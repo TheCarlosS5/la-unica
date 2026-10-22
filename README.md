@@ -17,3 +17,12 @@ Importa referencias/db (1).sql antes de usar. La estructura respeta sus columnas
 Para Laragon, inicia Apache y MySQL y abre http://localhost/la_unica/. Ajusta usuario y contraseña en php/config/conexion.php si tu configuración es distinta. No se ejecutó la aplicación durante este cambio.
 
 La carpeta php/_anterior/app conserva la versión previa como respaldo, no participa en las rutas actuales.
+
+## Front
+
+Diseño de papel cálido con letra manuscrita para el CRUD de clientes y productos. Los PHP conservan su lógica; solo cambió cómo se ven.
+
+- assets/css/estilos.css: todo el estilo. Colores, bordes y sombras están en las variables de :root (arriba del archivo).
+- assets/fonts/: Architects Daughter (títulos) y Patrick Hand (texto), alojadas en el proyecto para que funcionen sin internet (licencias en LICENCIAS.txt).
+- php/includes/menu.php y pie.php: menú lateral y pie compartidos, con el nuevo diseño.
+- php/inicio/main.php: portada con acceso a Clientes y Productos.
