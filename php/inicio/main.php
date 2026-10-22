@@ -7,21 +7,21 @@ require __DIR__ . '/../includes/menu.php';
 <section class="hero" aria-labelledby="titulo-hero">
     <div class="hero-insignia">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-            <path d="M12 2L2 7l10 5 10-5-10-5z" />
-            <path d="M2 17l10 5 10-5" />
-            <path d="M2 12l10 5 10-5" />
+            <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z" />
+            <line x1="3" y1="6" x2="21" y2="6" />
+            <path d="M16 10a4 4 0 0 1-8 0" />
         </svg>
-        <span>Gestión de clientes y productos</span>
+        <span>Clientes y productos</span>
     </div>
     <h1 id="titulo-hero">La Única</h1>
-    <p>Panel para administrar clientes, productos, existencias y precios, con protección de registros asociados a facturas.</p>
+    <p>Administra tus clientes, productos, existencias y precios desde un solo lugar.</p>
 </section>
 
 <section class="tarjetas modulos-grid" aria-label="Módulos del sistema">
     <article class="modulo-card">
         <div class="modulo-cabecera">
             <div class="modulo-icono" aria-hidden="true">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
                     <circle cx="9" cy="7" r="4" />
                     <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
@@ -67,7 +67,7 @@ require __DIR__ . '/../includes/menu.php';
     <article class="modulo-card">
         <div class="modulo-cabecera">
             <div class="modulo-icono" aria-hidden="true">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z" />
                     <polyline points="3.27 6.96 12 12.01 20.73 6.96" />
                     <line x1="12" y1="22.08" x2="12" y2="12" />

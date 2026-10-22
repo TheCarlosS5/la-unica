@@ -18,8 +18,11 @@ if ($seccionActual === '') {
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#fbf7ec">
 <title><?= h($titulo) ?> · La Única - Administración</title>
-<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%231b4931'%3E%3Cpath d='M12 2L2 7l10 5 10-5-10-5z'/%3E%3Cpath d='M2 17l10 5 10-5'/%3E%3Cpath d='M2 12l10 5 10-5'/%3E%3C/svg%3E">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%232b2b36' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath fill='%23ffe58a' d='M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z'/%3E%3Cline x1='3' y1='6' x2='21' y2='6'/%3E%3Cpath d='M16 10a4 4 0 0 1-8 0'/%3E%3C/svg%3E">
+<link rel="preload" href="<?= h($baseUrl) ?>/assets/fonts/patrick-hand-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="<?= h($baseUrl) ?>/assets/fonts/architects-daughter-latin.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="<?= h($baseUrl) ?>/assets/css/estilos.css">
 </head>
 <body class="shell-layout">
@@ -35,9 +38,9 @@ if ($seccionActual === '') {
             <a class="sidebar-marca" href="<?= h($baseUrl) ?>/main.php" title="Panel La Única">
                 <span class="marca-emblema" aria-hidden="true">
                     <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M12 2L2 7l10 5 10-5-10-5z"/>
-                        <path d="M2 17l10 5 10-5"/>
-                        <path d="M2 12l10 5 10-5"/>
+                        <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/>
+                        <line x1="3" y1="6" x2="21" y2="6"/>
+                        <path d="M16 10a4 4 0 0 1-8 0"/>
                     </svg>
                 </span>
                 <span class="marca-texto">
@@ -55,19 +58,23 @@ if ($seccionActual === '') {
 
         <div class="sidebar-cuerpo">
             <div class="sidebar-grupo">
-                <span class="sidebar-rotulo">Operación &amp; Catálogo</span>
                 <nav class="sidebar-nav" aria-label="Navegación del sistema">
                     <a class="nav-enlace<?= $seccionActual === 'inicio' ? ' activo' : '' ?>" href="<?= h($baseUrl) ?>/main.php"<?= $paginaActual === 'main.php' ? ' aria-current="page"' : '' ?>>
-                        <svg class="nav-icono" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <svg class="nav-icono" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                             <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
                             <polyline points="9 22 9 12 15 12 15 22"/>
                         </svg>
                         <span>Inicio</span>
                     </a>
-                    
+                </nav>
+            </div>
+
+            <div class="sidebar-grupo">
+                <span class="sidebar-rotulo">Catálogo</span>
+                <nav class="sidebar-nav" aria-label="Clientes y productos">
                     <div class="nav-item-complejo">
                         <a class="nav-enlace<?= $seccionActual === 'clientes' ? ' activo' : '' ?>" href="<?= h($baseUrl) ?>/php/clientes/ver_clientes.php"<?= $paginaActual === 'ver_clientes.php' ? ' aria-current="page"' : '' ?>>
-                            <svg class="nav-icono" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <svg class="nav-icono" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                                 <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
                                 <circle cx="9" cy="7" r="4"/>
                                 <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
@@ -86,7 +93,7 @@ if ($seccionActual === '') {
 
                     <div class="nav-item-complejo">
                         <a class="nav-enlace<?= $seccionActual === 'productos' ? ' activo' : '' ?>" href="<?= h($baseUrl) ?>/php/productos/ver_productos.php"<?= $paginaActual === 'ver_productos.php' ? ' aria-current="page"' : '' ?>>
-                            <svg class="nav-icono" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <svg class="nav-icono" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                                 <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>
                                 <polyline points="3.27 6.96 12 12.01 20.73 6.96"/>
                                 <line x1="12" y1="22.08" x2="12" y2="12"/>
@@ -102,20 +109,6 @@ if ($seccionActual === '') {
                         </a>
                     </div>
                 </nav>
-            </div>
-
-            <div class="sidebar-grupo">
-                <span class="sidebar-rotulo">Reglas de Sistema</span>
-                <div class="sidebar-info-card">
-                    <div class="sidebar-info-fila">
-                        <span class="sidebar-info-dot"></span>
-                        <span>Clientes y productos</span>
-                    </div>
-                    <div class="sidebar-info-fila">
-                        <span class="sidebar-info-dot"></span>
-                        <span>Borrados con confirmación</span>
-                    </div>
-                </div>
             </div>
         </div>
 
