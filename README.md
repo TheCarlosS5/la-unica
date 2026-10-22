@@ -49,9 +49,4 @@ php/
 referencias/
   db.sql                  Esquema inicial de la base de datos
   SRS.md                  Especificación de requisitos
-RELEASE.md                Guía para preparar y publicar un release
 ```
-
-## Publicar una versión
-
-Consulta [RELEASE.md](RELEASE.md) para preparar la primera versión, etiquetarla y publicarla en GitHub.
