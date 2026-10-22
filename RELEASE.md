@@ -1,42 +1,50 @@
 # Publicar un release
 
-Guía para preparar y publicar la primera versión de **La Única** en GitHub. Está escrita a partir de la implementación del repositorio: una aplicación web en PHP con MySQLi para administrar clientes y productos, ejecutada localmente con Apache y MySQL.
+Esta guía describe el proceso para publicar versiones de **La Única** en GitHub. No es el historial de cambios: las notas de cada versión se escriben en el release correspondiente de GitHub, que conserva las versiones publicadas y sus etiquetas. No es necesario duplicar ese historial en este archivo.
 
-## Versión inicial propuesta
+## Alcance actual de la aplicación
 
-- **Etiqueta:** `v1.0.0`
-- **Título del release:** `La Única v1.0.0`
-- **Tipo:** primera versión estable
-- **Alcance publicado:** página de inicio y operaciones CRUD de clientes y productos, con validaciones y protección de registros relacionados.
+La aplicación está desarrollada en PHP con MySQLi y permite administrar clientes y productos desde un entorno local con Apache y MySQL. El SRS también plantea facturación, pero la aplicación actual no cuenta con una interfaz para crear, consultar o cancelar facturas; no anuncies esas funciones como disponibles.
 
-La especificación SRS también plantea facturación, pero ese módulo no está implementado en la aplicación actual. No se debe anunciar como una función de esta versión.
+La aplicación tampoco implementa autenticación ni roles. Está pensada para uso local y no debe exponerse directamente a Internet.
 
-## Requisitos y límites de esta versión
+## Convención de versiones
 
-- Servidor web Apache y PHP con la extensión `mysqli`.
+Usa etiquetas con el formato `vMAYOR.MENOR.PARCHE`:
+
+- Primera versión estable: `v1.0.0`.
+- Corrección compatible: aumenta el parche, por ejemplo `v1.0.1`.
+- Función nueva compatible: aumenta la versión menor, por ejemplo `v1.1.0`.
+- Cambio que rompe compatibilidad: aumenta la versión mayor, por ejemplo `v2.0.0`.
+
+Una versión publicada conserva su etiqueta. Si encuentras un problema después de publicar, prepara una nueva versión en lugar de mover o reutilizar la etiqueta anterior.
+
+## Requisitos de ejecución
+
+- Apache.
+- PHP con la extensión `mysqli`.
 - MySQL y un navegador web.
-- Laragon es el entorno documentado para ejecutarla localmente.
-- La configuración actual de [conexion.php](php/config/conexion.php) usa `127.0.0.1`, el puerto `8000`, la base `la_unica`, el usuario `root` y contraseña vacía. Ajusta esos valores al entorno de instalación antes de ejecutar la aplicación.
-- El aplicativo no implementa inicio de sesión ni roles. Esta versión está pensada para uso local; no se debe exponer directamente a Internet.
-- [db.sql](referencias/db.sql) crea el esquema, pero no inserta datos de ejemplo. Importarlo requiere una base aún no creada, porque el script ejecuta `CREATE DATABASE la_unica`.
+- Laragon es el entorno documentado para la ejecución local.
+- La configuración inicial de [conexion.php](php/config/conexion.php) usa `127.0.0.1`, puerto `8000`, base `la_unica`, usuario `root` y contraseña vacía. Ajusta esos valores al entorno de instalación.
+- [db.sql](referencias/db.sql) crea el esquema, pero no inserta datos de ejemplo. Importa el script solo en una instancia donde todavía no exista la base `la_unica`, porque contiene `CREATE DATABASE la_unica`.
 
 ## Antes de publicar
 
-Completa esta lista desde la rama que se publicará:
+Completa esta lista para la versión que vas a etiquetar:
 
-- [ ] Confirma que todos los cambios de `main` están revisados, guardados y subidos a GitHub.
-- [ ] Verifica que la rama de publicación no contiene archivos de configuración personales, contraseñas reales ni datos de clientes.
-- [ ] Revisa la documentación de instalación: el README actual menciona `referencias/db (1).sql` y datos de ejemplo, pero el archivo presente es `referencias/db.sql` y no contiene inserciones de datos. Corrige el README antes de anunciar el release para que los pasos de instalación coincidan con el repositorio.
-- [ ] Prueba la instalación desde cero en una base vacía: iniciar Apache y MySQL, importar `referencias/db.sql`, ajustar `php/config/conexion.php` y abrir `http://localhost/la-unica/` (o la ruta configurada en Laragon).
-- [ ] Recorre manualmente la creación, consulta, edición y eliminación de un cliente y de un producto. Comprueba también que una baja con registros relacionados se bloquea y solicita confirmación cuando corresponde.
-- [ ] Confirma que la aplicación sigue mostrando errores de conexión o validación de forma comprensible y que los estilos y las fuentes locales cargan.
-- [ ] Confirma que la nota de versión describe únicamente funciones presentes en el código.
+- [ ] Confirma que los cambios están revisados, guardados y subidos a `main` en GitHub.
+- [ ] Verifica que el repositorio no contiene archivos de configuración personales, contraseñas reales ni datos de clientes.
+- [ ] Revisa que el README y estas instrucciones coincidan con los archivos y funciones presentes.
+- [ ] Prueba la instalación desde cero en una base vacía: inicia Apache y MySQL, importa `referencias/db.sql`, ajusta `php/config/conexion.php` y abre la ruta local configurada, por ejemplo `http://localhost/la-unica/`.
+- [ ] Recorre manualmente la creación, consulta, edición y eliminación de un cliente y de un producto. Comprueba que las bajas con registros relacionados se bloquean y que las eliminaciones solicitan confirmación.
+- [ ] Comprueba que los estilos y las fuentes locales cargan y que los errores de conexión o validación se muestran de forma comprensible.
+- [ ] Prepara notas de versión que describan solo los cambios incluidos en esta etiqueta. Esas notas se guardarán en GitHub al publicar el release.
 
 El repositorio no define una suite de pruebas automatizadas ni un proceso de compilación. Registra como verificación únicamente las pruebas manuales que efectivamente hayas completado.
 
 ## Crear y subir la etiqueta
 
-Desde PowerShell, en la carpeta del repositorio:
+Antes de etiquetar, confirma que no tienes cambios locales pendientes. Desde PowerShell, en la carpeta del repositorio:
 
 ```powershell
 git switch main
@@ -44,60 +52,52 @@ git pull --ff-only origin main
 git status --short
 ```
 
-Si hay cambios pendientes, guárdalos y súbelos antes de continuar. Cuando `main` esté listo y limpio, crea la etiqueta anotada y súbela:
+Si `git status --short` muestra cambios pendientes, guárdalos y súbelos antes de continuar. Cuando `main` esté listo, crea una etiqueta anotada. Para la primera versión:
 
 ```powershell
 git tag -a v1.0.0 -m "Release v1.0.0"
 git push origin v1.0.0
 ```
 
-Si `v1.0.0` ya existe, no la muevas ni la reutilices: corrige el problema en una nueva versión, por ejemplo `v1.0.1`.
+En las siguientes publicaciones, reemplaza `v1.0.0` por la nueva versión elegida.
 
-## Publicar el release en GitHub
+## Publicar en GitHub
 
-1. Abre el repositorio `TheCarlosS5/la-unica` en GitHub y entra a **Releases** → **Draft a new release**.
-2. Selecciona la etiqueta existente `v1.0.0` y como destino la rama `main`.
-3. Usa el título `La Única v1.0.0`.
-4. Copia y ajusta las notas propuestas abajo. Añade la fecha de publicación y las verificaciones que realmente realizaste.
-5. Deja desmarcada la opción de *pre-release* y publica el release cuando la revisión final esté completa.
-6. GitHub generará automáticamente los archivos fuente `.zip` y `.tar.gz` asociados a la etiqueta. No adjuntes volcados de bases con datos reales ni archivos de configuración con credenciales.
+1. Abre `TheCarlosS5/la-unica` en GitHub y entra a **Releases** → **Draft a new release**.
+2. Selecciona la etiqueta que acabas de subir. Si vas a crearla desde GitHub, elige `main` como destino.
+3. Usa un título como `La Única v1.0.0`.
+4. Escribe las notas de los cambios de esa versión usando la plantilla de abajo. Incluye fecha o verificaciones solo si aportan información y efectivamente se realizaron.
+5. Para una versión estable, deja desmarcada la opción de *pre-release* y conserva marcada la opción de último release.
+6. Publica el release. GitHub conservará las notas junto con la etiqueta y generará los archivos fuente `.zip` y `.tar.gz`.
 
-## Notas propuestas para `v1.0.0`
+No adjuntes volcados de bases con datos reales ni archivos de configuración con credenciales.
+
+### Plantilla para las notas de GitHub
+
+Copia esta plantilla en el formulario de GitHub y reemplaza los marcadores por los cambios reales. Omite las secciones vacías.
 
 ```markdown
-# La Única v1.0.0
+# La Única vX.Y.Z
 
-Primera versión del aplicativo web La Única para administrar clientes y productos de una tienda en un entorno local.
+Resumen breve de esta versión.
 
-## Incluye
+## Novedades
 
-- Crear, consultar, editar y eliminar clientes.
-- Crear, consultar, editar y eliminar productos.
-- Validación de datos y confirmación para las bajas.
-- Protección contra la eliminación de registros relacionados con facturas.
-- Interfaz web con estilos y fuentes locales.
+- Describe las funciones nuevas incluidas.
 
-## Requisitos
+## Correcciones
 
-- Apache y PHP con la extensión mysqli.
-- MySQL.
-- Laragon es el entorno documentado para la ejecución local.
+- Describe los errores corregidos.
 
-## Instalación
+## Instalación o actualización
 
-1. Configura Apache y MySQL.
-2. Importa `referencias/db.sql` en una instancia donde todavía no exista la base `la_unica`.
-3. Ajusta la conexión en `php/config/conexion.php`.
-4. Sirve la carpeta del proyecto y abre la URL local correspondiente, por ejemplo `http://localhost/la-unica/`.
-
-## Alcance
-
-Esta versión incluye gestión de clientes y productos. No incluye una interfaz para crear, consultar o cancelar facturas, autenticación de usuarios ni facturación electrónica. Está destinada a uso local y no debe exponerse directamente a Internet.
+- Incluye pasos especiales si esta versión los requiere.
 ```
+
+GitHub será el registro de cambios por versión. Para una versión futura, crea un nuevo release con sus propias notas; no reemplaces las notas de versiones anteriores ni mantengas una copia de ellas en `RELEASE.md`.
 
 ## Después de publicar
 
-- Comprueba que la página del release muestra la etiqueta y las notas correctas.
+- Comprueba que el release muestra la etiqueta, el título y las notas correctas.
 - Descarga el `.zip` generado y confirma que contiene el código y `referencias/db.sql`.
-- Comparte el enlace del release con las instrucciones de instalación, no una copia de una base de datos con información real.
-- Para una corrección posterior, publica una nueva etiqueta (por ejemplo `v1.0.1`) y conserva `v1.0.0` como el registro inmutable de la primera publicación.
+- Comparte el enlace de ese release y sus instrucciones; no compartas una base con información real.
