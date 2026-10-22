@@ -8,8 +8,6 @@ if ($seccionActual === '') {
         $seccionActual = 'clientes';
     } elseif (strpos($scriptActual, '/productos/') !== false) {
         $seccionActual = 'productos';
-    } elseif (strpos($scriptActual, '/facturas/') !== false) {
-        $seccionActual = 'facturas';
     } else {
         $seccionActual = 'inicio';
     }
@@ -47,7 +45,7 @@ if ($seccionActual === '') {
                 </span>
                 <span class="marca-texto">
                     <span class="marca-nombre">La Única</span>
-                    <span class="marca-subtexto">Tienda y caja</span>
+                    <span class="marca-subtexto">Gestión comercial</span>
                 </span>
             </a>
             <button id="btn-cerrar-drawer" class="btn-cerrar-drawer" type="button" aria-label="Cerrar menú lateral">
@@ -67,29 +65,6 @@ if ($seccionActual === '') {
                             <polyline points="9 22 9 12 15 12 15 22"/>
                         </svg>
                         <span>Inicio</span>
-                    </a>
-                </nav>
-            </div>
-
-            <div class="sidebar-grupo">
-                <span class="sidebar-rotulo">Caja</span>
-                <nav class="sidebar-nav" aria-label="Caja y facturas">
-                    <a class="nav-enlace nav-principal<?= $paginaActual === 'nueva_factura.php' ? ' activo' : '' ?>" href="<?= h($baseUrl) ?>/php/facturas/nueva_factura.php"<?= $paginaActual === 'nueva_factura.php' ? ' aria-current="page"' : '' ?>>
-                        <svg class="nav-icono" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                            <circle cx="9" cy="21" r="1"/>
-                            <circle cx="20" cy="21" r="1"/>
-                            <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/>
-                        </svg>
-                        <span>Nueva venta</span>
-                    </a>
-                    <a class="nav-enlace<?= $paginaActual === 'ver_facturas.php' ? ' activo' : '' ?>" href="<?= h($baseUrl) ?>/php/facturas/ver_facturas.php"<?= $paginaActual === 'ver_facturas.php' ? ' aria-current="page"' : '' ?>>
-                        <svg class="nav-icono" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
-                            <polyline points="14 2 14 8 20 8"/>
-                            <line x1="16" y1="13" x2="8" y2="13"/>
-                            <line x1="16" y1="17" x2="8" y2="17"/>
-                        </svg>
-                        <span>Facturas</span>
                     </a>
                 </nav>
             </div>

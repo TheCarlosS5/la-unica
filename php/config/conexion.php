@@ -8,7 +8,7 @@ if ($conexion->connect_errno) {
 $conexion->set_charset('utf8mb4');
 
 $scriptDir = str_replace('\\', '/', dirname((string)($_SERVER['SCRIPT_NAME'] ?? '/')));
-$baseUrl = preg_replace('#/php/(clientes|productos|facturas|inicio)$#', '', $scriptDir);
+$baseUrl = preg_replace('#/php/(clientes|productos|inicio)$#', '', $scriptDir);
 if ($baseUrl === '/' || $baseUrl === '.') $baseUrl = '';
 $baseUrl = rtrim($baseUrl, '/');
 

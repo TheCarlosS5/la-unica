@@ -20,12 +20,9 @@ La carpeta php/_anterior/app conserva la versión previa como respaldo, no parti
 
 ## Front (rama feat/frontend-cajero)
 
-Diseño de papel cálido con letra manuscrita para un negocio pequeño con un solo cajero. Los PHP de clientes y productos conservan su lógica; solo cambió cómo se ven.
+Diseño de papel cálido con letra manuscrita para el CRUD de clientes y productos. Los PHP conservan su lógica; solo cambió cómo se ven.
 
 - assets/css/estilos.css: todo el estilo. Colores, bordes y sombras están en las variables de :root (arriba del archivo).
-- assets/fonts/: Architects Daughter (títulos) y Patrick Hand (texto), alojadas en el proyecto para que funcionen sin internet.
-- assets/js/caja.js: lógica del ticket de la pantalla de venta (JavaScript simple, sin librerías).
-- php/facturas/nueva_factura.php: pantalla de venta. Solo front: lee productos y clientes, arma el ticket en el navegador y NO guarda nada todavía. Al inicio del archivo está la lista de pasos para que backend la conecte (crear guardar_factura.php y cambiar data-conectado="no" por "si").
-- php/facturas/ver_facturas.php: listado de facturas de solo lectura.
-- php/includes/menu.php y pie.php: se agregó "Nueva venta" y "Facturas" al menú, y pie.php carga un JS extra si la página define $scriptExtra.
-- php/config/conexion.php: una sola palabra nueva en la expresión de $baseUrl (facturas), para que las rutas funcionen desde la carpeta php/facturas.
+- assets/fonts/: Architects Daughter (títulos) y Patrick Hand (texto), alojadas en el proyecto para que funcionen sin internet (licencias en LICENCIAS.txt).
+- php/includes/menu.php y pie.php: menú lateral y pie compartidos, con el nuevo diseño.
+- php/inicio/main.php: portada con acceso a Clientes y Productos.

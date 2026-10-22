@@ -43,9 +43,5 @@
     });
 })();
 </script>
-<?php // Si la página define $scriptExtra = 'archivo.js', se carga desde assets/js/ ?>
-<?php if (!empty($scriptExtra)): ?>
-<script src="<?= h($baseUrl) ?>/assets/js/<?= h($scriptExtra) ?>" defer></script>
-<?php endif; ?>
 </body>
 </html>

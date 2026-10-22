@@ -9,8 +9,7 @@
  *   2. Base, sidebar, topbar y pie
  *   3. Encabezados, portada y botones
  *   4. Tablas, formularios, alertas y confirmaciones
- *   5. Caja (nueva venta) y facturas
- *   6. Responsivo y movimiento reducido
+ *   5. Responsivo y movimiento reducido
  */
 
 /* ==========================================================================
@@ -393,24 +392,6 @@ button, input, select, textarea {
   color: var(--color-primario-activo);
 }
 
-/* "Nueva venta" siempre destaca: es lo que más usa el cajero */
-.nav-enlace.nav-principal {
-  background-color: var(--color-primario);
-  border-color: var(--color-primario-activo);
-  color: var(--color-texto-invertido);
-  box-shadow: var(--sombra-sm);
-}
-
-.nav-enlace.nav-principal:hover {
-  background-color: var(--color-primario-hover);
-  color: var(--color-texto-invertido);
-}
-
-.nav-enlace.nav-principal.activo {
-  background-color: var(--color-primario-activo);
-  color: var(--color-texto-invertido);
-}
-
 /* Tarjeta informativa en sidebar (se conserva por si la quieren usar) */
 .sidebar-info-card {
   background-color: var(--color-fondo);
@@ -740,11 +721,6 @@ h1 {
   box-shadow: var(--sombra-lg);
 }
 
-/* La tarjeta de "Nueva venta" se pinta de resaltador para llamar la atención */
-.modulo-card.destacado {
-  background-color: var(--color-resaltador);
-}
-
 .modulo-cabecera {
   display: flex;
   align-items: center;
@@ -765,10 +741,6 @@ h1 {
   flex-shrink: 0;
 }
 
-.modulo-card.destacado .modulo-icono {
-  background-color: var(--color-superficie-elevada);
-}
-
 .tarjetas h2,
 .modulo-titulo {
   font-size: 1.6rem;
@@ -785,10 +757,6 @@ h1 {
   flex: 1;
 }
 
-.modulo-card.destacado .modulo-descripcion {
-  color: var(--color-linea);
-}
-
 .modulo-acciones {
   display: flex;
   align-items: center;
@@ -796,10 +764,6 @@ h1 {
   flex-wrap: wrap;
   padding-top: 14px;
   border-top: 1px solid var(--color-borde-suave);
-}
-
-.modulo-card.destacado .modulo-acciones {
-  border-top-color: var(--color-resaltador-fuerte);
 }
 
 .modulo-detalles {
@@ -1427,498 +1391,14 @@ button[disabled] {
 }
 
 /* ==========================================================================
-   5. Caja: nueva venta (php/facturas/nueva_factura.php)
-   Disposición: productos a la izquierda, "ticket" a la derecha.
+   5. Comportamiento responsivo (celular, tablet y escritorio)
    ========================================================================== */
-.caja {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) 400px;
-  gap: 26px;
-  align-items: stretch;
-  /* En escritorio la caja ocupa la pantalla: solo los productos y las líneas
-     del ticket hacen scroll, así el total y "Cobrar" siempre se ven. */
-  height: calc(100vh - 290px);
-  min-height: 540px;
-}
-
-.caja-productos {
-  min-width: 0;
-  min-height: 0;
-  display: flex;
-  flex-direction: column;
-}
-
-.caja-buscador {
-  flex-shrink: 0;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  background-color: var(--color-superficie-elevada);
-  border: 1px solid var(--color-contorno-fuerte);
-  border-radius: var(--radio-md);
-  padding: 0 14px;
-  margin-bottom: 18px;
-  box-shadow: var(--sombra-sm);
-}
-
-.caja-buscador:focus-within {
-  background-color: #fffbe6;
-  box-shadow: 0 0 0 3px var(--color-foco);
-}
-
-.caja-buscador svg {
-  flex-shrink: 0;
-  color: var(--color-texto-terciario);
-}
-
-.caja-buscador input {
-  flex: 1;
-  min-width: 0;
-  height: 50px;
-  border: 0;
-  background: transparent;
-  font-size: 1.2rem;
-}
-
-.caja-buscador input:focus {
-  outline: none;
-}
-
-.productos-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(176px, 1fr));
-  gap: 16px;
-  /* Cada fila mide lo que necesita su contenido (nombres de 2 o 3 líneas) */
-  grid-auto-rows: max-content;
-  align-content: start;
-  flex: 1;
-  min-height: 0;
-  overflow-y: auto;
-  /* espacio para el globito de cantidad y la sombra de cada tarjeta */
-  padding: 14px 14px 10px 6px;
-}
-
-/* Cada producto es un botón grande: un toque lo agrega al ticket */
-.producto-boton {
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  justify-content: flex-start;
-  gap: 2px;
-  min-height: 132px;
-  padding: 14px 14px 12px;
-  text-align: left;
-  background-color: var(--color-superficie-elevada);
-  color: var(--color-texto);
-  border-color: var(--color-contorno);
-  border-radius: var(--radio-lg);
-}
-
-.producto-boton:nth-child(even) {
-  border-radius: var(--radio-lg);
-}
-
-.producto-boton:hover {
-  border-color: var(--color-primario-borde);
-  background-color: #fff8dc;
-  color: var(--color-texto);
-  box-shadow: var(--sombra-md);
-}
-
-.producto-boton:active {
-  background-color: var(--color-resaltador);
-}
-
-.producto-boton:disabled {
-  background-color: var(--color-superficie-subyacente);
-  color: var(--color-texto-terciario);
-}
-
-.producto-nombre {
-  font-family: var(--fuente-titulo);
-  font-size: 1.12rem;
-  line-height: 1.2;
-  overflow-wrap: anywhere;
-}
-
-.producto-unidad {
-  font-size: 0.92rem;
-  color: var(--color-texto-terciario);
-}
-
-.producto-precio {
-  margin-top: auto;
-  font-size: 1.45rem;
-  color: var(--color-primario-activo);
-  font-variant-numeric: tabular-nums;
-}
-
-.producto-boton:disabled .producto-precio {
-  color: inherit;
-  text-decoration: line-through;
-}
-
-.producto-stock {
-  font-size: 0.9rem;
-  color: var(--color-texto-terciario);
-}
-
-.producto-stock.poco {
-  color: var(--color-aviso);
-}
-
-.producto-stock.agotado {
-  color: var(--color-peligro);
-}
-
-/* Globito con la cantidad ya agregada al ticket */
-.producto-cantidad {
-  position: absolute;
-  top: -10px;
-  right: -8px;
-  min-width: 30px;
-  height: 30px;
-  padding: 0 7px;
-  display: none;
-  align-items: center;
-  justify-content: center;
-  background-color: var(--color-resaltador-fuerte);
-  color: var(--color-linea);
-  border: 1px solid var(--color-contorno-fuerte);
-  border-radius: var(--radio-pill);
-  font-size: 1.05rem;
-  font-variant-numeric: tabular-nums;
-}
-
-.producto-boton.en-ticket .producto-cantidad {
-  display: inline-flex;
-}
-
-.productos-sin-resultados {
-  grid-column: 1 / -1;
-  text-align: center;
-  padding: 36px 16px;
-  border: 1px dashed var(--color-contorno-fuerte);
-  border-radius: var(--radio-lg);
-  color: var(--color-texto-terciario);
-  background-color: var(--color-superficie-elevada);
-}
-
-/* Ticket: el comprobante que va armando el cajero */
-.ticket {
-  min-height: 0;
-  background-color: var(--color-superficie-elevada);
-  border: 1px solid var(--color-contorno);
-  border-radius: var(--radio-lg);
-  box-shadow: var(--sombra-lg);
-  padding: 20px 20px 18px;
-  display: flex;
-  flex-direction: column;
-  gap: 14px;
-}
-
-.ticket-titulo {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 10px;
-  font-size: 1.6rem;
-  margin: 0;
-  color: var(--color-texto);
-}
-
-.ticket-vaciar {
-  min-height: 34px;
-  padding: 0 10px;
-  font-size: 0.95rem;
-  background-color: transparent;
-  color: var(--color-texto-secundario);
-  border-style: dashed;
-  border-color: var(--color-borde-fuerte);
-  box-shadow: none;
-}
-
-.ticket-vaciar:hover {
-  background-color: var(--color-peligro-fondo);
-  color: var(--color-peligro);
-  border-color: var(--color-peligro);
-  box-shadow: none;
-}
-
-.ticket-lineas {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  flex: 1;
-  overflow-y: auto;
-  min-height: 90px;
-  border-top: 1px solid var(--color-borde-suave);
-  border-bottom: 1px solid var(--color-borde-suave);
-}
-
-.ticket-vacio {
-  padding: 26px 8px;
-  text-align: center;
-  color: var(--color-texto-terciario);
-  font-size: 1.05rem;
-}
-
-.ticket-linea {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
-  grid-template-areas:
-    "nombre subtotal"
-    "cantidad quitar";
-  gap: 4px 10px;
-  align-items: center;
-  padding: 10px 2px;
-  border-bottom: 1px solid var(--color-borde);
-}
-
-.ticket-linea:last-child {
-  border-bottom: 0;
-}
-
-.linea-nombre {
-  grid-area: nombre;
-  font-size: 1.12rem;
-  line-height: 1.2;
-  overflow-wrap: anywhere;
-}
-
-.linea-nombre small {
-  display: block;
-  font-size: 0.88rem;
-  color: var(--color-texto-terciario);
-}
-
-.linea-subtotal {
-  grid-area: subtotal;
-  text-align: right;
-  font-size: 1.15rem;
-  font-variant-numeric: tabular-nums;
-  white-space: nowrap;
-}
-
-.cantidad {
-  grid-area: cantidad;
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-}
-
-.cantidad button {
-  width: 36px;
-  min-height: 36px;
-  height: 36px;
-  padding: 0;
-  font-size: 1.3rem;
-  line-height: 1;
-  border-radius: var(--radio-sm);
-  background-color: var(--color-superficie-elevada);
-  color: var(--color-linea);
-  border-color: var(--color-contorno-fuerte);
-}
-
-.cantidad button:hover {
-  background-color: var(--color-resaltador);
-  color: var(--color-linea);
-}
-
-.cantidad input {
-  width: 62px;
-  height: 36px;
-  text-align: center;
-  font-size: 1.1rem;
-  border: 1px solid var(--color-contorno-fuerte);
-  border-radius: var(--radio-sm);
-  background-color: var(--color-superficie);
-  font-variant-numeric: tabular-nums;
-  -moz-appearance: textfield;
-  appearance: textfield;
-}
-
-.cantidad input::-webkit-outer-spin-button,
-.cantidad input::-webkit-inner-spin-button {
-  -webkit-appearance: none;
-  margin: 0;
-}
-
-.cantidad input:focus {
-  outline: none;
-  background-color: #fffbe6;
-  box-shadow: 0 0 0 3px var(--color-foco);
-}
-
-.linea-quitar {
-  grid-area: quitar;
-  justify-self: end;
-  min-height: 34px;
-  padding: 0 10px;
-  font-size: 0.92rem;
-  background-color: transparent;
-  color: var(--color-peligro);
-  border-color: transparent;
-  box-shadow: none;
-  text-decoration: underline dashed;
-  text-underline-offset: 3px;
-}
-
-.linea-quitar:hover {
-  background-color: var(--color-peligro-fondo);
-  color: var(--color-peligro);
-  border-color: var(--color-peligro);
-  box-shadow: none;
-}
-
-.ticket-total {
-  display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-  gap: 12px;
-  margin: 0;
-}
-
-.ticket-total dt {
-  font-family: var(--fuente-titulo);
-  font-size: 1.3rem;
-}
-
-.ticket-total dd {
-  margin: 0;
-  font-size: 2.2rem;
-  line-height: 1.1;
-  font-variant-numeric: tabular-nums;
-  background-image: linear-gradient(transparent 55%, var(--color-resaltador) 55%, var(--color-resaltador) 92%, transparent 92%);
-  padding: 0 6px;
-}
-
-.ticket-pago {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 12px;
-  align-items: end;
-}
-
-.ticket-pago .campo {
-  margin-bottom: 0;
-}
-
-.ticket-cambio {
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-end;
-  min-height: 46px;
-}
-
-.ticket-cambio .etiqueta {
-  font-family: var(--fuente-titulo);
-  font-size: 1rem;
-}
-
-.ticket-cambio output {
-  font-size: 1.4rem;
-  font-variant-numeric: tabular-nums;
-  color: var(--color-primario-activo);
-}
-
-.ticket-cambio output.falta {
-  color: var(--color-peligro);
-}
-
-.ticket-cobrar {
-  width: 100%;
-  min-height: 56px;
-  font-family: var(--fuente-titulo);
-  font-size: 1.4rem;
-  background-color: var(--color-primario);
-}
-
-/* Avisos de la caja: nota adhesiva flotante, no ocupa espacio dentro del ticket */
-.aviso-flotante {
-  position: fixed;
-  top: calc(var(--alto-topbar) + 14px);
-  right: 24px;
-  z-index: 60;
-  width: min(420px, calc(100vw - 32px));
-  margin: 0;
-  box-shadow: var(--sombra-md);
-}
-
-/* Estado de las facturas (php/facturas/ver_facturas.php) */
-.insignia-estado {
-  display: inline-flex;
-  align-items: center;
-  padding: 0 12px;
-  border-radius: var(--radio-pill);
-  font-size: 0.98rem;
-  border: 1px solid var(--color-linea);
-}
-
-.insignia-estado.pagado {
-  background-color: var(--color-exito-fondo);
-  color: var(--color-exito);
-  border-color: var(--color-exito);
-}
-
-.insignia-estado.pendiente {
-  background-color: var(--color-aviso-fondo);
-  color: var(--color-aviso);
-  border-color: var(--color-aviso);
-}
-
-.insignia-estado.cancelado {
-  background-color: var(--color-peligro-fondo);
-  color: var(--color-peligro);
-  border-color: var(--color-peligro);
-  text-decoration: line-through;
-}
-
-/* Clase auxiliar para ocultar texto solo visualmente (lectores de pantalla) */
-.solo-lectores {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  padding: 0;
-  margin: -1px;
-  overflow: hidden;
-  clip: rect(0, 0, 0, 0);
-  white-space: nowrap;
-  border: 0;
-}
-
-/* ==========================================================================
-   6. Comportamiento responsivo (celular, tablet y escritorio)
-   ========================================================================== */
-@media (max-width: 1100px) {
-  .caja {
-    grid-template-columns: minmax(0, 1fr) 340px;
-    gap: 20px;
-  }
-}
-
 @media (max-width: 990px) {
   .tarjetas,
   .modulos-grid {
     grid-template-columns: 1fr;
   }
 
-  /* En tablet el ticket baja debajo de los productos y la página hace scroll normal */
-  .caja {
-    grid-template-columns: 1fr;
-    height: auto;
-    min-height: 0;
-  }
-
-  .productos-grid {
-    overflow: visible;
-    flex: none;
-  }
-
-  .ticket-lineas {
-    flex: none;
-  }
 }
 
 @media (max-width: 820px) {
@@ -2035,11 +1515,6 @@ button[disabled] {
     width: 100%;
   }
 
-  .productos-grid {
-    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-    gap: 14px;
-  }
-
   .pie-inner {
     flex-direction: column;
     text-align: center;
@@ -2056,10 +1531,6 @@ button[disabled] {
   .contenedor-contenido {
     padding: 20px 14px 36px;
   }
-
-  .ticket-pago {
-    grid-template-columns: 1fr;
-  }
 }
 
 @media (max-width: 360px) {
@@ -2070,64 +1541,6 @@ button[disabled] {
   .nav-enlace {
     padding: 8px 10px;
     font-size: 1rem;
-  }
-}
-
-/* Portátiles con poca altura (ej. 1366x768): la caja se compacta para que el
-   total y "Cobrar" no queden fuera de la pantalla */
-@media (min-width: 991px) and (max-height: 780px) {
-  .contenedor:has(.caja) {
-    padding-top: 14px;
-    padding-bottom: 16px;
-  }
-
-  .contenedor:has(.caja) .miga-pan {
-    display: none;
-  }
-
-  .contenedor:has(.caja) .encabezado-vista {
-    margin-bottom: 12px;
-  }
-
-  .contenedor:has(.caja) .encabezado-titulo {
-    font-size: 1.7rem;
-  }
-
-  .caja {
-    height: calc(100vh - 150px);
-    min-height: 470px;
-    gap: 20px;
-  }
-
-  .ticket {
-    padding: 14px;
-    gap: 8px;
-  }
-
-  .ticket-titulo {
-    font-size: 1.35rem;
-  }
-
-  .ticket .campo label {
-    margin-bottom: 2px;
-  }
-
-  .ticket .campo input,
-  .ticket .campo select {
-    height: 40px;
-  }
-
-  .ticket-lineas {
-    min-height: 60px;
-  }
-
-  .ticket-total dd {
-    font-size: 1.8rem;
-  }
-
-  .ticket-cobrar {
-    min-height: 48px;
-    font-size: 1.25rem;
   }
 }
 
@@ -2149,7 +1562,7 @@ button[disabled] {
   }
 }
 
-/* Al imprimir (por ejemplo una factura) se quita el menú y el fondo */
+/* Al imprimir se quita el menú y el fondo */
 @media print {
   body {
     background: #fff;
