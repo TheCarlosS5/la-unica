@@ -24,20 +24,19 @@ php/
   inicio/                 Página de inicio
   clientes/               CRUD de clientes
   productos/              CRUD de productos
-referencias/              Documentación y archivos de referencia
-db.sql                    Creación del esquema de base de datos
+referencias/              Documentación (SRS) y script SQL de la base de datos
 ```
 
 ## Base de datos
 
-El archivo `db.sql`, ubicado en la raíz, crea la base `la_unica`, sus cuatro tablas (`clientes`, `facturas`, `productos` y `detalle_facturas`), tres vistas y cinco procedimientos almacenados. No contiene instrucciones para insertar datos.
+El archivo `referencias/db (1).sql` crea la base `la_unica`, sus cuatro tablas (`clientes`, `facturas`, `productos` y `detalle_facturas`), tres vistas y cinco procedimientos almacenados, e inserta datos de ejemplo (10 clientes, 10 productos y 10 facturas con sus detalles).
 
-Importa `db.sql` una sola vez en una instancia donde todavía no exista la base `la_unica`. El archivo no elimina ni reinicia una base ya creada. En una instalación nueva, los listados de clientes y productos estarán vacíos hasta que se registren elementos desde la aplicación.
+Importa `referencias/db (1).sql` una sola vez en una instancia donde todavía no exista la base `la_unica`. El archivo no elimina ni reinicia una base ya creada.
 
 ## Ejecución local con Laragon
 
 1. Inicia Apache y MySQL en Laragon.
-2. Importa `db.sql` en la instancia MySQL que escucha en el puerto `5000`.
+2. Importa `referencias/db (1).sql` en la instancia MySQL que escucha en el puerto `8000`.
 3. Configura Laragon para servir esta carpeta. Si la carpeta se publica como `la-unica`, abre `http://localhost/la-unica/`.
 
-La configuración en `php/config/conexion.php` usa `127.0.0.1`, puerto `5000`, base `la_unica`, usuario `root` y contraseña vacía. Si las credenciales de MySQL son distintas, actualiza ese archivo.
+La configuración en `php/config/conexion.php` usa `127.0.0.1`, puerto `8000`, base `la_unica`, usuario `root` y contraseña vacía. Si las credenciales de MySQL son distintas, actualiza ese archivo.
