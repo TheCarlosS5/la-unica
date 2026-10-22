@@ -2,7 +2,7 @@
  * La Única - Administración de clientes y productos
  * Hoja de estilos principal: assets/css/estilos.css
  * Arquitectura: Menú / Índice en barra lateral izquierda (Sidebar Shell)
- * Estilo: "libreta de tendero" -> papel, trazos de lápiz y resaltador.
+ * Estilo: papel cálido con tipografía manuscrita (lápiz) y un toque de resaltador.
  *
  * Cómo está organizado (para encontrar rápido lo que buscan):
  *   1. Fuentes y variables (colores, bordes, sombras)   -> cambien el look aquí
@@ -44,11 +44,11 @@
   --color-secundario: #3c7d5c;
 
   /* Resaltador amarillo: para lo activo, lo importante y los totales */
-  --color-resaltador: #ffe58a;
-  --color-resaltador-fuerte: #ffd54a;
+  --color-resaltador: #fff1b8;
+  --color-resaltador-fuerte: #ffe27a;
 
   /* Papel */
-  --color-fondo: #fbf7ec;
+  --color-fondo: #faf7f0;
   --color-fondo-hover: #f3ecd6;
   --color-superficie: #fffdf7;
   --color-superficie-elevada: #ffffff;
@@ -61,9 +61,11 @@
   --color-texto-terciario: #6b6b78;
   --color-texto-invertido: #ffffff;
 
-  /* Bordes suaves (líneas punteadas dentro de las tarjetas) */
-  --color-borde: #cdc4aa;
-  --color-borde-suave: #e3dcc6;
+  /* Bordes suaves: contorno de tarjetas, contorno de controles y separadores */
+  --color-contorno: #ddd6c0;
+  --color-contorno-fuerte: #a29b83;
+  --color-borde: #d6cfb8;
+  --color-borde-suave: #e9e3d0;
   --color-borde-fuerte: #2b2b36;
 
   /* Estados */
@@ -82,19 +84,19 @@
 
   --color-foco: rgba(45, 106, 79, 0.35);
 
-  /* Sombras "recortadas": un desplazamiento duro, como una sombra dibujada */
-  --sombra-sm: 2px 2px 0 var(--color-linea);
-  --sombra-md: 3px 3px 0 var(--color-linea);
-  --sombra-lg: 5px 5px 0 var(--color-linea);
+  /* Sombras suaves */
+  --sombra-sm: 0 1px 2px rgba(43, 43, 54, 0.08);
+  --sombra-md: 0 4px 12px -2px rgba(43, 43, 54, 0.10), 0 1px 3px rgba(43, 43, 54, 0.06);
+  --sombra-lg: 0 14px 30px -6px rgba(43, 43, 54, 0.18), 0 2px 6px rgba(43, 43, 54, 0.06);
 
   /* Dimensiones del Shell */
   --ancho-sidebar: 262px;
   --alto-topbar: 60px;
 
-  /* Radios irregulares: cada esquina distinta = trazo hecho a mano */
-  --radio-sm: 7px 3px 8px 3px / 3px 8px 3px 7px;
-  --radio-md: 12px 4px 11px 5px / 5px 11px 4px 12px;
-  --radio-lg: 16px 5px 14px 6px / 6px 14px 5px 16px;
+  /* Radios de esquina */
+  --radio-sm: 6px;
+  --radio-md: 10px;
+  --radio-lg: 14px;
   --radio-pill: 9999px;
 
   /* Tipografías: título tipo lápiz, texto manuscrito legible */
@@ -125,9 +127,6 @@ html {
 body {
   margin: 0;
   background-color: var(--color-fondo);
-  /* Papel punteado */
-  background-image: radial-gradient(circle, #dcd3b8 1px, transparent 1.4px);
-  background-size: 24px 24px;
   color: var(--color-texto);
   font-family: var(--fuente-base);
   font-size: 1rem;
@@ -229,7 +228,7 @@ button, input, select, textarea {
   width: var(--ancho-sidebar);
   min-width: var(--ancho-sidebar);
   background-color: var(--color-superficie);
-  border-right: 2px solid var(--color-linea);
+  border-right: 1px solid var(--color-contorno);
   display: flex;
   flex-direction: column;
   position: sticky;
@@ -247,7 +246,7 @@ button, input, select, textarea {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  border-bottom: 2px dashed var(--color-borde);
+  border-bottom: 1px solid var(--color-borde-suave);
 }
 
 .sidebar-marca {
@@ -263,14 +262,13 @@ button, input, select, textarea {
   height: 40px;
   background-color: var(--color-resaltador);
   color: var(--color-linea);
-  border: 2px solid var(--color-linea);
+  border: 1px solid var(--color-contorno);
   border-radius: var(--radio-md);
   display: inline-flex;
   align-items: center;
   justify-content: center;
   box-shadow: var(--sombra-sm);
   flex-shrink: 0;
-  transform: rotate(-4deg);
 }
 
 .marca-texto {
@@ -300,7 +298,7 @@ button, input, select, textarea {
   min-height: 0;
   padding: 0;
   border-radius: var(--radio-sm);
-  border: 2px solid var(--color-linea);
+  border: 1px solid var(--color-contorno-fuerte);
   background: var(--color-superficie-elevada);
   color: var(--color-linea);
   box-shadow: none;
@@ -348,7 +346,7 @@ button, input, select, textarea {
   align-items: center;
   gap: 11px;
   padding: 8px 12px;
-  border: 2px solid transparent;
+  border: 1px solid transparent;
   border-radius: var(--radio-md);
   color: var(--color-texto);
   font-size: 1.05rem;
@@ -371,8 +369,8 @@ button, input, select, textarea {
 
 .nav-subenlace:hover,
 .nav-subenlace.activo {
-  color: var(--color-linea);
-  background-color: var(--color-resaltador);
+  color: var(--color-primario-activo);
+  background-color: var(--color-primario-suave);
 }
 
 .nav-icono {
@@ -390,16 +388,15 @@ button, input, select, textarea {
 
 /* Sección activa: resaltada con marcador amarillo */
 .nav-enlace.activo {
-  background-color: var(--color-resaltador);
-  border-color: var(--color-linea);
-  color: var(--color-linea);
-  box-shadow: var(--sombra-sm);
+  background-color: var(--color-primario-suave);
+  border-color: var(--color-primario-borde);
+  color: var(--color-primario-activo);
 }
 
 /* "Nueva venta" siempre destaca: es lo que más usa el cajero */
 .nav-enlace.nav-principal {
   background-color: var(--color-primario);
-  border-color: var(--color-linea);
+  border-color: var(--color-primario-activo);
   color: var(--color-texto-invertido);
   box-shadow: var(--sombra-sm);
 }
@@ -417,7 +414,7 @@ button, input, select, textarea {
 /* Tarjeta informativa en sidebar (se conserva por si la quieren usar) */
 .sidebar-info-card {
   background-color: var(--color-fondo);
-  border: 2px dashed var(--color-borde);
+  border: 1px dashed var(--color-contorno-fuerte);
   border-radius: var(--radio-md);
   padding: 10px 12px;
   display: flex;
@@ -444,13 +441,13 @@ button, input, select, textarea {
 /* Pie de la barra lateral */
 .sidebar-pie {
   padding: 14px 12px;
-  border-top: 2px dashed var(--color-borde);
+  border-top: 1px solid var(--color-borde-suave);
   margin-top: auto;
 }
 
 .terminal-badge {
   background-color: var(--color-fondo);
-  border: 2px solid var(--color-linea);
+  border: 1px solid var(--color-contorno);
   border-radius: var(--radio-md);
   padding: 8px 12px;
   display: flex;
@@ -499,7 +496,7 @@ button, input, select, textarea {
   height: var(--alto-topbar);
   min-height: var(--alto-topbar);
   background-color: var(--color-superficie);
-  border-bottom: 2px solid var(--color-linea);
+  border-bottom: 1px solid var(--color-contorno);
   padding: 0 32px;
   display: flex;
   align-items: center;
@@ -524,7 +521,7 @@ button, input, select, textarea {
   min-height: 0;
   padding: 0;
   border-radius: var(--radio-sm);
-  border: 2px solid var(--color-linea);
+  border: 1px solid var(--color-contorno-fuerte);
   background: var(--color-superficie-elevada);
   color: var(--color-linea);
   box-shadow: var(--sombra-sm);
@@ -570,7 +567,7 @@ button, input, select, textarea {
   font-size: 0.92rem;
   color: var(--color-linea);
   background-color: var(--color-primario-suave);
-  border: 2px solid var(--color-linea);
+  border: 1px solid var(--color-contorno);
   padding: 2px 12px;
   border-radius: var(--radio-pill);
 }
@@ -588,7 +585,7 @@ button, input, select, textarea {
 /* Pie de página integrado */
 .pie-app {
   background-color: var(--color-superficie);
-  border-top: 2px dashed var(--color-borde);
+  border-top: 1px solid var(--color-borde-suave);
   margin-top: auto;
   padding: 14px 32px;
   font-size: 0.92rem;
@@ -663,15 +660,6 @@ h1 {
   line-height: 1.15;
 }
 
-/* Subrayado de resaltador en los títulos de cada vista */
-.encabezado-titulo {
-  display: inline;
-  width: fit-content;
-  background-image: linear-gradient(transparent 58%, var(--color-resaltador) 58%, var(--color-resaltador) 92%, transparent 92%);
-  padding: 0 6px;
-  margin-left: -6px;
-}
-
 .encabezado-descripcion {
   font-size: 1.05rem;
   color: var(--color-texto-secundario);
@@ -691,25 +679,12 @@ h1 {
    ========================================================================== */
 .hero {
   background-color: var(--color-superficie-elevada);
-  /* Renglones de cuaderno */
-  background-image: repeating-linear-gradient(transparent 0 33px, #cfe0f0 33px 34px);
-  border: 2px solid var(--color-linea);
+  border: 1px solid var(--color-contorno);
   border-radius: var(--radio-lg);
-  padding: 30px 38px 30px 64px;
-  margin-bottom: 28px;
-  box-shadow: var(--sombra-lg);
+  padding: 28px 34px;
+  margin-bottom: 26px;
+  box-shadow: var(--sombra-md);
   position: relative;
-}
-
-/* Margen rojo de la libreta */
-.hero::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  left: 44px;
-  width: 2px;
-  background-color: #e8a29a;
 }
 
 .hero-insignia {
@@ -717,18 +692,17 @@ h1 {
   align-items: center;
   gap: 6px;
   background-color: var(--color-resaltador);
-  border: 2px solid var(--color-linea);
+  border: 1px solid var(--color-contorno);
   color: var(--color-linea);
   font-size: 0.95rem;
   padding: 1px 12px;
   border-radius: var(--radio-sm);
   margin-bottom: 10px;
-  transform: rotate(-1.5deg);
 }
 
 .hero h1,
 .hero h2 {
-  font-size: 2.9rem;
+  font-size: 2.6rem;
   color: var(--color-linea);
   margin: 0 0 6px;
   line-height: 1.1;
@@ -739,7 +713,7 @@ h1 {
   color: var(--color-texto-secundario);
   margin: 0;
   max-width: 650px;
-  line-height: 34px; /* igual a los renglones del fondo */
+  line-height: 1.5;
 }
 
 .tarjetas,
@@ -752,7 +726,7 @@ h1 {
 .tarjetas article,
 .modulo-card {
   background-color: var(--color-superficie-elevada);
-  border: 2px solid var(--color-linea);
+  border: 1px solid var(--color-contorno);
   border-radius: var(--radio-lg);
   padding: 24px;
   box-shadow: var(--sombra-md);
@@ -761,14 +735,9 @@ h1 {
   transition: transform var(--transicion-rapida), box-shadow var(--transicion-rapida);
 }
 
-.modulo-card:nth-child(even) {
-  border-radius: var(--radio-md);
-}
-
 .tarjetas article:hover,
 .modulo-card:hover {
   box-shadow: var(--sombra-lg);
-  transform: translate(-2px, -2px);
 }
 
 /* La tarjeta de "Nueva venta" se pinta de resaltador para llamar la atención */
@@ -787,7 +756,7 @@ h1 {
   width: 48px;
   height: 48px;
   border-radius: var(--radio-md);
-  border: 2px solid var(--color-linea);
+  border: 1px solid var(--color-contorno);
   background-color: var(--color-primario-suave);
   color: var(--color-linea);
   display: inline-flex;
@@ -826,11 +795,11 @@ h1 {
   gap: 10px;
   flex-wrap: wrap;
   padding-top: 14px;
-  border-top: 2px dashed var(--color-borde);
+  border-top: 1px solid var(--color-borde-suave);
 }
 
 .modulo-card.destacado .modulo-acciones {
-  border-top-color: var(--color-linea);
+  border-top-color: var(--color-resaltador-fuerte);
 }
 
 .modulo-detalles {
@@ -839,7 +808,7 @@ h1 {
   gap: 6px;
   margin-top: 14px;
   padding-top: 12px;
-  border-top: 2px dashed var(--color-borde);
+  border-top: 1px solid var(--color-borde-suave);
   font-size: 0.95rem;
   color: var(--color-texto-terciario);
 }
@@ -870,7 +839,7 @@ button {
   font-size: 1.05rem;
   text-decoration: none;
   cursor: pointer;
-  border: 2px solid var(--color-linea);
+  border: 1px solid var(--color-primario-activo);
   transition: background-color var(--transicion-rapida), transform var(--transicion-rapida), box-shadow var(--transicion-rapida);
   background-color: var(--color-primario);
   color: var(--color-texto-invertido);
@@ -881,15 +850,14 @@ button {
 button:hover {
   background-color: var(--color-primario-hover);
   color: var(--color-texto-invertido);
-  transform: translate(-1px, -1px);
   box-shadow: var(--sombra-md);
 }
 
-/* Al presionar, el botón "se hunde" en el papel */
+/* Al presionar, el botón baja un poquito */
 .boton:active,
 button:active {
-  transform: translate(2px, 2px);
-  box-shadow: 0 0 0 var(--color-linea);
+  transform: translateY(1px);
+  box-shadow: none;
   background-color: var(--color-primario-activo);
 }
 
@@ -915,6 +883,7 @@ button[disabled] {
 .secundario {
   background-color: var(--color-superficie-elevada);
   color: var(--color-texto);
+  border-color: var(--color-contorno-fuerte);
 }
 
 .boton.secundario:hover,
@@ -975,7 +944,7 @@ button[disabled] {
 .tabla-wrap,
 .tabla-contenedor {
   background-color: var(--color-superficie-elevada);
-  border: 2px solid var(--color-linea);
+  border: 1px solid var(--color-contorno);
   border-radius: var(--radio-lg);
   box-shadow: var(--sombra-md);
   overflow-x: auto;
@@ -992,7 +961,7 @@ button[disabled] {
 }
 
 .tabla thead {
-  background-color: var(--color-resaltador);
+  background-color: var(--color-superficie-subyacente);
 }
 
 .tabla th {
@@ -1002,7 +971,7 @@ button[disabled] {
   font-weight: 400;
   font-size: 0.98rem;
   color: var(--color-linea);
-  border-bottom: 2px solid var(--color-linea);
+  border-bottom: 1px solid var(--color-contorno);
   white-space: nowrap;
 }
 
@@ -1016,7 +985,7 @@ button[disabled] {
 
 .tabla td {
   padding: 12px 18px;
-  border-bottom: 2px dashed var(--color-borde-suave);
+  border-bottom: 1px solid var(--color-borde-suave);
   color: var(--color-texto);
   vertical-align: middle;
 }
@@ -1038,7 +1007,7 @@ button[disabled] {
   display: inline-block;
   font-size: 0.92rem;
   background-color: var(--color-superficie-subyacente);
-  border: 1.5px solid var(--color-borde);
+  border: 1px solid var(--color-borde);
   color: var(--color-texto-secundario);
   padding: 0 8px;
   border-radius: var(--radio-sm);
@@ -1068,7 +1037,7 @@ button[disabled] {
   display: inline-block;
   background-color: #f6efdc;
   color: #5c4b22;
-  border: 1.5px solid #d9c99b;
+  border: 1px solid #d9c99b;
   border-radius: var(--radio-pill);
   padding: 0 11px;
   font-size: 0.95rem;
@@ -1086,13 +1055,13 @@ button[disabled] {
 .insignia-facturas.con-facturas {
   background-color: var(--color-primario-suave);
   color: var(--color-primario-activo);
-  border: 1.5px solid var(--color-primario-borde);
+  border: 1px solid var(--color-primario-borde);
 }
 
 .insignia-facturas.sin-facturas {
   background-color: var(--color-fondo);
   color: var(--color-texto-terciario);
-  border: 1.5px dashed var(--color-borde);
+  border: 1px dashed var(--color-borde);
 }
 
 .insignia-stock {
@@ -1110,7 +1079,7 @@ button[disabled] {
 .insignia-stock.agotado {
   background-color: var(--color-peligro-fondo);
   color: var(--color-peligro);
-  border: 1.5px solid var(--color-peligro);
+  border: 1px solid var(--color-peligro);
   border-radius: var(--radio-pill);
   padding: 0 10px;
   font-size: 0.95rem;
@@ -1139,7 +1108,7 @@ button[disabled] {
   background-color: var(--color-superficie-elevada);
   color: var(--color-linea);
   font-size: 0.98rem;
-  border: 2px solid var(--color-linea);
+  border: 1px solid var(--color-contorno-fuerte);
   transition: background-color var(--transicion-rapida);
 }
 
@@ -1166,7 +1135,7 @@ button[disabled] {
   font-size: 0.92rem;
   color: var(--color-aviso);
   background-color: var(--color-aviso-fondo);
-  border: 1.5px dashed var(--color-aviso);
+  border: 1px dashed var(--color-aviso);
   border-radius: var(--radio-pill);
   padding: 1px 10px;
   user-select: none;
@@ -1183,7 +1152,7 @@ button[disabled] {
 .formulario,
 .tarjeta-formulario {
   background-color: var(--color-superficie-elevada);
-  border: 2px solid var(--color-linea);
+  border: 1px solid var(--color-contorno);
   border-radius: var(--radio-lg);
   padding: 30px;
   box-shadow: var(--sombra-md);
@@ -1226,7 +1195,7 @@ button[disabled] {
 .campo select {
   width: 100%;
   height: 46px;
-  border: 2px solid var(--color-linea);
+  border: 1px solid var(--color-contorno-fuerte);
   border-radius: var(--radio-md);
   padding: 0 12px;
   font-size: 1.1rem;
@@ -1239,7 +1208,7 @@ button[disabled] {
 .campo select:focus {
   outline: none;
   background-color: #fffbe6;
-  box-shadow: 3px 3px 0 var(--color-primario);
+  box-shadow: 0 0 0 3px var(--color-foco);
 }
 
 .campo input[readonly] {
@@ -1263,7 +1232,7 @@ button[disabled] {
   align-items: center;
   gap: 12px;
   background-color: var(--color-resaltador);
-  border: 2px solid var(--color-linea);
+  border: 1px solid var(--color-contorno);
   border-radius: var(--radio-md);
   padding: 10px 16px;
   margin-bottom: 22px;
@@ -1286,7 +1255,7 @@ button[disabled] {
   gap: 12px;
   margin-top: 24px;
   padding-top: 20px;
-  border-top: 2px dashed var(--color-borde);
+  border-top: 1px solid var(--color-borde-suave);
 }
 
 /* ==========================================================================
@@ -1304,7 +1273,7 @@ button[disabled] {
   line-height: 1.4;
   background-color: var(--color-exito-fondo);
   color: var(--color-exito);
-  border: 2px solid var(--color-exito);
+  border: 1px solid var(--color-exito);
   box-shadow: var(--sombra-sm);
 }
 
@@ -1336,7 +1305,7 @@ button[disabled] {
 .sin-datos,
 .estado-vacio {
   background-color: var(--color-superficie-elevada);
-  border: 2px dashed var(--color-linea);
+  border: 1px dashed var(--color-contorno-fuerte);
   border-radius: var(--radio-lg);
   padding: 46px 24px;
   text-align: center;
@@ -1372,7 +1341,7 @@ button[disabled] {
   font-size: 1rem;
   color: var(--color-texto-secundario);
   background-color: var(--color-superficie-elevada);
-  border: 2px dashed var(--color-borde);
+  border: 1px dashed var(--color-contorno-fuerte);
   border-radius: var(--radio-md);
   padding: 9px 14px;
   margin-top: 18px;
@@ -1392,7 +1361,7 @@ button[disabled] {
   max-width: 620px;
   margin: 10px auto 36px;
   background-color: var(--color-superficie-elevada);
-  border: 2px solid var(--color-linea);
+  border: 1px solid var(--color-contorno);
   border-radius: var(--radio-lg);
   box-shadow: var(--sombra-lg);
   overflow: hidden;
@@ -1400,7 +1369,7 @@ button[disabled] {
 
 .panel-confirmacion-cabecera {
   background-color: var(--color-peligro-fondo);
-  border-bottom: 2px solid var(--color-linea);
+  border-bottom: 1px solid var(--color-contorno);
   padding: 20px 22px;
   display: flex;
   align-items: flex-start;
@@ -1411,7 +1380,7 @@ button[disabled] {
   width: 40px;
   height: 40px;
   border-radius: var(--radio-md);
-  border: 2px solid var(--color-peligro);
+  border: 1px solid var(--color-peligro);
   background-color: var(--color-superficie-elevada);
   color: var(--color-peligro);
   display: inline-flex;
@@ -1426,7 +1395,7 @@ button[disabled] {
 
 .tarjeta-registro-eliminar {
   background-color: var(--color-superficie);
-  border: 2px dashed var(--color-linea);
+  border: 1px dashed var(--color-contorno-fuerte);
   border-radius: var(--radio-md);
   padding: 14px 18px;
   margin: 16px 0;
@@ -1450,7 +1419,7 @@ button[disabled] {
 .panel-confirmacion-pie {
   padding: 16px 22px;
   background-color: var(--color-superficie-subyacente);
-  border-top: 2px solid var(--color-linea);
+  border-top: 1px solid var(--color-contorno);
   display: flex;
   align-items: center;
   justify-content: flex-end;
@@ -1485,7 +1454,7 @@ button[disabled] {
   align-items: center;
   gap: 10px;
   background-color: var(--color-superficie-elevada);
-  border: 2px solid var(--color-linea);
+  border: 1px solid var(--color-contorno-fuerte);
   border-radius: var(--radio-md);
   padding: 0 14px;
   margin-bottom: 18px;
@@ -1494,7 +1463,7 @@ button[disabled] {
 
 .caja-buscador:focus-within {
   background-color: #fffbe6;
-  box-shadow: 3px 3px 0 var(--color-primario);
+  box-shadow: 0 0 0 3px var(--color-foco);
 }
 
 .caja-buscador svg {
@@ -1542,14 +1511,16 @@ button[disabled] {
   text-align: left;
   background-color: var(--color-superficie-elevada);
   color: var(--color-texto);
+  border-color: var(--color-contorno);
   border-radius: var(--radio-lg);
 }
 
 .producto-boton:nth-child(even) {
-  border-radius: var(--radio-md);
+  border-radius: var(--radio-lg);
 }
 
 .producto-boton:hover {
+  border-color: var(--color-primario-borde);
   background-color: #fff8dc;
   color: var(--color-texto);
   box-shadow: var(--sombra-md);
@@ -1614,7 +1585,7 @@ button[disabled] {
   justify-content: center;
   background-color: var(--color-resaltador-fuerte);
   color: var(--color-linea);
-  border: 2px solid var(--color-linea);
+  border: 1px solid var(--color-contorno-fuerte);
   border-radius: var(--radio-pill);
   font-size: 1.05rem;
   font-variant-numeric: tabular-nums;
@@ -1628,7 +1599,7 @@ button[disabled] {
   grid-column: 1 / -1;
   text-align: center;
   padding: 36px 16px;
-  border: 2px dashed var(--color-borde);
+  border: 1px dashed var(--color-contorno-fuerte);
   border-radius: var(--radio-lg);
   color: var(--color-texto-terciario);
   background-color: var(--color-superficie-elevada);
@@ -1638,7 +1609,7 @@ button[disabled] {
 .ticket {
   min-height: 0;
   background-color: var(--color-superficie-elevada);
-  border: 2px solid var(--color-linea);
+  border: 1px solid var(--color-contorno);
   border-radius: var(--radio-lg);
   box-shadow: var(--sombra-lg);
   padding: 20px 20px 18px;
@@ -1682,8 +1653,8 @@ button[disabled] {
   flex: 1;
   overflow-y: auto;
   min-height: 90px;
-  border-top: 2px dashed var(--color-borde);
-  border-bottom: 2px dashed var(--color-borde);
+  border-top: 1px solid var(--color-borde-suave);
+  border-bottom: 1px solid var(--color-borde-suave);
 }
 
 .ticket-vacio {
@@ -1702,7 +1673,7 @@ button[disabled] {
   gap: 4px 10px;
   align-items: center;
   padding: 10px 2px;
-  border-bottom: 1.5px dotted var(--color-borde);
+  border-bottom: 1px solid var(--color-borde);
 }
 
 .ticket-linea:last-child {
@@ -1747,6 +1718,7 @@ button[disabled] {
   border-radius: var(--radio-sm);
   background-color: var(--color-superficie-elevada);
   color: var(--color-linea);
+  border-color: var(--color-contorno-fuerte);
 }
 
 .cantidad button:hover {
@@ -1759,7 +1731,7 @@ button[disabled] {
   height: 36px;
   text-align: center;
   font-size: 1.1rem;
-  border: 2px solid var(--color-linea);
+  border: 1px solid var(--color-contorno-fuerte);
   border-radius: var(--radio-sm);
   background-color: var(--color-superficie);
   font-variant-numeric: tabular-nums;
@@ -1776,7 +1748,7 @@ button[disabled] {
 .cantidad input:focus {
   outline: none;
   background-color: #fffbe6;
-  box-shadow: 2px 2px 0 var(--color-primario);
+  box-shadow: 0 0 0 3px var(--color-foco);
 }
 
 .linea-quitar {
@@ -1872,7 +1844,6 @@ button[disabled] {
   width: min(420px, calc(100vw - 32px));
   margin: 0;
   box-shadow: var(--sombra-md);
-  transform: rotate(0.6deg);
 }
 
 /* Estado de las facturas (php/facturas/ver_facturas.php) */
@@ -1882,7 +1853,7 @@ button[disabled] {
   padding: 0 12px;
   border-radius: var(--radio-pill);
   font-size: 0.98rem;
-  border: 1.5px solid var(--color-linea);
+  border: 1px solid var(--color-linea);
 }
 
 .insignia-estado.pagado {
@@ -1999,12 +1970,8 @@ button[disabled] {
   }
 
   .hero {
-    padding: 22px 18px 22px 40px;
+    padding: 22px 18px;
     border-radius: var(--radio-md);
-  }
-
-  .hero::before {
-    left: 26px;
   }
 
   .hero h1,
@@ -2013,7 +1980,6 @@ button[disabled] {
   }
 
   .hero p {
-    line-height: 34px;
     font-size: 1.05rem;
   }
 
@@ -2177,9 +2143,8 @@ button[disabled] {
     transition-delay: 0ms !important;
   }
 
-  .boton:hover,
-  button:hover,
-  .modulo-card:hover {
+  .boton:active,
+  button:active {
     transform: none;
   }
 }

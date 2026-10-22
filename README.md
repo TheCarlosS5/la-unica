@@ -20,7 +20,7 @@ La carpeta php/_anterior/app conserva la versión previa como respaldo, no parti
 
 ## Front (rama feat/frontend-cajero)
 
-Diseño tipo libreta para un negocio pequeño con un solo cajero. Los PHP de clientes y productos conservan su lógica; solo cambió cómo se ven.
+Diseño de papel cálido con letra manuscrita para un negocio pequeño con un solo cajero. Los PHP de clientes y productos conservan su lógica; solo cambió cómo se ven.
 
 - assets/css/estilos.css: todo el estilo. Colores, bordes y sombras están en las variables de :root (arriba del archivo).
 - assets/fonts/: Architects Daughter (títulos) y Patrick Hand (texto), alojadas en el proyecto para que funcionen sin internet.
