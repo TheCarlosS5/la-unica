@@ -84,16 +84,17 @@ require __DIR__ . '/../includes/menu.php';
                         <span>Nombre del producto</span>
                         <span class="ayuda" style="margin:0;">Hasta 100 caracteres</span>
                     </label>
-                    <input id="nombre" name="nombre" type="text" maxlength="100" value="<?= h($nombre) ?>" placeholder="Ej. Café molido 500g" required>
+                     <input id="nombre" name="nombre" type="text" maxlength="100" autofocus pattern=".*\S+.*" title="El nombre no puede estar vacío ni contener solo
+  espacios" value="<?= h($nombre) ?>" placeholder="Ej. Café molido 500g" required>
                 </div>
-
                 <div class="campo">
                     <label for="unidad_medida">
                         <span>Unidad de medida</span>
                         <span class="ayuda" style="margin:0;">Hasta 20 car.</span>
                     </label>
-                    <input id="unidad_medida" name="unidad_medida" type="text" maxlength="20" value="<?= h($unidad) ?>" placeholder="Ej. Kilogramo, Litro, Paquete" required>
-                    <span class="ayuda texto-ayuda">Define la unidad para cuantificar ventas y existencias.</span>
+                    <input id="unidad_medida" name="unidad_medida" type="text" maxlength="20" pattern=".*\S+.*" title="La unidad no puede estar vacía ni contener solo
+  espacios" aria-describedby="ayuda-unidad" value="<?= h($unidad) ?>" placeholder="Ej. Kilogramo, Litro, Paquete" required>
+    <span id="ayuda-unidad" class="ayuda texto-ayuda">Define la unidad para cuantificar ventas y existencias.</span>
                 </div>
 
                 <div class="campo">
