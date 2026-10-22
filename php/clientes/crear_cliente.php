@@ -82,16 +82,17 @@ require __DIR__ . '/../includes/menu.php';
                     <span>ID del cliente</span>
                     <span class="ayuda" style="margin:0;">Requerido</span>
                 </label>
-                <input id="id_cliente" name="id_cliente" type="number" min="1" max="2147483647" value="<?= h($id) ?>" placeholder="Ej. 101" required>
-                <span class="ayuda texto-ayuda">Se ingresa manualmente, según el esquema de la base de datos (clave primaria única).</span>
+                 <input id="id_cliente" name="id_cliente" type="number" min="1" max="2147483647" step="1" inputmode="numeric" autofocus aria-describedby="ayuda-id-
+  cliente" value="<?= h($id) ?>" placeholder="Ej. 101" required>
+    <span id="ayuda-id-cliente" class="ayuda texto-ayuda">Se ingresa manualmente, según el esquema de la base de datos (clave primaria única).</span>
             </div>
-
             <div class="campo">
                 <label for="nombre">
                     <span>Nombre completo</span>
                     <span class="ayuda" style="margin:0;">Hasta 100 caracteres</span>
                 </label>
-                <input id="nombre" name="nombre" type="text" maxlength="100" value="<?= h($nombre) ?>" placeholder="Ej. Carlos Ramirez" required>
+                <input id="nombre" name="nombre" type="text" maxlength="100" pattern=".*\S+.*" title="El nombre no puede estar vacío ni contener solo espacios"
+  value="<?= h($nombre) ?>" placeholder="Ej. Carlos Ramirez" required>
             </div>
 
             <div class="campo">
