@@ -101,7 +101,6 @@ require __DIR__ . '/../includes/menu.php';
                 <input id="id_cliente" name="id_cliente" type="number" min="1" max="2147483647" value="<?= h($idCliente) ?>" placeholder="Ej. 101" required>
                 <span class="ayuda texto-ayuda">Se ingresa manualmente, según el esquema de la base de datos (clave primaria única).</span>
             </div>
-
             <div class="campo">
                 <label for="nombre">
                     <span>Nombre completo</span>

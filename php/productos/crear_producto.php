@@ -104,7 +104,6 @@ require __DIR__ . '/../includes/menu.php';
                     </label>
                     <input id="nombre" name="nombre" type="text" maxlength="100" value="<?= h($nombreProducto) ?>" placeholder="Ej. Café molido 500g" required>
                 </div>
-
                 <div class="campo">
                     <label for="unidad_medida">
                         <span>Unidad de medida</span>
