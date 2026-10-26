@@ -19,8 +19,8 @@ require __DIR__ . '/../includes/menu.php';
     <div class="encabezado-acciones">
         <a class="boton" href="crear_producto.php">
             <svg class="boton-icono" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                <line x1="12" y1="5" x2="12" y2="19"/>
-                <line x1="5" y1="12" x2="19" y2="12"/>
+                <line x1="12" y1="5" x2="12" y2="19" />
+                <line x1="5" y1="12" x2="19" y2="12" />
             </svg>
             <span>Crear producto</span>
         </a>
@@ -30,8 +30,8 @@ require __DIR__ . '/../includes/menu.php';
 <?php if (isset($_GET['mensaje'])): ?>
     <div class="mensaje alerta" role="status">
         <svg class="alerta-icono" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
-            <polyline points="22 4 12 14.01 9 11.01"/>
+            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
+            <polyline points="22 4 12 14.01 9 11.01" />
         </svg>
         <div class="alerta-contenido"><?= h($_GET['mensaje']) ?></div>
     </div>
@@ -40,15 +40,15 @@ require __DIR__ . '/../includes/menu.php';
 <?php if (!$resultado || $resultado->num_rows === 0): ?>
     <div class="sin-datos estado-vacio">
         <svg class="estado-vacio-icono" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-            <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>
-            <line x1="12" y1="22" x2="12" y2="12"/>
+            <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z" />
+            <line x1="12" y1="22" x2="12" y2="12" />
         </svg>
         <h2 class="estado-vacio-titulo">Todavía no hay productos registrados</h2>
         <p class="estado-vacio-texto">Registra los primeros artículos del inventario con sus existencias y precios unitarios para iniciar las ventas.</p>
         <a class="boton" href="crear_producto.php">
             <svg class="boton-icono" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                <line x1="12" y1="5" x2="12" y2="19"/>
-                <line x1="5" y1="12" x2="19" y2="12"/>
+                <line x1="12" y1="5" x2="12" y2="19" />
+                <line x1="5" y1="12" x2="19" y2="12" />
             </svg>
             <span>Crear primer producto</span>
         </a>
@@ -98,8 +98,8 @@ require __DIR__ . '/../includes/menu.php';
                             <div class="acciones" style="justify-content: flex-end;">
                                 <a class="editar" href="editar_producto.php?id=<?= h($p['id_producto']) ?>" title="Editar producto #<?= h($p['id_producto']) ?>">
                                     <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                                        <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
-                                        <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+                                        <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
+                                        <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
                                     </svg>
                                     <span>Editar</span>
                                 </a>
@@ -108,8 +108,8 @@ require __DIR__ . '/../includes/menu.php';
                                         <input type="hidden" name="id_producto" value="<?= h($p['id_producto']) ?>">
                                         <button type="submit" class="boton-peligro" title="Eliminar producto #<?= h($p['id_producto']) ?>">
                                             <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                                                <polyline points="3 6 5 6 21 6"/>
-                                                <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+                                                <polyline points="3 6 5 6 21 6" />
+                                                <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
                                             </svg>
                                             <span>Eliminar</span>
                                         </button>
@@ -117,8 +117,8 @@ require __DIR__ . '/../includes/menu.php';
                                 <?php else: ?>
                                     <span class="bloqueado etiqueta-bloqueado" title="No se permite eliminar productos que estén incluidos en detalles de factura">
                                         <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                                            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
-                                            <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+                                            <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
+                                            <path d="M7 11V7a5 5 0 0 1 10 0v4" />
                                         </svg>
                                         <span>En facturas</span>
                                     </span>
@@ -132,9 +132,9 @@ require __DIR__ . '/../includes/menu.php';
     </div>
     <div class="nota nota-informativa">
         <svg class="nota-icono" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-            <circle cx="12" cy="12" r="10"/>
-            <line x1="12" y1="16" x2="12" y2="12"/>
-            <line x1="12" y1="8" x2="12.01" y2="8"/>
+            <circle cx="12" cy="12" r="10" />
+            <line x1="12" y1="16" x2="12" y2="12" />
+            <line x1="12" y1="8" x2="12.01" y2="8" />
         </svg>
         <span>No se permite eliminar productos que estén incluidos en detalles de factura.</span>
     </div>

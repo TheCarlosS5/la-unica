@@ -1,6 +1,6 @@
 <?php
 mysqli_report(MYSQLI_REPORT_OFF);
-$conexion = new mysqli('127.0.0.1', 'root', '', 'la_unica', 8000);
+$conexion = new mysqli('127.0.0.1', 'root', 'root', 'la_unica', 3306);
 if ($conexion->connect_errno) {
     http_response_code(500);
     exit('Error de conexión a MySQL. Revisa que esté iniciado y que use el puerto 8000.');
