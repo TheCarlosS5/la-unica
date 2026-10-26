@@ -12,13 +12,16 @@ $nombreCliente = '';
 $fechaRegistro = '';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $idRecibido = $_POST['id_cliente'] ?? '';
-    $nombreRecibido = $_POST['nombre'] ?? '';
-    $fechaRecibida = $_POST['fecha_registro'] ?? '';
+    $idRecibido = $_POST['id_cliente'] ?? null;
+    $nombreRecibido = $_POST['nombre'] ?? null;
+    $fechaRecibida = $_POST['fecha_registro'] ?? null;
 
-    $idEnviado = is_scalar($idRecibido) ? (string)$idRecibido : '';
-    $nombreEnviado = is_scalar($nombreRecibido) ? (string)$nombreRecibido : '';
-    $fechaEnviada = is_scalar($fechaRecibida) ? (string)$fechaRecibida : '';
+    $datosPostValidos = is_string($idRecibido)
+        && is_string($nombreRecibido)
+        && is_string($fechaRecibida);
+    $idEnviado = is_string($idRecibido) ? $idRecibido : '';
+    $nombreEnviado = is_string($nombreRecibido) ? $nombreRecibido : '';
+    $fechaEnviada = is_string($fechaRecibida) ? $fechaRecibida : '';
 
     $idClienteValido = validarId($idEnviado);
     $nombreLimpio = trim($nombreEnviado);
@@ -29,8 +32,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $nombreCliente = $nombreEnviado;
     $fechaRegistro = $fechaEnviada;
 
-    if ($tokenCsrf !== null && !validarTokenCsrf($_POST['csrf_token'] ?? null)) {
+    if (!validarTokenCsrf($_POST['csrf_token'] ?? null)) {
+        http_response_code(403);
         $mensajeError = 'No se pudo validar la solicitud. Actualiza la página e inténtalo de nuevo.';
+    } elseif (!$datosPostValidos) {
+        $mensajeError = 'Los datos enviados no tienen el formato esperado.';
     } elseif ($idClienteValido === null) {
         $mensajeError = 'El ID debe ser un entero entre 1 y 2.147.483.647.';
     } elseif ($nombreLimpio === '') {

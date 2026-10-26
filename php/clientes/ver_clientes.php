@@ -6,10 +6,21 @@ $seccionActiva = 'clientes';
 $tokenCsrf = obtenerTokenCsrf();
 
 $sqlClientes = 'SELECT c.id_cliente, c.nombre, c.fecha_registro, COUNT(f.id_factura) AS total_facturas FROM clientes c LEFT JOIN facturas f ON f.id_cliente = c.id_cliente GROUP BY c.id_cliente, c.nombre, c.fecha_registro ORDER BY c.id_cliente';
-$resultadoClientes = $conexion->query($sqlClientes);
+$clientes = [];
+$errorLectura = false;
+try {
+    $resultadoClientes = $conexion->query($sqlClientes);
+    while ($cliente = $resultadoClientes->fetch_assoc()) {
+        $clientes[] = $cliente;
+    }
+    $resultadoClientes->free();
+} catch (Throwable $e) {
+    registrarErrorServidor('leer_clientes', $e);
+    $errorLectura = true;
+}
 
 $mensajeUrl = $_GET['mensaje'] ?? null;
-$mensajeTexto = ($mensajeUrl !== null) ? trim((string)$mensajeUrl) : '';
+$mensajeTexto = is_string($mensajeUrl) ? trim($mensajeUrl) : '';
 
 require __DIR__ . '/../includes/menu.php';
 ?>
@@ -44,7 +55,9 @@ require __DIR__ . '/../includes/menu.php';
     </div>
 <?php endif; ?>
 
-<?php if (!$resultadoClientes || $resultadoClientes->num_rows === 0): ?>
+<?php if ($errorLectura): ?>
+    <div class="mensaje error alerta alerta-error" role="alert">No se pudo cargar el listado de clientes. Inténtalo de nuevo más tarde.</div>
+<?php elseif (count($clientes) === 0): ?>
     <div class="sin-datos estado-vacio">
         <svg class="estado-vacio-icono" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
             <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
@@ -74,7 +87,7 @@ require __DIR__ . '/../includes/menu.php';
                 </tr>
             </thead>
             <tbody>
-                <?php while ($cliente = $resultadoClientes->fetch_assoc()): ?>
+                <?php foreach ($clientes as $cliente): ?>
                     <tr>
                         <td>
                             <span class="chip-id">#<?= h($cliente['id_cliente']) ?></span>
@@ -125,7 +138,7 @@ require __DIR__ . '/../includes/menu.php';
                             </div>
                         </td>
                     </tr>
-                <?php endwhile; ?>
+                <?php endforeach; ?>
             </tbody>
         </table>
     </div>

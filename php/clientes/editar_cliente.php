@@ -10,31 +10,43 @@ $tokenCsrf = obtenerTokenCsrf();
 $idRecibido = $_GET['id'] ?? null;
 $idCliente = validarId($idRecibido);
 
-if ($idRecibido === null || trim((string)$idRecibido) === '' || $idCliente === null) {
+if ($idRecibido === null || $idCliente === null) {
     http_response_code(400);
     exit('ID de cliente no válido.');
 }
 
-$sentencia = $conexion->prepare('SELECT nombre, fecha_registro FROM clientes WHERE id_cliente = ?');
-$sentencia->bind_param('i', $idCliente);
-$sentencia->execute();
-$sentencia->bind_result($nombreCliente, $fechaRegistro);
-$existe = $sentencia->fetch();
-$sentencia->close();
+try {
+    $sentencia = $conexion->prepare('SELECT nombre, fecha_registro FROM clientes WHERE id_cliente = ?');
+    $sentencia->bind_param('i', $idCliente);
+    $sentencia->execute();
+    $sentencia->bind_result($nombreCliente, $fechaRegistro);
+    $existe = $sentencia->fetch();
+    $sentencia->close();
+} catch (Throwable $e) {
+    registrarErrorServidor('leer_cliente_editar', $e);
+    http_response_code(500);
+    exit('No se pudo cargar la información del cliente. Inténtalo de nuevo más tarde.');
+}
 
 if (!$existe) {
     http_response_code(404);
     exit('No se encontró el cliente.');
 }
 
+$nombreFormulario = $nombreCliente;
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $nombreRecibido = $_POST['nombre'] ?? null;
+    $datosPostValidos = is_string($nombreRecibido);
+    $nombreFormulario = is_string($nombreRecibido) ? $nombreRecibido : '';
+    $nombreLimpio = is_string($nombreRecibido) ? trim($nombreRecibido) : '';
 
-    $nombreLimpio = ($nombreRecibido !== null) ? trim((string)$nombreRecibido) : '';
-
-    if ($tokenCsrf !== null && !validarTokenCsrf($_POST['csrf_token'] ?? null)) {
+    if (!validarTokenCsrf($_POST['csrf_token'] ?? null)) {
+        http_response_code(403);
         $mensajeError = 'No se pudo validar la solicitud. Actualiza la página e inténtalo de nuevo.';
-    } elseif ($nombreRecibido === null || $nombreLimpio === '' || longitudTexto($nombreLimpio) > 100) {
+    } elseif (!$datosPostValidos) {
+        $mensajeError = 'Los datos enviados no tienen el formato esperado.';
+    } elseif ($nombreLimpio === '' || longitudTexto($nombreLimpio) > 100) {
         $mensajeError = 'El nombre es obligatorio y admite hasta 100 caracteres.';
     } else {
         try {
@@ -42,6 +54,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $actualizar->bind_param('si', $nombreLimpio, $idCliente);
             if ($actualizar->execute()) {
                 $nombreCliente = $nombreLimpio;
+                $nombreFormulario = $nombreLimpio;
                 $mensajeExito = 'Cliente actualizado correctamente.';
             } else {
                 $mensajeError = 'No se pudo actualizar el cliente.';
@@ -66,7 +79,7 @@ require __DIR__ . '/../includes/menu.php';
             <span>Editar cliente #<?= h($idCliente) ?></span>
         </nav>
         <h1 class="encabezado-titulo">Editar cliente</h1>
-        <p class="encabezado-descripcion">Actualiza la información comercial y fecha de registro del cliente.</p>
+        <p class="encabezado-descripcion">Actualiza el nombre del cliente y consulta su fecha de registro.</p>
     </div>
 </div>
 
@@ -107,15 +120,15 @@ require __DIR__ . '/../includes/menu.php';
                     <span>Nombre del cliente</span>
                     <span class="ayuda" style="margin:0;">Obligatorio</span>
                 </label>
-                <input id="nombre" name="nombre" type="text" maxlength="100" value="<?= h($nombreCliente) ?>" required>
+                <input id="nombre" name="nombre" type="text" maxlength="100" value="<?= h($nombreFormulario) ?>" required>
             </div>
 
             <div class="campo">
                 <label for="fecha_registro">
                     <span>Fecha de registro</span>
-                    <span class="ayuda" style="margin:0;">Formato YYYY-MM-DD</span>
+                    <span class="ayuda" style="margin:0;">Solo consulta</span>
                 </label>
-                <input id="fecha_registro" name="fecha_registro" type="date" value="<?= h($fechaRegistro) ?>" readonly aria-readonly="true" required>
+                <input id="fecha_registro" name="fecha_registro" type="date" value="<?= h($fechaRegistro) ?>" readonly aria-readonly="true">
             </div>
 
             <div class="fila-botones">
