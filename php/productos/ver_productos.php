@@ -8,11 +8,11 @@ $titulo = 'Productos';
 $seccionActiva = 'productos';
 
 // "detalles" cuenta en cuántas facturas aparece el producto.
-$sql = 'SELECT p.id_producto, p.codigo, p.nombre, p.unidad_medida, p.stock, p.precio,
+$sql = 'SELECT p.id_producto, p.nombre, p.unidad_medida, p.stock, p.precio_unitario,
                COUNT(d.id_producto) AS detalles
         FROM productos p
-        LEFT JOIN detalle_factura d ON d.id_producto = p.id_producto
-        GROUP BY p.id_producto, p.codigo, p.nombre, p.unidad_medida, p.stock, p.precio
+        LEFT JOIN detalle_facturas d ON d.id_producto = p.id_producto
+        GROUP BY p.id_producto, p.nombre, p.unidad_medida, p.stock, p.precio_unitario
         ORDER BY p.nombre';
 $resultado = $conexion->query($sql);
 $productos = $resultado ? $resultado->fetch_all(MYSQLI_ASSOC) : [];
@@ -21,8 +21,8 @@ $productos = $resultado ? $resultado->fetch_all(MYSQLI_ASSOC) : [];
 $pocoStock = 0;
 $agotados = 0;
 foreach ($productos as $p) {
-    if ((float)$p['stock'] == 0) $agotados++;
-    elseif ((float)$p['stock'] < 10) $pocoStock++;
+    if ((int)$p['stock'] === 0) $agotados++;
+    elseif ((int)$p['stock'] < 10) $pocoStock++;
 }
 
 // Mensaje que llega desde eliminar_producto.php
@@ -39,7 +39,7 @@ require __DIR__ . '/../includes/menu.php';
     <div class="acciones-encabezado">
         <label class="buscador">
             <?= icono('search') ?>
-            <input type="search" data-buscador placeholder="Buscar por código o nombre…" aria-label="Buscar producto">
+            <input type="search" data-buscador placeholder="Buscar por id o nombre…" aria-label="Buscar producto">
         </label>
         <a class="btn btn-primary btn-con-icono" href="crear_producto.php">
             <?= icono('plus') ?> Nuevo producto
@@ -66,25 +66,25 @@ require __DIR__ . '/../includes/menu.php';
 <?php else: ?>
     <div class="row g-3 g-lg-4">
         <?php foreach ($productos as $i => $p): ?>
-            <div class="col-6 col-md-4 col-xl-3 fila" style="--i: <?= $i ?>" data-buscar="<?= h($p['codigo'] . ' ' . $p['nombre']) ?>">
+            <div class="col-6 col-md-4 col-xl-3 fila" style="--i: <?= $i ?>" data-buscar="<?= h($p['id_producto'] . ' ' . $p['nombre']) ?>">
                 <article class="producto">
                     <div class="producto-foto">
                         <img src="<?= h(foto_producto($p['nombre'])) ?>" alt="" loading="lazy">
                     </div>
                     <div class="producto-info">
                         <h2 class="producto-nombre"><?= h($p['nombre']) ?></h2>
-                        <p class="producto-codigo"><?= h($p['codigo']) ?></p>
+                        <p class="producto-codigo">#<?= h($p['id_producto']) ?></p>
                         <p class="producto-meta">
-                            <?php if ((float)$p['stock'] == 0): ?>
+                            <?php if ((int)$p['stock'] === 0): ?>
                                 <span class="estado agotado">Agotado</span>
-                            <?php elseif ((float)$p['stock'] < 10): ?>
-                                <span class="estado pocas">Quedan <?= cantidad($p['stock']) ?> <?= h($p['unidad_medida']) ?></span>
+                            <?php elseif ((int)$p['stock'] < 10): ?>
+                                <span class="estado pocas">Quedan <?= (int)$p['stock'] ?> <?= h($p['unidad_medida']) ?></span>
                             <?php else: ?>
-                                <span class="estado"><?= cantidad($p['stock']) ?> <?= h($p['unidad_medida']) ?> en stock</span>
+                                <span class="estado"><?= (int)$p['stock'] ?> <?= h($p['unidad_medida']) ?> en stock</span>
                             <?php endif; ?>
                         </p>
                         <div class="d-flex align-items-center justify-content-between">
-                            <span class="precio"><?= pesos($p['precio']) ?><small class="text-secondary"> / <?= h($p['unidad_medida']) ?></small></span>
+                            <span class="precio"><?= pesos($p['precio_unitario']) ?><small class="text-secondary"> / <?= h($p['unidad_medida']) ?></small></span>
                             <span class="text-nowrap">
                                 <a class="btn-icono" href="editar_producto.php?id=<?= h($p['id_producto']) ?>" title="Editar">
                                     <?= icono('pencil') ?>
@@ -104,7 +104,7 @@ require __DIR__ . '/../includes/menu.php';
             </div>
         <?php endforeach; ?>
     </div>
-    <p class="sin-resultados" hidden>No hay productos con ese código o nombre.</p>
+    <p class="sin-resultados" hidden>No hay productos con ese id o nombre.</p>
     <p class="nota">Los productos que ya aparecen en facturas no se pueden eliminar.</p>
 <?php endif; ?>
 <?php require __DIR__ . '/../includes/pie.php'; ?>

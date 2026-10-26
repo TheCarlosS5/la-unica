@@ -22,3 +22,9 @@
 .pxi-trash::before     { content: "\edbe"; }
 .pxi-user-plus::before { content: "\eddb"; }
 .pxi-users::before     { content: "\ede1"; }
+.pxi-receipt::before   { content: "\ecf1"; }
+.pxi-chart::before     { content: "\eb08"; }
+.pxi-printer::before   { content: "\ece4"; }
+.pxi-close::before     { content: "\eb30"; }
+.pxi-arrow-left::before { content: "\ea70"; }
+.pxi-eye::before       { content: "\eb90"; }

@@ -2,8 +2,7 @@
 // ===================================================================
 // editar_cliente.php  (la "U" de CRUD: Update / Actualizar)
 // Carga el cliente por su ID (?id=5), muestra el formulario con sus
-// datos y guarda los cambios.
-// Si el cliente ya tiene facturas, el tipo y número de documento no cambian.
+// datos y guarda el nombre. El id y la fecha de registro no cambian.
 // ===================================================================
 require __DIR__ . '/../config/conexion.php';
 $titulo = 'Editar cliente';
@@ -19,10 +18,8 @@ if ($id === null) {
     exit('ID de cliente no válido.');
 }
 
-// 2. Traer los datos actuales y cuántas facturas tiene.
-$stmt = $conexion->prepare('SELECT tipo_documento, numero_documento, nombre, telefono, correo, direccion,
-                                   (SELECT COUNT(*) FROM factura WHERE id_cliente = clientes.id_cliente) AS facturas
-                            FROM clientes WHERE id_cliente = ?');
+// 2. Traer los datos actuales del cliente.
+$stmt = $conexion->prepare('SELECT id_cliente, nombre, fecha_registro FROM clientes WHERE id_cliente = ?');
 $stmt->bind_param('i', $id);
 $stmt->execute();
 $c = $stmt->get_result()->fetch_assoc();
@@ -32,33 +29,27 @@ if (!$c) {
     http_response_code(404);
     exit('No se encontró el cliente.');
 }
-$bloquearDoc = (int)$c['facturas'] > 0;
 
-// 3. Si enviaron el formulario, validar y guardar.
+// 3. Si enviaron el formulario, validar y guardar solo el nombre.
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $entrada = $_POST;
-    if ($bloquearDoc) {
-        // El documento no se puede cambiar: usamos el que ya estaba guardado.
-        $entrada['tipo_documento'] = $c['tipo_documento'];
-        $entrada['numero_documento'] = $c['numero_documento'];
-    }
+    $entrada = $c;                              // id y fecha: los que ya estaban guardados
+    $entrada['nombre'] = $_POST['nombre'] ?? '';
     [$nuevo, $error] = validar_cliente($entrada);
-    $c = array_merge($c, $nuevo);
+    $c['nombre'] = $nuevo['nombre'];
 
     if ($error === '') {
-        $up = $conexion->prepare('UPDATE clientes SET tipo_documento = ?, numero_documento = ?, nombre = ?, telefono = ?, correo = ?, direccion = ? WHERE id_cliente = ?');
-        $up->bind_param('ssssssi', $c['tipo_documento'], $c['numero_documento'], $c['nombre'], $c['telefono'], $c['correo'], $c['direccion'], $id);
+        $up = $conexion->prepare('UPDATE clientes SET nombre = ? WHERE id_cliente = ?');
+        $up->bind_param('si', $c['nombre'], $id);
 
         if ($up->execute()) {
             $mensaje = 'Cliente actualizado correctamente.';
-        } elseif ($conexion->errno === 1062) {
-            $error = 'Ya existe otro cliente con ese tipo y número de documento.';
         } else {
             $error = 'No se pudo actualizar el cliente.';
         }
     }
 }
 
+$esEdicion = true;
 $textoBoton = 'Guardar cambios';
 require __DIR__ . '/../includes/menu.php';
 ?>

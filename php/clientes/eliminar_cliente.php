@@ -19,10 +19,10 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST' || $id === null) {
 }
 
 // Buscar el cliente para mostrar su nombre en la confirmación.
-$consulta = $conexion->prepare('SELECT nombre, tipo_documento, numero_documento FROM clientes WHERE id_cliente = ?');
+$consulta = $conexion->prepare('SELECT nombre FROM clientes WHERE id_cliente = ?');
 $consulta->bind_param('i', $id);
 $consulta->execute();
-$consulta->bind_result($nombre, $tipoDoc, $numeroDoc);
+$consulta->bind_result($nombre);
 $existe = $consulta->fetch();
 $consulta->close();
 
@@ -33,7 +33,7 @@ if (!$existe) {
 // Paso 2: el usuario ya confirmó.
 if (($_POST['confirmar'] ?? '') === 'si') {
     // No se puede borrar un cliente que tenga facturas.
-    $relaciones = $conexion->prepare('SELECT COUNT(*) FROM factura WHERE id_cliente = ?');
+    $relaciones = $conexion->prepare('SELECT COUNT(*) FROM facturas WHERE id_cliente = ?');
     $relaciones->bind_param('i', $id);
     $relaciones->execute();
     $relaciones->bind_result($totalFacturas);
@@ -66,7 +66,7 @@ require __DIR__ . '/../includes/menu.php';
         <span class="avatar"><?= h(iniciales($nombre)) ?></span>
         <div class="text-start">
             <strong><?= h($nombre) ?></strong><br>
-            <span class="text-secondary"><?= h($tipoDoc . ' ' . $numeroDoc) ?></span>
+            <span class="text-secondary"><?= 'Id ' . h($id) ?></span>
         </div>
     </div>
 

@@ -4,7 +4,7 @@ Esta guía describe el proceso para publicar versiones de **La Única** en GitHu
 
 ## Alcance actual de la aplicación
 
-La aplicación está desarrollada en PHP con MySQLi y permite administrar clientes y productos desde un entorno local con Apache y MySQL. El SRS también plantea facturación, pero la aplicación actual no cuenta con una interfaz para crear, consultar o cancelar facturas; no anuncies esas funciones como disponibles.
+La aplicación está desarrollada en PHP con MySQLi y permite administrar clientes, productos, facturas y reportes desde un entorno local con Apache y MySQL. El SRS pide Laravel; esta aplicación está hecha en PHP con MySQLi.
 
 La aplicación tampoco implementa autenticación ni roles. Está pensada para uso local y no debe exponerse directamente a Internet.
 
@@ -36,7 +36,7 @@ Completa esta lista para la versión que vas a etiquetar:
 - [ ] Verifica que el repositorio no contiene archivos de configuración personales, contraseñas reales ni datos de clientes.
 - [ ] Revisa que el README y estas instrucciones coincidan con los archivos y funciones presentes.
 - [ ] Prueba la instalación desde cero en una base vacía: inicia Apache y MySQL, importa `referencias/db.sql`, ajusta `php/config/conexion.php` y abre la ruta local configurada, por ejemplo `http://localhost/la-unica/`.
-- [ ] Recorre manualmente la creación, consulta, edición y eliminación de un cliente y de un producto. Comprueba que las bajas con registros relacionados se bloquean y que las eliminaciones solicitan confirmación.
+- [ ] Recorre manualmente la creación, consulta, edición y eliminación de un cliente y de un producto, y la creación, impresión y cancelación de una factura (el stock baja y vuelve), y que los reportes cargan. Comprueba que las bajas con registros relacionados se bloquean y que las eliminaciones solicitan confirmación.
 - [ ] Comprueba que los estilos y las fuentes locales cargan y que los errores de conexión o validación se muestran de forma comprensible.
 - [ ] Prepara notas de versión que describan solo los cambios incluidos en esta etiqueta. Esas notas se guardarán en GitHub al publicar el release.
 

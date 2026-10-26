@@ -33,7 +33,7 @@ if (!$existe) {
 // Paso 2: el usuario ya confirmó.
 if (($_POST['confirmar'] ?? '') === 'si') {
     // No se puede borrar un producto que aparezca en facturas.
-    $relaciones = $conexion->prepare('SELECT COUNT(*) FROM detalle_factura WHERE id_producto = ?');
+    $relaciones = $conexion->prepare('SELECT COUNT(*) FROM detalle_facturas WHERE id_producto = ?');
     $relaciones->bind_param('i', $id);
     $relaciones->execute();
     $relaciones->bind_result($enFacturas);

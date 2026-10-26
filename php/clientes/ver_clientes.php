@@ -3,19 +3,18 @@
 // ver_clientes.php  (la "R" de CRUD: Read / Leer)
 // Lista todos los clientes y cuántas facturas tiene cada uno.
 //
-// Un cliente con facturas no se puede eliminar; su documento tampoco
-// se puede cambiar al editarlo.
+// Un cliente con facturas no se puede eliminar (la base de datos lo impide).
 // ===================================================================
 require __DIR__ . '/../config/conexion.php';
+/** @var mysqli $conexion */
 $titulo = 'Clientes';
 $seccionActiva = 'clientes';
 
 // LEFT JOIN para que aparezcan también los clientes sin facturas (0).
-$sql = 'SELECT c.id_cliente, c.tipo_documento, c.numero_documento, c.nombre, c.telefono, c.correo,
-               COUNT(f.id_factura) AS facturas
+$sql = 'SELECT c.id_cliente, c.nombre, c.fecha_registro, COUNT(f.id_factura) AS facturas
         FROM clientes c
-        LEFT JOIN factura f ON f.id_cliente = c.id_cliente
-        GROUP BY c.id_cliente, c.tipo_documento, c.numero_documento, c.nombre, c.telefono, c.correo
+        LEFT JOIN facturas f ON f.id_cliente = c.id_cliente
+        GROUP BY c.id_cliente, c.nombre, c.fecha_registro
         ORDER BY c.nombre';
 $resultado = $conexion->query($sql);
 $clientes = $resultado ? $resultado->fetch_all(MYSQLI_ASSOC) : [];
@@ -40,7 +39,7 @@ require __DIR__ . '/../includes/menu.php';
     <div class="acciones-encabezado">
         <label class="buscador">
             <?= icono('search') ?>
-            <input type="search" data-buscador placeholder="Buscar por nombre o documento…" aria-label="Buscar cliente">
+            <input type="search" data-buscador placeholder="Buscar por id o nombre…" aria-label="Buscar cliente">
         </label>
         <a class="btn btn-primary btn-con-icono" href="crear_cliente.php">
             <?= icono('plus') ?> Nuevo cliente
@@ -70,26 +69,23 @@ require __DIR__ . '/../includes/menu.php';
                 <thead>
                     <tr>
                         <th>Cliente</th>
-                        <th>Documento</th>
-                        <th>Contacto</th>
+                        <th>Id</th>
+                        <th>Registro</th>
                         <th>Facturas</th>
                         <th class="text-end">Acciones</th>
                     </tr>
                 </thead>
                 <tbody>
                     <?php foreach ($clientes as $i => $c): ?>
-                        <tr class="fila" style="--i: <?= $i ?>" data-buscar="<?= h($c['nombre'] . ' ' . $c['numero_documento']) ?>">
+                        <tr class="fila" style="--i: <?= $i ?>" data-buscar="<?= h($c['id_cliente'] . ' ' . $c['nombre']) ?>">
                             <td>
                                 <div class="d-flex align-items-center">
                                     <span class="avatar"><?= h(iniciales($c['nombre'])) ?></span>
                                     <strong><?= h($c['nombre']) ?></strong>
                                 </div>
                             </td>
-                            <td class="text-secondary"><?= h($c['tipo_documento'] . ' ' . $c['numero_documento']) ?></td>
-                            <td class="text-secondary">
-                                <?= h($c['telefono'] ?? '') ?><?= ($c['telefono'] && $c['correo']) ? '<br>' : '' ?><?= h($c['correo'] ?? '') ?>
-                                <?= (!$c['telefono'] && !$c['correo']) ? '—' : '' ?>
-                            </td>
+                            <td class="text-secondary"><?= h($c['id_cliente']) ?></td>
+                            <td class="text-secondary"><?= h($c['fecha_registro']) ?></td>
                             <td><span class="etiqueta"><?= (int)$c['facturas'] ?></span></td>
                             <td class="text-end text-nowrap">
                                 <a class="btn-icono" href="editar_cliente.php?id=<?= h($c['id_cliente']) ?>" title="Editar">
@@ -109,7 +105,7 @@ require __DIR__ . '/../includes/menu.php';
                 </tbody>
             </table>
         </div>
-        <p class="sin-resultados" hidden>No hay clientes con ese nombre o documento.</p>
+        <p class="sin-resultados" hidden>No hay clientes con ese id o nombre.</p>
     </div>
     <p class="nota">Los clientes con facturas no se pueden eliminar.</p>
 <?php endif; ?>

@@ -4,7 +4,7 @@
 // Parte de arriba de todas las páginas: <head> y barra de navegación.
 // Antes de incluirlo, cada página define:
 //   $titulo        -> texto de la pestaña del navegador
-//   $seccionActiva -> 'clientes' o 'productos' (resalta el enlace)
+//   $seccionActiva -> 'clientes', 'productos', 'facturas' o 'reportes' (resalta el enlace)
 // ===================================================================
 require_once __DIR__ . '/funciones_vista.php';
 
@@ -44,6 +44,14 @@ $seccionActiva = $seccionActiva ?? '';
         <a class="enlace-menu <?= $seccionActiva === 'productos' ? 'activo' : '' ?>"
            href="<?= h($baseUrl) ?>/php/productos/ver_productos.php">
             <?= icono('package') ?> Productos
+        </a>
+        <a class="enlace-menu <?= $seccionActiva === 'facturas' ? 'activo' : '' ?>"
+           href="<?= h($baseUrl) ?>/php/facturas/ver_facturas.php">
+            <?= icono('receipt') ?> Facturas
+        </a>
+        <a class="enlace-menu <?= $seccionActiva === 'reportes' ? 'activo' : '' ?>"
+           href="<?= h($baseUrl) ?>/php/reportes/ver_reportes.php">
+            <?= icono('chart') ?> Reportes
         </a>
 
         <button id="cambiar-tema" class="btn-tema ms-auto" type="button" title="Cambiar modo claro / oscuro">

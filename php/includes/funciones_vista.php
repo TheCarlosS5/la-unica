@@ -71,8 +71,19 @@ function pesos($valor) {
     return '$ ' . number_format((float)$valor, $decimales, ',', '.');
 }
 
-// Cantidad sin ceros sobrantes: "12.500" -> "12,5"  y  "3.000" -> "3"
-function cantidad($valor) {
-    $texto = number_format((float)$valor, 3, ',', '.');
-    return rtrim(rtrim($texto, '0'), ',');
+// Fecha y hora como la pide el SRS: "2026-10-26 14:30:00" -> "26/10/2026 14:30:00"
+function fecha_hora($valor) {
+    $fecha = DateTime::createFromFormat('Y-m-d H:i:s', (string)$valor);
+    return $fecha ? $fecha->format('d/m/Y H:i:s') : (string)$valor;
+}
+
+// Insignia de color según el estado de la factura (Pagado, Cancelado o Pendiente).
+function insignia_estado($estado) {
+    $clases = ['Pagado' => 'pagado', 'Cancelado' => 'cancelado', 'Pendiente' => 'pendiente'];
+    return '<span class="estado-factura ' . ($clases[$estado] ?? '') . '">' . h($estado) . '</span>';
+}
+
+// Dinero con siempre dos decimales: 10500 -> "$ 10.500,00"
+function pesos2($valor) {
+    return '$ ' . number_format((float)$valor, 2, ',', '.');
 }

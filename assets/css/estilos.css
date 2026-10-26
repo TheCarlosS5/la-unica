@@ -347,3 +347,42 @@ button.btn-icono:hover { color: var(--peligro); }
 .producto-codigo { font-family: ui-monospace, Consolas, monospace; font-size: .72rem; color: var(--texto-suave); margin: 0 0 .25rem; }
 .producto-nombre { margin-bottom: 0; }
 .precio small { font-family: "Inter", sans-serif; font-weight: 400; font-size: .7rem; }
+
+/* ---------- 9. Facturas y reportes ---------- */
+.estado-factura {
+    display: inline-block; padding: .05rem .5rem; border: 2px solid var(--borde);
+    font-family: "Pixelify Sans", sans-serif; font-size: .85rem; font-weight: 600;
+}
+.estado-factura.pagado    { background: var(--acento-suave); color: var(--acento); border-color: var(--acento); }
+.estado-factura.cancelado { color: var(--peligro); border-color: var(--peligro); }
+.estado-factura.pendiente { color: var(--aviso); border-color: var(--aviso); }
+
+.num { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.total-factura {
+    display: flex; justify-content: flex-end; align-items: baseline; gap: 1rem;
+    padding: 1rem; border-top: 2px solid var(--borde);
+    font-family: "Pixelify Sans", sans-serif; font-size: 1.4rem; font-weight: 700;
+}
+
+/* Líneas de producto al crear una factura */
+.linea-producto { display: grid; grid-template-columns: 1fr 7rem 8rem auto; gap: .5rem; align-items: center; margin-bottom: .5rem; }
+.linea-producto .subtotal { text-align: right; font-variant-numeric: tabular-nums; }
+@media (max-width: 767px) { .linea-producto { grid-template-columns: 1fr 5rem auto; } .linea-producto .subtotal { display: none; } }
+
+/* Pestañas de reportes */
+.pestanas { display: flex; flex-wrap: wrap; gap: .5rem; margin-bottom: 1.25rem; }
+.pestana {
+    padding: .3rem .8rem; border: 2px solid var(--borde); background: var(--superficie);
+    color: var(--texto); text-decoration: none; font-weight: 500; font-size: .9rem;
+}
+.pestana:hover { background: var(--superficie-suave); }
+.pestana.activa { background: var(--tinta); color: var(--fondo); }
+
+/* Al imprimir: solo el comprobante, sin menú ni botones */
+@media print {
+    .barra-superior, .no-imprimir, .volver, .alert { display: none !important; }
+    html { font-size: 100%; }
+    body { background: #fff !important; color: #000 !important; }
+    .tarjeta { box-shadow: none !important; border-color: #000 !important; }
+    * { animation: none !important; }
+}

@@ -10,7 +10,7 @@ $seccionActiva = 'productos';
 
 $mensaje = '';
 $error = '';
-$vacio = ['codigo' => '', 'nombre' => '', 'descripcion' => '', 'unidad_medida' => 'UND', 'precio' => '', 'stock' => ''];
+$vacio = ['nombre' => '', 'unidad_medida' => '', 'stock' => '', 'precio_unitario' => ''];
 $p = $vacio;
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -18,21 +18,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     [$p, $error] = validar_producto($_POST);
 
     if ($error === '') {
-        $stmt = $conexion->prepare('INSERT INTO productos (codigo, nombre, descripcion, unidad_medida, precio, stock) VALUES (?, ?, ?, ?, ?, ?)');
-        $stmt->bind_param('ssssss', $p['codigo'], $p['nombre'], $p['descripcion'], $p['unidad_medida'], $p['precio'], $p['stock']);
+        $stock = (int)$p['stock'];
+        $stmt = $conexion->prepare('INSERT INTO productos (nombre, unidad_medida, stock, precio_unitario) VALUES (?, ?, ?, ?)');
+        $stmt->bind_param('ssis', $p['nombre'], $p['unidad_medida'], $stock, $p['precio_unitario']);
 
         if ($stmt->execute()) {
             $mensaje = 'Producto creado correctamente.';
             $p = $vacio; // limpiar el formulario
-        } elseif ($conexion->errno === 1062) { // 1062 = valor repetido en un campo único
-            $error = 'Ya existe un producto con ese código.';
         } else {
             $error = 'No se pudo crear el producto.';
         }
     }
 }
 
-$bloquearClave = false;
 $textoBoton = 'Guardar producto';
 require __DIR__ . '/../includes/menu.php';
 ?>

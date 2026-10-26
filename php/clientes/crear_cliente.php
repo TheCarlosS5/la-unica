@@ -2,7 +2,7 @@
 // ===================================================================
 // crear_cliente.php  (la "C" de CRUD: Create / Crear)
 // Muestra el formulario y, cuando se envía, guarda el cliente.
-// El ID lo genera la base de datos (AUTO_INCREMENT).
+// El id_cliente lo escribe quien registra (no es autoincremental).
 // ===================================================================
 require __DIR__ . '/../config/conexion.php';
 $titulo = 'Nuevo cliente';
@@ -10,7 +10,7 @@ $seccionActiva = 'clientes';
 
 $mensaje = '';
 $error = '';
-$vacio = ['tipo_documento' => 'CC', 'numero_documento' => '', 'nombre' => '', 'telefono' => '', 'correo' => '', 'direccion' => ''];
+$vacio = ['id_cliente' => '', 'nombre' => '', 'fecha_registro' => ''];
 $c = $vacio;
 
 // Solo procesamos cuando el formulario fue enviado (método POST).
@@ -19,21 +19,28 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     [$c, $error] = validar_cliente($_POST);
 
     if ($error === '') {
-        $stmt = $conexion->prepare('INSERT INTO clientes (tipo_documento, numero_documento, nombre, telefono, correo, direccion) VALUES (?, ?, ?, ?, ?, ?)');
-        $stmt->bind_param('ssssss', $c['tipo_documento'], $c['numero_documento'], $c['nombre'], $c['telefono'], $c['correo'], $c['direccion']);
+        $id = (int)$c['id_cliente'];
+        // Si no hay fecha, la base de datos pone la de hoy automáticamente.
+        if ($c['fecha_registro'] === '') {
+            $stmt = $conexion->prepare('INSERT INTO clientes (id_cliente, nombre) VALUES (?, ?)');
+            $stmt->bind_param('is', $id, $c['nombre']);
+        } else {
+            $stmt = $conexion->prepare('INSERT INTO clientes (id_cliente, nombre, fecha_registro) VALUES (?, ?, ?)');
+            $stmt->bind_param('iss', $id, $c['nombre'], $c['fecha_registro']);
+        }
 
         if ($stmt->execute()) {
             $mensaje = 'Cliente creado correctamente.';
             $c = $vacio; // limpiar el formulario
         } elseif ($conexion->errno === 1062) { // 1062 = valor repetido en un campo único
-            $error = 'Ya existe un cliente con ese tipo y número de documento.';
+            $error = 'Ya existe un cliente con ese id.';
         } else {
             $error = 'No se pudo crear el cliente.';
         }
     }
 }
 
-$bloquearDoc = false;
+$esEdicion = false;
 $textoBoton = 'Guardar cliente';
 require __DIR__ . '/../includes/menu.php';
 ?>
