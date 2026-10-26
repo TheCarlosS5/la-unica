@@ -1,42 +1,88 @@
 <?php
 require __DIR__ . '/../config/conexion.php';
+
 $titulo = 'Crear cliente';
 $seccionActiva = 'clientes';
-$mensaje = '';
-$error = '';
-$id = '';
-$nombre = '';
-$fecha = '';
+$mensajeExito = (($_GET['creado'] ?? '') === '1') ? 'Cliente creado correctamente.' : '';
+$mensajeError = '';
+$tokenCsrf = obtenerTokenCsrf();
+
+$idCliente = '';
+$nombreCliente = '';
+$fechaRegistro = '';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $id = id_valido($_POST['id_cliente'] ?? '');
-    $nombre = trim((string)($_POST['nombre'] ?? ''));
-    $fecha = trim((string)($_POST['fecha_registro'] ?? ''));
+    $idRecibido = $_POST['id_cliente'] ?? null;
+    $nombreRecibido = $_POST['nombre'] ?? null;
+    $fechaRecibida = $_POST['fecha_registro'] ?? null;
 
-    if ($id === null) {
-        $error = 'El ID debe ser un entero entre 1 y 2.147.483.647.';
-    } elseif ($nombre === '' || texto_largo($nombre) > 100) {
-        $error = 'El nombre es obligatorio y admite hasta 100 caracteres.';
-    } elseif ($fecha !== '' && !fecha_valida($fecha)) {
-        $error = 'La fecha no es válida.';
+    $datosPostValidos = is_string($idRecibido)
+        && is_string($nombreRecibido)
+        && is_string($fechaRecibida);
+    $idEnviado = is_string($idRecibido) ? $idRecibido : '';
+    $nombreEnviado = is_string($nombreRecibido) ? $nombreRecibido : '';
+    $fechaEnviada = is_string($fechaRecibida) ? $fechaRecibida : '';
+
+    $idClienteValido = validarId($idEnviado);
+    $nombreLimpio = trim($nombreEnviado);
+    $fechaLimpia = trim($fechaEnviada);
+
+    // Mantener los valores originales para que el formulario no los pierda si falla la validación.
+    $idCliente = $idEnviado;
+    $nombreCliente = $nombreEnviado;
+    $fechaRegistro = $fechaEnviada;
+
+    if (!validarTokenCsrf($_POST['csrf_token'] ?? null)) {
+        http_response_code(403);
+        $mensajeError = 'No se pudo validar la solicitud. Actualiza la página e inténtalo de nuevo.';
+    } elseif (!$datosPostValidos) {
+        $mensajeError = 'Los datos enviados no tienen el formato esperado.';
+    } elseif ($idClienteValido === null) {
+        $mensajeError = 'El ID debe ser un entero entre 1 y 2.147.483.647.';
+    } elseif ($nombreLimpio === '') {
+        $mensajeError = 'El nombre es obligatorio y no puede contener solo espacios.';
+    } elseif (longitudTexto($nombreEnviado) > 100) {
+        $mensajeError = 'El nombre admite hasta 100 caracteres.';
+    } elseif ($fechaLimpia !== '' && !validarFecha($fechaLimpia)) {
+        $mensajeError = 'La fecha no es válida.';
     } else {
-        if ($fecha === '') {
-            $stmt = $conexion->prepare('INSERT INTO clientes(id_cliente,nombre) VALUES(?,?)');
-            $stmt->bind_param('is', $id, $nombre);
-        } else {
-            $stmt = $conexion->prepare('INSERT INTO clientes(id_cliente,nombre,fecha_registro) VALUES(?,?,?)');
-            $stmt->bind_param('iss', $id, $nombre, $fecha);
+        $sentencia = null;
+        $creacionExitosa = false;
+        try {
+            if ($fechaLimpia === '') {
+                $sentencia = $conexion->prepare('INSERT INTO clientes (id_cliente, nombre) VALUES (?, ?)');
+                $sentencia->bind_param('is', $idClienteValido, $nombreLimpio);
+            } else {
+                $sentencia = $conexion->prepare('INSERT INTO clientes (id_cliente, nombre, fecha_registro) VALUES (?, ?, ?)');
+                $sentencia->bind_param('iss', $idClienteValido, $nombreLimpio, $fechaLimpia);
+            }
+
+            if ($sentencia && $sentencia->execute()) {
+                $creacionExitosa = true;
+            } else {
+                $mensajeError = 'No se pudo crear el cliente por un problema de base de datos. Inténtalo de nuevo.';
+            }
+        } catch (mysqli_sql_exception $e) {
+            registrarErrorServidor('crear_cliente', $e);
+            $mensajeError = ((int)$e->getCode() === 1062)
+                ? 'Ya existe un cliente con ese ID.'
+                : 'No se pudo crear el cliente por un problema de base de datos. Inténtalo de nuevo.';
+        } catch (Throwable $e) {
+            registrarErrorServidor('crear_cliente', $e);
+            $mensajeError = 'No se pudo crear el cliente por un problema de base de datos. Inténtalo de nuevo.';
+        } finally {
+            if ($sentencia instanceof mysqli_stmt) {
+                $sentencia->close();
+            }
         }
-        if ($stmt && $stmt->execute()) {
-            $mensaje = 'Cliente creado correctamente.';
-            $id = '';
-            $nombre = '';
-            $fecha = '';
-        } else {
-            $error = 'No se pudo crear. Revisa que ese ID no esté registrado.';
+
+        if ($creacionExitosa) {
+            header('Location: crear_cliente.php?creado=1', true, 303);
+            exit;
         }
     }
 }
+
 require __DIR__ . '/../includes/menu.php';
 ?>
 <div class="encabezado-vista">
@@ -55,43 +101,45 @@ require __DIR__ . '/../includes/menu.php';
 
 <div class="panel-formulario-wrap">
     <div class="formulario tarjeta-formulario">
-        <?php if ($mensaje !== ''): ?>
+        <?php if ($mensajeExito !== ''): ?>
             <div class="mensaje alerta" role="status">
                 <svg class="alerta-icono" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                    <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
-                    <polyline points="22 4 12 14.01 9 11.01"/>
+                    <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
+                    <polyline points="22 4 12 14.01 9 11.01" />
                 </svg>
-                <div class="alerta-contenido"><?= h($mensaje) ?></div>
+                <div class="alerta-contenido"><?= h($mensajeExito) ?></div>
             </div>
         <?php endif; ?>
 
-        <?php if ($error !== ''): ?>
+        <?php if ($mensajeError !== ''): ?>
             <div class="mensaje error alerta alerta-error" role="alert">
                 <svg class="alerta-icono" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                    <circle cx="12" cy="12" r="10"/>
-                    <line x1="12" y1="8" x2="12" y2="12"/>
-                    <line x1="12" y1="16" x2="12.01" y2="16"/>
+                    <circle cx="12" cy="12" r="10" />
+                    <line x1="12" y1="8" x2="12" y2="12" />
+                    <line x1="12" y1="16" x2="12.01" y2="16" />
                 </svg>
-                <div class="alerta-contenido"><?= h($error) ?></div>
+                <div class="alerta-contenido"><?= h($mensajeError) ?></div>
             </div>
         <?php endif; ?>
 
         <form method="post">
+            <?php if ($tokenCsrf !== null): ?>
+                <input type="hidden" name="csrf_token" value="<?= h($tokenCsrf) ?>">
+            <?php endif; ?>
             <div class="campo">
                 <label for="id_cliente">
                     <span>ID del cliente</span>
                     <span class="ayuda" style="margin:0;">Requerido</span>
                 </label>
-                <input id="id_cliente" name="id_cliente" type="number" min="1" max="2147483647" value="<?= h($id) ?>" placeholder="Ej. 101" required>
-                <span class="ayuda texto-ayuda">Se ingresa manualmente, según el esquema de la base de datos (clave primaria única).</span>
+                <input id="id_cliente" name="id_cliente" type="number" min="1" max="2147483647" step="1" inputmode="numeric" autofocus aria-describedby="ayuda-id-cliente" value="<?= h($idCliente) ?>" placeholder="Ej. 101" required>
+                <span id="ayuda-id-cliente" class="ayuda texto-ayuda">Se ingresa manualmente, según el esquema de la base de datos (clave primaria única).</span>
             </div>
-
             <div class="campo">
                 <label for="nombre">
                     <span>Nombre completo</span>
                     <span class="ayuda" style="margin:0;">Hasta 100 caracteres</span>
                 </label>
-                <input id="nombre" name="nombre" type="text" maxlength="100" value="<?= h($nombre) ?>" placeholder="Ej. Carlos Ramirez" required>
+                <input id="nombre" name="nombre" type="text" maxlength="100" pattern=".*\S+.*" title="El nombre no puede estar vacío ni contener solo espacios" value="<?= h($nombreCliente) ?>" placeholder="Ej. Carlos Ramirez" required>
             </div>
 
             <div class="campo">
@@ -99,23 +147,23 @@ require __DIR__ . '/../includes/menu.php';
                     <span>Fecha de registro</span>
                     <span class="ayuda" style="margin:0;">Opcional</span>
                 </label>
-                <input id="fecha_registro" name="fecha_registro" type="date" value="<?= h($fecha) ?>">
+                <input id="fecha_registro" name="fecha_registro" type="date" value="<?= h($fechaRegistro) ?>">
                 <span class="ayuda texto-ayuda">Déjala vacía para asignar automáticamente la fecha actual del sistema.</span>
             </div>
 
             <div class="fila-botones">
                 <button type="submit">
                     <svg class="boton-icono" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                        <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/>
-                        <polyline points="17 21 17 13 7 13 7 21"/>
-                        <polyline points="7 3 7 8 15 8"/>
+                        <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z" />
+                        <polyline points="17 21 17 13 7 13 7 21" />
+                        <polyline points="7 3 7 8 15 8" />
                     </svg>
                     <span>Crear cliente</span>
                 </button>
                 <a class="boton secundario" href="ver_clientes.php">
                     <svg class="boton-icono" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                        <line x1="19" y1="12" x2="5" y2="12"/>
-                        <polyline points="12 19 5 12 12 5"/>
+                        <line x1="19" y1="12" x2="5" y2="12" />
+                        <polyline points="12 19 5 12 12 5" />
                     </svg>
                     <span>Ver clientes</span>
                 </a>
