@@ -1,22 +1,25 @@
 <?php
 require __DIR__ . '/../config/conexion.php';
+
 $titulo = 'Editar cliente';
 $seccionActiva = 'clientes';
-$id = id_valido($_GET['id'] ?? '');
-$error = '';
-$mensaje = '';
+$mensajeExito = '';
+$mensajeError = '';
 
-if ($id === null) {
+$idRecibido = $_GET['id'] ?? null;
+$idCliente = validarId($idRecibido);
+
+if ($idRecibido === null || trim((string)$idRecibido) === '' || $idCliente === null) {
     http_response_code(400);
     exit('ID de cliente no válido.');
 }
 
-$stmt = $conexion->prepare('SELECT nombre,fecha_registro FROM clientes WHERE id_cliente=?');
-$stmt->bind_param('i', $id);
-$stmt->execute();
-$stmt->bind_result($nombre, $fecha);
-$existe = $stmt->fetch();
-$stmt->close();
+$sentencia = $conexion->prepare('SELECT nombre, fecha_registro FROM clientes WHERE id_cliente = ?');
+$sentencia->bind_param('i', $idCliente);
+$sentencia->execute();
+$sentencia->bind_result($nombreCliente, $fechaRegistro);
+$existe = $sentencia->fetch();
+$sentencia->close();
 
 if (!$existe) {
     http_response_code(404);
@@ -24,23 +27,34 @@ if (!$existe) {
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $nombre = trim((string)($_POST['nombre'] ?? ''));
-    $fecha = trim((string)($_POST['fecha_registro'] ?? ''));
+    $nombreRecibido = $_POST['nombre'] ?? null;
+    $fechaRecibida = $_POST['fecha_registro'] ?? null;
 
-    if ($nombre === '' || texto_largo($nombre) > 100) {
-        $error = 'El nombre es obligatorio y admite hasta 100 caracteres.';
-    } elseif (!fecha_valida($fecha)) {
-        $error = 'La fecha no es válida.';
+    $nombreLimpio = ($nombreRecibido !== null) ? trim((string)$nombreRecibido) : '';
+    $fechaLimpia = ($fechaRecibida !== null) ? trim((string)$fechaRecibida) : '';
+
+    if ($nombreRecibido === null || $nombreLimpio === '' || longitudTexto($nombreLimpio) > 100) {
+        $mensajeError = 'El nombre es obligatorio y admite hasta 100 caracteres.';
+    } elseif ($fechaRecibida === null || $fechaLimpia === '' || !validarFecha($fechaLimpia)) {
+        $mensajeError = 'La fecha no es válida.';
     } else {
-        $up = $conexion->prepare('UPDATE clientes SET nombre=?,fecha_registro=? WHERE id_cliente=?');
-        $up->bind_param('ssi', $nombre, $fecha, $id);
-        if ($up->execute()) {
-            $mensaje = 'Cliente actualizado correctamente.';
-        } else {
-            $error = 'No se pudo actualizar el cliente.';
+        try {
+            $actualizar = $conexion->prepare('UPDATE clientes SET nombre = ?, fecha_registro = ? WHERE id_cliente = ?');
+            $actualizar->bind_param('ssi', $nombreLimpio, $fechaLimpia, $idCliente);
+            if ($actualizar->execute()) {
+                $nombreCliente = $nombreLimpio;
+                $fechaRegistro = $fechaLimpia;
+                $mensajeExito = 'Cliente actualizado correctamente.';
+            } else {
+                $mensajeError = 'No se pudo actualizar el cliente.';
+            }
+            $actualizar->close();
+        } catch (Throwable $e) {
+            $mensajeError = 'No se pudo actualizar el cliente.';
         }
     }
 }
+
 require __DIR__ . '/../includes/menu.php';
 ?>
 <div class="encabezado-vista">
@@ -50,7 +64,7 @@ require __DIR__ . '/../includes/menu.php';
             <span class="miga-separador" aria-hidden="true">/</span>
             <a href="ver_clientes.php">Clientes</a>
             <span class="miga-separador" aria-hidden="true">/</span>
-            <span>Editar cliente #<?= h($id) ?></span>
+            <span>Editar cliente #<?= h($idCliente) ?></span>
         </nav>
         <h1 class="encabezado-titulo">Editar cliente</h1>
         <p class="encabezado-descripcion">Actualiza la información comercial y fecha de registro del cliente.</p>
@@ -61,27 +75,27 @@ require __DIR__ . '/../includes/menu.php';
     <div class="formulario tarjeta-formulario">
         <div class="tarjeta-id-fijo">
             <span class="etiqueta">Identificador fijo</span>
-            <span class="valor">#<?= h($id) ?></span>
+            <span class="valor">#<?= h($idCliente) ?></span>
         </div>
 
-        <?php if ($mensaje !== ''): ?>
+        <?php if ($mensajeExito !== ''): ?>
             <div class="mensaje alerta" role="status">
                 <svg class="alerta-icono" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                     <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
                     <polyline points="22 4 12 14.01 9 11.01" />
                 </svg>
-                <div class="alerta-contenido"><?= h($mensaje) ?></div>
+                <div class="alerta-contenido"><?= h($mensajeExito) ?></div>
             </div>
         <?php endif; ?>
 
-        <?php if ($error !== ''): ?>
+        <?php if ($mensajeError !== ''): ?>
             <div class="mensaje error alerta alerta-error" role="alert">
                 <svg class="alerta-icono" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                     <circle cx="12" cy="12" r="10" />
                     <line x1="12" y1="8" x2="12" y2="12" />
                     <line x1="12" y1="16" x2="12.01" y2="16" />
                 </svg>
-                <div class="alerta-contenido"><?= h($error) ?></div>
+                <div class="alerta-contenido"><?= h($mensajeError) ?></div>
             </div>
         <?php endif; ?>
 
@@ -91,7 +105,7 @@ require __DIR__ . '/../includes/menu.php';
                     <span>Nombre del cliente</span>
                     <span class="ayuda" style="margin:0;">Obligatorio</span>
                 </label>
-                <input id="nombre" name="nombre" type="text" maxlength="100" value="<?= h($nombre) ?>" required>
+                <input id="nombre" name="nombre" type="text" maxlength="100" value="<?= h($nombreCliente) ?>" required>
             </div>
 
             <div class="campo">
@@ -99,7 +113,7 @@ require __DIR__ . '/../includes/menu.php';
                     <span>Fecha de registro</span>
                     <span class="ayuda" style="margin:0;">Formato YYYY-MM-DD</span>
                 </label>
-                <input id="fecha_registro" name="fecha_registro" type="date" value="<?= h($fecha) ?>" required>
+                <input id="fecha_registro" name="fecha_registro" type="date" value="<?= h($fechaRegistro) ?>" required>
             </div>
 
             <div class="fila-botones">

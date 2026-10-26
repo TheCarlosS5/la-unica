@@ -3,6 +3,7 @@ $baseUrl = $baseUrl ?? '';
 $titulo = $titulo ?? 'La Única';
 $seccionActual = $seccionActiva ?? '';
 $paginaActual = basename(str_replace('\\', '/', (string)($_SERVER['SCRIPT_NAME'] ?? '')));
+
 if ($seccionActual === '') {
     $scriptActual = str_replace('\\', '/', $_SERVER['SCRIPT_NAME'] ?? '');
     if (strpos($scriptActual, '/clientes/') !== false) {
@@ -31,11 +32,9 @@ if ($seccionActual === '') {
 <body class="shell-layout">
     <a class="salto-contenido" href="#contenido-principal">Saltar al contenido principal</a>
 
-    <!-- Telón de fondo para menú móvil -->
     <div id="drawer-backdrop" class="drawer-backdrop" aria-hidden="true"></div>
 
     <div class="layout-app">
-        <!-- Navegación principal -->
         <aside id="barra-lateral" class="barra-lateral" aria-label="Menú principal de La Única">
             <div class="sidebar-cabecera">
                 <a class="sidebar-marca" href="<?= h($baseUrl) ?>/main.php" title="Panel La Única">
@@ -126,7 +125,6 @@ if ($seccionActual === '') {
             </div>
         </aside>
 
-        <!-- Área de contenido a la derecha -->
         <div class="area-principal">
             <header class="topbar-principal" role="banner">
                 <div class="topbar-izquierda">

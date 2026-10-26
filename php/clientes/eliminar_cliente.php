@@ -1,59 +1,73 @@
 <?php
 require __DIR__ . '/../config/conexion.php';
 
-$id = id_valido($_POST['id_cliente'] ?? '');
-$mensaje = '';
-$error = false;
-$confirmar = false;
-$nombre = '';
+$titulo = 'Eliminar cliente';
+$seccionActiva = 'clientes';
 
-if (($_SERVER['REQUEST_METHOD'] ?? 'GET') !== 'POST' || $id === null) {
+$mensajeResultado = '';
+$esError = false;
+$mostrarConfirmacion = false;
+$nombreCliente = '';
+
+$idRecibido = $_POST['id_cliente'] ?? null;
+$confirmarRecibido = $_POST['confirmar'] ?? null;
+$idCliente = validarId($idRecibido);
+
+if (($_SERVER['REQUEST_METHOD'] ?? 'GET') !== 'POST' || $idRecibido === null || trim((string)$idRecibido) === '' || $idCliente === null) {
     http_response_code(400);
-    $mensaje = 'Solicitud no válida.';
-    $error = true;
+    $mensajeResultado = 'Solicitud no válida.';
+    $esError = true;
 } else {
-    $consulta = $conexion->prepare('SELECT nombre FROM clientes WHERE id_cliente=?');
-    $consulta->bind_param('i', $id);
-    $consulta->execute();
-    $consulta->bind_result($nombre);
+    try {
+        $consulta = $conexion->prepare('SELECT nombre FROM clientes WHERE id_cliente = ?');
+        $consulta->bind_param('i', $idCliente);
+        $consulta->execute();
+        $consulta->bind_result($nombreCliente);
+        $existe = $consulta->fetch();
+        $consulta->close();
 
-    if (!$consulta->fetch()) {
-        http_response_code(404);
-        $mensaje = 'No se encontró el cliente.';
-        $error = true;
-    }
-    $consulta->close();
-
-    if (!$error) {
-        if (($_POST['confirmar'] ?? '') !== 'si') {
-            $confirmar = true;
+        if (!$existe) {
+            http_response_code(404);
+            $mensajeResultado = 'No se encontró el cliente.';
+            $esError = true;
         } else {
-            $relaciones = $conexion->prepare('SELECT COUNT(*) FROM facturas WHERE id_cliente=?');
-            $relaciones->bind_param('i', $id);
-            $relaciones->execute();
-            $relaciones->bind_result($total);
-            $relaciones->fetch();
-            $relaciones->close();
+            $esConfirmado = ($confirmarRecibido !== null && trim((string)$confirmarRecibido) === 'si');
 
-            if ($total > 0) {
-                $mensaje = 'No se puede eliminar: el cliente tiene facturas asociadas.';
-                $error = true;
+            if (!$esConfirmado) {
+                $mostrarConfirmacion = true;
             } else {
-                $eliminar = $conexion->prepare('DELETE FROM clientes WHERE id_cliente=?');
-                $eliminar->bind_param('i', $id);
-                $ejecutado = $eliminar->execute();
-                $mensaje = $ejecutado && $eliminar->affected_rows === 1
-                    ? 'Cliente eliminado correctamente.'
-                    : 'No se encontró el cliente o no se pudo eliminar.';
-                $error = !$ejecutado || $eliminar->affected_rows !== 1;
-                $eliminar->close();
+                $checkFacturas = $conexion->prepare('SELECT COUNT(*) FROM facturas WHERE id_cliente = ?');
+                $checkFacturas->bind_param('i', $idCliente);
+                $checkFacturas->execute();
+                $checkFacturas->bind_result($totalFacturas);
+                $checkFacturas->fetch();
+                $checkFacturas->close();
+
+                if ($totalFacturas > 0) {
+                    $mensajeResultado = 'No se puede eliminar: el cliente tiene facturas asociadas.';
+                    $esError = true;
+                } else {
+                    $eliminar = $conexion->prepare('DELETE FROM clientes WHERE id_cliente = ?');
+                    $eliminar->bind_param('i', $idCliente);
+                    $ejecutado = $eliminar->execute();
+
+                    if ($ejecutado && $eliminar->affected_rows === 1) {
+                        $mensajeResultado = 'Cliente eliminado correctamente.';
+                        $esError = false;
+                    } else {
+                        $mensajeResultado = 'No se encontró el cliente o no se pudo eliminar.';
+                        $esError = true;
+                    }
+                    $eliminar->close();
+                }
             }
         }
+    } catch (Throwable $e) {
+        $mensajeResultado = 'Error en el servidor al procesar la eliminación.';
+        $esError = true;
     }
 }
 
-$titulo = 'Eliminar cliente';
-$seccionActiva = 'clientes';
 require __DIR__ . '/../includes/menu.php';
 ?>
 <div class="encabezado-vista">
@@ -65,12 +79,12 @@ require __DIR__ . '/../includes/menu.php';
             <span class="miga-separador" aria-hidden="true">/</span>
             <span>Baja de cliente</span>
         </nav>
-        <h1 class="encabezado-titulo"><?= $confirmar ? 'Confirmar eliminación' : 'Estado de la operación' ?></h1>
+        <h1 class="encabezado-titulo"><?= $mostrarConfirmacion ? 'Confirmar eliminación' : 'Estado de la operación' ?></h1>
         <p class="encabezado-descripcion">Protocolo de seguridad para preservación de registros comerciales e integridad referencial.</p>
     </div>
 </div>
 
-<?php if ($confirmar): ?>
+<?php if ($mostrarConfirmacion): ?>
     <section class="panel-confirmacion" aria-labelledby="titulo-confirmacion">
         <div class="panel-confirmacion-cabecera">
             <div class="panel-confirmacion-icono" aria-hidden="true">
@@ -93,9 +107,9 @@ require __DIR__ . '/../includes/menu.php';
 
             <dl class="tarjeta-registro-eliminar">
                 <dt>ID Cliente</dt>
-                <dd><span class="chip-id">#<?= h($id) ?></span></dd>
+                <dd><span class="chip-id">#<?= h($idCliente) ?></span></dd>
                 <dt>Nombre</dt>
-                <dd><?= h($nombre) ?></dd>
+                <dd><?= h($nombreCliente) ?></dd>
             </dl>
 
             <div class="nota nota-informativa" style="margin: 0;">
@@ -108,7 +122,7 @@ require __DIR__ . '/../includes/menu.php';
         </div>
 
         <form method="post" action="eliminar_cliente.php">
-            <input type="hidden" name="id_cliente" value="<?= h($id) ?>">
+            <input type="hidden" name="id_cliente" value="<?= h($idCliente) ?>">
             <input type="hidden" name="confirmar" value="si">
             <div class="panel-confirmacion-pie">
                 <a class="boton secundario" href="ver_clientes.php">Cancelar</a>
@@ -125,9 +139,9 @@ require __DIR__ . '/../includes/menu.php';
 <?php else: ?>
     <div class="panel-formulario-wrap">
         <div class="tarjeta-formulario" style="max-width: 580px; text-align: center;">
-            <div class="alerta <?= $error ? 'mensaje error alerta-error' : 'mensaje alerta' ?>" style="text-align: left;" role="<?= $error ? 'alert' : 'status' ?>">
+            <div class="alerta <?= $esError ? 'mensaje error alerta-error' : 'mensaje alerta' ?>" style="text-align: left;" role="<?= $esError ? 'alert' : 'status' ?>">
                 <svg class="alerta-icono" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                    <?php if ($error): ?>
+                    <?php if ($esError): ?>
                         <circle cx="12" cy="12" r="10" />
                         <line x1="12" y1="8" x2="12" y2="12" />
                         <line x1="12" y1="16" x2="12.01" y2="16" />
@@ -137,7 +151,7 @@ require __DIR__ . '/../includes/menu.php';
                     <?php endif; ?>
                 </svg>
                 <div class="alerta-contenido">
-                    <strong><?= $error ? 'Operación bloqueada' : 'Operación exitosa' ?>:</strong> <?= h($mensaje) ?>
+                    <strong><?= $esError ? 'Operación bloqueada' : 'Operación exitosa' ?>:</strong> <?= h($mensajeResultado) ?>
                 </div>
             </div>
 
