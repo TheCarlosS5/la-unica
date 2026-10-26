@@ -3,6 +3,7 @@ require __DIR__ . '/../config/conexion.php';
 
 $titulo = 'Clientes';
 $seccionActiva = 'clientes';
+$tokenCsrf = obtenerTokenCsrf();
 
 $sqlClientes = 'SELECT c.id_cliente, c.nombre, c.fecha_registro, COUNT(f.id_factura) AS total_facturas FROM clientes c LEFT JOIN facturas f ON f.id_cliente = c.id_cliente GROUP BY c.id_cliente, c.nombre, c.fecha_registro ORDER BY c.id_cliente';
 $resultadoClientes = $conexion->query($sqlClientes);
@@ -100,6 +101,9 @@ require __DIR__ . '/../includes/menu.php';
                                 </a>
                                 <?php if ((int)$cliente['total_facturas'] === 0): ?>
                                     <form method="post" action="eliminar_cliente.php" onsubmit="return confirm('¿Eliminar este cliente?')">
+                                        <?php if ($tokenCsrf !== null): ?>
+                                            <input type="hidden" name="csrf_token" value="<?= h($tokenCsrf) ?>">
+                                        <?php endif; ?>
                                         <input type="hidden" name="id_cliente" value="<?= h($cliente['id_cliente']) ?>">
                                         <button type="submit" class="boton-peligro" title="Eliminar cliente #<?= h($cliente['id_cliente']) ?>">
                                             <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">

@@ -3,8 +3,9 @@ require __DIR__ . '/../config/conexion.php';
 
 $titulo = 'Crear cliente';
 $seccionActiva = 'clientes';
-$mensajeExito = '';
+$mensajeExito = (($_GET['creado'] ?? '') === '1') ? 'Cliente creado correctamente.' : '';
 $mensajeError = '';
+$tokenCsrf = obtenerTokenCsrf();
 
 $idCliente = '';
 $nombreCliente = '';
@@ -28,7 +29,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $nombreCliente = $nombreEnviado;
     $fechaRegistro = $fechaEnviada;
 
-    if ($idClienteValido === null) {
+    if ($tokenCsrf !== null && !validarTokenCsrf($_POST['csrf_token'] ?? null)) {
+        $mensajeError = 'No se pudo validar la solicitud. Actualiza la página e inténtalo de nuevo.';
+    } elseif ($idClienteValido === null) {
         $mensajeError = 'El ID debe ser un entero entre 1 y 2.147.483.647.';
     } elseif ($nombreLimpio === '') {
         $mensajeError = 'El nombre es obligatorio y no puede contener solo espacios.';
@@ -38,6 +41,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $mensajeError = 'La fecha no es válida.';
     } else {
         $sentencia = null;
+        $creacionExitosa = false;
         try {
             if ($fechaLimpia === '') {
                 $sentencia = $conexion->prepare('INSERT INTO clientes (id_cliente, nombre) VALUES (?, ?)');
@@ -48,23 +52,27 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             }
 
             if ($sentencia && $sentencia->execute()) {
-                $mensajeExito = 'Cliente creado correctamente.';
-                $idCliente = '';
-                $nombreCliente = '';
-                $fechaRegistro = '';
+                $creacionExitosa = true;
             } else {
                 $mensajeError = 'No se pudo crear el cliente por un problema de base de datos. Inténtalo de nuevo.';
             }
         } catch (mysqli_sql_exception $e) {
+            registrarErrorServidor('crear_cliente', $e);
             $mensajeError = ((int)$e->getCode() === 1062)
                 ? 'Ya existe un cliente con ese ID.'
                 : 'No se pudo crear el cliente por un problema de base de datos. Inténtalo de nuevo.';
         } catch (Throwable $e) {
+            registrarErrorServidor('crear_cliente', $e);
             $mensajeError = 'No se pudo crear el cliente por un problema de base de datos. Inténtalo de nuevo.';
         } finally {
             if ($sentencia instanceof mysqli_stmt) {
                 $sentencia->close();
             }
+        }
+
+        if ($creacionExitosa) {
+            header('Location: crear_cliente.php?creado=1', true, 303);
+            exit;
         }
     }
 }
@@ -109,6 +117,9 @@ require __DIR__ . '/../includes/menu.php';
         <?php endif; ?>
 
         <form method="post">
+            <?php if ($tokenCsrf !== null): ?>
+                <input type="hidden" name="csrf_token" value="<?= h($tokenCsrf) ?>">
+            <?php endif; ?>
             <div class="campo">
                 <label for="id_cliente">
                     <span>ID del cliente</span>
