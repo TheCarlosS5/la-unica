@@ -2,7 +2,7 @@
 mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
 
 try {
-    $conexion = new mysqli('127.0.0.1', 'root', 'root', 'la_unica', 3306);
+    $conexion = new mysqli('127.0.0.1', 'root', '', 'la_unica', 3306);
     $conexion->set_charset('utf8mb4');
 } catch (Throwable $e) {
     http_response_code(500);
