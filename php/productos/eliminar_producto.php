@@ -12,9 +12,19 @@ $tokenCsrf = obtenerTokenCsrf();
 
 $idRecibido = $_POST['id_producto'] ?? null;
 $confirmarRecibido = $_POST['confirmar'] ?? null;
+$datosPostValidos = is_string($idRecibido)
+    && ($confirmarRecibido === null || is_string($confirmarRecibido));
 $idProducto = validarId($idRecibido);
 
-if (($_SERVER['REQUEST_METHOD'] ?? 'GET') !== 'POST' || ($tokenCsrf !== null && !validarTokenCsrf($_POST['csrf_token'] ?? null)) || $idRecibido === null || trim((string)$idRecibido) === '' || $idProducto === null) {
+if (($_SERVER['REQUEST_METHOD'] ?? 'GET') !== 'POST') {
+    http_response_code(400);
+    $mensajeResultado = 'Solicitud no válida.';
+    $esError = true;
+} elseif (!validarTokenCsrf($_POST['csrf_token'] ?? null)) {
+    http_response_code(403);
+    $mensajeResultado = 'No se pudo validar la solicitud. Actualiza la página e inténtalo de nuevo.';
+    $esError = true;
+} elseif (!$datosPostValidos || $idProducto === null) {
     http_response_code(400);
     $mensajeResultado = 'Solicitud no válida.';
     $esError = true;
@@ -32,7 +42,7 @@ if (($_SERVER['REQUEST_METHOD'] ?? 'GET') !== 'POST' || ($tokenCsrf !== null && 
             $mensajeResultado = 'No se encontró el producto.';
             $esError = true;
         } else {
-            $esConfirmado = ($confirmarRecibido !== null && trim((string)$confirmarRecibido) === 'si');
+            $esConfirmado = ($confirmarRecibido === 'si');
 
             if (!$esConfirmado) {
                 $mostrarConfirmacion = true;

@@ -10,22 +10,33 @@ $tokenCsrf = obtenerTokenCsrf();
 $idRecibido = $_GET['id'] ?? null;
 $idProducto = validarId($idRecibido);
 
-if ($idRecibido === null || trim((string)$idRecibido) === '' || $idProducto === null) {
+if ($idRecibido === null || $idProducto === null) {
     http_response_code(400);
     exit('ID de producto no válido.');
 }
 
-$sentencia = $conexion->prepare('SELECT nombre, unidad_medida, stock, precio_unitario FROM productos WHERE id_producto = ?');
-$sentencia->bind_param('i', $idProducto);
-$sentencia->execute();
-$sentencia->bind_result($nombreProducto, $unidadMedida, $stockActual, $precioUnitario);
-$existe = $sentencia->fetch();
-$sentencia->close();
+try {
+    $sentencia = $conexion->prepare('SELECT nombre, unidad_medida, stock, precio_unitario FROM productos WHERE id_producto = ?');
+    $sentencia->bind_param('i', $idProducto);
+    $sentencia->execute();
+    $sentencia->bind_result($nombreProducto, $unidadMedida, $stockActual, $precioUnitario);
+    $existe = $sentencia->fetch();
+    $sentencia->close();
+} catch (Throwable $e) {
+    registrarErrorServidor('leer_producto_editar', $e);
+    http_response_code(500);
+    exit('No se pudo cargar la información del producto. Inténtalo de nuevo más tarde.');
+}
 
 if (!$existe) {
     http_response_code(404);
     exit('No se encontró el producto.');
 }
+
+$nombreFormulario = $nombreProducto;
+$unidadFormulario = $unidadMedida;
+$stockFormulario = $stockActual;
+$precioFormulario = $precioUnitario;
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $nombreRecibido = $_POST['nombre'] ?? null;
@@ -33,22 +44,35 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $stockRecibido = $_POST['stock'] ?? null;
     $precioRecibido = $_POST['precio_unitario'] ?? null;
 
-    $nombreNuevo = ($nombreRecibido !== null) ? trim((string)$nombreRecibido) : '';
-    $unidadNueva = ($unidadRecibida !== null) ? trim((string)$unidadRecibida) : '';
-    $stockTexto = ($stockRecibido !== null) ? trim((string)$stockRecibido) : '';
-    $precioNuevo = ($precioRecibido !== null) ? trim((string)$precioRecibido) : '';
+    $datosPostValidos = is_string($nombreRecibido)
+        && is_string($unidadRecibida)
+        && is_string($stockRecibido)
+        && is_string($precioRecibido);
+
+    $nombreFormulario = is_string($nombreRecibido) ? $nombreRecibido : '';
+    $unidadFormulario = is_string($unidadRecibida) ? $unidadRecibida : '';
+    $stockFormulario = is_string($stockRecibido) ? $stockRecibido : '';
+    $precioFormulario = is_string($precioRecibido) ? $precioRecibido : '';
+
+    $nombreNuevo = is_string($nombreRecibido) ? trim($nombreRecibido) : '';
+    $unidadNueva = is_string($unidadRecibida) ? trim($unidadRecibida) : '';
+    $stockTexto = is_string($stockRecibido) ? trim($stockRecibido) : '';
+    $precioNuevo = is_string($precioRecibido) ? trim($precioRecibido) : '';
 
     $stockNuevo = filter_var($stockTexto, FILTER_VALIDATE_INT);
 
-    if ($tokenCsrf !== null && !validarTokenCsrf($_POST['csrf_token'] ?? null)) {
+    if (!validarTokenCsrf($_POST['csrf_token'] ?? null)) {
+        http_response_code(403);
         $mensajeError = 'No se pudo validar la solicitud. Actualiza la página e inténtalo de nuevo.';
-    } elseif ($nombreRecibido === null || $nombreNuevo === '' || longitudTexto($nombreNuevo) > 100) {
+    } elseif (!$datosPostValidos) {
+        $mensajeError = 'Los datos enviados no tienen el formato esperado.';
+    } elseif ($nombreNuevo === '' || longitudTexto($nombreNuevo) > 100) {
         $mensajeError = 'El nombre es obligatorio y admite hasta 100 caracteres.';
-    } elseif ($unidadRecibida === null || $unidadNueva === '' || longitudTexto($unidadNueva) > 20) {
+    } elseif ($unidadNueva === '' || longitudTexto($unidadNueva) > 20) {
         $mensajeError = 'La unidad es obligatoria y admite hasta 20 caracteres.';
-    } elseif ($stockRecibido === null || $stockTexto === '' || $stockNuevo === false || $stockNuevo < 0 || $stockNuevo > 2147483647) {
+    } elseif ($stockTexto === '' || $stockNuevo === false || $stockNuevo < 0 || $stockNuevo > 2147483647) {
         $mensajeError = 'El stock debe ser un entero no negativo.';
-    } elseif ($precioRecibido === null || $precioNuevo === '' || !preg_match('/^\d{1,8}(?:\.\d{1,2})?$/', $precioNuevo)) {
+    } elseif ($precioNuevo === '' || !preg_match('/^\d{1,8}(?:\.\d{1,2})?$/', $precioNuevo)) {
         $mensajeError = 'El precio debe ser no negativo y tener máximo dos decimales.';
     } else {
         try {
@@ -70,6 +94,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     $unidadMedida = $unidadNueva;
                     $stockActual = $stockNuevo;
                     $precioUnitario = $precioNuevo;
+                    $nombreFormulario = $nombreNuevo;
+                    $unidadFormulario = $unidadNueva;
+                    $stockFormulario = $stockNuevo;
+                    $precioFormulario = $precioNuevo;
                     $mensajeExito = 'Producto actualizado correctamente.';
                 } else {
                     $mensajeError = 'No se pudo actualizar el producto.';
@@ -137,7 +165,7 @@ require __DIR__ . '/../includes/menu.php';
                         <span>Nombre del producto</span>
                         <span class="ayuda" style="margin:0;">Hasta 100 caracteres</span>
                     </label>
-                    <input id="nombre" name="nombre" type="text" maxlength="100" value="<?= h($nombreProducto) ?>" required>
+                    <input id="nombre" name="nombre" type="text" maxlength="100" value="<?= h($nombreFormulario) ?>" required>
                 </div>
 
                 <div class="campo">
@@ -145,7 +173,7 @@ require __DIR__ . '/../includes/menu.php';
                         <span>Unidad de medida</span>
                         <span class="ayuda" style="margin:0;">Hasta 20 car.</span>
                     </label>
-                    <input id="unidad_medida" name="unidad_medida" type="text" maxlength="20" value="<?= h($unidadMedida) ?>" required>
+                    <input id="unidad_medida" name="unidad_medida" type="text" maxlength="20" value="<?= h($unidadFormulario) ?>" required>
                     <span class="ayuda texto-ayuda">Nota: No se puede modificar si el producto ya cuenta con facturas registradas.</span>
                 </div>
 
@@ -154,7 +182,7 @@ require __DIR__ . '/../includes/menu.php';
                         <span>Stock disponible</span>
                         <span class="ayuda" style="margin:0;">Entero ≥ 0</span>
                     </label>
-                    <input id="stock" name="stock" type="number" min="0" max="2147483647" step="1" value="<?= h($stockActual) ?>" required>
+                    <input id="stock" name="stock" type="number" min="0" max="2147483647" step="1" value="<?= h($stockFormulario) ?>" required>
                     <span class="ayuda texto-ayuda">Unidades en inventario.</span>
                 </div>
 
@@ -163,7 +191,7 @@ require __DIR__ . '/../includes/menu.php';
                         <span>Precio unitario ($)</span>
                         <span class="ayuda" style="margin:0;">Hasta 2 decimales</span>
                     </label>
-                    <input id="precio_unitario" name="precio_unitario" type="number" min="0" max="99999999.99" step="0.01" value="<?= h($precioUnitario) ?>" required>
+                    <input id="precio_unitario" name="precio_unitario" type="number" min="0" max="99999999.99" step="0.01" value="<?= h($precioFormulario) ?>" required>
                     <span class="ayuda texto-ayuda">Valor unitario de venta.</span>
                 </div>
             </div>

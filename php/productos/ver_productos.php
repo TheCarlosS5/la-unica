@@ -6,10 +6,21 @@ $seccionActiva = 'productos';
 $tokenCsrf = obtenerTokenCsrf();
 
 $sqlProductos = 'SELECT p.id_producto, p.nombre, p.unidad_medida, p.stock, p.precio_unitario, COUNT(d.id_producto) AS total_detalles FROM productos p LEFT JOIN detalle_facturas d ON d.id_producto = p.id_producto GROUP BY p.id_producto, p.nombre, p.unidad_medida, p.stock, p.precio_unitario ORDER BY p.id_producto';
-$resultadoProductos = $conexion->query($sqlProductos);
+$productos = [];
+$errorLectura = false;
+try {
+    $resultadoProductos = $conexion->query($sqlProductos);
+    while ($producto = $resultadoProductos->fetch_assoc()) {
+        $productos[] = $producto;
+    }
+    $resultadoProductos->free();
+} catch (Throwable $e) {
+    registrarErrorServidor('leer_productos', $e);
+    $errorLectura = true;
+}
 
 $mensajeUrl = $_GET['mensaje'] ?? null;
-$mensajeTexto = ($mensajeUrl !== null) ? trim((string)$mensajeUrl) : '';
+$mensajeTexto = is_string($mensajeUrl) ? trim($mensajeUrl) : '';
 
 require __DIR__ . '/../includes/menu.php';
 ?>
@@ -44,7 +55,9 @@ require __DIR__ . '/../includes/menu.php';
     </div>
 <?php endif; ?>
 
-<?php if (!$resultadoProductos || $resultadoProductos->num_rows === 0): ?>
+<?php if ($errorLectura): ?>
+    <div class="mensaje error alerta alerta-error" role="alert">No se pudo cargar el listado de productos. Inténtalo de nuevo más tarde.</div>
+<?php elseif (count($productos) === 0): ?>
     <div class="sin-datos estado-vacio">
         <svg class="estado-vacio-icono" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
             <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z" />
@@ -75,7 +88,7 @@ require __DIR__ . '/../includes/menu.php';
                 </tr>
             </thead>
             <tbody>
-                <?php while ($producto = $resultadoProductos->fetch_assoc()): ?>
+                <?php foreach ($productos as $producto): ?>
                     <tr>
                         <td>
                             <span class="chip-id">#<?= h($producto['id_producto']) ?></span>
@@ -136,7 +149,7 @@ require __DIR__ . '/../includes/menu.php';
                             </div>
                         </td>
                     </tr>
-                <?php endwhile; ?>
+                <?php endforeach; ?>
             </tbody>
         </table>
     </div>

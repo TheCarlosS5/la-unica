@@ -3,7 +3,7 @@ require __DIR__ . '/../config/conexion.php';
 
 $titulo = 'Crear producto';
 $seccionActiva = 'productos';
-$mensajeExito = '';
+$mensajeExito = (($_GET['creado'] ?? '') === '1') ? 'Producto creado correctamente.' : '';
 $mensajeError = '';
 $tokenCsrf = obtenerTokenCsrf();
 
@@ -18,18 +18,26 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $stockRecibido = $_POST['stock'] ?? null;
     $precioRecibido = $_POST['precio_unitario'] ?? null;
 
-    $nombreProducto = ($nombreRecibido !== null) ? trim((string)$nombreRecibido) : '';
-    $unidadMedida = ($unidadRecibida !== null) ? trim((string)$unidadRecibida) : '';
-    $stockTexto = ($stockRecibido !== null) ? trim((string)$stockRecibido) : '';
-    $precioTexto = ($precioRecibido !== null) ? trim((string)$precioRecibido) : '';
+    $datosPostValidos = is_string($nombreRecibido)
+        && is_string($unidadRecibida)
+        && is_string($stockRecibido)
+        && is_string($precioRecibido);
+
+    $nombreProducto = is_string($nombreRecibido) ? trim($nombreRecibido) : '';
+    $unidadMedida = is_string($unidadRecibida) ? trim($unidadRecibida) : '';
+    $stockTexto = is_string($stockRecibido) ? trim($stockRecibido) : '';
+    $precioTexto = is_string($precioRecibido) ? trim($precioRecibido) : '';
 
     $stockValido = filter_var($stockTexto, FILTER_VALIDATE_INT);
 
     $stockInicial = $stockTexto;
     $precioUnitario = $precioTexto;
 
-    if ($tokenCsrf !== null && !validarTokenCsrf($_POST['csrf_token'] ?? null)) {
+    if (!validarTokenCsrf($_POST['csrf_token'] ?? null)) {
+        http_response_code(403);
         $mensajeError = 'No se pudo validar la solicitud. Actualiza la página e inténtalo de nuevo.';
+    } elseif (!$datosPostValidos) {
+        $mensajeError = 'Los datos enviados no tienen el formato esperado.';
     } elseif ($nombreRecibido === null || $nombreProducto === '' || longitudTexto($nombreProducto) > 100) {
         $mensajeError = 'El nombre es obligatorio y admite hasta 100 caracteres.';
     } elseif ($unidadRecibida === null || $unidadMedida === '' || longitudTexto($unidadMedida) > 20) {
@@ -44,11 +52,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $sentencia->bind_param('ssis', $nombreProducto, $unidadMedida, $stockValido, $precioTexto);
 
             if ($sentencia->execute()) {
-                $mensajeExito = 'Producto creado correctamente.';
-                $nombreProducto = '';
-                $unidadMedida = '';
-                $stockInicial = '';
-                $precioUnitario = '';
+                header('Location: crear_producto.php?creado=1', true, 303);
+                exit;
             } else {
                 $mensajeError = 'No se pudo crear el producto.';
             }
