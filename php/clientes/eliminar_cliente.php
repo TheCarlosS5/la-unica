@@ -1,73 +1,59 @@
 <?php
 require __DIR__ . '/../config/conexion.php';
 
-$titulo = 'Eliminar cliente';
-$seccionActiva = 'clientes';
+$id = id_valido($_POST['id_cliente'] ?? '');
+$mensaje = '';
+$error = false;
+$confirmar = false;
+$nombre = '';
 
-$mensajeResultado = '';
-$esError = false;
-$mostrarConfirmacion = false;
-$nombreCliente = '';
-
-$idRecibido = $_POST['id_cliente'] ?? null;
-$confirmarRecibido = $_POST['confirmar'] ?? null;
-$idCliente = validarId($idRecibido);
-
-if (($_SERVER['REQUEST_METHOD'] ?? 'GET') !== 'POST' || $idRecibido === null || trim((string)$idRecibido) === '' || $idCliente === null) {
+if (($_SERVER['REQUEST_METHOD'] ?? 'GET') !== 'POST' || $id === null) {
     http_response_code(400);
-    $mensajeResultado = 'Solicitud no válida.';
-    $esError = true;
+    $mensaje = 'Solicitud no válida.';
+    $error = true;
 } else {
-    try {
-        $consulta = $conexion->prepare('SELECT nombre FROM clientes WHERE id_cliente = ?');
-        $consulta->bind_param('i', $idCliente);
-        $consulta->execute();
-        $consulta->bind_result($nombreCliente);
-        $existe = $consulta->fetch();
-        $consulta->close();
+    $consulta = $conexion->prepare('SELECT nombre FROM clientes WHERE id_cliente=?');
+    $consulta->bind_param('i', $id);
+    $consulta->execute();
+    $consulta->bind_result($nombre);
 
-        if (!$existe) {
-            http_response_code(404);
-            $mensajeResultado = 'No se encontró el cliente.';
-            $esError = true;
+    if (!$consulta->fetch()) {
+        http_response_code(404);
+        $mensaje = 'No se encontró el cliente.';
+        $error = true;
+    }
+    $consulta->close();
+
+    if (!$error) {
+        if (($_POST['confirmar'] ?? '') !== 'si') {
+            $confirmar = true;
         } else {
-            $esConfirmado = ($confirmarRecibido !== null && trim((string)$confirmarRecibido) === 'si');
+            $relaciones = $conexion->prepare('SELECT COUNT(*) FROM facturas WHERE id_cliente=?');
+            $relaciones->bind_param('i', $id);
+            $relaciones->execute();
+            $relaciones->bind_result($total);
+            $relaciones->fetch();
+            $relaciones->close();
 
-            if (!$esConfirmado) {
-                $mostrarConfirmacion = true;
+            if ($total > 0) {
+                $mensaje = 'No se puede eliminar: el cliente tiene facturas asociadas.';
+                $error = true;
             } else {
-                $checkFacturas = $conexion->prepare('SELECT COUNT(*) FROM facturas WHERE id_cliente = ?');
-                $checkFacturas->bind_param('i', $idCliente);
-                $checkFacturas->execute();
-                $checkFacturas->bind_result($totalFacturas);
-                $checkFacturas->fetch();
-                $checkFacturas->close();
-
-                if ($totalFacturas > 0) {
-                    $mensajeResultado = 'No se puede eliminar: el cliente tiene facturas asociadas.';
-                    $esError = true;
-                } else {
-                    $eliminar = $conexion->prepare('DELETE FROM clientes WHERE id_cliente = ?');
-                    $eliminar->bind_param('i', $idCliente);
-                    $ejecutado = $eliminar->execute();
-
-                    if ($ejecutado && $eliminar->affected_rows === 1) {
-                        $mensajeResultado = 'Cliente eliminado correctamente.';
-                        $esError = false;
-                    } else {
-                        $mensajeResultado = 'No se encontró el cliente o no se pudo eliminar.';
-                        $esError = true;
-                    }
-                    $eliminar->close();
-                }
+                $eliminar = $conexion->prepare('DELETE FROM clientes WHERE id_cliente=?');
+                $eliminar->bind_param('i', $id);
+                $ejecutado = $eliminar->execute();
+                $mensaje = $ejecutado && $eliminar->affected_rows === 1
+                    ? 'Cliente eliminado correctamente.'
+                    : 'No se encontró el cliente o no se pudo eliminar.';
+                $error = !$ejecutado || $eliminar->affected_rows !== 1;
+                $eliminar->close();
             }
         }
-    } catch (Throwable $e) {
-        $mensajeResultado = 'Error en el servidor al procesar la eliminación.';
-        $esError = true;
     }
 }
 
+$titulo = 'Eliminar cliente';
+$seccionActiva = 'clientes';
 require __DIR__ . '/../includes/menu.php';
 ?>
 <div class="encabezado-vista">
@@ -79,19 +65,19 @@ require __DIR__ . '/../includes/menu.php';
             <span class="miga-separador" aria-hidden="true">/</span>
             <span>Baja de cliente</span>
         </nav>
-        <h1 class="encabezado-titulo"><?= $mostrarConfirmacion ? 'Confirmar eliminación' : 'Estado de la operación' ?></h1>
+        <h1 class="encabezado-titulo"><?= $confirmar ? 'Confirmar eliminación' : 'Estado de la operación' ?></h1>
         <p class="encabezado-descripcion">Protocolo de seguridad para preservación de registros comerciales e integridad referencial.</p>
     </div>
 </div>
 
-<?php if ($mostrarConfirmacion): ?>
+<?php if ($confirmar): ?>
     <section class="panel-confirmacion" aria-labelledby="titulo-confirmacion">
         <div class="panel-confirmacion-cabecera">
             <div class="panel-confirmacion-icono" aria-hidden="true">
                 <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" />
-                    <line x1="12" y1="9" x2="12" y2="13" />
-                    <line x1="12" y1="17" x2="12.01" y2="17" />
+                    <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
+                    <line x1="12" y1="9" x2="12" y2="13"/>
+                    <line x1="12" y1="17" x2="12.01" y2="17"/>
                 </svg>
             </div>
             <div>
@@ -107,29 +93,29 @@ require __DIR__ . '/../includes/menu.php';
 
             <dl class="tarjeta-registro-eliminar">
                 <dt>ID Cliente</dt>
-                <dd><span class="chip-id">#<?= h($idCliente) ?></span></dd>
+                <dd><span class="chip-id">#<?= h($id) ?></span></dd>
                 <dt>Nombre</dt>
-                <dd><?= h($nombreCliente) ?></dd>
+                <dd><?= h($nombre) ?></dd>
             </dl>
 
             <div class="nota nota-informativa" style="margin: 0;">
                 <svg class="nota-icono" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                    <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
-                    <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+                    <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+                    <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
                 </svg>
                 <span>Validación de relaciones: Si el cliente posee facturas asociadas en la base de datos, la eliminación será rechazada automáticamente.</span>
             </div>
         </div>
 
         <form method="post" action="eliminar_cliente.php">
-            <input type="hidden" name="id_cliente" value="<?= h($idCliente) ?>">
+            <input type="hidden" name="id_cliente" value="<?= h($id) ?>">
             <input type="hidden" name="confirmar" value="si">
             <div class="panel-confirmacion-pie">
                 <a class="boton secundario" href="ver_clientes.php">Cancelar</a>
                 <button type="submit" class="boton-peligro-solido">
                     <svg class="boton-icono" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                        <polyline points="3 6 5 6 21 6" />
-                        <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
+                        <polyline points="3 6 5 6 21 6"/>
+                        <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
                     </svg>
                     <span>Confirmar eliminación</span>
                 </button>
@@ -139,27 +125,27 @@ require __DIR__ . '/../includes/menu.php';
 <?php else: ?>
     <div class="panel-formulario-wrap">
         <div class="tarjeta-formulario" style="max-width: 580px; text-align: center;">
-            <div class="alerta <?= $esError ? 'mensaje error alerta-error' : 'mensaje alerta' ?>" style="text-align: left;" role="<?= $esError ? 'alert' : 'status' ?>">
+            <div class="alerta <?= $error ? 'mensaje error alerta-error' : 'mensaje alerta' ?>" style="text-align: left;" role="<?= $error ? 'alert' : 'status' ?>">
                 <svg class="alerta-icono" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                    <?php if ($esError): ?>
-                        <circle cx="12" cy="12" r="10" />
-                        <line x1="12" y1="8" x2="12" y2="12" />
-                        <line x1="12" y1="16" x2="12.01" y2="16" />
+                    <?php if ($error): ?>
+                        <circle cx="12" cy="12" r="10"/>
+                        <line x1="12" y1="8" x2="12" y2="12"/>
+                        <line x1="12" y1="16" x2="12.01" y2="16"/>
                     <?php else: ?>
-                        <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
-                        <polyline points="22 4 12 14.01 9 11.01" />
+                        <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+                        <polyline points="22 4 12 14.01 9 11.01"/>
                     <?php endif; ?>
                 </svg>
                 <div class="alerta-contenido">
-                    <strong><?= $esError ? 'Operación bloqueada' : 'Operación exitosa' ?>:</strong> <?= h($mensajeResultado) ?>
+                    <strong><?= $error ? 'Operación bloqueada' : 'Operación exitosa' ?>:</strong> <?= h($mensaje) ?>
                 </div>
             </div>
 
             <div style="margin-top: 24px;">
                 <a class="boton" href="ver_clientes.php">
                     <svg class="boton-icono" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                        <line x1="19" y1="12" x2="5" y2="12" />
-                        <polyline points="12 19 5 12 12 5" />
+                        <line x1="19" y1="12" x2="5" y2="12"/>
+                        <polyline points="12 19 5 12 12 5"/>
                     </svg>
                     <span>Volver a clientes</span>
                 </a>
