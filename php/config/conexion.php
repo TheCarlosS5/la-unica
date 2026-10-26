@@ -74,7 +74,7 @@ if (!function_exists('obtenerTokenCsrf')) {
                 $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
             } catch (Throwable $e) {
                 registrarErrorServidor('token_csrf', $e);
-                throw $e;
+                return null;
             }
         }
 
@@ -95,7 +95,7 @@ if (!function_exists('validarTokenCsrf')) {
 
 if (!function_exists('validarId')) {
     function validarId($valor) {
-        if ($valor === null || $valor === '') {
+        if ((!is_string($valor) && !is_int($valor)) || $valor === '') {
             return null;
         }
         $id = filter_var($valor, FILTER_VALIDATE_INT);
