@@ -1,47 +1,36 @@
-        </main>
-        <footer class="pie-app" role="contentinfo">
-            <div class="pie-inner">
-                <span class="pie-marca">La Única</span>
-                <span class="pie-separador" aria-hidden="true">·</span>
-                <span>Administración local de clientes y productos</span>
-            </div>
-        </footer>
-    </div>
-</div>
+<?php
+// ===================================================================
+// pie.php
+// Parte de abajo de todas las páginas. Cierra lo que abrió menu.php
+// y carga los scripts.
+// ===================================================================
+?>
+</main>
 
 <script>
-(function() {
-    var sidebar = document.getElementById('barra-lateral');
-    var backdrop = document.getElementById('drawer-backdrop');
-    var btnAbrir = document.getElementById('btn-abrir-drawer');
-    var btnCerrar = document.getElementById('btn-cerrar-drawer');
-    if (!sidebar || !btnAbrir) return;
-
-    function abrirMenu() {
-        sidebar.classList.add('abierto');
-        if (backdrop) backdrop.classList.add('visible');
-        btnAbrir.setAttribute('aria-expanded', 'true');
-        document.body.classList.add('drawer-bloqueado');
-        if (btnCerrar) btnCerrar.focus();
-    }
-
-    function cerrarMenu() {
-        sidebar.classList.remove('abierto');
-        if (backdrop) backdrop.classList.remove('visible');
-        btnAbrir.setAttribute('aria-expanded', 'false');
-        document.body.classList.remove('drawer-bloqueado');
-        btnAbrir.focus();
-    }
-
-    btnAbrir.addEventListener('click', abrirMenu);
-    if (btnCerrar) btnCerrar.addEventListener('click', cerrarMenu);
-    if (backdrop) backdrop.addEventListener('click', cerrarMenu);
-    document.addEventListener('keydown', function(e) {
-        if (e.key === 'Escape' && sidebar.classList.contains('abierto')) {
-            cerrarMenu();
-        }
+    // Botón de modo claro / oscuro: cambia el tema y lo recuerda.
+    document.getElementById('cambiar-tema').addEventListener('click', function () {
+        var html = document.documentElement;
+        var nuevo = html.getAttribute('data-bs-theme') === 'dark' ? 'light' : 'dark';
+        html.setAttribute('data-bs-theme', nuevo);
+        try { localStorage.setItem('tema', nuevo); } catch (e) {}
     });
-})();
+
+    // Buscador: oculta las filas/tarjetas cuyo data-buscar no contiene el texto.
+    var buscador = document.querySelector('[data-buscador]');
+    if (buscador) {
+        buscador.addEventListener('input', function () {
+            var texto = buscador.value.toLowerCase().trim();
+            var visibles = 0;
+            document.querySelectorAll('[data-buscar]').forEach(function (elemento) {
+                var coincide = elemento.dataset.buscar.toLowerCase().includes(texto);
+                elemento.hidden = !coincide;
+                if (coincide) visibles++;
+            });
+            document.querySelector('.sin-resultados').hidden = visibles > 0;
+        });
+    }
 </script>
+
 </body>
 </html>
