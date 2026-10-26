@@ -1,166 +1,85 @@
 <?php
+// ===================================================================
+// editar_producto.php  (la "U" de CRUD: Update / Actualizar)
+// Carga el producto por su ID (?id=5), muestra el formulario
+// con sus datos y guarda los cambios.
+// Si el producto ya está en facturas, el código y la unidad no cambian
+// (las facturas viejas seguirían apuntando a otro artículo).
+// El precio sí puede cambiar: las facturas viejas guardan su propio precio.
+// ===================================================================
 require __DIR__ . '/../config/conexion.php';
 $titulo = 'Editar producto';
 $seccionActiva = 'productos';
-$id = id_valido($_GET['id'] ?? '');
-$error = '';
-$mensaje = '';
 
+$mensaje = '';
+$error = '';
+
+// 1. Leer el ID de la URL y validarlo.
+$id = id_valido($_GET['id'] ?? '');
 if ($id === null) {
     http_response_code(400);
     exit('ID de producto no válido.');
 }
 
-$stmt = $conexion->prepare('SELECT nombre,unidad_medida,stock,precio_unitario FROM productos WHERE id_producto=?');
+// 2. Traer los datos actuales y en cuántas facturas aparece.
+$stmt = $conexion->prepare('SELECT codigo, nombre, descripcion, unidad_medida, precio, stock,
+                                   (SELECT COUNT(*) FROM detalle_factura WHERE id_producto = productos.id_producto) AS ventas
+                            FROM productos WHERE id_producto = ?');
 $stmt->bind_param('i', $id);
 $stmt->execute();
-$stmt->bind_result($nombre, $unidad, $stock, $precio);
-$existe = $stmt->fetch();
+$p = $stmt->get_result()->fetch_assoc();
 $stmt->close();
 
-if (!$existe) {
+if (!$p) {
     http_response_code(404);
     exit('No se encontró el producto.');
 }
+// La base devuelve el stock con 3 decimales ("5.000"); lo mostramos como "5".
+$p['stock'] = rtrim(rtrim($p['stock'], '0'), '.');
+$bloquearClave = (int)$p['ventas'] > 0;
 
+// 3. Si enviaron el formulario, validar y guardar.
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $nombre = trim((string)($_POST['nombre'] ?? ''));
-    $unidadNueva = trim((string)($_POST['unidad_medida'] ?? ''));
-    $stockTexto = trim((string)($_POST['stock'] ?? ''));
-    $precio = trim((string)($_POST['precio_unitario'] ?? ''));
-    $stockNuevo = filter_var($stockTexto, FILTER_VALIDATE_INT);
+    $entrada = $_POST;
+    if ($bloquearClave) {
+        // Usamos el código y la unidad que ya estaban guardados.
+        $entrada['codigo'] = $p['codigo'];
+        $entrada['unidad_medida'] = $p['unidad_medida'];
+    }
+    [$nuevo, $error] = validar_producto($entrada);
+    $p = array_merge($p, $nuevo);
 
-    if ($nombre === '' || texto_largo($nombre) > 100) {
-        $error = 'El nombre es obligatorio y admite hasta 100 caracteres.';
-    } elseif ($unidadNueva === '' || texto_largo($unidadNueva) > 20) {
-        $error = 'La unidad es obligatoria y admite hasta 20 caracteres.';
-    } elseif ($stockNuevo === false || $stockNuevo < 0 || $stockNuevo > 2147483647) {
-        $error = 'El stock debe ser un entero no negativo.';
-    } elseif (!preg_match('/^\d{1,8}(?:\.\d{1,2})?$/', $precio)) {
-        $error = 'El precio debe ser no negativo y tener máximo dos decimales.';
-    } else {
-        $check = $conexion->prepare('SELECT COUNT(*) FROM detalle_facturas WHERE id_producto=?');
-        $check->bind_param('i', $id);
-        $check->execute();
-        $check->bind_result($detalles);
-        $check->fetch();
-        $check->close();
+    if ($error === '') {
+        $up = $conexion->prepare('UPDATE productos SET codigo = ?, nombre = ?, descripcion = ?, unidad_medida = ?, precio = ?, stock = ? WHERE id_producto = ?');
+        $up->bind_param('ssssssi', $p['codigo'], $p['nombre'], $p['descripcion'], $p['unidad_medida'], $p['precio'], $p['stock'], $id);
 
-        if ($unidadNueva !== $unidad && $detalles > 0) {
-            $error = 'No se puede cambiar la unidad: el producto ya aparece en facturas.';
+        if ($up->execute()) {
+            $mensaje = 'Producto actualizado correctamente.';
+        } elseif ($conexion->errno === 1062) {
+            $error = 'Ya existe otro producto con ese código.';
         } else {
-            $up = $conexion->prepare('UPDATE productos SET nombre=?,unidad_medida=?,stock=?,precio_unitario=? WHERE id_producto=?');
-            $up->bind_param('ssisi', $nombre, $unidadNueva, $stockNuevo, $precio, $id);
-            if ($up->execute()) {
-                $unidad = $unidadNueva;
-                $stock = $stockNuevo;
-                $mensaje = 'Producto actualizado correctamente.';
-            } else {
-                $error = 'No se pudo actualizar el producto.';
-            }
+            $error = 'No se pudo actualizar el producto.';
         }
     }
 }
+
+$textoBoton = 'Guardar cambios';
 require __DIR__ . '/../includes/menu.php';
 ?>
-<div class="encabezado-vista">
-    <div class="encabezado-info">
-        <nav class="miga-pan" aria-label="Ruta de navegación">
-            <a href="<?= h($baseUrl) ?>/main.php">Inicio</a>
-            <span class="miga-separador" aria-hidden="true">/</span>
-            <a href="ver_productos.php">Productos</a>
-            <span class="miga-separador" aria-hidden="true">/</span>
-            <span>Editar producto #<?= h($id) ?></span>
-        </nav>
-        <h1 class="encabezado-titulo">Editar producto</h1>
-        <p class="encabezado-descripcion">Modifica el catálogo de artículos, existencias disponibles y precio unitario.</p>
-    </div>
-</div>
+<a class="volver" href="ver_productos.php">← Productos</a>
 
-<div class="panel-formulario-wrap">
-    <div class="formulario tarjeta-formulario">
-        <div class="tarjeta-id-fijo">
-            <span class="etiqueta">Identificador fijo</span>
-            <span class="valor">#<?= h($id) ?></span>
+<div class="tarjeta formulario aparecer">
+    <div class="formulario-cabecera">
+        <img class="miniatura" src="<?= h(foto_producto($p['nombre'])) ?>" alt="">
+        <div>
+            <h1 class="h4 mb-1">Editar producto</h1>
+            <p class="text-secondary mb-0">Producto #<?= h($id) ?></p>
         </div>
-
-        <?php if ($mensaje !== ''): ?>
-            <div class="mensaje alerta" role="status">
-                <svg class="alerta-icono" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                    <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
-                    <polyline points="22 4 12 14.01 9 11.01"/>
-                </svg>
-                <div class="alerta-contenido"><?= h($mensaje) ?></div>
-            </div>
-        <?php endif; ?>
-
-        <?php if ($error !== ''): ?>
-            <div class="mensaje error alerta alerta-error" role="alert">
-                <svg class="alerta-icono" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                    <circle cx="12" cy="12" r="10"/>
-                    <line x1="12" y1="8" x2="12" y2="12"/>
-                    <line x1="12" y1="16" x2="12.01" y2="16"/>
-                </svg>
-                <div class="alerta-contenido"><?= h($error) ?></div>
-            </div>
-        <?php endif; ?>
-
-        <form method="post">
-            <div class="formulario-grid">
-                <div class="campo col-completa">
-                    <label for="nombre">
-                        <span>Nombre del producto</span>
-                        <span class="ayuda" style="margin:0;">Hasta 100 caracteres</span>
-                    </label>
-                    <input id="nombre" name="nombre" type="text" maxlength="100" value="<?= h($nombre) ?>" required>
-                </div>
-
-                <div class="campo">
-                    <label for="unidad_medida">
-                        <span>Unidad de medida</span>
-                        <span class="ayuda" style="margin:0;">Hasta 20 car.</span>
-                    </label>
-                    <input id="unidad_medida" name="unidad_medida" type="text" maxlength="20" value="<?= h($unidad) ?>" required>
-                    <span class="ayuda texto-ayuda">Nota: No se puede modificar si el producto ya cuenta con facturas registradas.</span>
-                </div>
-
-                <div class="campo">
-                    <label for="stock">
-                        <span>Stock disponible</span>
-                        <span class="ayuda" style="margin:0;">Entero ≥ 0</span>
-                    </label>
-                    <input id="stock" name="stock" type="number" min="0" max="2147483647" step="1" value="<?= h($stock) ?>" required>
-                    <span class="ayuda texto-ayuda">Unidades en inventario.</span>
-                </div>
-
-                <div class="campo col-completa">
-                    <label for="precio_unitario">
-                        <span>Precio unitario ($)</span>
-                        <span class="ayuda" style="margin:0;">Hasta 2 decimales</span>
-                    </label>
-                    <input id="precio_unitario" name="precio_unitario" type="number" min="0" max="99999999.99" step="0.01" value="<?= h($precio) ?>" required>
-                    <span class="ayuda texto-ayuda">Valor unitario de venta.</span>
-                </div>
-            </div>
-
-            <div class="fila-botones">
-                <button type="submit">
-                    <svg class="boton-icono" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                        <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/>
-                        <polyline points="17 21 17 13 7 13 7 21"/>
-                        <polyline points="7 3 7 8 15 8"/>
-                    </svg>
-                    <span>Guardar cambios</span>
-                </button>
-                <a class="boton secundario" href="ver_productos.php">
-                    <svg class="boton-icono" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                        <line x1="19" y1="12" x2="5" y2="12"/>
-                        <polyline points="12 19 5 12 12 5"/>
-                    </svg>
-                    <span>Volver</span>
-                </a>
-            </div>
-        </form>
     </div>
+
+    <?= alerta($mensaje) ?>
+    <?= alerta($error, 'error') ?>
+
+    <?php require __DIR__ . '/../includes/form_producto.php'; ?>
 </div>
 <?php require __DIR__ . '/../includes/pie.php'; ?>
