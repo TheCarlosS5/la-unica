@@ -3,6 +3,7 @@ require __DIR__ . '/../config/conexion.php';
 
 $titulo = 'Productos';
 $seccionActiva = 'productos';
+$tokenCsrf = obtenerTokenCsrf();
 
 $sqlProductos = 'SELECT p.id_producto, p.nombre, p.unidad_medida, p.stock, p.precio_unitario, COUNT(d.id_producto) AS total_detalles FROM productos p LEFT JOIN detalle_facturas d ON d.id_producto = p.id_producto GROUP BY p.id_producto, p.nombre, p.unidad_medida, p.stock, p.precio_unitario ORDER BY p.id_producto';
 $resultadoProductos = $conexion->query($sqlProductos);
@@ -111,6 +112,9 @@ require __DIR__ . '/../includes/menu.php';
                                 </a>
                                 <?php if ((int)$producto['total_detalles'] === 0): ?>
                                     <form method="post" action="eliminar_producto.php" onsubmit="return confirm('¿Eliminar este producto?')">
+                                        <?php if ($tokenCsrf !== null): ?>
+                                            <input type="hidden" name="csrf_token" value="<?= h($tokenCsrf) ?>">
+                                        <?php endif; ?>
                                         <input type="hidden" name="id_producto" value="<?= h($producto['id_producto']) ?>">
                                         <button type="submit" class="boton-peligro" title="Eliminar producto #<?= h($producto['id_producto']) ?>">
                                             <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">

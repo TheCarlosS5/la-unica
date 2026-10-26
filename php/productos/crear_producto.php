@@ -5,6 +5,7 @@ $titulo = 'Crear producto';
 $seccionActiva = 'productos';
 $mensajeExito = '';
 $mensajeError = '';
+$tokenCsrf = obtenerTokenCsrf();
 
 $nombreProducto = '';
 $unidadMedida = '';
@@ -27,7 +28,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $stockInicial = $stockTexto;
     $precioUnitario = $precioTexto;
 
-    if ($nombreRecibido === null || $nombreProducto === '' || longitudTexto($nombreProducto) > 100) {
+    if ($tokenCsrf !== null && !validarTokenCsrf($_POST['csrf_token'] ?? null)) {
+        $mensajeError = 'No se pudo validar la solicitud. Actualiza la página e inténtalo de nuevo.';
+    } elseif ($nombreRecibido === null || $nombreProducto === '' || longitudTexto($nombreProducto) > 100) {
         $mensajeError = 'El nombre es obligatorio y admite hasta 100 caracteres.';
     } elseif ($unidadRecibida === null || $unidadMedida === '' || longitudTexto($unidadMedida) > 20) {
         $mensajeError = 'La unidad es obligatoria y admite hasta 20 caracteres.';
@@ -51,6 +54,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             }
             $sentencia->close();
         } catch (Throwable $e) {
+            registrarErrorServidor('crear_producto', $e);
             $mensajeError = 'No se pudo crear el producto.';
         }
     }
@@ -96,6 +100,9 @@ require __DIR__ . '/../includes/menu.php';
         <?php endif; ?>
 
         <form method="post">
+            <?php if ($tokenCsrf !== null): ?>
+                <input type="hidden" name="csrf_token" value="<?= h($tokenCsrf) ?>">
+            <?php endif; ?>
             <div class="formulario-grid">
                 <div class="campo col-completa">
                     <label for="nombre">

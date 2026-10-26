@@ -2,7 +2,7 @@
 mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
 
 try {
-    $conexion = new mysqli('127.0.0.1', 'root', 'root', 'la_unica', 3306);
+    $conexion = new mysqli('127.0.0.1', 'root', '', 'la_unica', 3306);
     $conexion->set_charset('utf8mb4');
 } catch (Throwable $e) {
     http_response_code(500);
@@ -25,6 +25,71 @@ if (!function_exists('escaparHtml')) {
 if (!function_exists('h')) {
     function h($valor) {
         return escaparHtml($valor);
+    }
+}
+
+if (!function_exists('registrarErrorServidor')) {
+    function registrarErrorServidor($contexto, Throwable $error) {
+        $detalle = preg_replace('/[\r\n]+/', ' ', $error->getMessage());
+        $registro = '[' . (string)$contexto . '] ' . get_class($error) . ' (' . (string)$error->getCode() . '): ' . $detalle;
+        if ($error instanceof mysqli_sql_exception) {
+            $registro .= ' SQLSTATE=' . $error->getSqlState();
+        }
+        error_log($registro);
+    }
+}
+
+if (!function_exists('sesionDisponible')) {
+    function sesionDisponible() {
+        if (!function_exists('session_status') || !function_exists('session_start') || session_status() === PHP_SESSION_DISABLED) {
+            return false;
+        }
+
+        if (session_status() === PHP_SESSION_NONE) {
+            if (headers_sent()) {
+                return false;
+            }
+            try {
+                if (!session_start()) {
+                    return false;
+                }
+            } catch (Throwable $e) {
+                registrarErrorServidor('sesion_csrf', $e);
+                return false;
+            }
+        }
+
+        return session_status() === PHP_SESSION_ACTIVE;
+    }
+}
+
+if (!function_exists('obtenerTokenCsrf')) {
+    function obtenerTokenCsrf() {
+        if (!sesionDisponible()) {
+            return null;
+        }
+
+        if (!isset($_SESSION['csrf_token']) || !is_string($_SESSION['csrf_token']) || $_SESSION['csrf_token'] === '') {
+            try {
+                $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
+            } catch (Throwable $e) {
+                registrarErrorServidor('token_csrf', $e);
+                throw $e;
+            }
+        }
+
+        return $_SESSION['csrf_token'];
+    }
+}
+
+if (!function_exists('validarTokenCsrf')) {
+    function validarTokenCsrf($tokenRecibido) {
+        if (!is_string($tokenRecibido)) {
+            return false;
+        }
+
+        $tokenEsperado = obtenerTokenCsrf();
+        return $tokenEsperado !== null && hash_equals($tokenEsperado, $tokenRecibido);
     }
 }
 
@@ -65,7 +130,15 @@ if (!function_exists('longitudTexto')) {
         if ($valor === null) {
             return 0;
         }
-        return function_exists('mb_strlen') ? mb_strlen((string)$valor, 'UTF-8') : strlen((string)$valor);
+
+        $texto = (string)$valor;
+        if (function_exists('mb_strlen')) {
+            return mb_strlen($texto, 'UTF-8');
+        }
+
+        $coincidencias = [];
+        $longitudUtf8 = preg_match_all('/./us', $texto, $coincidencias);
+        return ($longitudUtf8 !== false) ? $longitudUtf8 : strlen($texto);
     }
 }
 

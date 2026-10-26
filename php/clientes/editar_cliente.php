@@ -5,6 +5,7 @@ $titulo = 'Editar cliente';
 $seccionActiva = 'clientes';
 $mensajeExito = '';
 $mensajeError = '';
+$tokenCsrf = obtenerTokenCsrf();
 
 $idRecibido = $_GET['id'] ?? null;
 $idCliente = validarId($idRecibido);
@@ -28,28 +29,26 @@ if (!$existe) {
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $nombreRecibido = $_POST['nombre'] ?? null;
-    $fechaRecibida = $_POST['fecha_registro'] ?? null;
 
     $nombreLimpio = ($nombreRecibido !== null) ? trim((string)$nombreRecibido) : '';
-    $fechaLimpia = ($fechaRecibida !== null) ? trim((string)$fechaRecibida) : '';
 
-    if ($nombreRecibido === null || $nombreLimpio === '' || longitudTexto($nombreLimpio) > 100) {
+    if ($tokenCsrf !== null && !validarTokenCsrf($_POST['csrf_token'] ?? null)) {
+        $mensajeError = 'No se pudo validar la solicitud. Actualiza la página e inténtalo de nuevo.';
+    } elseif ($nombreRecibido === null || $nombreLimpio === '' || longitudTexto($nombreLimpio) > 100) {
         $mensajeError = 'El nombre es obligatorio y admite hasta 100 caracteres.';
-    } elseif ($fechaRecibida === null || $fechaLimpia === '' || !validarFecha($fechaLimpia)) {
-        $mensajeError = 'La fecha no es válida.';
     } else {
         try {
-            $actualizar = $conexion->prepare('UPDATE clientes SET nombre = ?, fecha_registro = ? WHERE id_cliente = ?');
-            $actualizar->bind_param('ssi', $nombreLimpio, $fechaLimpia, $idCliente);
+            $actualizar = $conexion->prepare('UPDATE clientes SET nombre = ? WHERE id_cliente = ?');
+            $actualizar->bind_param('si', $nombreLimpio, $idCliente);
             if ($actualizar->execute()) {
                 $nombreCliente = $nombreLimpio;
-                $fechaRegistro = $fechaLimpia;
                 $mensajeExito = 'Cliente actualizado correctamente.';
             } else {
                 $mensajeError = 'No se pudo actualizar el cliente.';
             }
             $actualizar->close();
         } catch (Throwable $e) {
+            registrarErrorServidor('editar_cliente', $e);
             $mensajeError = 'No se pudo actualizar el cliente.';
         }
     }
@@ -100,6 +99,9 @@ require __DIR__ . '/../includes/menu.php';
         <?php endif; ?>
 
         <form method="post">
+            <?php if ($tokenCsrf !== null): ?>
+                <input type="hidden" name="csrf_token" value="<?= h($tokenCsrf) ?>">
+            <?php endif; ?>
             <div class="campo">
                 <label for="nombre">
                     <span>Nombre del cliente</span>
@@ -113,7 +115,7 @@ require __DIR__ . '/../includes/menu.php';
                     <span>Fecha de registro</span>
                     <span class="ayuda" style="margin:0;">Formato YYYY-MM-DD</span>
                 </label>
-                <input id="fecha_registro" name="fecha_registro" type="date" value="<?= h($fechaRegistro) ?>" required>
+                <input id="fecha_registro" name="fecha_registro" type="date" value="<?= h($fechaRegistro) ?>" readonly aria-readonly="true" required>
             </div>
 
             <div class="fila-botones">

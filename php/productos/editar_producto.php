@@ -5,6 +5,7 @@ $titulo = 'Editar producto';
 $seccionActiva = 'productos';
 $mensajeExito = '';
 $mensajeError = '';
+$tokenCsrf = obtenerTokenCsrf();
 
 $idRecibido = $_GET['id'] ?? null;
 $idProducto = validarId($idRecibido);
@@ -39,7 +40,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     $stockNuevo = filter_var($stockTexto, FILTER_VALIDATE_INT);
 
-    if ($nombreRecibido === null || $nombreNuevo === '' || longitudTexto($nombreNuevo) > 100) {
+    if ($tokenCsrf !== null && !validarTokenCsrf($_POST['csrf_token'] ?? null)) {
+        $mensajeError = 'No se pudo validar la solicitud. Actualiza la página e inténtalo de nuevo.';
+    } elseif ($nombreRecibido === null || $nombreNuevo === '' || longitudTexto($nombreNuevo) > 100) {
         $mensajeError = 'El nombre es obligatorio y admite hasta 100 caracteres.';
     } elseif ($unidadRecibida === null || $unidadNueva === '' || longitudTexto($unidadNueva) > 20) {
         $mensajeError = 'La unidad es obligatoria y admite hasta 20 caracteres.';
@@ -74,6 +77,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $actualizar->close();
             }
         } catch (Throwable $e) {
+            registrarErrorServidor('editar_producto', $e);
             $mensajeError = 'No se pudo actualizar el producto.';
         }
     }
@@ -124,6 +128,9 @@ require __DIR__ . '/../includes/menu.php';
         <?php endif; ?>
 
         <form method="post">
+            <?php if ($tokenCsrf !== null): ?>
+                <input type="hidden" name="csrf_token" value="<?= h($tokenCsrf) ?>">
+            <?php endif; ?>
             <div class="formulario-grid">
                 <div class="campo col-completa">
                     <label for="nombre">

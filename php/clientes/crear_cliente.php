@@ -3,33 +3,45 @@ require __DIR__ . '/../config/conexion.php';
 
 $titulo = 'Crear cliente';
 $seccionActiva = 'clientes';
-$mensajeExito = '';
+$mensajeExito = (($_GET['creado'] ?? '') === '1') ? 'Cliente creado correctamente.' : '';
 $mensajeError = '';
+$tokenCsrf = obtenerTokenCsrf();
 
 $idCliente = '';
 $nombreCliente = '';
 $fechaRegistro = '';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $idRecibido = $_POST['id_cliente'] ?? null;
-    $nombreRecibido = $_POST['nombre'] ?? null;
-    $fechaRecibida = $_POST['fecha_registro'] ?? null;
+    $idRecibido = $_POST['id_cliente'] ?? '';
+    $nombreRecibido = $_POST['nombre'] ?? '';
+    $fechaRecibida = $_POST['fecha_registro'] ?? '';
 
-    $idClienteValido = validarId($idRecibido);
-    $nombreLimpio = ($nombreRecibido !== null) ? trim((string)$nombreRecibido) : '';
-    $fechaLimpia = ($fechaRecibida !== null) ? trim((string)$fechaRecibida) : '';
+    $idEnviado = is_scalar($idRecibido) ? (string)$idRecibido : '';
+    $nombreEnviado = is_scalar($nombreRecibido) ? (string)$nombreRecibido : '';
+    $fechaEnviada = is_scalar($fechaRecibida) ? (string)$fechaRecibida : '';
 
-    $idCliente = ($idRecibido !== null) ? trim((string)$idRecibido) : '';
-    $nombreCliente = $nombreLimpio;
-    $fechaRegistro = $fechaLimpia;
+    $idClienteValido = validarId($idEnviado);
+    $nombreLimpio = trim($nombreEnviado);
+    $fechaLimpia = trim($fechaEnviada);
 
-    if ($idRecibido === null || trim((string)$idRecibido) === '' || $idClienteValido === null) {
+    // Mantener los valores originales para que el formulario no los pierda si falla la validación.
+    $idCliente = $idEnviado;
+    $nombreCliente = $nombreEnviado;
+    $fechaRegistro = $fechaEnviada;
+
+    if ($tokenCsrf !== null && !validarTokenCsrf($_POST['csrf_token'] ?? null)) {
+        $mensajeError = 'No se pudo validar la solicitud. Actualiza la página e inténtalo de nuevo.';
+    } elseif ($idClienteValido === null) {
         $mensajeError = 'El ID debe ser un entero entre 1 y 2.147.483.647.';
-    } elseif ($nombreLimpio === '' || longitudTexto($nombreLimpio) > 100) {
-        $mensajeError = 'El nombre es obligatorio y admite hasta 100 caracteres.';
+    } elseif ($nombreLimpio === '') {
+        $mensajeError = 'El nombre es obligatorio y no puede contener solo espacios.';
+    } elseif (longitudTexto($nombreEnviado) > 100) {
+        $mensajeError = 'El nombre admite hasta 100 caracteres.';
     } elseif ($fechaLimpia !== '' && !validarFecha($fechaLimpia)) {
         $mensajeError = 'La fecha no es válida.';
     } else {
+        $sentencia = null;
+        $creacionExitosa = false;
         try {
             if ($fechaLimpia === '') {
                 $sentencia = $conexion->prepare('INSERT INTO clientes (id_cliente, nombre) VALUES (?, ?)');
@@ -40,15 +52,27 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             }
 
             if ($sentencia && $sentencia->execute()) {
-                $mensajeExito = 'Cliente creado correctamente.';
-                $idCliente = '';
-                $nombreCliente = '';
-                $fechaRegistro = '';
+                $creacionExitosa = true;
             } else {
-                $mensajeError = 'No se pudo crear. Revisa que ese ID no esté registrado.';
+                $mensajeError = 'No se pudo crear el cliente por un problema de base de datos. Inténtalo de nuevo.';
             }
+        } catch (mysqli_sql_exception $e) {
+            registrarErrorServidor('crear_cliente', $e);
+            $mensajeError = ((int)$e->getCode() === 1062)
+                ? 'Ya existe un cliente con ese ID.'
+                : 'No se pudo crear el cliente por un problema de base de datos. Inténtalo de nuevo.';
         } catch (Throwable $e) {
-            $mensajeError = 'No se pudo crear. Revisa que ese ID no esté registrado.';
+            registrarErrorServidor('crear_cliente', $e);
+            $mensajeError = 'No se pudo crear el cliente por un problema de base de datos. Inténtalo de nuevo.';
+        } finally {
+            if ($sentencia instanceof mysqli_stmt) {
+                $sentencia->close();
+            }
+        }
+
+        if ($creacionExitosa) {
+            header('Location: crear_cliente.php?creado=1', true, 303);
+            exit;
         }
     }
 }
@@ -93,20 +117,23 @@ require __DIR__ . '/../includes/menu.php';
         <?php endif; ?>
 
         <form method="post">
+            <?php if ($tokenCsrf !== null): ?>
+                <input type="hidden" name="csrf_token" value="<?= h($tokenCsrf) ?>">
+            <?php endif; ?>
             <div class="campo">
                 <label for="id_cliente">
                     <span>ID del cliente</span>
                     <span class="ayuda" style="margin:0;">Requerido</span>
                 </label>
-                <input id="id_cliente" name="id_cliente" type="number" min="1" max="2147483647" value="<?= h($idCliente) ?>" placeholder="Ej. 101" required>
-                <span class="ayuda texto-ayuda">Se ingresa manualmente, según el esquema de la base de datos (clave primaria única).</span>
+                <input id="id_cliente" name="id_cliente" type="number" min="1" max="2147483647" step="1" inputmode="numeric" autofocus aria-describedby="ayuda-id-cliente" value="<?= h($idCliente) ?>" placeholder="Ej. 101" required>
+                <span id="ayuda-id-cliente" class="ayuda texto-ayuda">Se ingresa manualmente, según el esquema de la base de datos (clave primaria única).</span>
             </div>
             <div class="campo">
                 <label for="nombre">
                     <span>Nombre completo</span>
                     <span class="ayuda" style="margin:0;">Hasta 100 caracteres</span>
                 </label>
-                <input id="nombre" name="nombre" type="text" maxlength="100" value="<?= h($nombreCliente) ?>" placeholder="Ej. Carlos Ramirez" required>
+                <input id="nombre" name="nombre" type="text" maxlength="100" pattern=".*\S+.*" title="El nombre no puede estar vacío ni contener solo espacios" value="<?= h($nombreCliente) ?>" placeholder="Ej. Carlos Ramirez" required>
             </div>
 
             <div class="campo">

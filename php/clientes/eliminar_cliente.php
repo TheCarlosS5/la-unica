@@ -8,12 +8,13 @@ $mensajeResultado = '';
 $esError = false;
 $mostrarConfirmacion = false;
 $nombreCliente = '';
+$tokenCsrf = obtenerTokenCsrf();
 
 $idRecibido = $_POST['id_cliente'] ?? null;
 $confirmarRecibido = $_POST['confirmar'] ?? null;
 $idCliente = validarId($idRecibido);
 
-if (($_SERVER['REQUEST_METHOD'] ?? 'GET') !== 'POST' || $idRecibido === null || trim((string)$idRecibido) === '' || $idCliente === null) {
+if (($_SERVER['REQUEST_METHOD'] ?? 'GET') !== 'POST' || ($tokenCsrf !== null && !validarTokenCsrf($_POST['csrf_token'] ?? null)) || $idRecibido === null || trim((string)$idRecibido) === '' || $idCliente === null) {
     http_response_code(400);
     $mensajeResultado = 'Solicitud no válida.';
     $esError = true;
@@ -63,6 +64,7 @@ if (($_SERVER['REQUEST_METHOD'] ?? 'GET') !== 'POST' || $idRecibido === null || 
             }
         }
     } catch (Throwable $e) {
+        registrarErrorServidor('eliminar_cliente', $e);
         $mensajeResultado = 'Error en el servidor al procesar la eliminación.';
         $esError = true;
     }
@@ -122,6 +124,9 @@ require __DIR__ . '/../includes/menu.php';
         </div>
 
         <form method="post" action="eliminar_cliente.php">
+            <?php if ($tokenCsrf !== null): ?>
+                <input type="hidden" name="csrf_token" value="<?= h($tokenCsrf) ?>">
+            <?php endif; ?>
             <input type="hidden" name="id_cliente" value="<?= h($idCliente) ?>">
             <input type="hidden" name="confirmar" value="si">
             <div class="panel-confirmacion-pie">
