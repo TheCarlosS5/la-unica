@@ -52,6 +52,7 @@ main.php                  Carga la página de inicio
 assets/
   css/                    Estilos de la aplicación
   fonts/                  Fuentes locales y archivo de licencias
+  img/                    Imagenes del proyecto
   js/                     Interacciones de formularios
 php/
   config/conexion.php     Conexión MySQLi y funciones compartidas
