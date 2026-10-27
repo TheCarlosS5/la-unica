@@ -1,143 +1,130 @@
 <?php
-// ===================================================================
-// ver_reportes.php
-// Muestra los reportes que ya trae la base de datos (referencias/db.sql):
-//   - 3 vistas      (se consultan con SELECT)
-//   - 5 procedimientos almacenados (se ejecutan con CALL)
-// El reporte se elige con la URL: ver_reportes.php?r=stock
-// ===================================================================
 require __DIR__ . '/../config/conexion.php';
+require_once __DIR__ . '/datos_reportes.php';
+
+$reportes = catalogoReportes();
+
+// Conserva compatibilidad con los enlaces antiguos basados en ?reporte=.
+$reporteSolicitado = $_GET['reporte'] ?? null;
+if (is_string($reporteSolicitado) && isset($reportes[$reporteSolicitado])) {
+    header('Location: ' . $baseUrl . '/php/reportes/' . rawurlencode($reportes[$reporteSolicitado]['archivo']));
+    exit;
+}
+
 $titulo = 'Reportes';
 $seccionActiva = 'reportes';
+$errorLectura = false;
+$filasPorReporte = [];
 
-// Catálogo de reportes: nombre en la URL => título, explicación, consulta SQL
-// y las columnas que son dinero (se muestran con $ y dos decimales).
-$reportes = [
-    'clientes' => [
-        'titulo' => 'Facturas por cliente',
-        'detalle' => 'Cuántas facturas tiene cada cliente (cualquier estado). Incluye clientes sin facturas.',
-        'sql' => 'CALL reporte_facturas_clientes()',
-        'dinero' => [],
-    ],
-    'totales' => [
-        'titulo' => 'Total por factura',
-        'detalle' => 'Suma de cantidad × precio actual de cada factura. No filtra por estado.',
-        'sql' => 'SELECT * FROM vista_total_facturas',
-        'dinero' => ['total_factura'],
-    ],
-    'unidades' => [
-        'titulo' => 'Unidades por producto',
-        'detalle' => 'Unidades facturadas de cada producto. Incluye las de facturas canceladas.',
-        'sql' => 'SELECT * FROM vista_unidades_productos',
-        'dinero' => [],
-    ],
-    'detalle' => [
-        'titulo' => 'Detalle de facturas',
-        'detalle' => 'Cada línea de cada factura con su subtotal calculado con el precio actual.',
-        'sql' => 'CALL reporte_detalle_facturas()',
-        'dinero' => ['precio_unitario', 'subtotal'],
-    ],
-    'stock' => [
-        'titulo' => 'Existencias',
-        'detalle' => 'Stock y precio vigente de cada producto, del que tiene menos al que tiene más.',
-        'sql' => 'CALL reporte_stock_productos()',
-        'dinero' => ['precio_unitario'],
-    ],
-    'estados' => [
-        'titulo' => 'Facturas por estado',
-        'detalle' => 'Cuántas facturas hay en cada estado.',
-        'sql' => 'CALL reporte_facturas_por_estado()',
-        'dinero' => [],
-    ],
-    'pendientes' => [
-        'titulo' => 'Facturas pendientes',
-        'detalle' => 'Facturas con estado Pendiente, de la más antigua a la más reciente.',
-        'sql' => 'CALL reporte_facturas_pendientes()',
-        'dinero' => [],
-    ],
-    'vista_clientes' => [
-        'titulo' => 'Total de facturas por cliente (vista)',
-        'detalle' => 'Lo mismo que «Facturas por cliente», pero leído desde la vista vista_clientes_total_facturas.',
-        'sql' => 'SELECT * FROM vista_clientes_total_facturas',
-        'dinero' => [],
-    ],
-];
-
-// Reporte pedido en la URL; si no existe, se muestra el primero.
-$clave = $_GET['r'] ?? 'clientes';
-if (!isset($reportes[$clave])) {
-    $clave = 'clientes';
+try {
+    foreach ($reportes as $claveReporte => $reporte) {
+        $filasPorReporte[$claveReporte] = obtenerFilasReporte($conexion, $claveReporte);
+    }
+} catch (Throwable $e) {
+    registrarErrorServidor('leer_resumen_reportes', $e);
+    http_response_code(500);
+    $errorLectura = true;
 }
-$reporte = $reportes[$clave];
 
-$filas = [];
-$columnas = [];
-$resultado = $conexion->query($reporte['sql']);
-if ($resultado) {
-    $columnas = array_map(fn($campo) => $campo->name, $resultado->fetch_fields());
-    $filas = $resultado->fetch_all(MYSQLI_ASSOC);
-    $resultado->free();
-}
-// Un CALL deja resultados pendientes; hay que leerlos para poder seguir usando la conexión.
-while ($conexion->more_results()) {
-    $conexion->next_result();
+if (!$errorLectura) {
+    $totalClientes = count($filasPorReporte['clientes']);
+    $totalFacturasClientes = array_sum(array_map(
+        static fn(array $fila): int => (int)$fila['total_facturas'],
+        $filasPorReporte['clientes']
+    ));
+    $totalVigente = array_reduce(
+        $filasPorReporte['total_facturas'],
+        static fn(float $total, array $fila): float => $total + (float)$fila['total_factura'],
+        0.0
+    );
+    $totalUnidades = array_sum(array_map(
+        static fn(array $fila): int => (int)$fila['unidades_facturadas'],
+        $filasPorReporte['unidades_productos']
+    ));
+    $totalStock = array_sum(array_map(
+        static fn(array $fila): int => (int)$fila['stock'],
+        $filasPorReporte['stock_productos']
+    ));
+    $totalFacturasPorEstado = array_sum(array_map(
+        static fn(array $fila): int => (int)$fila['total_facturas'],
+        $filasPorReporte['por_estado']
+    ));
+    $desgloseEstados = array_map(
+        static fn(array $fila): string => (string)$fila['estado_factura'] . ': ' . number_format((int)$fila['total_facturas'], 0, ',', '.'),
+        $filasPorReporte['por_estado']
+    );
+    $facturasEnDetalle = count(array_unique(array_column($filasPorReporte['detalle_facturas'], 'id_factura')));
+
+    $resumen = [
+        'clientes' => [
+            'valor' => number_format($totalClientes, 0, ',', '.'),
+            'detalle' => number_format($totalFacturasClientes, 0, ',', '.') . ' facturas registradas entre todos los clientes, sin filtrar por estado.',
+        ],
+        'total_facturas' => [
+            'valor' => formatearMonedaCop(number_format($totalVigente, 2, '.', '')),
+            'detalle' => number_format(count($filasPorReporte['total_facturas']), 0, ',', '.') . ' facturas con detalle; los importes usan los precios vigentes e incluyen todos los estados.',
+        ],
+        'unidades_productos' => [
+            'valor' => number_format($totalUnidades, 0, ',', '.'),
+            'detalle' => number_format(count($filasPorReporte['unidades_productos']), 0, ',', '.') . ' productos con unidades facturadas; incluye detalles de todos los estados.',
+        ],
+        'detalle_facturas' => [
+            'valor' => number_format(count($filasPorReporte['detalle_facturas']), 0, ',', '.'),
+            'detalle' => 'Líneas de detalle distribuidas en ' . number_format($facturasEnDetalle, 0, ',', '.') . ' facturas.',
+        ],
+        'stock_productos' => [
+            'valor' => number_format($totalStock, 0, ',', '.'),
+            'detalle' => 'Unidades disponibles en ' . number_format(count($filasPorReporte['stock_productos']), 0, ',', '.') . ' productos registrados.',
+        ],
+        'por_estado' => [
+            'valor' => number_format($totalFacturasPorEstado, 0, ',', '.'),
+            'detalle' => $desgloseEstados === [] ? 'No hay facturas registradas.' : implode(' · ', $desgloseEstados) . '.',
+        ],
+        'pendientes' => [
+            'valor' => number_format(count($filasPorReporte['pendientes']), 0, ',', '.'),
+            'detalle' => 'Facturas cuyo estado actual es Pendiente.',
+        ],
+    ];
 }
 
 require __DIR__ . '/../includes/menu.php';
 ?>
-<div class="encabezado aparecer">
-    <div>
-        <h1>Reportes</h1>
-        <p class="text-secondary mb-0">Consultas listas de la base de datos.</p>
+<div class="encabezado-vista">
+    <div class="encabezado-info">
+        <nav class="miga-pan" aria-label="Ruta de navegación">
+            <a href="<?= h($baseUrl) ?>/main.php">Inicio</a>
+            <span class="miga-separador" aria-hidden="true">/</span>
+            <span>Reportes</span>
+        </nav>
+        <h1 class="encabezado-titulo">Resumen de reportes</h1>
+        <p class="encabezado-descripcion">Vista general de clientes, ventas, productos, existencias y estados. Abre cada reporte para consultar su detalle.</p>
     </div>
 </div>
 
-<nav class="pestanas aparecer" aria-label="Reportes">
-    <?php foreach ($reportes as $id => $r): ?>
-        <a class="pestana <?= $id === $clave ? 'activa' : '' ?>" href="ver_reportes.php?r=<?= h($id) ?>"><?= h($r['titulo']) ?></a>
-    <?php endforeach; ?>
-</nav>
+<?php if ($errorLectura): ?>
+    <div class="mensaje error alerta alerta-error" role="alert">No se pudo generar el resumen. Revisa la conexión y que estén disponibles las vistas y procedimientos definidos en <code>referencias/db.sql</code>.</div>
+<?php else: ?>
+    <section class="tarjetas reportes-resumen-grid" aria-label="Resumen general de los reportes">
+        <?php foreach ($reportes as $claveReporte => $reporte): ?>
+            <article class="reportes-resumen-card">
+                <div class="modulo-cabecera">
+                    <div class="modulo-icono" aria-hidden="true">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M3 3v18h18" />
+                            <path d="M18 17V9M13 17V5M8 17v-3" />
+                        </svg>
+                    </div>
+                    <h2 class="modulo-titulo"><?= h($reporte['titulo']) ?></h2>
+                </div>
+                <p class="reportes-resumen-valor"><?= h($resumen[$claveReporte]['valor']) ?></p>
+                <p class="reportes-resumen-descripcion"><?= h($reporte['descripcion']) ?></p>
+                <p class="reportes-resumen-detalle"><?= h($resumen[$claveReporte]['detalle']) ?></p>
+                <div class="modulo-acciones">
+                    <a class="boton" href="<?= h($baseUrl) ?>/php/reportes/<?= h($reporte['archivo']) ?>">Abrir reporte</a>
+                </div>
+            </article>
+        <?php endforeach; ?>
+    </section>
+<?php endif; ?>
 
-<div class="tarjeta aparecer">
-    <div class="p-3" style="border-bottom: 2px solid var(--borde);">
-        <h2 class="h5 mb-1"><?= h($reporte['titulo']) ?> <span class="contador"><?= count($filas) ?></span></h2>
-        <p class="text-secondary mb-0"><?= h($reporte['detalle']) ?></p>
-    </div>
-
-    <?php if (count($filas) === 0): ?>
-        <p class="sin-resultados">No hay datos para este reporte todavía.</p>
-    <?php else: ?>
-        <div class="table-responsive">
-            <table class="table align-middle mb-0">
-                <thead>
-                    <tr>
-                        <?php foreach ($columnas as $columna): ?>
-                            <th><?= h(ucfirst(str_replace('_', ' ', $columna))) ?></th>
-                        <?php endforeach; ?>
-                    </tr>
-                </thead>
-                <tbody>
-                    <?php foreach ($filas as $fila): ?>
-                        <tr>
-                            <?php foreach ($columnas as $columna): ?>
-                                <?php $valor = $fila[$columna]; ?>
-                                <?php if (in_array($columna, $reporte['dinero'], true)): ?>
-                                    <td class="num"><?= pesos2($valor) ?></td>
-                                <?php elseif (in_array($columna, ['estado', 'estado_factura'], true)): ?>
-                                    <td><?= insignia_estado($valor) ?></td>
-                                <?php elseif ($columna === 'fecha_factura' || $columna === 'fecha'): ?>
-                                    <td class="text-secondary"><?= h(fecha_hora($valor)) ?></td>
-                                <?php elseif (is_numeric($valor)): ?>
-                                    <td class="num"><?= h($valor) ?></td>
-                                <?php else: ?>
-                                    <td><?= h($valor ?? '—') ?></td>
-                                <?php endif; ?>
-                            <?php endforeach; ?>
-                        </tr>
-                    <?php endforeach; ?>
-                </tbody>
-            </table>
-        </div>
-    <?php endif; ?>
-</div>
 <?php require __DIR__ . '/../includes/pie.php'; ?>

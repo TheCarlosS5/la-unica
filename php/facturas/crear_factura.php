@@ -1,237 +1,329 @@
 <?php
-// ===================================================================
-// crear_factura.php  (la "C" de CRUD: Create / Crear)
-// El operador elige un cliente, agrega productos con cantidades enteras
-// y al guardar:
-//   1. se revisa de nuevo el stock en el servidor,
-//   2. se guarda la factura (estado Pagado) y sus detalles,
-//   3. se descuenta el stock.
-// Los tres pasos van dentro de una TRANSACCIÓN: o se guardan todos o ninguno.
-// ===================================================================
 require __DIR__ . '/../config/conexion.php';
+
 $titulo = 'Nueva factura';
 $seccionActiva = 'facturas';
+$tokenCsrf = obtenerTokenCsrf();
+$mensajeError = '';
+$mensajeExito = '';
+$clienteSeleccionado = '';
+$lineasFormulario = [['id_producto' => '', 'cantidad' => '1']];
+$clientes = [];
+$productos = [];
 
-$error = '';
-$idCliente = '';
-$lineas = [['id_producto' => '', 'cantidad' => '']]; // líneas del formulario
-
-// Datos para llenar las listas desplegables.
-$clientes = $conexion->query('SELECT id_cliente, nombre FROM clientes ORDER BY nombre')->fetch_all(MYSQLI_ASSOC);
-$productos = $conexion->query('SELECT id_producto, nombre, unidad_medida, stock, precio_unitario FROM productos ORDER BY nombre')->fetch_all(MYSQLI_ASSOC);
+if (sesionDisponible() && isset($_SESSION['factura_creada']) && is_array($_SESSION['factura_creada'])) {
+    $facturaCreada = $_SESSION['factura_creada'];
+    unset($_SESSION['factura_creada']);
+    $mensajeExito = 'Factura #' . (int)($facturaCreada['id'] ?? 0)
+        . ' registrada como Pagado. Total: '
+        . formatearMonedaCop($facturaCreada['total'] ?? '0.00') . '.';
+}
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $idCliente = trim($_POST['id_cliente'] ?? '');
-    $ids = (array)($_POST['id_producto'] ?? []);
-    $cantidades = (array)($_POST['cantidad'] ?? []);
+    $clienteEntrada = $_POST['id_cliente'] ?? null;
+    $productosEntrada = $_POST['id_producto'] ?? null;
+    $cantidadesEntrada = $_POST['cantidad'] ?? null;
+    $clienteSeleccionado = is_string($clienteEntrada) ? $clienteEntrada : '';
+    $lineasEntradaValidas = is_array($productosEntrada)
+        && is_array($cantidadesEntrada)
+        && count($productosEntrada) === count($cantidadesEntrada)
+        && count($productosEntrada) >= 1
+        && count($productosEntrada) <= 100;
 
-    // 1. Armar las líneas. Si un producto se repite, se suman sus cantidades.
-    $pedido = [];     // id_producto => cantidad total
-    $lineas = [];     // para volver a mostrar el formulario si hay error
-    foreach ($ids as $i => $idProducto) {
-        $idProducto = trim((string)$idProducto);
-        $cantidadTexto = trim((string)($cantidades[$i] ?? ''));
-        if ($idProducto === '' && $cantidadTexto === '') {
-            continue; // línea vacía: se ignora
+    $lineasFormulario = [];
+    if ($lineasEntradaValidas) {
+        foreach ($productosEntrada as $indice => $productoEntrada) {
+            $cantidadEntrada = $cantidadesEntrada[$indice] ?? null;
+            $lineasFormulario[] = [
+                'id_producto' => is_string($productoEntrada) ? $productoEntrada : '',
+                'cantidad' => is_string($cantidadEntrada) ? $cantidadEntrada : '',
+            ];
         }
-        $lineas[] = ['id_producto' => $idProducto, 'cantidad' => $cantidadTexto];
+    } else {
+        $lineasFormulario = [['id_producto' => '', 'cantidad' => '1']];
+    }
 
-        $idValido = id_valido($idProducto);
-        $cantidad = filter_var($cantidadTexto, FILTER_VALIDATE_INT);
-        if ($idValido === null) {
-            $error = 'Elige un producto en cada línea.';
-        } elseif ($cantidad === false || $cantidad < 1 || $cantidad > 2147483647) {
-            $error = 'La cantidad debe ser un número entero mayor que 0.';
-        } else {
-            $pedido[$idValido] = ($pedido[$idValido] ?? 0) + $cantidad;
+    $lineasVenta = [];
+    $cantidadesPorProducto = [];
+    $idClienteValido = validarId($clienteSeleccionado);
+
+    if (!validarTokenCsrf($_POST['csrf_token'] ?? null)) {
+        http_response_code(403);
+        $mensajeError = 'No se pudo validar la solicitud. Actualiza la página e inténtalo de nuevo.';
+    } elseif (!is_string($clienteEntrada) || $idClienteValido === null) {
+        $mensajeError = 'Selecciona un cliente válido.';
+    } elseif (!$lineasEntradaValidas) {
+        $mensajeError = 'Agrega entre 1 y 100 productos con sus cantidades.';
+    } else {
+        foreach ($productosEntrada as $indice => $productoEntrada) {
+            $cantidadEntrada = $cantidadesEntrada[$indice] ?? null;
+            $idProducto = is_string($productoEntrada) ? validarId($productoEntrada) : null;
+            $cantidadTexto = is_string($cantidadEntrada) ? $cantidadEntrada : '';
+
+            if ($idProducto === null || !preg_match('/^[1-9][0-9]*$/D', $cantidadTexto)) {
+                $mensajeError = 'Cada línea debe tener un producto válido y una cantidad entera mayor que cero.';
+                break;
+            }
+
+            $cantidad = filter_var($cantidadTexto, FILTER_VALIDATE_INT);
+            if ($cantidad === false || $cantidad > 2147483647) {
+                $mensajeError = 'La cantidad debe ser un entero entre 1 y 2.147.483.647.';
+                break;
+            }
+
+            $lineasVenta[] = ['id_producto' => $idProducto, 'cantidad' => $cantidad];
+            $cantidadAcumulada = ($cantidadesPorProducto[$idProducto] ?? 0) + $cantidad;
+            if ($cantidadAcumulada > 2147483647) {
+                $mensajeError = 'La cantidad acumulada de un producto supera el límite permitido.';
+                break;
+            }
+            $cantidadesPorProducto[$idProducto] = $cantidadAcumulada;
         }
     }
-    if ($lineas === []) {
-        $lineas = [['id_producto' => '', 'cantidad' => '']];
+
+    if ($mensajeError === '' && $tokenCsrf === null) {
+        http_response_code(503);
+        $mensajeError = 'No fue posible iniciar la sesión de seguridad. Recarga la página e inténtalo de nuevo.';
     }
 
-    if ($error === '' && id_valido($idCliente) === null) {
-        $error = 'Elige un cliente.';
-    } elseif ($error === '' && $pedido === []) {
-        $error = 'La factura necesita al menos un producto.';
-    }
-
-    // 2. Guardar todo dentro de una transacción.
-    if ($error === '') {
-        $idCliente = (int)$idCliente;
-        mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT); // ahora los errores de MySQL lanzan excepciones
+    if ($mensajeError === '') {
+        $transaccionIniciada = false;
         try {
             $conexion->begin_transaction();
+            $transaccionIniciada = true;
 
-            // El cliente debe existir.
-            $consulta = $conexion->prepare('SELECT 1 FROM clientes WHERE id_cliente = ?');
-            $consulta->bind_param('i', $idCliente);
-            $consulta->execute();
-            if (!$consulta->get_result()->fetch_row()) {
-                throw new RuntimeException('El cliente elegido no existe.');
-            }
-            $consulta->close();
-
-            // Bloquear los productos (FOR UPDATE) para que nadie más cambie su stock
-            // mientras guardamos. Siempre en el mismo orden para evitar bloqueos cruzados.
-            ksort($pedido);
-            $consulta = $conexion->prepare('SELECT nombre, stock FROM productos WHERE id_producto = ? FOR UPDATE');
-            foreach ($pedido as $idProducto => $cantidad) {
-                $consulta->bind_param('i', $idProducto);
-                $consulta->execute();
-                $producto = $consulta->get_result()->fetch_assoc();
-                if (!$producto) {
-                    throw new RuntimeException('Uno de los productos ya no existe.');
-                }
-                if ((int)$producto['stock'] === 0) {
-                    throw new RuntimeException('«' . $producto['nombre'] . '» está agotado.');
-                }
-                if ($cantidad > (int)$producto['stock']) {
-                    throw new RuntimeException('No hay stock suficiente de «' . $producto['nombre'] . '»: quedan ' . $producto['stock'] . '.');
-                }
-            }
-            $consulta->close();
-
-            // La factura se guarda como Pagado (el valor por defecto del esquema es Pendiente).
-            $insertar = $conexion->prepare("INSERT INTO facturas (id_cliente, estado_factura) VALUES (?, 'Pagado')");
-            $insertar->bind_param('i', $idCliente);
-            $insertar->execute();
-            $idFactura = $conexion->insert_id;
-            $insertar->close();
-
-            // Una fila de detalle por producto y se descuenta el stock.
-            $detalle = $conexion->prepare('INSERT INTO detalle_facturas (id_factura, id_producto, cantidad) VALUES (?, ?, ?)');
-            $descontar = $conexion->prepare('UPDATE productos SET stock = stock - ? WHERE id_producto = ?');
-            foreach ($pedido as $idProducto => $cantidad) {
-                $detalle->bind_param('iii', $idFactura, $idProducto, $cantidad);
-                $detalle->execute();
-                $descontar->bind_param('ii', $cantidad, $idProducto);
-                $descontar->execute();
+            $consultaCliente = $conexion->prepare('SELECT id_cliente FROM clientes WHERE id_cliente = ? FOR UPDATE');
+            $consultaCliente->bind_param('i', $idClienteValido);
+            $consultaCliente->execute();
+            $clienteExiste = $consultaCliente->get_result()->fetch_assoc() !== null;
+            $consultaCliente->close();
+            if (!$clienteExiste) {
+                throw new DomainException('El cliente seleccionado ya no existe. Actualiza la página y vuelve a seleccionarlo.');
             }
 
+            $idsOrdenados = array_keys($cantidadesPorProducto);
+            sort($idsOrdenados, SORT_NUMERIC);
+            $consultaProducto = $conexion->prepare('SELECT stock FROM productos WHERE id_producto = ? FOR UPDATE');
+            foreach ($idsOrdenados as $idProducto) {
+                $consultaProducto->bind_param('i', $idProducto);
+                $consultaProducto->execute();
+                $productoEncontrado = $consultaProducto->get_result()->fetch_assoc();
+                if ($productoEncontrado === null) {
+                    throw new DomainException('Uno de los productos seleccionados ya no existe. Actualiza la página.');
+                }
+                if ((int)$productoEncontrado['stock'] < $cantidadesPorProducto[$idProducto]) {
+                    throw new DomainException('Las existencias cambiaron y no alcanzan para completar la venta. Revisa las cantidades e inténtalo de nuevo.');
+                }
+            }
+            $consultaProducto->close();
+
+            $crearFactura = $conexion->prepare("INSERT INTO facturas (id_cliente, estado_factura) VALUES (?, 'Pagado')");
+            $crearFactura->bind_param('i', $idClienteValido);
+            $crearFactura->execute();
+            $idFactura = (int)$conexion->insert_id;
+            $crearFactura->close();
+
+            $insertarDetalle = $conexion->prepare('INSERT INTO detalle_facturas (id_factura, id_producto, cantidad) VALUES (?, ?, ?)');
+            $descontarStock = $conexion->prepare('UPDATE productos SET stock = stock - ? WHERE id_producto = ? AND stock >= ?');
+            foreach ($cantidadesPorProducto as $idProducto => $cantidad) {
+                $insertarDetalle->bind_param('iii', $idFactura, $idProducto, $cantidad);
+                $insertarDetalle->execute();
+
+                $descontarStock->bind_param('iii', $cantidad, $idProducto, $cantidad);
+                $descontarStock->execute();
+                if ($descontarStock->affected_rows !== 1) {
+                    throw new DomainException('Las existencias cambiaron durante la venta. No se guardó la factura; inténtalo de nuevo.');
+                }
+            }
+            $insertarDetalle->close();
+            $descontarStock->close();
+
+            $consultaTotal = $conexion->prepare('SELECT total_factura FROM vista_total_facturas WHERE id_factura = ?');
+            $consultaTotal->bind_param('i', $idFactura);
+            $consultaTotal->execute();
+            $filaTotal = $consultaTotal->get_result()->fetch_assoc();
+            $consultaTotal->close();
+            if ($filaTotal === null || $filaTotal['total_factura'] === null) {
+                throw new RuntimeException('La factura no produjo un total calculable.');
+            }
+
+            $totalFactura = (string)$filaTotal['total_factura'];
             $conexion->commit();
-            mysqli_report(MYSQLI_REPORT_OFF);
-            header('Location: ver_factura.php?id=' . $idFactura . '&mensaje=' . urlencode('Factura creada correctamente.'));
+            $transaccionIniciada = false;
+
+            $_SESSION['factura_creada'] = [
+                'id' => $idFactura,
+                'total' => $totalFactura,
+                'productos' => count($cantidadesPorProducto),
+            ];
+            header('Location: crear_factura.php', true, 303);
             exit;
-        } catch (RuntimeException $e) {
-            $conexion->rollback();
-            $error = $e->getMessage(); // error de regla de negocio: se muestra tal cual
+        } catch (DomainException $e) {
+            if ($transaccionIniciada) {
+                try {
+                    $conexion->rollback();
+                } catch (Throwable $errorRollback) {
+                    registrarErrorServidor('crear_factura_rollback', $errorRollback);
+                }
+            }
+            http_response_code(409);
+            $mensajeError = $e->getMessage();
         } catch (Throwable $e) {
-            $conexion->rollback();
-            $error = 'No se pudo guardar la factura. No se hizo ningún cambio.';
+            if ($transaccionIniciada) {
+                try {
+                    $conexion->rollback();
+                } catch (Throwable $errorRollback) {
+                    registrarErrorServidor('crear_factura_rollback', $errorRollback);
+                }
+            }
+            registrarErrorServidor('crear_factura', $e);
+            $mensajeError = 'No se pudo registrar la factura. No se aplicaron cambios; verifica la conexión e inténtalo de nuevo.';
         }
-        mysqli_report(MYSQLI_REPORT_OFF);
     }
+}
+
+try {
+    $resultadoClientes = $conexion->query('SELECT id_cliente, nombre FROM clientes ORDER BY nombre, id_cliente');
+    $clientes = $resultadoClientes->fetch_all(MYSQLI_ASSOC);
+    $resultadoClientes->free();
+
+    $resultadoProductos = $conexion->query('SELECT id_producto, nombre, unidad_medida, stock, precio_unitario FROM productos ORDER BY nombre, id_producto');
+    $productos = $resultadoProductos->fetch_all(MYSQLI_ASSOC);
+    $resultadoProductos->free();
+} catch (Throwable $e) {
+    registrarErrorServidor('cargar_catalogos_factura', $e);
+    $mensajeError = 'No se pudieron cargar los clientes y productos. Recarga la página o verifica la conexión.';
+    $clientes = [];
+    $productos = [];
+}
+
+$opcionesProductos = '<option value="">Selecciona un producto</option>';
+$productosDisponibles = 0;
+foreach ($productos as $producto) {
+    $idProducto = (int)$producto['id_producto'];
+    $stockProducto = (int)$producto['stock'];
+    if ($stockProducto > 0) {
+        $productosDisponibles++;
+    }
+    $etiqueta = $producto['nombre'] . ' · ' . $producto['unidad_medida'] . ' · '
+        . formatearMonedaCop($producto['precio_unitario']) . ' · stock: ' . $stockProducto;
+    $opcionesProductos .= '<option value="' . $idProducto . '" data-stock="' . $stockProducto
+        . '" data-precio="' . h((string)$producto['precio_unitario']) . '"'
+        . ($stockProducto < 1 ? ' disabled' : '') . '>' . h($etiqueta) . '</option>';
 }
 
 require __DIR__ . '/../includes/menu.php';
 ?>
-<a class="volver" href="ver_facturas.php">← Facturas</a>
-
-<div class="tarjeta formulario aparecer" style="max-width: 60rem;">
-    <div class="formulario-cabecera">
-        <span class="insignia"><?= icono('receipt') ?></span>
-        <div>
-            <h1 class="h4 mb-1">Nueva factura</h1>
-            <p class="text-secondary mb-0">Elige el cliente y agrega los productos.</p>
-        </div>
+<div class="encabezado-vista">
+    <div class="encabezado-info">
+        <nav class="miga-pan" aria-label="Ruta de navegación">
+            <a href="<?= h($baseUrl) ?>/main.php">Inicio</a>
+            <span class="miga-separador" aria-hidden="true">/</span>
+            <span>Nueva factura</span>
+        </nav>
+        <h1 class="encabezado-titulo">Registrar una venta</h1>
+        <p class="encabezado-descripcion">Selecciona el cliente y agrega los productos. El inventario se valida y actualiza al guardar la factura.</p>
     </div>
+</div>
 
-    <?= alerta($error, 'error') ?>
+<div class="panel-formulario-wrap">
+    <section class="formulario tarjeta-formulario factura-formulario" aria-labelledby="titulo-formulario-factura">
+        <h2 id="titulo-formulario-factura" class="titulo-seccion">Datos de la venta</h2>
 
-    <?php if (count($clientes) === 0 || count($productos) === 0): ?>
-        <p class="mb-0">Para facturar necesitas al menos un cliente y un producto registrados.</p>
-    <?php else: ?>
-    <form method="post" id="form-factura">
-        <div class="mb-4">
-            <label class="form-label" for="id_cliente">Cliente</label>
-            <select class="form-select" id="id_cliente" name="id_cliente" required>
-                <option value="">Elige un cliente…</option>
-                <?php foreach ($clientes as $c): ?>
-                    <option value="<?= h($c['id_cliente']) ?>" <?= (string)$idCliente === (string)$c['id_cliente'] ? 'selected' : '' ?>>
-                        <?= h($c['nombre']) ?> (<?= h($c['id_cliente']) ?>)
-                    </option>
-                <?php endforeach; ?>
-            </select>
-        </div>
+        <?php if ($mensajeExito !== ''): ?>
+            <div class="mensaje alerta" role="status">
+                <svg class="alerta-icono" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" /><polyline points="22 4 12 14.01 9 11.01" /></svg>
+                <div class="alerta-contenido"><?= h($mensajeExito) ?></div>
+            </div>
+        <?php endif; ?>
 
-        <label class="form-label">Productos</label>
-        <div id="lineas">
-            <?php foreach ($lineas as $linea): ?>
-                <div class="linea-producto">
-                    <select class="form-select" name="id_producto[]" aria-label="Producto">
-                        <option value="">Elige un producto…</option>
-                        <?php foreach ($productos as $p): ?>
-                            <?php $agotado = (int)$p['stock'] === 0; ?>
-                            <option value="<?= h($p['id_producto']) ?>" data-precio="<?= h($p['precio_unitario']) ?>" data-stock="<?= h($p['stock']) ?>"
-                                    <?= $agotado ? 'disabled' : '' ?> <?= $linea['id_producto'] === (string)$p['id_producto'] ? 'selected' : '' ?>>
-                                <?= h($p['nombre']) ?> — <?= $agotado ? 'Agotado' : h($p['stock']) . ' ' . h($p['unidad_medida']) . ' · ' . pesos($p['precio_unitario']) ?>
-                            </option>
+        <?php if ($mensajeError !== ''): ?>
+            <div class="mensaje error alerta alerta-error" role="alert">
+                <svg class="alerta-icono" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10" /><line x1="12" y1="8" x2="12" y2="12" /><line x1="12" y1="16" x2="12.01" y2="16" /></svg>
+                <div class="alerta-contenido"><?= h($mensajeError) ?></div>
+            </div>
+        <?php endif; ?>
+
+        <?php if ($tokenCsrf === null): ?>
+            <div class="mensaje aviso alerta alerta-aviso" role="status"><div class="alerta-contenido">La sesión de seguridad no está disponible. Recarga la página antes de registrar una venta.</div></div>
+        <?php elseif (count($clientes) === 0): ?>
+            <div class="estado-vacio" role="status"><h2>No hay clientes registrados</h2><p>Registra un cliente antes de crear una factura.</p><a class="boton" href="<?= h($baseUrl) ?>/php/clientes/crear_cliente.php">Crear cliente</a></div>
+        <?php elseif (count($productos) === 0): ?>
+            <div class="estado-vacio" role="status"><h2>No hay productos registrados</h2><p>Registra productos antes de crear una factura.</p><a class="boton" href="<?= h($baseUrl) ?>/php/productos/crear_producto.php">Crear producto</a></div>
+        <?php elseif ($productosDisponibles === 0): ?>
+            <div class="mensaje aviso alerta alerta-aviso" role="status"><div class="alerta-contenido">No hay productos con existencias disponibles para vender.</div></div>
+        <?php else: ?>
+            <form method="post" id="formulario-factura" data-moneda="COP">
+                <input type="hidden" name="csrf_token" value="<?= h($tokenCsrf) ?>">
+
+                <div class="campo">
+                    <label for="id_cliente"><span>Cliente</span><span class="ayuda" style="margin:0">Requerido</span></label>
+                    <select id="id_cliente" name="id_cliente" required>
+                        <option value="">Selecciona un cliente</option>
+                        <?php foreach ($clientes as $cliente): ?>
+                            <option value="<?= (int)$cliente['id_cliente'] ?>" <?= $clienteSeleccionado === (string)$cliente['id_cliente'] ? 'selected' : '' ?>><?= h($cliente['nombre']) ?> · ID <?= (int)$cliente['id_cliente'] ?></option>
                         <?php endforeach; ?>
                     </select>
-                    <input class="form-control" name="cantidad[]" type="number" min="1" step="1" placeholder="Cantidad"
-                           value="<?= h($linea['cantidad']) ?>" aria-label="Cantidad">
-                    <span class="subtotal text-secondary">—</span>
-                    <button class="btn-icono" type="button" data-quitar title="Quitar línea"><?= icono('close') ?></button>
                 </div>
-            <?php endforeach; ?>
-        </div>
 
-        <button class="btn btn-light btn-con-icono mt-2" type="button" id="agregar-linea">
-            <?= icono('plus') ?> Agregar producto
-        </button>
+                <div class="factura-lineas-cabecera">
+                    <div><h3>Productos</h3><p class="ayuda">Cada producto puede agregarse una sola vez; ajusta su cantidad.</p></div>
+                    <button class="boton secundario" type="button" id="agregar-linea-factura">Agregar producto</button>
+                </div>
 
-        <div class="total-factura px-0"><span>Total</span> <span id="total">$ 0,00</span></div>
-        <p class="nota mt-0">El stock se vuelve a revisar al guardar.</p>
+                <div id="lineas-factura" class="factura-lineas" aria-live="polite">
+                    <?php foreach ($lineasFormulario as $indice => $linea): ?>
+                        <div class="factura-linea" data-linea-factura>
+                            <div class="campo factura-producto-campo">
+                                <label for="id_producto_<?= $indice ?>">Producto</label>
+                                <select id="id_producto_<?= $indice ?>" name="id_producto[]" data-producto-select required>
+                                    <?php
+                                    $opcionesLinea = str_replace('<option value="' . h((string)$linea['id_producto']) . '"', '<option value="' . h((string)$linea['id_producto']) . '" selected', $opcionesProductos);
+                                    echo $opcionesLinea;
+                                    ?>
+                                </select>
+                                <span class="ayuda" data-detalle-producto>Selecciona un producto para consultar precio y existencias.</span>
+                            </div>
+                            <div class="campo factura-cantidad-campo">
+                                <label for="cantidad_<?= $indice ?>">Cantidad</label>
+                                <input id="cantidad_<?= $indice ?>" name="cantidad[]" type="number" min="1" max="2147483647" step="1" inputmode="numeric" value="<?= h($linea['cantidad']) ?>" data-cantidad required>
+                            </div>
+                            <button class="boton-peligro factura-quitar-linea" type="button" data-quitar-linea aria-label="Quitar este producto">Quitar</button>
+                        </div>
+                    <?php endforeach; ?>
+                </div>
 
-        <div class="d-flex gap-2 justify-content-end">
-            <a class="btn btn-light" href="ver_facturas.php">Cancelar</a>
-            <button class="btn btn-primary" type="submit">Guardar factura</button>
-        </div>
-    </form>
+                <template id="plantilla-linea-factura">
+                    <div class="factura-linea" data-linea-factura>
+                        <div class="campo factura-producto-campo">
+                            <label>Producto</label>
+                            <select name="id_producto[]" data-producto-select required><?= $opcionesProductos ?></select>
+                            <span class="ayuda" data-detalle-producto>Selecciona un producto para consultar precio y existencias.</span>
+                        </div>
+                        <div class="campo factura-cantidad-campo">
+                            <label>Cantidad</label>
+                            <input name="cantidad[]" type="number" min="1" max="2147483647" step="1" inputmode="numeric" value="1" data-cantidad required>
+                        </div>
+                        <button class="boton-peligro factura-quitar-linea" type="button" data-quitar-linea aria-label="Quitar este producto">Quitar</button>
+                    </div>
+                </template>
 
-    <script>
-        // Solo muestra subtotales y total mientras se escribe. El servidor vuelve a calcular todo al guardar.
-        (function () {
-            var contenedor = document.getElementById('lineas');
-            var plantilla = contenedor.firstElementChild.cloneNode(true);
-            var formato = new Intl.NumberFormat('es-CO', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+                <div class="factura-resumen" aria-live="polite">
+                    <span>Total estimado</span>
+                    <output id="total-factura" for="lineas-factura">$0,00 COP</output>
+                    <p>El total se calcula con el precio vigente de cada producto, según el esquema de esta versión.</p>
+                </div>
 
-            function recalcular() {
-                var total = 0;
-                contenedor.querySelectorAll('.linea-producto').forEach(function (linea) {
-                    var opcion = linea.querySelector('select').selectedOptions[0];
-                    var cantidad = parseInt(linea.querySelector('input').value, 10);
-                    var celda = linea.querySelector('.subtotal');
-                    if (opcion && opcion.dataset.precio && cantidad > 0) {
-                        var subtotal = Math.round(cantidad * parseFloat(opcion.dataset.precio) * 100) / 100;
-                        total += subtotal;
-                        celda.textContent = '$ ' + formato.format(subtotal);
-                    } else {
-                        celda.textContent = '—';
-                    }
-                });
-                document.getElementById('total').textContent = '$ ' + formato.format(total);
-            }
-
-            document.getElementById('agregar-linea').addEventListener('click', function () {
-                var nueva = plantilla.cloneNode(true);
-                nueva.querySelector('select').value = '';
-                nueva.querySelector('input').value = '';
-                contenedor.appendChild(nueva);
-                recalcular();
-            });
-            contenedor.addEventListener('click', function (e) {
-                var boton = e.target.closest('[data-quitar]');
-                if (!boton) return;
-                if (contenedor.children.length > 1) boton.closest('.linea-producto').remove();
-                recalcular();
-            });
-            contenedor.addEventListener('input', recalcular);
-            contenedor.addEventListener('change', recalcular);
-            recalcular();
-        })();
-    </script>
-    <?php endif; ?>
+                <div class="fila-botones">
+                    <button type="submit">
+                        <svg class="boton-icono" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11z" /><path d="M17 21v-8H7v8M7 3v5h8" /></svg>
+                        <span>Guardar venta</span>
+                    </button>
+                    <a class="boton secundario" href="<?= h($baseUrl) ?>/main.php">Volver al inicio</a>
+                </div>
+            </form>
+            <script src="<?= h($baseUrl) ?>/assets/js/facturas.js" defer></script>
+        <?php endif; ?>
+    </section>
 </div>
 <?php require __DIR__ . '/../includes/pie.php'; ?>

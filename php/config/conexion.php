@@ -1,101 +1,166 @@
 <?php
-// ===================================================================
-// conexion.php
-// Todas las páginas incluyen este archivo primero. Hace dos cosas:
-//   1. Abre la conexión a MySQL y la guarda en $conexion.
-//   2. Define funciones pequeñas que se usan en varias páginas.
-// ===================================================================
-
-// --- 1. Conexión a MySQL -------------------------------------------
-// Datos: servidor, usuario, contraseña, base de datos y puerto.
-// Si tu MySQL usa otro puerto o contraseña, cámbialo aquí.
-mysqli_report(MYSQLI_REPORT_OFF); // los errores los revisamos nosotros
-$conexion = new mysqli('127.0.0.1', 'root', '', 'la_unica', 8000);
-
-if ($conexion->connect_errno) {
-    http_response_code(500);
-    exit('Error de conexión a MySQL. Revisa que esté iniciado y que use el puerto 8000.');
-}
-$conexion->set_charset('utf8mb4'); // para que las tildes y la ñ se guarden bien
-
-// Las fechas se manejan en hora de Bogotá (el SRS lo pide), tanto en PHP como en MySQL.
+mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
 date_default_timezone_set('America/Bogota');
-$conexion->query("SET time_zone = '-05:00'");
 
-// $baseUrl es la carpeta del proyecto vista desde el navegador
-// (por ejemplo "/la-unica"). Sirve para armar enlaces a CSS e imágenes.
-$carpetaActual = str_replace('\\', '/', dirname($_SERVER['SCRIPT_NAME'] ?? '/'));
-$baseUrl = preg_replace('#/php/(clientes|productos|facturas|reportes)$#', '', $carpetaActual);
-$baseUrl = rtrim($baseUrl, '/.');
-
-// --- 2. Funciones de ayuda -----------------------------------------
-
-// Escapa un texto antes de mostrarlo en HTML (evita ataques XSS).
-function h($valor) {
-    return htmlspecialchars((string)$valor, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+try {
+    $conexion = new mysqli('127.0.0.1', 'root', '', 'la_unica', 5000);
+    $conexion->set_charset('utf8mb4');
+    $conexion->query("SET time_zone = '-05:00'");
+} catch (Throwable $e) {
+    http_response_code(500);
+    exit('Error de conexión a la base de datos.');
 }
 
-// Devuelve el número si es un ID válido (entero positivo), o null si no lo es.
-function id_valido($valor) {
-    $id = filter_var($valor, FILTER_VALIDATE_INT);
-    if ($id === false || $id <= 0 || $id > 2147483647) {
-        return null;
+$scriptDir = str_replace('\\', '/', dirname((string)($_SERVER['SCRIPT_NAME'] ?? '/')));
+$baseUrl = preg_replace('#/php/(clientes|productos|facturas|reportes|inicio)$#', '', $scriptDir);
+if ($baseUrl === '/' || $baseUrl === '.') {
+    $baseUrl = '';
+}
+$baseUrl = rtrim($baseUrl, '/');
+
+if (!function_exists('escaparHtml')) {
+    function escaparHtml($valor) {
+        return htmlspecialchars((string)$valor, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
     }
-    return $id;
 }
 
-// Cuenta letras (no bytes): "Peña" tiene 4 letras aunque la ñ ocupe 2 bytes.
-function texto_largo($valor) {
-    return mb_strlen($valor, 'UTF-8');
-}
-
-// true si el texto es una fecha real con formato AAAA-MM-DD.
-function fecha_valida($valor) {
-    $fecha = DateTime::createFromFormat('!Y-m-d', (string)$valor);
-    return $fecha !== false && $fecha->format('Y-m-d') === $valor;
-}
-
-// Revisa los datos de un cliente que llegan del formulario ($_POST).
-// Devuelve [datos_limpios, error]. Si todo está bien, error es ''.
-// La fecha de registro es opcional: si va vacía la pone la base de datos.
-function validar_cliente($entrada) {
-    $d = [
-        'id_cliente'     => trim($entrada['id_cliente'] ?? ''),
-        'nombre'         => trim($entrada['nombre'] ?? ''),
-        'fecha_registro' => trim($entrada['fecha_registro'] ?? ''),
-    ];
-
-    $error = '';
-    if (id_valido($d['id_cliente']) === null) {
-        $error = 'El id del cliente debe ser un número entre 1 y 2.147.483.647.';
-    } elseif ($d['nombre'] === '' || texto_largo($d['nombre']) > 100) {
-        $error = 'El nombre es obligatorio y admite hasta 100 caracteres.';
-    } elseif ($d['fecha_registro'] !== '' && !fecha_valida($d['fecha_registro'])) {
-        $error = 'La fecha de registro no es válida.';
+if (!function_exists('h')) {
+    function h($valor) {
+        return escaparHtml($valor);
     }
-    return [$d, $error];
 }
 
-// Igual que validar_cliente, pero para un producto.
-function validar_producto($entrada) {
-    $d = [
-        'nombre'          => trim($entrada['nombre'] ?? ''),
-        'unidad_medida'   => trim($entrada['unidad_medida'] ?? ''),
-        'stock'           => trim($entrada['stock'] ?? ''),
-        'precio_unitario' => trim($entrada['precio_unitario'] ?? ''),
-    ];
-    $stock = filter_var($d['stock'], FILTER_VALIDATE_INT);
-
-    $error = '';
-    if ($d['nombre'] === '' || texto_largo($d['nombre']) > 100) {
-        $error = 'El nombre es obligatorio y admite hasta 100 caracteres.';
-    } elseif ($d['unidad_medida'] === '' || texto_largo($d['unidad_medida']) > 20) {
-        $error = 'La unidad es obligatoria y admite hasta 20 caracteres.';
-    } elseif ($stock === false || $stock < 0 || $stock > 2147483647) {
-        $error = 'El stock debe ser un número entero mayor o igual a 0.';
-    } elseif (!preg_match('/^\d{1,8}(\.\d{1,2})?$/', $d['precio_unitario'])) {
-        // Acepta por ejemplo: 2500  o  2500.50  (máximo 2 decimales)
-        $error = 'El precio debe ser positivo y tener máximo dos decimales.';
+if (!function_exists('registrarErrorServidor')) {
+    function registrarErrorServidor($contexto, Throwable $error) {
+        $detalle = preg_replace('/[\r\n]+/', ' ', $error->getMessage());
+        $registro = '[' . (string)$contexto . '] ' . get_class($error) . ' (' . (string)$error->getCode() . '): ' . $detalle;
+        if ($error instanceof mysqli_sql_exception) {
+            $registro .= ' SQLSTATE=' . $error->getSqlState();
+        }
+        error_log($registro);
     }
-    return [$d, $error];
+}
+
+if (!function_exists('sesionDisponible')) {
+    function sesionDisponible() {
+        if (!function_exists('session_status') || !function_exists('session_start') || session_status() === PHP_SESSION_DISABLED) {
+            return false;
+        }
+
+        if (session_status() === PHP_SESSION_NONE) {
+            if (headers_sent()) {
+                return false;
+            }
+            try {
+                if (!session_start()) {
+                    return false;
+                }
+            } catch (Throwable $e) {
+                registrarErrorServidor('sesion_csrf', $e);
+                return false;
+            }
+        }
+
+        return session_status() === PHP_SESSION_ACTIVE;
+    }
+}
+
+if (!function_exists('obtenerTokenCsrf')) {
+    function obtenerTokenCsrf() {
+        if (!sesionDisponible()) {
+            return null;
+        }
+
+        if (!isset($_SESSION['csrf_token']) || !is_string($_SESSION['csrf_token']) || $_SESSION['csrf_token'] === '') {
+            try {
+                $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
+            } catch (Throwable $e) {
+                registrarErrorServidor('token_csrf', $e);
+                return null;
+            }
+        }
+
+        return $_SESSION['csrf_token'];
+    }
+}
+
+if (!function_exists('validarTokenCsrf')) {
+    function validarTokenCsrf($tokenRecibido) {
+        if (!is_string($tokenRecibido)) {
+            return false;
+        }
+
+        $tokenEsperado = obtenerTokenCsrf();
+        return $tokenEsperado !== null && hash_equals($tokenEsperado, $tokenRecibido);
+    }
+}
+
+if (!function_exists('validarId')) {
+    function validarId($valor) {
+        if ((!is_string($valor) && !is_int($valor)) || $valor === '') {
+            return null;
+        }
+        $id = filter_var($valor, FILTER_VALIDATE_INT);
+        return ($id !== false && $id > 0 && $id <= 2147483647) ? $id : null;
+    }
+}
+
+if (!function_exists('id_valido')) {
+    function id_valido($valor) {
+        return validarId($valor);
+    }
+}
+
+if (!function_exists('validarFecha')) {
+    function validarFecha($valor) {
+        if ($valor === null || $valor === '') {
+            return false;
+        }
+        $fecha = DateTime::createFromFormat('!Y-m-d', (string)$valor);
+        return $fecha !== false && $fecha->format('Y-m-d') === (string)$valor;
+    }
+}
+
+if (!function_exists('fecha_valida')) {
+    function fecha_valida($valor) {
+        return validarFecha($valor);
+    }
+}
+
+if (!function_exists('longitudTexto')) {
+    function longitudTexto($valor) {
+        if ($valor === null) {
+            return 0;
+        }
+
+        $texto = (string)$valor;
+        if (function_exists('mb_strlen')) {
+            return mb_strlen($texto, 'UTF-8');
+        }
+
+        $coincidencias = [];
+        $longitudUtf8 = preg_match_all('/./us', $texto, $coincidencias);
+        return ($longitudUtf8 !== false) ? $longitudUtf8 : strlen($texto);
+    }
+}
+
+if (!function_exists('texto_largo')) {
+    function texto_largo($valor) {
+        return longitudTexto($valor);
+    }
+}
+
+if (!function_exists('formatearMonedaCop')) {
+    function formatearMonedaCop($valor) {
+        $texto = (string)$valor;
+        if (!preg_match('/^([0-9]+)(?:\.([0-9]{1,2}))?$/D', $texto, $partes)) {
+            return '$0,00 COP';
+        }
+
+        $entero = ltrim($partes[1], '0');
+        $entero = $entero === '' ? '0' : $entero;
+        $decimales = str_pad($partes[2] ?? '', 2, '0');
+        $enteroAgrupado = preg_replace('/\B(?=(\d{3})+(?!\d))/', '.', $entero);
+        return '$' . $enteroAgrupado . ',' . $decimales . ' COP';
+    }
 }
