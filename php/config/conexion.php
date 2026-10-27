@@ -1,16 +1,18 @@
 <?php
 mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
+date_default_timezone_set('America/Bogota');
 
 try {
-    $conexion = new mysqli('127.0.0.1', 'root', '', 'la_unica', 3306);
+    $conexion = new mysqli('127.0.0.1', 'root', '', 'la_unica', 8000);
     $conexion->set_charset('utf8mb4');
+    $conexion->query("SET time_zone = '-05:00'");
 } catch (Throwable $e) {
     http_response_code(500);
     exit('Error de conexión a la base de datos.');
 }
 
 $scriptDir = str_replace('\\', '/', dirname((string)($_SERVER['SCRIPT_NAME'] ?? '/')));
-$baseUrl = preg_replace('#/php/(clientes|productos|inicio)$#', '', $scriptDir);
+$baseUrl = preg_replace('#/php/(clientes|productos|facturas|reportes|inicio)$#', '', $scriptDir);
 if ($baseUrl === '/' || $baseUrl === '.') {
     $baseUrl = '';
 }
@@ -145,5 +147,20 @@ if (!function_exists('longitudTexto')) {
 if (!function_exists('texto_largo')) {
     function texto_largo($valor) {
         return longitudTexto($valor);
+    }
+}
+
+if (!function_exists('formatearMonedaCop')) {
+    function formatearMonedaCop($valor) {
+        $texto = (string)$valor;
+        if (!preg_match('/^([0-9]+)(?:\.([0-9]{1,2}))?$/D', $texto, $partes)) {
+            return '$0,00 COP';
+        }
+
+        $entero = ltrim($partes[1], '0');
+        $entero = $entero === '' ? '0' : $entero;
+        $decimales = str_pad($partes[2] ?? '', 2, '0');
+        $enteroAgrupado = preg_replace('/\B(?=(\d{3})+(?!\d))/', '.', $entero);
+        return '$' . $enteroAgrupado . ',' . $decimales . ' COP';
     }
 }

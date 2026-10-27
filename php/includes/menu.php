@@ -10,6 +10,10 @@ if ($seccionActual === '') {
         $seccionActual = 'clientes';
     } elseif (strpos($scriptActual, '/productos/') !== false) {
         $seccionActual = 'productos';
+    } elseif (strpos($scriptActual, '/facturas/') !== false) {
+        $seccionActual = 'facturas';
+    } elseif (strpos($scriptActual, '/reportes/') !== false) {
+        $seccionActual = 'reportes';
     } else {
         $seccionActual = 'inicio';
     }
@@ -72,6 +76,28 @@ if ($seccionActual === '') {
                 </div>
 
                 <div class="sidebar-grupo">
+                    <span class="sidebar-rotulo">Ventas</span>
+                    <nav class="sidebar-nav" aria-label="Facturas">
+                        <div class="nav-item-complejo">
+                            <a class="nav-enlace<?= $seccionActual === 'facturas' ? ' activo' : '' ?>" href="<?= h($baseUrl) ?>/php/facturas/ver_facturas.php" <?= $paginaActual === 'ver_facturas.php' ? ' aria-current="page"' : '' ?>>
+                                <svg class="nav-icono" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                    <rect x="3" y="4" width="18" height="16" rx="2" />
+                                    <path d="M7 9h10M7 13h3m3 0h4m-10 3h10" />
+                                </svg>
+                                <span>Facturas</span>
+                            </a>
+                            <a class="nav-subenlace<?= $paginaActual === 'crear_factura.php' ? ' activo' : '' ?>" href="<?= h($baseUrl) ?>/php/facturas/crear_factura.php" title="Registrar una nueva factura" <?= $paginaActual === 'crear_factura.php' ? ' aria-current="page"' : '' ?>>
+                                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                    <line x1="12" y1="5" x2="12" y2="19" />
+                                    <line x1="5" y1="12" x2="19" y2="12" />
+                                </svg>
+                                <span>Nueva factura</span>
+                            </a>
+                        </div>
+                    </nav>
+                </div>
+
+                <div class="sidebar-grupo">
                     <span class="sidebar-rotulo">Catálogo</span>
                     <nav class="sidebar-nav" aria-label="Clientes y productos">
                         <div class="nav-item-complejo">
@@ -110,6 +136,19 @@ if ($seccionActual === '') {
                                 <span>Nuevo producto</span>
                             </a>
                         </div>
+                    </nav>
+                </div>
+
+                <div class="sidebar-grupo">
+                    <span class="sidebar-rotulo">Información</span>
+                    <nav class="sidebar-nav" aria-label="Consultas de información">
+                        <a class="nav-enlace<?= $seccionActual === 'reportes' ? ' activo' : '' ?>" href="<?= h($baseUrl) ?>/php/reportes/ver_reportes.php" <?= $paginaActual === 'ver_reportes.php' ? ' aria-current="page"' : '' ?>>
+                            <svg class="nav-icono" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                <path d="M3 3v18h18" />
+                                <path d="M18 17V9M13 17V5M8 17v-3" />
+                            </svg>
+                            <span>Reportes</span>
+                        </a>
                     </nav>
                 </div>
             </div>

@@ -5,15 +5,45 @@ $titulo = 'Productos';
 $seccionActiva = 'productos';
 $tokenCsrf = obtenerTokenCsrf();
 
-$sqlProductos = 'SELECT p.id_producto, p.nombre, p.unidad_medida, p.stock, p.precio_unitario, COUNT(d.id_producto) AS total_detalles FROM productos p LEFT JOIN detalle_facturas d ON d.id_producto = p.id_producto GROUP BY p.id_producto, p.nombre, p.unidad_medida, p.stock, p.precio_unitario ORDER BY p.id_producto';
+$terminoBusqueda = $_GET['buscar'] ?? '';
+$terminoBusqueda = is_string($terminoBusqueda) ? trim($terminoBusqueda) : '';
+$busquedaActiva = $terminoBusqueda !== '';
+$idBusquedaNormalizado = ctype_digit($terminoBusqueda) ? ltrim($terminoBusqueda, '0') : '';
+if ($idBusquedaNormalizado === '' && $busquedaActiva && ctype_digit($terminoBusqueda)) {
+    $idBusquedaNormalizado = '0';
+}
+$buscarPorId = $busquedaActiva
+    && ctype_digit($terminoBusqueda)
+    && strlen($idBusquedaNormalizado) <= 10
+    && (float)$idBusquedaNormalizado <= 2147483647;
+
+$sqlSeleccionProductos = 'SELECT p.id_producto, p.nombre, p.unidad_medida, p.stock, p.precio_unitario, COUNT(d.id_producto) AS total_detalles FROM productos p LEFT JOIN detalle_facturas d ON d.id_producto = p.id_producto';
+$sqlAgruparProductos = ' GROUP BY p.id_producto, p.nombre, p.unidad_medida, p.stock, p.precio_unitario ORDER BY p.id_producto';
 $productos = [];
 $errorLectura = false;
 try {
-    $resultadoProductos = $conexion->query($sqlProductos);
+    if ($busquedaActiva && $buscarPorId) {
+        $consultaProductos = $conexion->prepare($sqlSeleccionProductos . ' WHERE p.id_producto = ? OR p.nombre LIKE ?' . $sqlAgruparProductos);
+        $patronNombre = '%' . $terminoBusqueda . '%';
+        $consultaProductos->bind_param('ss', $idBusquedaNormalizado, $patronNombre);
+        $consultaProductos->execute();
+        $resultadoProductos = $consultaProductos->get_result();
+    } elseif ($busquedaActiva) {
+        $consultaProductos = $conexion->prepare($sqlSeleccionProductos . ' WHERE p.nombre LIKE ?' . $sqlAgruparProductos);
+        $patronNombre = '%' . $terminoBusqueda . '%';
+        $consultaProductos->bind_param('s', $patronNombre);
+        $consultaProductos->execute();
+        $resultadoProductos = $consultaProductos->get_result();
+    } else {
+        $resultadoProductos = $conexion->query($sqlSeleccionProductos . $sqlAgruparProductos);
+    }
     while ($producto = $resultadoProductos->fetch_assoc()) {
         $productos[] = $producto;
     }
     $resultadoProductos->free();
+    if (isset($consultaProductos)) {
+        $consultaProductos->close();
+    }
 } catch (Throwable $e) {
     registrarErrorServidor('leer_productos', $e);
     $errorLectura = true;
@@ -55,8 +85,27 @@ require __DIR__ . '/../includes/menu.php';
     </div>
 <?php endif; ?>
 
+<form class="filtro-busqueda" method="get" action="ver_productos.php" role="search">
+    <div class="campo">
+        <label for="buscar-productos">Buscar por ID o nombre</label>
+        <input id="buscar-productos" name="buscar" type="search" maxlength="100" value="<?= h($terminoBusqueda) ?>" placeholder="Escribe un ID o nombre" autocomplete="off">
+    </div>
+    <div class="filtro-acciones">
+        <button class="boton" type="submit">Buscar</button>
+        <?php if ($busquedaActiva): ?>
+            <a class="boton secundario" href="ver_productos.php">Limpiar</a>
+        <?php endif; ?>
+    </div>
+</form>
+
 <?php if ($errorLectura): ?>
     <div class="mensaje error alerta alerta-error" role="alert">No se pudo cargar el listado de productos. Inténtalo de nuevo más tarde.</div>
+<?php elseif (count($productos) === 0 && $busquedaActiva): ?>
+    <div class="sin-datos estado-vacio">
+        <h2 class="estado-vacio-titulo">No se encontraron productos</h2>
+        <p class="estado-vacio-texto">No hay resultados para “<?= h($terminoBusqueda) ?>”. Prueba con otro ID o nombre.</p>
+        <a class="boton secundario" href="ver_productos.php">Limpiar búsqueda</a>
+    </div>
 <?php elseif (count($productos) === 0): ?>
     <div class="sin-datos estado-vacio">
         <svg class="estado-vacio-icono" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">

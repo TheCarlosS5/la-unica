@@ -5,15 +5,45 @@ $titulo = 'Clientes';
 $seccionActiva = 'clientes';
 $tokenCsrf = obtenerTokenCsrf();
 
-$sqlClientes = 'SELECT c.id_cliente, c.nombre, c.fecha_registro, COUNT(f.id_factura) AS total_facturas FROM clientes c LEFT JOIN facturas f ON f.id_cliente = c.id_cliente GROUP BY c.id_cliente, c.nombre, c.fecha_registro ORDER BY c.id_cliente';
+$terminoBusqueda = $_GET['buscar'] ?? '';
+$terminoBusqueda = is_string($terminoBusqueda) ? trim($terminoBusqueda) : '';
+$busquedaActiva = $terminoBusqueda !== '';
+$idBusquedaNormalizado = ctype_digit($terminoBusqueda) ? ltrim($terminoBusqueda, '0') : '';
+if ($idBusquedaNormalizado === '' && $busquedaActiva && ctype_digit($terminoBusqueda)) {
+    $idBusquedaNormalizado = '0';
+}
+$buscarPorId = $busquedaActiva
+    && ctype_digit($terminoBusqueda)
+    && strlen($idBusquedaNormalizado) <= 10
+    && (float)$idBusquedaNormalizado <= 2147483647;
+
+$sqlSeleccionClientes = 'SELECT c.id_cliente, c.nombre, c.fecha_registro, COUNT(f.id_factura) AS total_facturas FROM clientes c LEFT JOIN facturas f ON f.id_cliente = c.id_cliente';
+$sqlAgruparClientes = ' GROUP BY c.id_cliente, c.nombre, c.fecha_registro ORDER BY c.id_cliente';
 $clientes = [];
 $errorLectura = false;
 try {
-    $resultadoClientes = $conexion->query($sqlClientes);
+    if ($busquedaActiva && $buscarPorId) {
+        $consultaClientes = $conexion->prepare($sqlSeleccionClientes . ' WHERE c.id_cliente = ? OR c.nombre LIKE ?' . $sqlAgruparClientes);
+        $patronNombre = '%' . $terminoBusqueda . '%';
+        $consultaClientes->bind_param('ss', $idBusquedaNormalizado, $patronNombre);
+        $consultaClientes->execute();
+        $resultadoClientes = $consultaClientes->get_result();
+    } elseif ($busquedaActiva) {
+        $consultaClientes = $conexion->prepare($sqlSeleccionClientes . ' WHERE c.nombre LIKE ?' . $sqlAgruparClientes);
+        $patronNombre = '%' . $terminoBusqueda . '%';
+        $consultaClientes->bind_param('s', $patronNombre);
+        $consultaClientes->execute();
+        $resultadoClientes = $consultaClientes->get_result();
+    } else {
+        $resultadoClientes = $conexion->query($sqlSeleccionClientes . $sqlAgruparClientes);
+    }
     while ($cliente = $resultadoClientes->fetch_assoc()) {
         $clientes[] = $cliente;
     }
     $resultadoClientes->free();
+    if (isset($consultaClientes)) {
+        $consultaClientes->close();
+    }
 } catch (Throwable $e) {
     registrarErrorServidor('leer_clientes', $e);
     $errorLectura = true;
@@ -55,8 +85,27 @@ require __DIR__ . '/../includes/menu.php';
     </div>
 <?php endif; ?>
 
+<form class="filtro-busqueda" method="get" action="ver_clientes.php" role="search">
+    <div class="campo">
+        <label for="buscar-clientes">Buscar por ID o nombre</label>
+        <input id="buscar-clientes" name="buscar" type="search" maxlength="100" value="<?= h($terminoBusqueda) ?>" placeholder="Escribe un ID o nombre" autocomplete="off">
+    </div>
+    <div class="filtro-acciones">
+        <button class="boton" type="submit">Buscar</button>
+        <?php if ($busquedaActiva): ?>
+            <a class="boton secundario" href="ver_clientes.php">Limpiar</a>
+        <?php endif; ?>
+    </div>
+</form>
+
 <?php if ($errorLectura): ?>
     <div class="mensaje error alerta alerta-error" role="alert">No se pudo cargar el listado de clientes. Inténtalo de nuevo más tarde.</div>
+<?php elseif (count($clientes) === 0 && $busquedaActiva): ?>
+    <div class="sin-datos estado-vacio">
+        <h2 class="estado-vacio-titulo">No se encontraron clientes</h2>
+        <p class="estado-vacio-texto">No hay resultados para “<?= h($terminoBusqueda) ?>”. Prueba con otro ID o nombre.</p>
+        <a class="boton secundario" href="ver_clientes.php">Limpiar búsqueda</a>
+    </div>
 <?php elseif (count($clientes) === 0): ?>
     <div class="sin-datos estado-vacio">
         <svg class="estado-vacio-icono" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">

@@ -3,7 +3,7 @@
             <div class="pie-inner">
                 <span class="pie-marca">La Única</span>
                 <span class="pie-separador" aria-hidden="true">·</span>
-                <span>Administración local de clientes y productos</span>
+                <span>Administración local de ventas y catálogo</span>
             </div>
         </footer>
     </div>
