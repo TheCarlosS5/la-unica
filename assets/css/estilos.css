@@ -259,15 +259,21 @@ button, input, select, textarea {
 .marca-emblema {
   width: 40px;
   height: 40px;
-  background-color: var(--color-resaltador);
-  color: var(--color-linea);
-  border: 1px solid var(--color-contorno);
-  border-radius: var(--radio-md);
+  background-color: transparent;
+  color: inherit;
+  border: 0;
+  border-radius: 0;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  box-shadow: var(--sombra-sm);
+  box-shadow: none;
   flex-shrink: 0;
+}
+
+.marca-emblema img {
+  width: 32px;
+  height: 32px;
+  border-radius: 4px;
   object-fit: cover;
 }
 
@@ -521,14 +527,6 @@ button, input, select, textarea {
   gap: 8px;
   font-size: 1.05rem;
   color: var(--color-texto-secundario);
-}
-
-.topbar-logo {
-  width: 30px;
-  height: 30px;
-  flex: 0 0 auto;
-  border-radius: var(--radio-sm);
-  object-fit: cover;
 }
 
 .topbar-sistema {
@@ -1805,18 +1803,6 @@ button[disabled] {
 
   .topbar-principal {
     padding: 0 18px;
-  }
-
-  .topbar-logo {
-    width: 26px;
-    height: 26px;
-  }
-
-  .topbar-modulo {
-    max-width: clamp(80px, 28vw, 220px);
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
   }
 
   .contenedor,

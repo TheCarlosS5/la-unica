@@ -44,7 +44,9 @@ if ($seccionActual === '') {
         <aside id="barra-lateral" class="barra-lateral" aria-label="Menú principal de La Única">
             <div class="sidebar-cabecera">
                 <a class="sidebar-marca" href="<?= h($baseUrl) ?>/main.php" title="Panel La Única">
-                    <img class="marca-emblema" src="<?= h($baseUrl) ?>/assets/img/logo.png" alt="" aria-hidden="true">
+                    <span class="marca-emblema" aria-hidden="true">
+                        <img src="<?= h($baseUrl) ?>/assets/img/logo.png" alt="">
+                    </span>
                     <span class="marca-texto">
                         <span class="marca-nombre">La Única</span>
                         <span class="marca-subtexto">Gestión comercial</span>
@@ -182,7 +184,6 @@ if ($seccionActual === '') {
                         </svg>
                     </button>
                     <div class="topbar-contexto">
-                        <img class="topbar-logo" src="<?= h($baseUrl) ?>/assets/img/logo.png" alt="" aria-hidden="true">
                         <span class="topbar-sistema">La Única</span>
                         <span class="topbar-separador" aria-hidden="true">/</span>
                         <span class="topbar-modulo"><?= h($titulo) ?></span>
