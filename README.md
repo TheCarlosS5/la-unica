@@ -2,7 +2,9 @@
 
 Aplicación web local para administrar clientes, productos, ventas mediante facturas y reportes. Está desarrollada en PHP y se conecta a MySQL mediante MySQLi. Laragon es el entorno documentado para ejecutarla.
 
-La especificación vigente es [referencias/SRS.pdf](referencias/SRS.pdf), versión 1.3. [referencias/SRS.md](referencias/SRS.md) es su versión de consulta en Markdown y refleja el mismo alcance. Los módulos de esta versión están implementados; la autenticación y los roles están fuera del alcance definido.
+La especificación de requisitos vigente es [referencias/SRS.docx](referencias/SRS.docx), versión 1.4. Para consulta están disponibles [referencias/SRS.pdf](referencias/SRS.pdf) y [referencias/SRS.md](referencias/SRS.md), también en versión 1.4. Los tres documentos describen el mismo alcance.
+
+El [manual de usuario](referencias/Manual_usuario.docx) explica el acceso y las tareas de clientes, productos, ventas, facturas y reportes. Incluye cuadros reservados para capturas de ejecución del aplicativo. Los módulos documentados están implementados; la autenticación y los roles están fuera del alcance definido.
 
 ## Funciones implementadas
 
@@ -10,7 +12,7 @@ La especificación vigente es [referencias/SRS.pdf](referencias/SRS.pdf), versi�
 - **Productos:** crear, consultar, editar y eliminar. El identificador se genera automáticamente. Se administran nombre, unidad de medida de texto, stock entero y precio unitario.
 - **Ventas:** crear una factura pagada para un cliente con uno o varios productos. La aplicación comprueba y descuenta existencias en una transacción; el total usa los precios vigentes del catálogo.
 - **Facturas:** buscar por ID de factura, ID o nombre del cliente y fecha; consultar el estado y los detalles, imprimir un comprobante interno y cancelar facturas pagadas reponiendo el inventario.
-- **Reportes:** consultar conteos por cliente y estado, totales vigentes por factura, detalle, unidades por producto, existencias y facturas pendientes mediante las vistas y procedimientos del esquema.
+- **Reportes:** consultar un resumen general y siete reportes individuales: clientes y cantidad de facturas, total vigente por factura, unidades facturadas por producto, detalle de facturas, existencias de productos, facturas por estado y facturas pendientes. Los importes reflejan los precios vigentes del catálogo.
 - Las operaciones validan los datos y las eliminaciones requieren confirmación. No se permite eliminar clientes con facturas ni productos que aparezcan en detalles de factura.
 
 ## Funciones fuera del alcance actual
@@ -34,9 +36,9 @@ Importa el script una sola vez en una instancia donde todavía no exista la base
 ## Ejecución local con Laragon
 
 1. Inicia Apache y MySQL desde Laragon.
-2. Importa `referencias/db.sql` en tu instancia de MySQL. La configuración inicial de la aplicación espera MySQL en `127.0.0.1:8000`.
-3. Si tu MySQL usa otro puerto o credenciales, ajusta la conexión en [php/config/conexion.php](php/config/conexion.php). La configuración inicial usa el usuario `root` y contraseña vacía.
-4. Configura Laragon para servir la carpeta del proyecto. Si está disponible en `http://localhost/la-unica/`, abre esa dirección en el navegador.
+2. Importa `referencias/db.sql` en tu instancia local de MySQL.
+3. La conexión inicial de [php/config/conexion.php](php/config/conexion.php) usa `127.0.0.1`, el puerto MySQL `5000`, la base `la_unica`, el usuario `root` y contraseña vacía. Ajusta estos valores a la configuración de tu instancia; el puerto depende del entorno local y no es un valor fijo para todas las instalaciones.
+4. Configura Laragon para servir la carpeta del proyecto y abre la URL local que exponga Apache. `http://localhost/la-unica/` es un ejemplo; la dirección y el puerto web también pueden variar según la configuración local.
 
 PHP utiliza la zona horaria `America/Bogota` y cada conexión MySQL fija su sesión a UTC-05:00 para registrar y consultar las fechas locales.
 
@@ -61,6 +63,8 @@ php/
   reportes/               Consultas de reportes
 referencias/
   db.sql                  Esquema inicial de la base de datos
-  SRS.pdf                 SRS vigente, versión 1.3
-  SRS.md                  Versión Markdown sincronizada con SRS.pdf
+  Manual_usuario.docx     Guía de uso de los módulos y reportes
+  SRS.docx                Especificación de requisitos vigente, versión 1.4
+  SRS.pdf                 Copia de consulta del SRS, versión 1.4
+  SRS.md                  Versión Markdown del SRS, versión 1.4
 ```

@@ -259,15 +259,22 @@ button, input, select, textarea {
 .marca-emblema {
   width: 40px;
   height: 40px;
-  background-color: var(--color-resaltador);
-  color: var(--color-linea);
-  border: 1px solid var(--color-contorno);
-  border-radius: var(--radio-md);
+  background-color: transparent;
+  color: inherit;
+  border: 0;
+  border-radius: 0;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  box-shadow: var(--sombra-sm);
+  box-shadow: none;
   flex-shrink: 0;
+}
+
+.marca-emblema img {
+  width: 32px;
+  height: 32px;
+  border-radius: 4px;
+  object-fit: cover;
 }
 
 .marca-texto {
@@ -1280,6 +1287,37 @@ button[disabled] {
   border-radius: var(--radio-lg);
   background-color: var(--color-superficie);
   box-shadow: var(--sombra-sm);
+}
+
+.reportes-resumen-card {
+  gap: 8px;
+}
+
+.reportes-resumen-card .modulo-cabecera {
+  margin-bottom: 4px;
+}
+
+.reportes-resumen-card .modulo-titulo {
+  font-size: 1.35rem;
+}
+
+.tarjetas .reportes-resumen-valor {
+  flex: 0 0 auto;
+  margin: 0;
+  color: var(--color-primario-activo);
+  font-size: 1.65rem;
+  font-weight: 700;
+}
+
+.tarjetas .reportes-resumen-descripcion {
+  flex: 0 0 auto;
+  margin: 0;
+}
+
+.tarjetas .reportes-resumen-detalle {
+  flex: 1 0 auto;
+  margin: 0;
+  font-size: 0.95rem;
 }
 
 .panel-reporte-cabecera {

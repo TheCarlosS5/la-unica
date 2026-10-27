@@ -1,4 +1,14 @@
 <?php
+/**
+ * Archivo: editar_producto.php
+ * Módulo: Productos — edición.
+ * Propósito: cargar y actualizar los datos vigentes de un producto.
+ * Funcionamiento: valida el ID de GET, carga el artículo y procesa el POST con CSRF y validación
+ * de nombre, unidad, existencias y precio antes de ejecutar UPDATE.
+ * Puntos clave: stock representa la nueva cantidad total. Si el producto ya aparece en detalles de
+ * factura, no se permite cambiar su unidad de medida; nombre, stock y precio sí se pueden actualizar.
+ */
+
 require __DIR__ . '/../config/conexion.php';
 
 $titulo = 'Editar producto';

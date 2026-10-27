@@ -1,4 +1,18 @@
 <?php
+/**
+ * Archivo: menu.php
+ * Módulo: Plantilla compartida de navegación.
+ * Propósito: construir la cabecera, el menú lateral y el contenedor principal que usan las vistas.
+ * Funcionamiento: consume las variables de título/sección preparadas por cada módulo, identifica
+ * la página actual y renderiza enlaces con estado activo. Obtiene los enlaces de reportes del catálogo.
+ * Puntos clave:
+ * - Se incluye después de preparar los datos de la página.
+ * - Escapa valores dinámicos con h() y define el inicio de <main>; pie.php lo cierra.
+ * - Carga CSS, fuentes locales, favicon y controles accesibles del menú.
+ */
+
+require_once __DIR__ . '/../reportes/datos_reportes.php';
+$catalogoReportes = catalogoReportes();
 $baseUrl = $baseUrl ?? '';
 $titulo = $titulo ?? 'La Única';
 $seccionActual = $seccionActiva ?? '';
@@ -27,7 +41,7 @@ if ($seccionActual === '') {
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="theme-color" content="#fbf7ec">
     <title><?= h($titulo) ?> · La Única - Administración</title>
-    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%232b2b36' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath fill='%23ffe58a' d='M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z'/%3E%3Cline x1='3' y1='6' x2='21' y2='6'/%3E%3Cpath d='M16 10a4 4 0 0 1-8 0'/%3E%3C/svg%3E">
+    <link rel="icon" type="image/png" href="<?= h($baseUrl) ?>/assets/img/logo.png">
     <link rel="preload" href="<?= h($baseUrl) ?>/assets/fonts/patrick-hand-latin.woff2" as="font" type="font/woff2" crossorigin>
     <link rel="preload" href="<?= h($baseUrl) ?>/assets/fonts/architects-daughter-latin.woff2" as="font" type="font/woff2" crossorigin>
     <link rel="stylesheet" href="<?= h($baseUrl) ?>/assets/css/estilos.css">
@@ -43,11 +57,7 @@ if ($seccionActual === '') {
             <div class="sidebar-cabecera">
                 <a class="sidebar-marca" href="<?= h($baseUrl) ?>/main.php" title="Panel La Única">
                     <span class="marca-emblema" aria-hidden="true">
-                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z" />
-                            <line x1="3" y1="6" x2="21" y2="6" />
-                            <path d="M16 10a4 4 0 0 1-8 0" />
-                        </svg>
+                        <img src="<?= h($baseUrl) ?>/assets/img/logo.png" alt="">
                     </span>
                     <span class="marca-texto">
                         <span class="marca-nombre">La Única</span>
@@ -142,13 +152,24 @@ if ($seccionActual === '') {
                 <div class="sidebar-grupo">
                     <span class="sidebar-rotulo">Información</span>
                     <nav class="sidebar-nav" aria-label="Consultas de información">
-                        <a class="nav-enlace<?= $seccionActual === 'reportes' ? ' activo' : '' ?>" href="<?= h($baseUrl) ?>/php/reportes/ver_reportes.php" <?= $paginaActual === 'ver_reportes.php' ? ' aria-current="page"' : '' ?>>
-                            <svg class="nav-icono" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                                <path d="M3 3v18h18" />
-                                <path d="M18 17V9M13 17V5M8 17v-3" />
-                            </svg>
-                            <span>Reportes</span>
-                        </a>
+                        <div class="nav-item-complejo">
+                            <a class="nav-enlace<?= $seccionActual === 'reportes' ? ' activo' : '' ?>" href="<?= h($baseUrl) ?>/php/reportes/ver_reportes.php" <?= $paginaActual === 'ver_reportes.php' ? ' aria-current="page"' : '' ?>>
+                                <svg class="nav-icono" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                    <path d="M3 3v18h18" />
+                                    <path d="M18 17V9M13 17V5M8 17v-3" />
+                                </svg>
+                                <span>Reportes</span>
+                            </a>
+                            <?php foreach ($catalogoReportes as $reporteNav): ?>
+                                <a class="nav-subenlace<?= $paginaActual === $reporteNav['archivo'] ? ' activo' : '' ?>" href="<?= h($baseUrl) ?>/php/reportes/<?= h($reporteNav['archivo']) ?>" title="Ver reporte: <?= h($reporteNav['titulo']) ?>" <?= $paginaActual === $reporteNav['archivo'] ? ' aria-current="page"' : '' ?>>
+                                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                        <path d="M3 3v18h18" />
+                                        <path d="M18 17V9M13 17V5M8 17v-3" />
+                                    </svg>
+                                    <span><?= h($reporteNav['titulo']) ?></span>
+                                </a>
+                            <?php endforeach; ?>
+                        </div>
                     </nav>
                 </div>
             </div>
