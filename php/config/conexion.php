@@ -15,14 +15,76 @@
 mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
 date_default_timezone_set('America/Bogota');
 
+
 try {
-    $conexion = new mysqli('127.0.0.1', 'root', '', 'la_unica', 5000);
+    $configLocalPath = __DIR__ . '/conexion.local.php';
+    $configLocal = [];
+
+    if (is_file($configLocalPath)) {
+        $configLocal = require $configLocalPath;
+
+        if (!is_array($configLocal)) {
+            throw new RuntimeException(
+                'La configuración local de MySQL no es válida.'
+            );
+        }
+    }
+
+    $obtenerConfig = static function (
+        string $claveLocal,
+        string $variableEntorno,
+        $valorPredeterminado
+    ) use ($configLocal) {
+        $valorEntorno = getenv($variableEntorno);
+
+        if ($valorEntorno !== false) {
+            return $valorEntorno;
+        }
+
+        if (array_key_exists($claveLocal, $configLocal)) {
+            return $configLocal[$claveLocal];
+        }
+
+        return $valorPredeterminado;
+    };
+
+    $host = (string) $obtenerConfig(
+        'host', 'DB_HOST', '127.0.0.1'
+    );
+    $usuario = (string) $obtenerConfig(
+        'usuario', 'DB_USERNAME', 'root'
+    );
+    $contrasena = (string) $obtenerConfig(
+        'contrasena', 'DB_PASSWORD', ''
+    );
+    $baseDatos = (string) $obtenerConfig(
+        'base_datos', 'DB_DATABASE', 'la_unica'
+    );
+    $puerto = filter_var(
+        $obtenerConfig('puerto', 'DB_PORT', 5000),
+        FILTER_VALIDATE_INT,
+        ['options' => ['min_range' => 1, 'max_range' => 65535]]
+    );
+
+    if ($puerto === false) {
+        throw new RuntimeException('El puerto MySQL no es válido.');
+    }
+
+    $conexion = new mysqli(
+        $host,
+        $usuario,
+        $contrasena,
+        $baseDatos,
+        $puerto
+    );
+
     $conexion->set_charset('utf8mb4');
     $conexion->query("SET time_zone = '-05:00'");
 } catch (Throwable $e) {
     http_response_code(500);
     exit('Error de conexión a la base de datos.');
 }
+
 
 $scriptDir = str_replace('\\', '/', dirname((string)($_SERVER['SCRIPT_NAME'] ?? '/')));
 $baseUrl = preg_replace('#/php/(clientes|productos|facturas|reportes|inicio)$#', '', $scriptDir);

@@ -1,0 +1,49 @@
+﻿name: PHP and JavaScript Syntax Check
+
+on:
+  push:
+    branches:
+      - camilo-trabajo
+  pull_request:
+    branches:
+      - main
+
+permissions:
+  contents: read
+
+jobs:
+  php-lint:
+    name: Validate PHP and JavaScript syntax
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+
+      - name: Check PHP syntax
+        shell: bash
+        run: |
+          set -euo pipefail
+          mapfile -d '' files < <(find . -type f -name '*.php' -not -path './.git/*' -print0)
+
+          if [ "${#files[@]}" -eq 0 ]; then
+            echo "No PHP files found."
+            exit 1
+          fi
+
+          for file in "${files[@]}"; do
+            php -l "$file"
+          done
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Check JavaScript syntax
+        run: node --check assets/js/facturas.js
