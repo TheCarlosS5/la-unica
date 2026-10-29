@@ -8,6 +8,14 @@ La aplicación está desarrollada en PHP con MySQLi y permite administrar client
 
 La aplicación tampoco implementa autenticación ni roles. Está pensada para uso local y no debe exponerse directamente a Internet.
 
+## Documentación del proyecto
+
+- El SRS vigente es [SRS.docx](referencias/SRS.docx), versión 1.4. [SRS.pdf](referencias/SRS.pdf) y [SRS.md](referencias/SRS.md) ofrecen copias de consulta de esa misma versión. Mantén los tres archivos sincronizados cuando cambien los requisitos.
+- [Manual_usuario.docx](referencias/Manual_usuario.docx) describe el uso de la versión documentada, incluidos los reportes individuales; sus cuadros de captura son espacios para completar con imágenes del aplicativo.
+- [db.sql](referencias/db.sql) define el esquema inicial que requiere la aplicación.
+
+La versión del SRS y la etiqueta del release de software (`vMAYOR.MENOR.PARCHE`) son referencias independientes.
+
 ## Convención de versiones
 
 Usa etiquetas con el formato `vMAYOR.MENOR.PARCHE`:
@@ -25,7 +33,7 @@ Una versión publicada conserva su etiqueta. Si encuentras un problema después 
 - PHP con la extensión `mysqli`.
 - MySQL y un navegador web.
 - Laragon es el entorno documentado para la ejecución local.
-- La configuración inicial de [conexion.php](php/config/conexion.php) usa `127.0.0.1`, puerto `8000`, base `la_unica`, usuario `root` y contraseña vacía. Ajusta esos valores al entorno de instalación.
+- La configuración inicial de [conexion.php](php/config/conexion.php) usa `127.0.0.1`, puerto MySQL `5000`, base `la_unica`, usuario `root` y contraseña vacía. Ajusta el puerto y los demás valores a la instancia local; el puerto no es fijo para todos los entornos.
 - [db.sql](referencias/db.sql) crea el esquema, pero no inserta datos de ejemplo. Importa el script solo en una instancia donde todavía no exista la base `la_unica`, porque contiene `CREATE DATABASE la_unica`.
 
 ## Antes de publicar
@@ -35,9 +43,10 @@ Completa esta lista para la versión que vas a etiquetar:
 - [ ] Confirma que los cambios están revisados, guardados y subidos a `main` en GitHub.
 - [ ] Verifica que el repositorio no contiene archivos de configuración personales, contraseñas reales ni datos de clientes.
 - [ ] Revisa que el README y estas instrucciones coincidan con los archivos y funciones presentes.
+- [ ] Confirma que `SRS.docx`, `SRS.pdf` y `SRS.md` contienen la misma versión vigente y que `Manual_usuario.docx` describe las funciones incluidas en este release.
 - [ ] Prueba la instalación desde cero en una base vacía: inicia Apache y MySQL, importa `referencias/db.sql`, ajusta `php/config/conexion.php` y abre la ruta local configurada, por ejemplo `http://localhost/la-unica/`.
 - [ ] Recorre manualmente la creación, consulta, edición y eliminación de un cliente y de un producto. Comprueba que las bajas con registros relacionados se bloquean y que las eliminaciones solicitan confirmación.
-- [ ] Recorre los reportes y verifica sus resultados frente a las vistas y procedimientos almacenados de `referencias/db.sql`.
+- [ ] Recorre el resumen general y los siete reportes individuales; verifica sus resultados frente a las vistas y procedimientos de `referencias/db.sql`.
 - [ ] Comprueba que los estilos y las fuentes locales cargan y que los errores de conexión o validación se muestran de forma comprensible.
 - [ ] Prepara notas de versión que describan solo los cambios incluidos en esta etiqueta. Esas notas se guardarán en GitHub al publicar el release.
 
@@ -100,5 +109,5 @@ GitHub será el registro de cambios por versión. Para una versión futura, crea
 ## Después de publicar
 
 - Comprueba que el release muestra la etiqueta, el título y las notas correctas.
-- Descarga el `.zip` generado y confirma que contiene el código y `referencias/db.sql`.
+- Descarga el `.zip` generado y confirma que contiene el código, `referencias/db.sql` y los documentos de `referencias/` (`Manual_usuario.docx`, `SRS.docx`, `SRS.pdf` y `SRS.md`).
 - Comparte el enlace de ese release y sus instrucciones; no compartas una base con información real.

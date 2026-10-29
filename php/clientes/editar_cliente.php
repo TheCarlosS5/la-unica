@@ -1,4 +1,14 @@
 <?php
+/**
+ * Archivo: editar_cliente.php
+ * Módulo: Clientes — edición.
+ * Propósito: consultar un cliente por ID y permitir la actualización de su nombre.
+ * Funcionamiento: valida el ID recibido por GET, carga el registro con consulta preparada y procesa
+ * el POST con CSRF y validación del nombre antes de ejecutar UPDATE.
+ * Puntos clave: el ID y la fecha de registro son de solo consulta; únicamente se modifica el nombre.
+ * Los errores de base de datos se registran en el log y se muestra un mensaje controlado.
+ */
+
 require __DIR__ . '/../config/conexion.php';
 
 $titulo = 'Editar cliente';

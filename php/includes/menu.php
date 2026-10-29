@@ -1,4 +1,16 @@
 <?php
+/**
+ * Archivo: menu.php
+ * Módulo: Plantilla compartida de navegación.
+ * Propósito: construir la cabecera, el menú lateral y el contenedor principal que usan las vistas.
+ * Funcionamiento: consume las variables de título/sección preparadas por cada módulo, identifica
+ * la página actual y renderiza enlaces con estado activo. Obtiene los enlaces de reportes del catálogo.
+ * Puntos clave:
+ * - Se incluye después de preparar los datos de la página.
+ * - Escapa valores dinámicos con h() y define el inicio de <main>; pie.php lo cierra.
+ * - Carga CSS, fuentes locales, favicon y controles accesibles del menú.
+ */
+
 require_once __DIR__ . '/../reportes/datos_reportes.php';
 $catalogoReportes = catalogoReportes();
 $baseUrl = $baseUrl ?? '';

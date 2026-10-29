@@ -1,4 +1,14 @@
 <?php
+/**
+ * Archivo: ver_reportes.php
+ * Módulo: Reportes — resumen general.
+ * Propósito: reunir los resultados de los siete reportes y presentar sus indicadores en tarjetas.
+ * Funcionamiento: carga cada conjunto mediante obtenerFilasReporte(), agrega clientes, facturas,
+ * totales, unidades, detalles, existencias y estados, y enlaza cada tarjeta con su reporte individual.
+ * Punto clave: conserva redirección de compatibilidad para enlaces antiguos con ?reporte=; un error
+ * al consultar cualquier fuente impide mostrar un resumen parcial.
+ */
+
 require __DIR__ . '/../config/conexion.php';
 require_once __DIR__ . '/datos_reportes.php';
 

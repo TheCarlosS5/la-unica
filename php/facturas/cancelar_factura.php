@@ -1,4 +1,14 @@
 <?php
+/**
+ * Archivo: cancelar_factura.php
+ * Módulo: Facturas — cancelación.
+ * Propósito: cancelar una factura Pagado y reponer sus cantidades de inventario una sola vez.
+ * Funcionamiento: exige POST y token CSRF; dentro de una transacción bloquea la factura y productos,
+ * agrupa cantidades por producto, repone stock, cambia el estado a Cancelado y confirma.
+ * Puntos clave: no admite otros estados ni una segunda cancelación; valida límites de stock. Cualquier
+ * fallo provoca rollback, registra detalles técnicos en el log y devuelve el resultado por redirección 303.
+ */
+
 require __DIR__ . '/../config/conexion.php';
 
 if (($_SERVER['REQUEST_METHOD'] ?? 'GET') !== 'POST') {
@@ -23,6 +33,7 @@ $mensajeResultado = '';
 $cancelacionExitosa = false;
 
 try {
+    // El cambio de estado y la reposición de todas las existencias forman una sola operación.
     $conexion->begin_transaction();
     $transaccionIniciada = true;
 
@@ -42,6 +53,7 @@ try {
         throw new DomainException($mensajeEstado);
     }
 
+    // Agrupar líneas evita actualizar varias veces el mismo producto en una factura.
     $consultaDetalles = $conexion->prepare('SELECT id_producto, SUM(cantidad) AS cantidad_total FROM detalle_facturas WHERE id_factura = ? GROUP BY id_producto ORDER BY id_producto');
     $consultaDetalles->bind_param('i', $idFactura);
     $consultaDetalles->execute();
@@ -89,6 +101,7 @@ try {
     $bloquearProducto->close();
     $actualizarStock->close();
 
+    // La condición de estado también protege frente a una cancelación repetida o concurrente.
     $actualizarFactura = $conexion->prepare("UPDATE facturas SET estado_factura = 'Cancelado' WHERE id_factura = ? AND estado_factura = 'Pagado'");
     $actualizarFactura->bind_param('i', $idFactura);
     $actualizarFactura->execute();

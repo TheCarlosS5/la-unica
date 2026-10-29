@@ -1,4 +1,18 @@
 <?php
+/**
+ * Archivo: crear_factura.php
+ * Módulo: Facturas — registro de ventas.
+ * Propósito: crear una factura con cliente y líneas de productos, y actualizar el inventario.
+ * Funcionamiento: valida CSRF, cliente, productos y cantidades; agrega cantidades repetidas por
+ * producto; abre una transacción, bloquea las filas implicadas, valida stock, inserta factura/detalles,
+ * descuenta existencias, calcula el total vigente y confirma todo en conjunto.
+ * Puntos clave:
+ * - Se admiten de 1 a 100 líneas y cantidades enteras positivas.
+ * - Los productos se bloquean por ID ordenado para reducir conflictos de concurrencia.
+ * - Cualquier error revierte factura, detalles e inventario; el éxito usa sesión flash y redirección 303.
+ * - La aplicación marca la factura como Pagado; no procesa una transacción bancaria.
+ */
+
 require __DIR__ . '/../config/conexion.php';
 
 $titulo = 'Nueva factura';
@@ -89,6 +103,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if ($mensajeError === '') {
         $transaccionIniciada = false;
         try {
+            // Factura, detalles y descuentos se confirman juntos o se revierten juntos.
             $conexion->begin_transaction();
             $transaccionIniciada = true;
 
@@ -101,6 +116,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 throw new DomainException('El cliente seleccionado ya no existe. Actualiza la página y vuelve a seleccionarlo.');
             }
 
+            // Bloquear productos siempre en orden de ID reduce interbloqueos entre ventas concurrentes.
             $idsOrdenados = array_keys($cantidadesPorProducto);
             sort($idsOrdenados, SORT_NUMERIC);
             $consultaProducto = $conexion->prepare('SELECT stock FROM productos WHERE id_producto = ? FOR UPDATE');
@@ -138,6 +154,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $insertarDetalle->close();
             $descontarStock->close();
 
+            // El total se lee de la vista para mantener la misma regla de precio vigente que los reportes.
             $consultaTotal = $conexion->prepare('SELECT total_factura FROM vista_total_facturas WHERE id_factura = ?');
             $consultaTotal->bind_param('i', $idFactura);
             $consultaTotal->execute();

@@ -1,4 +1,14 @@
 <?php
+/**
+ * Archivo: eliminar_cliente.php
+ * Módulo: Clientes — eliminación protegida.
+ * Propósito: solicitar confirmación y eliminar un cliente solo cuando no tiene facturas asociadas.
+ * Funcionamiento: acepta POST, valida el ID y CSRF, muestra primero una pantalla de confirmación
+ * y, tras la segunda solicitud, cuenta las facturas antes de ejecutar DELETE.
+ * Puntos clave: las referencias en facturas bloquean la baja; la regla se comprueba en PHP y también
+ * queda protegida por la integridad referencial de la base. El resultado se presenta en esta vista.
+ */
+
 require __DIR__ . '/../config/conexion.php';
 
 $titulo = 'Eliminar cliente';

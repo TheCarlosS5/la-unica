@@ -1,4 +1,14 @@
 <?php
+/**
+ * Archivo: imprimir_factura.php
+ * Módulo: Facturas — consulta y comprobante.
+ * Propósito: presentar el detalle de una factura y generar una vista imprimible del comprobante interno.
+ * Funcionamiento: valida el ID, carga factura, cliente, detalles y total mediante consultas preparadas;
+ * el total se recalcula con el precio vigente de cada producto.
+ * Puntos clave: la impresión se inicia desde el navegador; solo una factura Pagado muestra la acción
+ * de cancelación y esta requiere CSRF. El comprobante no es factura fiscal ni electrónica.
+ */
+
 require __DIR__ . '/../config/conexion.php';
 
 $idFactura = validarId($_GET['id'] ?? null);

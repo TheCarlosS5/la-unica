@@ -1,4 +1,14 @@
 <?php
+/**
+ * Archivo: ver_facturas.php
+ * Módulo: Facturas — consulta.
+ * Propósito: buscar ventas y mostrar su estado, fecha, líneas y total vigente.
+ * Funcionamiento: combina filtros opcionales por ID de factura, ID/nombre de cliente y fecha; construye
+ * condiciones parametrizadas, agrupa detalles/productos y ordena los resultados más recientes primero.
+ * Puntos clave: el importe se calcula con precios actuales del catálogo; los parámetros usan sentencias
+ * preparadas y los enlaces abren el comprobante de cada factura.
+ */
+
 require __DIR__ . '/../config/conexion.php';
 
 $titulo = 'Facturas';

@@ -1,4 +1,14 @@
 <?php
+/**
+ * Archivo: crear_producto.php
+ * Módulo: Productos — alta.
+ * Propósito: agregar un artículo al catálogo con unidad, stock inicial y precio.
+ * Funcionamiento: valida el POST y su token CSRF; comprueba nombre, unidad, stock entero y precio
+ * decimal antes de insertar con una sentencia preparada. En éxito aplica redirección HTTP 303.
+ * Puntos clave: el ID lo genera la base; nombre admite 100 caracteres, unidad 20, stock no negativo
+ * y precio hasta dos decimales. Los campos se conservan si la validación falla.
+ */
+
 require __DIR__ . '/../config/conexion.php';
 
 $titulo = 'Crear producto';

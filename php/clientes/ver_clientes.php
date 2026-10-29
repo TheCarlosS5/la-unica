@@ -1,4 +1,14 @@
 <?php
+/**
+ * Archivo: ver_clientes.php
+ * Módulo: Clientes — consulta.
+ * Propósito: listar, buscar y ofrecer acciones para los clientes registrados.
+ * Funcionamiento: acepta búsqueda por ID o fragmento del nombre, arma una consulta preparada cuando
+ * hay filtro y agrupa un LEFT JOIN con facturas para calcular el total asociado a cada cliente.
+ * Puntos clave: el LEFT JOIN conserva clientes con cero facturas; la tabla escapa valores con h().
+ * La baja solo se ofrece cuando el cliente no tiene facturas y usa POST con token CSRF.
+ */
+
 require __DIR__ . '/../config/conexion.php';
 
 $titulo = 'Clientes';

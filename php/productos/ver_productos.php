@@ -1,4 +1,14 @@
 <?php
+/**
+ * Archivo: ver_productos.php
+ * Módulo: Productos — consulta.
+ * Propósito: mostrar el catálogo, existencias, precio vigente y acciones disponibles.
+ * Funcionamiento: filtra por ID o nombre, consulta productos con un LEFT JOIN de detalles y prepara
+ * la tabla, el estado vacío o el mensaje de error según el resultado.
+ * Puntos clave: el listado conserva productos sin detalles y cuenta sus referencias; stock cero se
+ * marca como agotado; la baja solo se ofrece sin historial y se envía por POST con token CSRF.
+ */
+
 require __DIR__ . '/../config/conexion.php';
 
 $titulo = 'Productos';
