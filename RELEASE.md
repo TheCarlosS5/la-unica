@@ -11,7 +11,7 @@ La aplicación tampoco implementa autenticación ni roles. Está pensada para us
 ## Documentación del proyecto
 
 - El SRS vigente es [SRS.docx](referencias/SRS.docx), versión 1.4. [SRS.pdf](referencias/SRS.pdf) y [SRS.md](referencias/SRS.md) ofrecen copias de consulta de esa misma versión. Mantén los tres archivos sincronizados cuando cambien los requisitos.
-- [Manual_usuario.docx](referencias/Manual_usuario.docx) describe el uso de la versión documentada, incluidos los reportes individuales; sus cuadros de captura son espacios para completar con imágenes del aplicativo.
+- [manual.docx](referencias/manual.docx) y [manual.pdf](referencias/manual.pdf) describen los módulos principales e incluyen capturas del aplicativo. La sección «Sobre nosotros» y su visor de manual se añadieron después y todavía no están detallados en el SRS 1.4 ni en el manual.
 - [db.sql](referencias/db.sql) define el esquema inicial que requiere la aplicación.
 
 La versión del SRS y la etiqueta del release de software (`vMAYOR.MENOR.PARCHE`) son referencias independientes.
@@ -43,11 +43,11 @@ Completa esta lista para la versión que vas a etiquetar:
 - [ ] Confirma que los cambios están revisados, guardados y subidos a `main` en GitHub.
 - [ ] Verifica que el repositorio no contiene archivos de configuración personales, contraseñas reales ni datos de clientes.
 - [ ] Revisa que el README y estas instrucciones coincidan con los archivos y funciones presentes.
-- [ ] Confirma que `SRS.docx`, `SRS.pdf` y `SRS.md` contienen la misma versión vigente y que `Manual_usuario.docx` describe las funciones incluidas en este release.
+- [ ] Confirma que `SRS.docx`, `SRS.pdf` y `SRS.md` contienen la misma versión vigente y que `manual.docx` describe los módulos principales; recuerda que la sección «Sobre nosotros» aún no está desarrollada en la documentación formal.
 - [ ] Prueba la instalación desde cero en una base vacía: inicia Apache y MySQL, importa `referencias/db.sql`, ajusta `php/config/conexion.php` y abre la ruta local configurada, por ejemplo `http://localhost/la-unica/`.
 - [ ] Recorre manualmente la creación, consulta, edición y eliminación de un cliente y de un producto. Comprueba que las bajas con registros relacionados se bloquean y que las eliminaciones solicitan confirmación.
-- [ ] Recorre el resumen general y los siete reportes individuales; verifica sus resultados frente a las vistas y procedimientos de `referencias/db.sql`.
-- [ ] Comprueba que los estilos y las fuentes locales cargan y que los errores de conexión o validación se muestran de forma comprensible.
+- [ ] Recorre el resumen general y los siete reportes individuales; verifica sus resultados frente a las vistas y procedimientos de `referencias/db.sql`. Comprueba «Sobre nosotros → Manual del Usuario» y, si existe `assets/video/1.mp4`, la página «Video explicativo».
+- [ ] Comprueba que los estilos y las fuentes locales cargan sin Bootstrap ni `assets/vendor`, y que los errores de conexión o validación se muestran de forma comprensible.
 - [ ] Prepara notas de versión que describan solo los cambios incluidos en esta etiqueta. Esas notas se guardarán en GitHub al publicar el release.
 
 El repositorio no define una suite de pruebas automatizadas ni un proceso de compilación. Registra como verificación únicamente las pruebas manuales que efectivamente hayas completado.
@@ -109,5 +109,5 @@ GitHub será el registro de cambios por versión. Para una versión futura, crea
 ## Después de publicar
 
 - Comprueba que el release muestra la etiqueta, el título y las notas correctas.
-- Descarga el `.zip` generado y confirma que contiene el código, `referencias/db.sql` y los documentos de `referencias/` (`Manual_usuario.docx`, `SRS.docx`, `SRS.pdf` y `SRS.md`).
+- Descarga el `.zip` generado y confirma que contiene el código, `referencias/db.sql` y los documentos de `referencias/` (`manual.docx`, `manual.pdf`, `SRS.docx`, `SRS.pdf` y `SRS.md`).
 - Comparte el enlace de ese release y sus instrucciones; no compartas una base con información real.

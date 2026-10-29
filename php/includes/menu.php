@@ -28,6 +28,8 @@ if ($seccionActual === '') {
         $seccionActual = 'facturas';
     } elseif (strpos($scriptActual, '/reportes/') !== false) {
         $seccionActual = 'reportes';
+    } elseif (strpos($scriptActual, '/sobre_nosotros/') !== false) {
+        $seccionActual = 'sobre_nosotros';
     } else {
         $seccionActual = 'inicio';
     }
@@ -169,6 +171,38 @@ if ($seccionActual === '') {
                                     <span><?= h($reporteNav['titulo']) ?></span>
                                 </a>
                             <?php endforeach; ?>
+                        </div>
+
+                        <div class="nav-item-complejo">
+                            <a class="nav-enlace<?= $seccionActual === 'sobre_nosotros' ? ' activo' : '' ?>" href="<?= h($baseUrl) ?>/php/sobre_nosotros/index.php" <?= $paginaActual === 'index.php' && $seccionActual === 'sobre_nosotros' ? ' aria-current="page"' : '' ?>>
+                                <svg class="nav-icono" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                    <circle cx="12" cy="12" r="10" />
+                                    <path d="M12 16v-4" />
+                                    <path d="M12 8h.01" />
+                                </svg>
+                                <span>Sobre nosotros</span>
+                            </a>
+                            <a class="nav-subenlace<?= $paginaActual === 'manual_usuario.php' ? ' activo' : '' ?>" href="<?= h($baseUrl) ?>/php/sobre_nosotros/manual_usuario.php" title="Consultar el manual del usuario" <?= $paginaActual === 'manual_usuario.php' ? ' aria-current="page"' : '' ?>>
+                                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                    <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />
+                                    <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" />
+                                </svg>
+                                <span>Manual del Usuario</span>
+                            </a>
+                            <a class="nav-subenlace<?= $paginaActual === 'video_explicativo.php' ? ' activo' : '' ?>" href="<?= h($baseUrl) ?>/php/sobre_nosotros/video_explicativo.php" title="Ver el video explicativo" <?= $paginaActual === 'video_explicativo.php' ? ' aria-current="page"' : '' ?>>
+                                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                    <rect x="3" y="5" width="18" height="14" rx="2" />
+                                    <path d="m10 9 5 3-5 3z" />
+                                </svg>
+                                <span>Video explicativo</span>
+                            </a>
+                            <a class="nav-subenlace" href="<?= h($baseUrl) ?>/wiki/index.php" title="Abrir la wiki con guías paso a paso">
+                                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                    <path d="M2 4h6a4 4 0 0 1 4 4v12a3 3 0 0 0-3-3H2z" />
+                                    <path d="M22 4h-6a4 4 0 0 0-4 4v12a3 3 0 0 1 3-3h7z" />
+                                </svg>
+                                <span>Wiki</span>
+                            </a>
                         </div>
                     </nav>
                 </div>
