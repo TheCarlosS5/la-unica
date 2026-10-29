@@ -60,7 +60,7 @@ assets/
   video/                  Ubicación esperada para 1.mp4
 php/
   config/conexion.php     Conexión MySQLi y funciones compartidas
-  includes/               Menú, pie de página y utilidades de vista
+  includes/               Menú y pie de página
   inicio/                 Dashboard
   clientes/               Operaciones de clientes
   productos/              Operaciones de productos

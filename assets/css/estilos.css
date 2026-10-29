@@ -1431,18 +1431,6 @@ button[disabled] {
   min-width: 640px;
 }
 
-.acciones-factura-vista {
-  justify-content: flex-end;
-}
-
-.acciones-factura-vista form {
-  margin: 0;
-}
-
-.acciones-factura-vista .boton {
-  white-space: nowrap;
-}
-
 .comprobante-cabecera {
   display: flex;
   align-items: flex-start;
