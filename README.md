@@ -13,7 +13,8 @@ El [manual de usuario en Word](referencias/manual.docx) y su [versión PDF](refe
 - **Ventas:** crear una factura pagada para un cliente con uno o varios productos. La aplicación comprueba y descuenta existencias en una transacción; el total usa los precios vigentes del catálogo.
 - **Facturas:** buscar y consultar facturas, ver sus detalles, imprimir un comprobante interno y cancelar facturas pagadas reponiendo el inventario.
 - **Reportes:** un resumen general y siete reportes individuales: clientes y cantidad de facturas, total vigente por factura, unidades facturadas por producto, detalle de facturas, existencias de productos, facturas por estado y facturas pendientes. Los importes reflejan los precios vigentes del catálogo.
-- **Sobre nosotros:** acceso al manual PDF integrado y a la sección del video explicativo. Para reproducirlo, coloca el archivo en `assets/video/1.mp4`.
+- **Sobre nosotros:** acceso al manual PDF integrado, a la sección del video explicativo y a la wiki. Para reproducir el video, coloca el archivo en `assets/video/1.mp4`.
+- **Wiki:** documentación completa en `wiki/` (abre `…/wiki/` o *Menú → Información → Wiki*): guías paso a paso con capturas señaladas, configuración, solución de problemas y notas técnicas. Está hecha en PHP plano y no necesita la base de datos.
 - Las operaciones validan los datos; se protegen las solicitudes de modificación con tokens CSRF y las eliminaciones requieren confirmación. No se permite eliminar clientes con facturas ni productos que aparezcan en detalles de factura.
 
 ## Funciones fuera del alcance actual
@@ -67,6 +68,11 @@ php/
   facturas/               Ventas, consultas, cancelaciones e impresión
   reportes/               Resumen y reportes individuales
   sobre_nosotros/         Manual integrado y página del video
+wiki/
+  index.php               Wiki del proyecto (guías, configuración y notas técnicas)
+  paginas/                Contenido de cada página
+  img/                    Capturas señaladas paso a paso
+  herramientas/           Script que regenera las capturas
 referencias/
   db.sql                  Esquema inicial de la base de datos
   manual.docx             Manual editable

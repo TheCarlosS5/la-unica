@@ -196,6 +196,13 @@ if ($seccionActual === '') {
                                 </svg>
                                 <span>Video explicativo</span>
                             </a>
+                            <a class="nav-subenlace" href="<?= h($baseUrl) ?>/wiki/index.php" title="Abrir la wiki con guías paso a paso">
+                                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                    <path d="M2 4h6a4 4 0 0 1 4 4v12a3 3 0 0 0-3-3H2z" />
+                                    <path d="M22 4h-6a4 4 0 0 0-4 4v12a3 3 0 0 1 3-3h7z" />
+                                </svg>
+                                <span>Wiki</span>
+                            </a>
                         </div>
                     </nav>
                 </div>

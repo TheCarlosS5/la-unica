@@ -3,7 +3,7 @@
  * Archivo: index.php
  * Módulo: Sobre nosotros.
  * Propósito: presentar los recursos de ayuda y documentación de La Única.
- * Funcionamiento: muestra tarjetas de acceso al manual integrado y al futuro video explicativo.
+ * Funcionamiento: muestra tarjetas de acceso al manual integrado, al video explicativo y a la wiki.
  */
 
 require __DIR__ . '/inicializar.php';
@@ -61,6 +61,26 @@ require __DIR__ . '/../includes/menu.php';
         <div class="modulo-acciones">
             <a class="boton secundario" href="<?= h($baseUrl) ?>/php/sobre_nosotros/video_explicativo.php">
                 <span>Ver video</span>
+                <svg class="boton-icono" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 18 15 12 9 6" /></svg>
+            </a>
+        </div>
+    </article>
+
+    <article class="reportes-resumen-card">
+        <div class="modulo-cabecera">
+            <div class="modulo-icono" aria-hidden="true">
+                <svg width="25" height="25" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M2 4h6a4 4 0 0 1 4 4v12a3 3 0 0 0-3-3H2z" />
+                    <path d="M22 4h-6a4 4 0 0 0-4 4v12a3 3 0 0 1 3-3h7z" />
+                </svg>
+            </div>
+            <h2 class="modulo-titulo">Wiki</h2>
+        </div>
+        <p class="reportes-resumen-descripcion">Guías paso a paso con capturas señaladas, solución de problemas y notas técnicas del proyecto.</p>
+        <p class="reportes-resumen-detalle">Funciona aunque la base de datos esté apagada.</p>
+        <div class="modulo-acciones">
+            <a class="boton secundario" href="<?= h($baseUrl) ?>/wiki/index.php">
+                <span>Abrir wiki</span>
                 <svg class="boton-icono" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 18 15 12 9 6" /></svg>
             </a>
         </div>
