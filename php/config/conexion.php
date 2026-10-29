@@ -16,7 +16,7 @@ mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
 date_default_timezone_set('America/Bogota');
 
 try {
-    $conexion = new mysqli('127.0.0.1', 'root', '', 'la_unica', 8000);
+    $conexion = new mysqli('127.0.0.1', 'root', '', 'la_unica', 5000);
     $conexion->set_charset('utf8mb4');
     $conexion->query("SET time_zone = '-05:00'");
 } catch (Throwable $e) {
