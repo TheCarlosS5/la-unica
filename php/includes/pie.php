@@ -1,3 +1,13 @@
+<!--
+/**
+ * Archivo: pie.php
+ * Módulo: Plantilla compartida de cierre.
+ * Propósito: cerrar el contenedor principal y mostrar el pie común de las páginas.
+ * Funcionamiento: imprime el cierre del shell y activa el menú lateral adaptable con JavaScript.
+ * Puntos clave: abrir/cerrar menú, cerrar al pulsar el fondo o Escape, actualizar aria-expanded
+ * y devolver el foco al botón que lo abrió.
+ */
+-->
         </main>
         <footer class="pie-app" role="contentinfo">
             <div class="pie-inner">

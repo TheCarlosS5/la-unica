@@ -1,4 +1,18 @@
 <?php
+/**
+ * Archivo: datos_reportes.php
+ * Módulo: Reportes — catálogo y acceso a datos.
+ * Propósito: centralizar definición, columnas, textos, fuentes SQL y consulta de los siete reportes.
+ * Funcionamiento: catalogoReportes() entrega metadatos; obtenerFilasReporte() selecciona la vista o
+ * procedimiento correspondiente; consultarFilasReporte() lee resultados y limpia resultados adicionales.
+ * Puntos clave: se compara la vista y el procedimiento de clientes; si difieren, el resumen/reporte falla
+ * explícitamente. Los totales y subtotales usan el precio vigente almacenado en productos.
+ */
+
+/**
+ * Devuelve títulos, descripción, fuente de datos, columnas y reglas de los siete reportes.
+ * @return array Catálogo indexado por la clave interna de cada reporte.
+ */
 function catalogoReportes(): array
 {
     return [
@@ -109,6 +123,14 @@ function catalogoReportes(): array
     ];
 }
 
+/**
+ * Ejecuta una consulta, recoge filas asociativas y libera todos sus resultados.
+ * Cuando se invoca un procedimiento, drena también los conjuntos adicionales de MySQLi.
+ * @param mysqli $conexion Conexión compartida del aplicativo.
+ * @param string $consulta SELECT o llamada CALL definida por el reporte.
+ * @param bool $esProcedimiento Indica si deben consumirse resultados adicionales.
+ * @return array Filas devueltas por la primera consulta.
+ */
 function consultarFilasReporte(mysqli $conexion, string $consulta, bool $esProcedimiento = false): array
 {
     $resultado = $conexion->query($consulta);
@@ -138,6 +160,15 @@ function consultarFilasReporte(mysqli $conexion, string $consulta, bool $esProce
     return $filas;
 }
 
+/**
+ * Despacha una clave de reporte a su vista o procedimiento almacenado.
+ * La salida de clientes se compara entre vista y procedimiento antes de devolverla.
+ * @param mysqli $conexion Conexión compartida del aplicativo.
+ * @param string $tipoReporte Clave definida en catalogoReportes().
+ * @return array Filas normalizadas para la vista.
+ * @throws InvalidArgumentException Si la clave no está disponible.
+ * @throws UnexpectedValueException Si las dos fuentes de clientes no coinciden.
+ */
 function obtenerFilasReporte(mysqli $conexion, string $tipoReporte): array
 {
     switch ($tipoReporte) {

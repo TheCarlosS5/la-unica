@@ -1,4 +1,14 @@
 <?php
+/**
+ * Archivo: crear_cliente.php
+ * Módulo: Clientes — alta.
+ * Propósito: registrar un cliente con identificador manual, nombre y fecha opcional.
+ * Funcionamiento: en POST valida tipos, token CSRF, ID positivo, nombre y fecha; inserta con
+ * sentencia preparada y muestra errores junto al formulario. En éxito redirige con HTTP 303.
+ * Puntos clave: ID único de la tienda; nombre obligatorio de hasta 100 caracteres; si la fecha
+ * queda vacía, la base aplica su valor predeterminado. El formulario conserva los datos ante errores.
+ */
+
 require __DIR__ . '/../config/conexion.php';
 
 $titulo = 'Crear cliente';

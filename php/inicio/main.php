@@ -1,4 +1,13 @@
 <?php
+/**
+ * Archivo: php/inicio/main.php
+ * Módulo: Inicio.
+ * Propósito: mostrar el panel de entrada y los accesos a clientes, productos, facturas y reportes.
+ * Funcionamiento: carga la conexión y utilidades compartidas, fija el título y sección activa,
+ * incluye menu.php, presenta tarjetas con enlaces a cada módulo y termina con pie.php.
+ * Punto clave: esta página es el destino de main.php y no ejecuta operaciones de escritura.
+ */
+
 require __DIR__ . '/../config/conexion.php';
 $titulo = 'Inicio';
 $seccionActiva = 'inicio';

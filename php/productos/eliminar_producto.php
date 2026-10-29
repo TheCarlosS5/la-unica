@@ -1,4 +1,14 @@
 <?php
+/**
+ * Archivo: eliminar_producto.php
+ * Módulo: Productos — eliminación protegida.
+ * Propósito: confirmar la baja de un artículo que no tenga historial de facturación.
+ * Funcionamiento: exige POST, valida ID y CSRF, muestra una confirmación y, al confirmarse, consulta
+ * detalle_facturas antes de ejecutar DELETE con una sentencia preparada.
+ * Puntos clave: los productos referenciados por facturas no se eliminan; se informa el resultado
+ * sin exponer errores técnicos al navegador.
+ */
+
 require __DIR__ . '/../config/conexion.php';
 
 $titulo = 'Eliminar producto';

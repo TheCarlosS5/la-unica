@@ -1,4 +1,14 @@
 <?php
+/**
+ * Archivo: reporte_individual.php
+ * Módulo: Reportes — plantilla individual reutilizable.
+ * Propósito: renderizar cualquiera de los siete reportes sin duplicar la estructura de página y tabla.
+ * Funcionamiento: cada archivo pequeño asigna tipoReporte y requiere esta plantilla; aquí se valida la
+ * clave, se carga el catálogo, se consultan filas y se muestran error, estado vacío o tabla detallada.
+ * Puntos clave: columnas y formatos provienen de datos_reportes.php; los datos dinámicos se escapan;
+ * cuando aplica, la fila enlaza al comprobante de la factura.
+ */
+
 require __DIR__ . '/../config/conexion.php';
 require_once __DIR__ . '/datos_reportes.php';
 
