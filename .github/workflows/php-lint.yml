@@ -1,4 +1,4 @@
-﻿name: PHP Syntax Check
+﻿name: PHP and JavaScript Syntax Check
 
 on:
   push:
@@ -13,7 +13,7 @@ permissions:
 
 jobs:
   php-lint:
-    name: Validate PHP syntax
+    name: Validate PHP and JavaScript syntax
     runs-on: ubuntu-latest
 
     steps:
@@ -39,3 +39,11 @@ jobs:
           for file in "${files[@]}"; do
             php -l "$file"
           done
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Check JavaScript syntax
+        run: node --check assets/js/facturas.js
