@@ -12,3 +12,5 @@ El equipo de desarrollo determina que, por ahora, el comportamiento se mantiene 
 
 **Estado:** Documentado como observación. Aprobado por el equipo.
 **Severidad:** Baja (No afecta la operación principal del sistema).
+
+**Seguimiento (30/10/2026):** Las fechas pasadas se mantienen permitidas (sirven para registrar clientes antiguos, y el SRS lo admite en RF-01). La revisión encontró un caso que la observación no cubría: se aceptaban fechas **futuras** (por ejemplo, 2099). Ahora `crear_cliente.php` las rechaza en el servidor y el campo tiene `max` con la fecha de hoy. La regla quedó en el SRS 1.5 (RF-01, RF-11 y 3.5.4).
