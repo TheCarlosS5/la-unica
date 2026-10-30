@@ -177,7 +177,7 @@ function obtenerFilasReporte(mysqli $conexion, string $tipoReporte): array
         case 'total_facturas':
             return consultarFilasReporte(
                 $conexion,
-                'SELECT id_factura, cliente, total_factura FROM vista_total_facturas ORDER BY id_factura DESC'
+                'SELECT id_factura, cliente, estado_factura, total_factura FROM vista_total_facturas ORDER BY id_factura DESC'
             );
 
         case 'unidades_productos':

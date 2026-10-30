@@ -286,6 +286,22 @@ final class DatabaseReportsTest extends TestCase
         }
     }
 
+    public function testEveryReportReturnsTheColumnsItsCatalogDeclares(): void
+    {
+        // Regresión: el catálogo pedía estado_factura en «Total por factura» y la consulta no lo traía.
+        foreach (catalogoReportes() as $clave => $reporte) {
+            $filas = obtenerFilasReporte($this->db, $clave);
+            self::assertNotSame([], $filas, "El reporte {$clave} no devolvió filas con los datos de prueba.");
+
+            foreach ($reporte['columnas'] as $columna) {
+                self::assertArrayHasKey($columna['campo'], $filas[0], "El reporte {$clave} no trae la columna {$columna['campo']}.");
+            }
+            if ($reporte['enlace_factura']) {
+                self::assertArrayHasKey('id_factura', $filas[0], "El reporte {$clave} enlaza facturas pero no trae id_factura.");
+            }
+        }
+    }
+
     public function testUnknownReportKeyIsRejected(): void
     {
         $this->expectException(InvalidArgumentException::class);
