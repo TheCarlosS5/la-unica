@@ -360,7 +360,7 @@ await ir('/php/facturas/crear_factura.php');
 await pagina.select('#id_cliente', '1008');
 await foto('facturas-paso-cliente', {
   recorte: 'marcas', margen: 30,
-  marcas: [{ sel: '#id_cliente', n: 1, texto: 'Elige el cliente', lado: 'abajo' }],
+  marcas: [{ sel: '#id_cliente', n: 1 }, { sel: '.campo-opciones', n: 2 }],
 });
 const lineas = () => pagina.$$('[data-linea-factura]');
 await (await (await lineas())[0].$('[data-producto-select]')).select('5');

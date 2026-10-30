@@ -48,8 +48,8 @@
 <p>Menú → <em>Ventas → <strong>Nueva factura</strong></em>.</p>
 </li>
 <li>
-<p><span class="marca-num">1</span> <strong>Elige el cliente.</strong> La lista muestra el nombre y el ID.</p>
-<figure class="captura"><img src="img/facturas-paso-cliente.webp" alt="Selección del cliente" loading="lazy"><figcaption>Selección del cliente</figcaption></figure>
+<p><span class="marca-num">1</span> <strong>Elige el cliente.</strong> La lista muestra el nombre y el ID. <span class="marca-num">2</span> <strong>Elige la forma de pago:</strong> <em>De contado</em> guarda la venta como <em>Pagado</em>; <em>Por cobrar</em>, como <em>Pendiente</em> (luego registras el pago desde el comprobante).</p>
+<figure class="captura"><img src="img/facturas-paso-cliente.webp" alt="Selección del cliente y de la forma de pago" loading="lazy"><figcaption>Selección del cliente y de la forma de pago</figcaption></figure>
 </li>
 <li>
 <p><strong>Llena la primera línea.</strong></p>

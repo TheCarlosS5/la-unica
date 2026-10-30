@@ -11,7 +11,7 @@ La aplicación tampoco implementa autenticación ni roles. Está pensada para us
 ## Documentación del proyecto
 
 - El SRS vigente es [SRS.docx](referencias/SRS.docx), versión 1.5. [SRS.pdf](referencias/SRS.pdf) y [SRS.md](referencias/SRS.md) ofrecen copias de consulta de esa misma versión. Mantén los tres archivos sincronizados cuando cambien los requisitos.
-- [manual.docx](referencias/manual.docx) y [manual.pdf](referencias/manual.pdf) describen los módulos principales e incluyen capturas del aplicativo. La sección «Sobre nosotros», la venta por cobrar y el registro de pago están en el SRS 1.5, pero todavía no en el manual.
+- [manual.docx](referencias/manual.docx) y [manual.pdf](referencias/manual.pdf), versión 1.1, describen todos los módulos con capturas del aplicativo, incluidos la venta por cobrar, el registro de pago y «Sobre nosotros». Si cambia la interfaz, actualiza el manual y sus capturas antes de publicar.
 - [db.sql](referencias/db.sql) define el esquema inicial que requiere la aplicación.
 
 La versión del SRS y la etiqueta del release de software (`vMAYOR.MENOR.PARCHE`) son referencias independientes.
@@ -43,7 +43,7 @@ Completa esta lista para la versión que vas a etiquetar:
 - [ ] Confirma que los cambios están revisados, guardados y subidos a `main` en GitHub.
 - [ ] Verifica que el repositorio no contiene archivos de configuración personales, contraseñas reales ni datos de clientes.
 - [ ] Revisa que el README y estas instrucciones coincidan con los archivos y funciones presentes.
-- [ ] Confirma que `SRS.docx`, `SRS.pdf` y `SRS.md` contienen la misma versión vigente y que `manual.docx` describe los módulos principales; recuerda que la sección «Sobre nosotros» aún no está desarrollada en la documentación formal.
+- [ ] Confirma que `SRS.docx`, `SRS.pdf` y `SRS.md` contienen la misma versión vigente y que `manual.docx`/`manual.pdf` corresponden a la versión de la interfaz que se publica (capturas e índice incluidos).
 - [ ] Confirma que GitHub Actions está en verde en `main`: validación de sintaxis y pruebas de base de datos (incluida la migración desde el esquema anterior).
 - [ ] Prueba la instalación desde cero en una base vacía: inicia Apache y MySQL, importa `referencias/db.sql`, ajusta `php/config/conexion.local.php` si hace falta y abre la ruta local configurada, por ejemplo `http://localhost/la-unica/`.
 - [ ] Recorre manualmente la creación, consulta, edición y eliminación de un cliente y de un producto. Comprueba que las bajas con registros relacionados se bloquean y que las eliminaciones solicitan confirmación.

@@ -4,11 +4,11 @@ Aplicación web local para administrar clientes, productos, ventas mediante fact
 
 La especificación de requisitos vigente es [referencias/SRS.docx](referencias/SRS.docx), versión 1.5. Para consulta están disponibles [referencias/SRS.pdf](referencias/SRS.pdf) y [referencias/SRS.md](referencias/SRS.md), también en versión 1.5. Los tres documentos describen el alcance de clientes, productos, facturas, cobros, reportes y la sección Sobre nosotros, además de la arquitectura del aplicativo.
 
-El [manual de usuario en Word](referencias/manual.docx) y su [versión PDF](referencias/manual.pdf) incluyen instrucciones y capturas de los módulos principales. La sección «Sobre nosotros», añadida después, permite consultar el PDF dentro del aplicativo y acceder a la página del video explicativo; esa navegación está en el SRS 1.5 (RF-15), pero todavía no en el manual.
+El [manual de usuario en Word](referencias/manual.docx) y su [versión PDF](referencias/manual.pdf), versión 1.1, explican paso a paso todos los módulos con capturas actuales: ventas de contado o por cobrar, registro de pago, cancelación, reportes y la sección «Sobre nosotros», que permite consultar el PDF dentro del aplicativo, ver el video explicativo y abrir la wiki.
 
 ## Funciones implementadas
 
-- **Clientes:** crear, consultar, editar y eliminar. El identificador se ingresa manualmente; la fecha de registro es opcional y, si se deja vacía, la asigna la base de datos.
+- **Clientes:** crear, consultar, editar y eliminar. El identificador se ingresa manualmente; la fecha de registro es opcional (no puede ser posterior a hoy) y, si se deja vacía, la asigna la base de datos.
 - **Productos:** crear, consultar, editar y eliminar. El identificador se genera automáticamente. Se administran nombre, unidad de medida de texto, existencias enteras y precio unitario.
 - **Ventas:** crear una factura de contado (*Pagado*) o por cobrar (*Pendiente*) para un cliente con uno o varios productos. La aplicación comprueba y descuenta existencias en una transacción y **guarda el precio de cada línea**: editar después el catálogo no altera las facturas ya emitidas.
 - **Facturas:** buscar y consultar facturas, ver sus detalles, imprimir un comprobante interno, registrar el pago de una factura *Pendiente* y cancelar facturas *Pagado* o *Pendiente* reponiendo el inventario una sola vez.
@@ -16,8 +16,6 @@ El [manual de usuario en Word](referencias/manual.docx) y su [versión PDF](refe
 - **Sobre nosotros:** acceso al manual PDF integrado, a la sección del video explicativo y a la wiki. Para reproducir el video, coloca el archivo en `assets/video/1.mp4`.
 - **Wiki:** documentación completa en `wiki/` (abre `…/wiki/` o *Menú → Información → Wiki*): guías paso a paso con capturas señaladas, configuración, solución de problemas y notas técnicas. Está hecha en PHP plano y no necesita la base de datos.
 - Las operaciones validan los datos; se protegen las solicitudes de modificación con tokens CSRF y las eliminaciones requieren confirmación. No se permite eliminar clientes con facturas ni productos que aparezcan en detalles de factura.
-
-> **Pendiente de documentar en el manual de usuario:** la venta por cobrar, el botón *Registrar pago* y el precio guardado en cada factura ya están en el SRS 1.5, pero todavía no en `manual.docx`/`manual.pdf`.
 
 ## Funciones fuera del alcance actual
 
@@ -105,8 +103,8 @@ referencias/
   db.sql                  Esquema inicial de la base de datos
   migraciones/            Scripts para actualizar bases existentes
   usuario_app.sql         Usuario MySQL con permisos mínimos
-  manual.docx             Manual editable
-  manual.pdf              Manual para consulta y visor integrado
+  manual.docx             Manual de usuario editable, versión 1.1
+  manual.pdf              Manual de usuario para consulta y visor integrado
   SRS.docx                Especificación de requisitos, versión 1.5
   SRS.pdf                 Copia de consulta del SRS, versión 1.5
   SRS.md                  Versión Markdown del SRS, versión 1.5
