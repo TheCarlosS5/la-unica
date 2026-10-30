@@ -2,8 +2,6 @@ name: Database Integration Tests
 
 on:
   push:
-    branches:
-      - camilo-pruebas-validaciones
   pull_request:
     branches:
       - main
@@ -39,6 +37,8 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Set up PHP
         uses: shivammathur/setup-php@v2
@@ -65,3 +65,16 @@ jobs:
 
       - name: Run database integration tests
         run: composer test:database
+
+      - name: Verify migration from the previous schema
+        shell: bash
+        run: |
+          set -euo pipefail
+          # Crea una base con el esquema anterior (sin precio en detalle_facturas), la migra y repite las pruebas.
+          git show 0150dc2438a6e00d7d3c0baa20e73b7a34ee4d0d:referencias/db.sql |
+            sed -e 's/^CREATE DATABASE la_unica;$/CREATE DATABASE la_unica_test_migracion;/' \
+                -e 's/^USE la_unica;$/USE la_unica_test_migracion;/' |
+            mysql --host=127.0.0.1 --port=3306 --user=root --password="$DB_TEST_PASSWORD"
+          sed 's/^USE la_unica;$/USE la_unica_test_migracion;/' referencias/migraciones/001_precio_historico.sql |
+            mysql --host=127.0.0.1 --port=3306 --user=root --password="$DB_TEST_PASSWORD"
+          DB_TEST_DATABASE=la_unica_test_migracion composer test:database
