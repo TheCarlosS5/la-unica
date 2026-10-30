@@ -1560,6 +1560,34 @@ button[disabled] {
   box-shadow: 0 0 0 3px var(--color-foco);
 }
 
+.campo-opciones {
+  border: 0;
+  padding: 0;
+  min-width: 0;
+}
+
+.campo-opciones legend {
+  font-family: var(--fuente-titulo);
+  font-size: 1rem;
+  color: var(--color-texto);
+  margin-bottom: 6px;
+  padding: 0;
+}
+
+.campo-opciones label {
+  justify-content: flex-start;
+  font-family: inherit;
+  cursor: pointer;
+}
+
+.campo-opciones input[type="radio"] {
+  width: 18px;
+  height: 18px;
+  margin: 0;
+  padding: 0;
+  accent-color: var(--color-texto);
+}
+
 .campo input[readonly] {
   background-color: var(--color-superficie-subyacente);
   border-style: dashed;

@@ -112,7 +112,7 @@ function catalogoWiki()
                 'descripcion' => 'Sistema visual, plantilla de páginas, menú adaptable y el script del formulario de facturas.',
             ],
             'tecnico/requisitos' => [
-                'titulo' => 'Requisitos (SRS 1.4)',
+                'titulo' => 'Requisitos (SRS 1.5)',
                 'descripcion' => 'Resumen del SRS vigente y matriz de trazabilidad requisito → código.',
             ],
             'tecnico/contribuir' => [

@@ -13,7 +13,7 @@ require __DIR__ . '/../config/conexion.php';
 
 $titulo = 'Crear producto';
 $seccionActiva = 'productos';
-$mensajeExito = (($_GET['creado'] ?? '') === '1') ? 'Producto creado correctamente.' : '';
+$mensajeExito = tomarMensajeFlash('producto_creado');
 $mensajeError = '';
 $tokenCsrf = obtenerTokenCsrf();
 
@@ -62,7 +62,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $sentencia->bind_param('ssis', $nombreProducto, $unidadMedida, $stockValido, $precioTexto);
 
             if ($sentencia->execute()) {
-                header('Location: crear_producto.php?creado=1', true, 303);
+                guardarMensajeFlash('producto_creado', 'Producto creado correctamente.');
+                header('Location: crear_producto.php', true, 303);
                 exit;
             } else {
                 $mensajeError = 'No se pudo crear el producto.';

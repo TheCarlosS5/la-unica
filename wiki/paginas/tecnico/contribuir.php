@@ -101,16 +101,8 @@ git push -u origin mi-cambio</code></pre>
 </thead>
 <tbody>
 <tr>
-<td>Guardar <code>precio_unitario</code> en <code>detalle_facturas</code></td>
-<td>Totales históricos estables.</td>
-</tr>
-<tr>
 <td>Inicio de sesión simple</td>
 <td>Poder usarla con más de una persona.</td>
-</tr>
-<tr>
-<td>Flujo para facturas <em>Pendiente</em> (cobrar / cancelar)</td>
-<td>Ventas a crédito.</td>
 </tr>
 <tr>
 <td>Exportar reportes a CSV</td>

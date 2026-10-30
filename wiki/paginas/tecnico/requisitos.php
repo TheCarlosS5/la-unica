@@ -1,8 +1,12 @@
 <?php if (!defined('LA_UNICA_WIKI')) { exit; } ?>
-<p>Resumen de <code>referencias/SRS.md</code> <strong>versión 1.4</strong> (27/10/2026, vigente). Las tres copias (<code>.docx</code>, <code>.pdf</code>, <code>.md</code>) deben mantenerse sincronizadas.</p>
+<p>Resumen de <code>referencias/SRS.md</code> <strong>versión 1.5</strong> (30/10/2026, vigente). Las tres copias (<code>.docx</code>, <code>.pdf</code>, <code>.md</code>) deben mantenerse sincronizadas.</p>
+<div class="aviso aviso-note">
+<p class="aviso-titulo">Novedades de la versión 1.5</p>
+<p>El detalle guarda el precio de la venta (RF-07), las ventas pueden quedar <em>Pendiente</em> y cobrarse después (RF-06, RF-10 y RF-14), los reportes de ventas excluyen las canceladas (RF-13), la fecha de registro no puede ser futura (RF-01) y se documentan Sobre nosotros (RF-15), la arquitectura (2.5), la seguridad (RNF-07) y las pruebas automatizadas (RNF-08).</p>
+</div>
 <h2 id="resumen-ejecutivo">Resumen ejecutivo</h2>
 <blockquote>
-<p>La Única será una aplicación web local para registrar clientes y productos, gestionar facturas y consultar reportes. La base de datos <code>la_unica</code> se crea con cuatro tablas, tres vistas y cinco procedimientos almacenados definidos en <code>db.sql</code>. […] El esquema no guarda el precio histórico en cada detalle: los subtotales y totales se calculan con el precio actual del producto.</p>
+<p>La Única será una aplicación web local para registrar clientes y productos, gestionar facturas y consultar reportes. La base de datos <code>la_unica</code> se crea con cuatro tablas, tres vistas y cinco procedimientos almacenados definidos en <code>db.sql</code>. […] Cada detalle guardará la cantidad y el precio_unitario aplicado en la venta: los subtotales y totales se calcularán con ese precio, de modo que actualizar el catálogo no altere las facturas emitidas.</p>
 </blockquote>
 <p>Es un <strong>prototipo formativo</strong>: la factura es un comprobante interno sin IVA ni otros impuestos.</p>
 <p><strong>Fuera del alcance:</strong> usuarios y roles, autenticación, recuperación de contraseñas, categorías, tabla de tienda, contabilidad avanzada, descuentos, pasarelas de pago, facturación electrónica y apps móviles nativas.</p>
@@ -25,15 +29,23 @@
 </tr>
 <tr>
 <td>3.2.3 Facturas</td>
-<td>seleccionar un cliente y agregar productos con cantidades enteras positivas para generar una factura con total a precio actual y existencias actualizadas.</td>
+<td>seleccionar un cliente, indicar si la venta es de contado o por cobrar y agregar productos con cantidades enteras positivas para generar una factura que guarde el precio de cada producto y actualice las existencias.</td>
 </tr>
 <tr>
 <td>3.2.4 Consulta y cancelación</td>
-<td>consultar e imprimir facturas por id, cliente o fecha; cancelar solo facturas <em>Pagado</em>.</td>
+<td>consultar e imprimir facturas por id, cliente o fecha; cancelar facturas <em>Pagado</em> o <em>Pendiente</em>.</td>
 </tr>
 <tr>
 <td>3.2.5 Reportes</td>
 <td>consultar reportes de clientes, ventas, existencias y estados.</td>
+</tr>
+<tr>
+<td>3.2.6 Cobro</td>
+<td>consultar las facturas pendientes y registrar el pago cuando el cliente pague, sin modificar existencias.</td>
+</tr>
+<tr>
+<td>3.2.7 Ayuda</td>
+<td>consultar el manual, el video y la wiki desde el aplicativo, aunque la base de datos no esté disponible.</td>
 </tr>
 </tbody>
 </table></div>
@@ -81,13 +93,13 @@
 <tr>
 <td>RF-06</td>
 <td>Generar la factura (estado <em>Pagado</em> explícito)</td>
-<td><code>crear_factura.php</code> — <code>INSERT … 'Pagado'</code></td>
+<td><code>registrarVenta()</code> — <em>Pagado</em> o <em>Pendiente</em> según la forma de pago</td>
 <td><span class="insignia insignia-success">Cumple</span></td>
 </tr>
 <tr>
 <td>RF-07</td>
 <td>Calcular importes con precio vigente</td>
-<td>Vistas + <code>imprimir_factura.php</code>, <code>ver_facturas.php</code></td>
+<td>Se usa el precio guardado en <code>detalle_facturas</code> al vender</td>
 <td><span class="insignia insignia-success">Cumple</span></td>
 </tr>
 <tr>
@@ -105,7 +117,7 @@
 <tr>
 <td>RF-10</td>
 <td>Cancelar facturas (Pagado → Cancelado, una vez)</td>
-<td><code>facturas/cancelar_factura.php</code></td>
+<td><code>cancelarFactura()</code> — también Pendiente → Cancelado; <code>registrarPagoFactura()</code> para Pendiente → Pagado</td>
 <td><span class="insignia insignia-success">Cumple</span></td>
 </tr>
 <tr>
@@ -123,7 +135,19 @@
 <tr>
 <td>RF-13</td>
 <td>Resumen + 7 reportes</td>
-<td><code>reportes/ver_reportes.php</code> + 7 rutas</td>
+<td><code>reportes/ver_reportes.php</code> + 7 rutas; totales y unidades excluyen canceladas</td>
+<td><span class="insignia insignia-success">Cumple</span></td>
+</tr>
+<tr>
+<td>RF-14</td>
+<td>Registrar el pago de facturas (Pendiente → Pagado)</td>
+<td><code>facturas/registrar_pago_factura.php</code> — <code>registrarPagoFactura()</code></td>
+<td><span class="insignia insignia-success">Cumple</span></td>
+</tr>
+<tr>
+<td>RF-15</td>
+<td>Consultar la ayuda (manual, video y wiki)</td>
+<td><code>sobre_nosotros/</code> y <code>wiki/</code>, sin base de datos</td>
 <td><span class="insignia insignia-success">Cumple</span></td>
 </tr>
 </tbody>
@@ -154,26 +178,38 @@
 <tr>
 <td>RNF-03</td>
 <td>Exposición del servicio</td>
-<td>App y MySQL solo en <em>loopback</em>.</td>
-<td>Conexión a <code>127.0.0.1</code>; responsabilidad del despliegue.</td>
+<td>App y MySQL solo en <em>loopback</em> (<code>Listen 127.0.0.1</code>, <code>bind-address</code>).</td>
+<td>Conexión a <code>127.0.0.1</code>; la configuración de Apache y MySQL es responsabilidad del despliegue (ver <a href="index.php?pagina=guia/instalacion">Instalación</a>).</td>
 </tr>
 <tr>
 <td>RNF-04</td>
 <td>Integridad</td>
-<td>Ventas y cancelaciones en transacciones; ajustes atómicos coordinados.</td>
+<td>Ventas, pagos y cancelaciones en transacciones; ajustes atómicos coordinados.</td>
 <td>Ver <a href="index.php?pagina=tecnico/flujo-de-ventas">Flujo de ventas</a>.</td>
 </tr>
 <tr>
 <td>RNF-05</td>
 <td>Compatibilidad</td>
-<td>Navegadores modernos; impresión del comprobante.</td>
-<td>HTML/CSS estándar + <code>@media print</code>.</td>
+<td>Navegadores modernos; menú adaptable; impresión del comprobante.</td>
+<td>HTML/CSS estándar, menú lateral desplegable + <code>@media print</code>.</td>
 </tr>
 <tr>
 <td>RNF-06</td>
 <td>Mantenibilidad</td>
-<td>PHP organizado; esquema reproducible con <code>db.sql</code>.</td>
-<td>Estructura por módulos, cabeceras de documentación.</td>
+<td>PHP sin frameworks; lógica de facturación separada; esquema reproducible con <code>db.sql</code> y migraciones.</td>
+<td>Estructura por módulos, <code>servicio_facturas.php</code>, <code>referencias/migraciones/</code>.</td>
+</tr>
+<tr>
+<td>RNF-07</td>
+<td>Seguridad</td>
+<td>Sentencias preparadas, escape de salida, POST + CSRF, cookie HttpOnly/SameSite, cabeceras, usuario MySQL limitado, archivos internos ocultos.</td>
+<td>Ver <a href="index.php?pagina=tecnico/seguridad">Seguridad</a>.</td>
+</tr>
+<tr>
+<td>RNF-08</td>
+<td>Verificabilidad</td>
+<td>Pruebas de integración automatizadas en cada envío, incluida una base migrada.</td>
+<td>PHPUnit en <code>tests/</code> + GitHub Actions.</td>
 </tr>
 </tbody>
 </table></div>
@@ -182,10 +218,9 @@
 <li>Toda factura referencia un cliente; todo detalle, una factura y un producto existentes (FK).</li>
 <li>Al menos <strong>un detalle por venta</strong> — lo valida PHP (el esquema no lo impone).</li>
 <li><code>unidad_medida</code> es texto libre; <code>stock</code> y <code>cantidad</code> son enteros (<code>stock ≥ 0</code>, <code>cantidad &gt; 0</code>).</li>
-<li>No se copian nombre ni precio al detalle: se muestran los <strong>vigentes</strong>.</li>
-<li>Cambiar el precio cambia los importes de ventas anteriores.</li>
+<li>El detalle guarda el <strong>precio de la venta</strong>; cambiar el precio del catálogo no altera ventas anteriores. El nombre sí se muestra el actual.</li>
 <li>Cancelar suma al stock <strong>vigente</strong> las cantidades del detalle, una sola vez.</li>
-<li>Solo transición <strong>Pagado → Cancelado</strong>; <em>Pendiente</em> no tiene flujo en esta versión.</li>
+<li>Transiciones: <strong>Pendiente → Pagado</strong>, <strong>Pagado → Cancelado</strong> y <strong>Pendiente → Cancelado</strong>.</li>
 <li>No se modifican ni eliminan facturas ni detalles.</li>
 <li>Un producto con stock 0 sigue visible pero no se puede agregar a una venta.</li>
 </ul>
@@ -197,7 +232,9 @@
 <li>Cantidades fraccionarias, cero o negativas se <strong>rechazan</strong>; stock insuficiente rechaza la venta <strong>sin cambios parciales</strong>.</li>
 <li>Venta de 3 → ajuste manual a 1 → cancelar = <strong>4</strong>; una segunda cancelación no cambia nada.</li>
 <li>Producto con stock 0 no se puede agregar por la interfaz, y el servidor rechaza intentos de saltarse la regla.</li>
-<li>El precio acepta hasta dos decimales y un máximo de <strong>99.999.999,99</strong>.</li>
+<li>El precio acepta hasta dos decimales y un máximo de <strong>99.999.999,99</strong>. Si cambia de 4.800 a 5.000, una factura anterior conserva su total con 4.800.</li>
+<li>Una venta por cobrar queda <em>Pendiente</em> y aparece en <em>Facturas pendientes</em>; al registrar el pago pasa a <em>Pagado</em> sin cambiar el stock.</li>
+<li>Una <code>fecha_registro</code> futura se rechaza; una anterior se acepta.</li>
 </ul>
 </div>
 <h2 id="historial-de-versiones-del-srs">Historial de versiones del SRS</h2>
@@ -238,8 +275,14 @@
 <tr>
 <td>1.4</td>
 <td>27/10/2026</td>
-<td><strong>Vigente</strong></td>
+<td>Reemplazada</td>
 <td>Ajustes a reportes, reglas, dependencias y aceptación.</td>
+</tr>
+<tr>
+<td>1.5</td>
+<td>30/10/2026</td>
+<td><strong>Vigente</strong></td>
+<td>Alineación con el aplicativo: precio de venta guardado, ventas por cobrar (RF-14), reportes sin canceladas, Sobre nosotros (RF-15), arquitectura (2.5), seguridad (RNF-07) y pruebas (RNF-08).</td>
 </tr>
 </tbody>
 </table></div>

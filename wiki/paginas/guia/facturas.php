@@ -13,27 +13,27 @@
 <tbody>
 <tr>
 <td><span class="insignia insignia-success">Pagado</span></td>
-<td>Toda venta registrada desde la aplicación</td>
+<td>Venta <em>de contado</em>, o al registrar el pago de una <em>Pendiente</em></td>
 <td>Sí</td>
 <td><strong>Sí</strong>, una sola vez</td>
 </tr>
 <tr>
 <td><span class="insignia insignia-danger">Cancelado</span></td>
-<td>Al cancelar una factura <em>Pagado</em></td>
+<td>Al cancelar una factura <em>Pagado</em> o <em>Pendiente</em></td>
 <td>No (se repuso)</td>
 <td>No</td>
 </tr>
 <tr>
 <td><span class="insignia insignia-caution">Pendiente</span></td>
-<td>Solo si se inserta directamente en MySQL sin estado</td>
-<td>Depende de quién la insertó</td>
-<td>No</td>
+<td>Venta <em>por cobrar</em> (fiado): el cliente se lleva la mercancía y paga después</td>
+<td>Sí</td>
+<td><strong>Sí</strong>, una sola vez</td>
 </tr>
 </tbody>
 </table></div>
 <div class="aviso aviso-note">
 <p class="aviso-titulo">Nota</p>
-<p>La aplicación <strong>no crea facturas Pendiente</strong>: el esquema lo admite como valor por defecto, pero el SRS no define su flujo. Aparecen en los reportes cuando se cargan desde SQL.</p>
+<p>Al guardar una venta eliges la <strong>forma de pago</strong>: <em>De contado</em> la guarda como <em>Pagado</em>; <em>Por cobrar</em> la guarda como <em>Pendiente</em>. Cuando el cliente pague, abre el comprobante y pulsa <strong>Registrar pago</strong>: pasa a <em>Pagado</em> sin mover el inventario.</p>
 </div>
 <h2 id="abrir-el-módulo">Abrir el módulo</h2>
 <figure class="captura"><img src="img/facturas-menu.webp" alt="Facturas en el menú" loading="lazy"><figcaption>Facturas en el menú</figcaption></figure>
@@ -48,8 +48,8 @@
 <p>Menú → <em>Ventas → <strong>Nueva factura</strong></em>.</p>
 </li>
 <li>
-<p><span class="marca-num">1</span> <strong>Elige el cliente.</strong> La lista muestra el nombre y el ID.</p>
-<figure class="captura"><img src="img/facturas-paso-cliente.webp" alt="Selección del cliente" loading="lazy"><figcaption>Selección del cliente</figcaption></figure>
+<p><span class="marca-num">1</span> <strong>Elige el cliente.</strong> La lista muestra el nombre y el ID. <span class="marca-num">2</span> <strong>Elige la forma de pago:</strong> <em>De contado</em> guarda la venta como <em>Pagado</em>; <em>Por cobrar</em>, como <em>Pendiente</em> (luego registras el pago desde el comprobante).</p>
+<figure class="captura"><img src="img/facturas-paso-cliente.webp" alt="Selección del cliente y de la forma de pago" loading="lazy"><figcaption>Selección del cliente y de la forma de pago</figcaption></figure>
 </li>
 <li>
 <p><strong>Llena la primera línea.</strong></p>
@@ -72,7 +72,7 @@
 <p><strong>Revisa el total y guarda.</strong></p>
 <figure class="captura"><img src="img/facturas-paso-total.webp" alt="Total estimado y botón Guardar venta" loading="lazy"><figcaption>Total estimado y botón Guardar venta</figcaption></figure>
 <ul>
-<li><span class="marca-num">1</span> El <strong>Total estimado</strong> se recalcula al instante con los precios vigentes.</li>
+<li><span class="marca-num">1</span> El <strong>Total estimado</strong> se recalcula al instante con los precios actuales. Al guardar, cada línea conserva ese precio aunque después cambie el catálogo.</li>
 <li><span class="marca-num">2</span> Pulsa <strong>Guardar venta</strong>. El botón cambia a <em>Guardando…</em> para evitar que se guarde dos veces.</li>
 </ul>
 </li>
@@ -108,7 +108,7 @@
 </li>
 </ol>
 </div>
-<p>El listado muestra número, fecha y hora, cliente, estado, cantidad de líneas y <strong>total vigente</strong>, de la más reciente a la más antigua.</p>
+<p>El listado muestra número, fecha y hora, cliente, estado, cantidad de líneas y <strong>total</strong>, de la más reciente a la más antigua.</p>
 <figure class="captura"><img src="img/facturas-lista.webp" alt="Listado de facturas" loading="lazy"><figcaption>Listado de facturas</figcaption></figure>
 <h2 id="ver-e-imprimir-el-comprobante">Ver e imprimir el comprobante</h2>
 <div class="pasos">
@@ -122,12 +122,12 @@
 <figure class="captura"><img src="img/facturas-comprobante-botones.webp" alt="Botones del comprobante" loading="lazy"><figcaption>Botones del comprobante</figcaption></figure>
 <ul>
 <li><span class="marca-num">1</span> <strong>Imprimir</strong>: abre el diálogo de impresión del navegador. Puedes elegir <em>Guardar como PDF</em>.</li>
-<li><span class="marca-num">2</span> <strong>Cancelar factura</strong>: solo aparece en facturas <em>Pagado</em> (ver abajo).</li>
+<li><span class="marca-num">2</span> <strong>Cancelar factura</strong>: aparece en facturas <em>Pagado</em> y <em>Pendiente</em> (ver abajo). En una <em>Pendiente</em> también verás <strong>Registrar pago</strong>.</li>
 <li><span class="marca-num">3</span> <strong>Volver a facturas</strong>.</li>
 </ul>
 </li>
 <li>
-<p>El comprobante incluye el cliente, la fecha, <span class="marca-num">1</span> el estado, cada producto con unidad, cantidad, precio vigente y subtotal, y <span class="marca-num">2</span> el total.</p>
+<p>El comprobante incluye el cliente, la fecha, <span class="marca-num">1</span> el estado, cada producto con unidad, cantidad, precio de venta y subtotal, y <span class="marca-num">2</span> el total.</p>
 <figure class="captura"><img src="img/facturas-comprobante-detalle.webp" alt="Detalle del comprobante" loading="lazy"><figcaption>Detalle del comprobante</figcaption></figure>
 </li>
 </ol>
@@ -141,7 +141,7 @@
 <h2 id="cancelar-una-factura">Cancelar una factura</h2>
 <div class="pasos">
 <ol>
-<li>Abre el comprobante de una factura <strong>Pagado</strong> y pulsa <strong>Cancelar factura</strong> (<span class="marca-num">2</span> en la imagen de los botones).</li>
+<li>Abre el comprobante de una factura <strong>Pagado</strong> o <strong>Pendiente</strong> y pulsa <strong>Cancelar factura</strong> (<span class="marca-num">2</span> en la imagen de los botones).</li>
 <li>Confirma: <em>«¿Cancelar esta factura y reponer las existencias?»</em>.</li>
 <li>
 <p>Listo:</p>
@@ -159,7 +159,7 @@
 <p>Una venta descontó <strong>3</strong> unidades. Luego se ajustó el stock a mano a <strong>1</strong>. Al cancelar la venta el stock queda en <strong>4</strong> (1 + 3). Una segunda cancelación no cambia nada.</p>
 </div>
 <div class="pestana" data-titulo="¿Y las facturas Pendiente?">
-<p>No se pueden cancelar desde la app: <em>«Solo se pueden cancelar facturas con estado Pagado.»</em></p>
+<p>Se cancelan igual que las <em>Pagado</em>: la mercancía vuelve al inventario y la deuda desaparece del reporte de pendientes.</p>
 </div>
 </div>
 <h2 id="lo-que-no-se-puede-hacer">Lo que no se puede hacer</h2>

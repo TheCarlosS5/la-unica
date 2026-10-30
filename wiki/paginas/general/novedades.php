@@ -1,5 +1,17 @@
 <?php if (!defined('LA_UNICA_WIKI')) { exit; } ?>
 <p>Cronología del repositorio hasta la rama <code>revision-samuel</code> (79 commits entre el 22 y el 28 de octubre de 2026). Las fechas y mensajes salen de <code>git log</code>.</p>
+<h2 id="30-de-octubre-de-2026--precio-de-venta-y-ventas-por-cobrar">30 de octubre de 2026 — precio de venta, ventas por cobrar y pruebas</h2>
+<ul>
+<li><code>fix:</code> <code>detalle_facturas</code> guarda el <strong>precio de la venta</strong>; editar el catálogo ya no cambia facturas anteriores. Las bases existentes se actualizan con <code>referencias/migraciones/001_precio_historico.sql</code>.</li>
+<li><code>feat:</code> ventas <strong>por cobrar</strong> (estado <em>Pendiente</em>), con <em>Registrar pago</em> y cancelación desde el comprobante.</li>
+<li><code>fix:</code> los reportes de ventas (totales y unidades) excluyen las facturas canceladas.</li>
+<li><code>fix:</code> el comprobante ya no falla con un error fatal cuando la consulta de detalles falla.</li>
+<li><code>fix:</code> puerto MySQL por defecto <code>3306</code> (BUG-001); usuario <code>la_unica_app</code>, cookies de sesión <code>HttpOnly</code>/<code>SameSite</code>, cabeceras de seguridad y <code>.htaccess</code>.</li>
+<li><code>docs:</code> <strong>SRS 1.5</strong> en <code>.docx</code>, <code>.pdf</code> y <code>.md</code>: requisitos alineados con el aplicativo, RF-14, RF-15, RNF-07, RNF-08 y nueva sección de arquitectura.</li>
+<li><code>docs:</code> <strong>Manual de usuario 1.1</strong> (<code>.docx</code> y <code>.pdf</code>): venta por cobrar, registro de pago (5.4), Sobre nosotros (2.4), reportes actualizados, capturas nuevas e índice corregido. También se regeneraron las capturas de la wiki.</li>
+<li><code>fix:</code> el reporte <em>Total por factura</em> ya muestra la columna Estado.</li>
+<li><code>test:</code> PHPUnit con 30 pruebas de integración (reportes, ventas, pagos y cancelaciones) que corren en GitHub Actions en cada push.</li>
+</ul>
 <h2 id="28-de-octubre-de-2026--versión-funcional-revisada">28 de octubre de 2026 — versión funcional revisada</h2>
 <ul>
 <li><strong>Versión funcional</strong> subida por Samuel con la sección <strong>Sobre nosotros</strong> (manual PDF integrado y página del video explicativo).</li>
@@ -60,7 +72,12 @@
 <tr>
 <td>1.4</td>
 <td>27/10/2026</td>
-<td><strong>Vigente.</strong> Ajustes a reportes, reglas, dependencias y aceptación.</td>
+<td>Ajustes a reportes, reglas, dependencias y aceptación.</td>
+</tr>
+<tr>
+<td>1.5</td>
+<td>30/10/2026</td>
+<td><strong>Vigente.</strong> Alineación con el aplicativo, arquitectura, seguridad y pruebas.</td>
 </tr>
 </tbody>
 </table></div>

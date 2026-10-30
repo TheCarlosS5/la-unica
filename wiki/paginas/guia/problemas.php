@@ -8,9 +8,9 @@
 <div class="pasos">
 <ol>
 <li><strong>¿MySQL está encendido?</strong> En Laragon, <em>Start All</em> y comprueba que MySQL esté en verde.</li>
-<li><strong>¿Puerto correcto?</strong> La app usa el <strong>5000</strong>. Mira el puerto real en <code>my.ini</code> y ajusta <code>php/config/conexion.php</code> (ver <a href="index.php?pagina=configuracion/base-de-datos#cambiar-el-puerto">Conexión a la base de datos</a>).</li>
-<li><strong>¿Existe la base <code>la_unica</code>?</strong> En HeidiSQL o con <code>mysql -u root -P 5000 -e "SHOW DATABASES"</code>. Si no está, importa <code>referencias/db.sql</code>.</li>
-<li><strong>¿Usuario y contraseña?</strong> Por defecto <code>root</code> sin contraseña. Si tu MySQL tiene clave, ponla en <code>conexion.php</code>.</li>
+<li><strong>¿Puerto correcto?</strong> Por defecto la app usa el <strong>3306</strong>. Mira el puerto real en <code>my.ini</code> y, si es otro, ponlo en <code>php/config/conexion.local.php</code> (ver <a href="index.php?pagina=configuracion/base-de-datos#cambiar-el-puerto">Conexión a la base de datos</a>).</li>
+<li><strong>¿Existe la base <code>la_unica</code>?</strong> En HeidiSQL o con <code>mysql -u root -P 3306 -e "SHOW DATABASES"</code>. Si no está, importa <code>referencias/db.sql</code>.</li>
+<li><strong>¿Usuario y contraseña?</strong> Por defecto <code>root</code> sin contraseña. Si tu MySQL tiene clave (o usas <code>la_unica_app</code>), ponla en <code>conexion.local.php</code>.</li>
 </ol>
 </div>
 <p>Mientras tanto, <em>Sobre nosotros → Manual del Usuario</em> sigue funcionando sin base de datos.</p>
@@ -24,7 +24,7 @@
 <p>Tu MySQL es demasiado viejo (o es MariaDB antiguo). Necesitas <strong>MySQL 8.0.16 o superior</strong>. Laragon reciente ya lo trae.</p>
 <h2 id="las-tildes-y-eñes-se-ven-raras-ã-âœ">Las tildes y eñes se ven raras (<code>Ã±</code>, <code>â”œ</code>)</h2>
 <p>Los datos se insertaron con una codificación distinta de UTF-8 (pasa al importar con la consola de Windows). La app siempre usa <code>utf8mb4</code>; el problema está en cómo entraron los datos. Al importar desde consola usa:</p>
-<pre class="highlight"><code class="language-powershell">mysql -u root -P 5000 --default-character-set=utf8mb4 la_unica &lt; archivo.sql</code></pre>
+<pre class="highlight"><code class="language-powershell">mysql -u root -P 3306 --default-character-set=utf8mb4 la_unica &lt; archivo.sql</code></pre>
 <h2 id="call-to-undefined-function-mysqli-o-class-mysqli-not-found">«Call to undefined function mysqli…» o «Class "mysqli" not found»</h2>
 <p>PHP no tiene la extensión <code>mysqli</code>. En Laragon: <em>Menú → PHP → Extensions → mysqli</em>. Fuera de Laragon, descomenta <code>extension=mysqli</code> en <code>php.ini</code> y reinicia Apache.</p>
 <h2 id="no-se-pudo-validar-la-solicitud-actualiza-la-página-e-inténtalo-de-nuevo">«No se pudo validar la solicitud. Actualiza la página e inténtalo de nuevo.»</h2>

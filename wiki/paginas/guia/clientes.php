@@ -22,7 +22,7 @@
 <tr>
 <td>Fecha de registro</td>
 <td>fecha</td>
-<td>Opcional. Si la dejas vacía se usa la fecha de hoy.</td>
+<td>Opcional. Si la dejas vacía se usa la fecha de hoy. Puede ser anterior, pero no posterior a hoy.</td>
 </tr>
 </tbody>
 </table></div>

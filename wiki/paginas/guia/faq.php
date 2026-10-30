@@ -3,8 +3,8 @@
 <p>No. Todo (PHP, MySQL, fuentes, íconos, manual) es local. Solo necesitas Internet para descargar el proyecto la primera vez.</p>
 <h2 id="tiene-usuarios-y-contraseñas">¿Tiene usuarios y contraseñas?</h2>
 <p>No. El SRS deja la autenticación y los roles <strong>fuera del alcance</strong>. El control de acceso es el del propio equipo (la sesión de Windows). Por eso la app no debe exponerse a la red.</p>
-<h2 id="por-qué-cambió-el-total-de-una-factura-vieja">¿Por qué cambió el total de una factura vieja?</h2>
-<p>Porque el esquema (<code>db.sql</code>) no guarda el <strong>precio al momento de la venta</strong>: <code>detalle_facturas</code> solo tiene producto y cantidad. Los totales se calculan siempre como <code>cantidad × precio_unitario</code> <strong>actual</strong>. Si cambias un precio, cambian los importes mostrados en todas las facturas con ese producto, incluidos comprobantes y reportes. El SRS (RF-07) lo documenta como comportamiento esperado de esta versión.</p>
+<h2 id="por-qué-cambió-el-total-de-una-factura-vieja">¿Cambia el total de una factura vieja si edito un precio?</h2>
+<p>No. Cada línea de <code>detalle_facturas</code> guarda su <code>precio_unitario</code> al momento de la venta, y los totales se calculan con ese precio. Hasta la versión anterior se usaba el precio actual del catálogo y las facturas cambiaban solas; si tu base viene de esa versión, aplica <code>referencias/migraciones/001_precio_historico.sql</code> (las ventas antiguas quedan con el precio que tenía el catálogo al migrar).</p>
 <h2 id="puedo-vender-con-decimales-15-kg">¿Puedo vender con decimales (1,5 kg)?</h2>
 <p>No. <code>stock</code> y <code>cantidad</code> son enteros en la base. Si vendes a granel, define la unidad en una medida más pequeña (por ejemplo <code>gramos</code> o <code>media libra</code>).</p>
 <h2 id="puedo-cambiar-la-unidad-de-un-producto">¿Puedo cambiar la unidad de un producto?</h2>
@@ -13,8 +13,8 @@
 <p>No. Si te equivocaste, <strong>cancela</strong> la factura (repone el stock) y registra una nueva. Las facturas y sus líneas nunca se eliminan.</p>
 <h2 id="puedo-cancelar-una-factura-dos-veces">¿Puedo cancelar una factura dos veces?</h2>
 <p>No. La segunda vez el servidor responde <em>«Esta factura ya está cancelada; no se repuso el inventario otra vez.»</em> La reposición de stock ocurre una sola vez.</p>
-<h2 id="para-qué-sirve-el-estado-pendiente-si-la-app-no-lo-usa">¿Para qué sirve el estado «Pendiente» si la app no lo usa?</h2>
-<p>El esquema lo define como valor por defecto de <code>estado_factura</code>. La aplicación siempre crea facturas <em>Pagado</em>, pero si alguien inserta facturas directamente en MySQL sin indicar el estado, quedan <em>Pendiente</em> y aparecen en el reporte de pendientes. Su flujo (cobrarlas, cancelarlas) no está definido en esta versión.</p>
+<h2 id="para-qué-sirve-el-estado-pendiente-si-la-app-no-lo-usa">¿Para qué sirve el estado «Pendiente»?</h2>
+<p>Para las ventas <strong>por cobrar</strong> (fiado). Al registrar la venta eliges <em>Por cobrar</em>; el inventario se descuenta igual y la factura aparece en el reporte <em>Facturas pendientes</em> hasta que pulses <strong>Registrar pago</strong> en su comprobante, o la canceles.</p>
 <h2 id="puedo-tener-dos-clientes-con-el-mismo-nombre">¿Puedo tener dos clientes con el mismo nombre?</h2>
 <p>Sí. Solo el <strong>ID</strong> es único. Usa la búsqueda por ID para distinguirlos.</p>
 <h2 id="por-qué-el-id-del-cliente-lo-escribo-yo-y-el-del-producto-no">¿Por qué el ID del cliente lo escribo yo y el del producto no?</h2>

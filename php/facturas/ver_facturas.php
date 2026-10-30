@@ -2,10 +2,10 @@
 /**
  * Archivo: ver_facturas.php
  * Módulo: Facturas — consulta.
- * Propósito: buscar ventas y mostrar su estado, fecha, líneas y total vigente.
+ * Propósito: buscar ventas y mostrar su estado, fecha, líneas y total.
  * Funcionamiento: combina filtros opcionales por ID de factura, ID/nombre de cliente y fecha; construye
  * condiciones parametrizadas, agrupa detalles/productos y ordena los resultados más recientes primero.
- * Puntos clave: el importe se calcula con precios actuales del catálogo; los parámetros usan sentencias
+ * Puntos clave: el importe usa el precio guardado en cada línea de la venta; los parámetros usan sentencias
  * preparadas y los enlaces abren el comprobante de cada factura.
  */
 
@@ -45,11 +45,11 @@ if ($terminoBusqueda !== '') {
         $tipos .= 'iis';
         $parametros[] = $idBusqueda;
         $parametros[] = $idBusqueda;
-        $parametros[] = '%' . $terminoBusqueda . '%';
+        $parametros[] = patronLike($terminoBusqueda);
     } else {
         $condiciones[] = 'c.nombre LIKE ?';
         $tipos .= 's';
-        $parametros[] = '%' . $terminoBusqueda . '%';
+        $parametros[] = patronLike($terminoBusqueda);
     }
 }
 
@@ -64,10 +64,9 @@ if ($fechaBusqueda !== '') {
 if ($errorFiltro === '') {
     $sqlFacturas = 'SELECT f.id_factura, f.id_cliente, c.nombre AS cliente, f.estado_factura, f.fecha_factura, '
         . 'COUNT(d.id_detalle_factura) AS cantidad_lineas, '
-        . 'COALESCE(SUM(d.cantidad * p.precio_unitario), 0.00) AS total_factura '
+        . 'COALESCE(SUM(d.cantidad * d.precio_unitario), 0.00) AS total_factura '
         . 'FROM facturas f INNER JOIN clientes c ON c.id_cliente = f.id_cliente '
-        . 'LEFT JOIN detalle_facturas d ON d.id_factura = f.id_factura '
-        . 'LEFT JOIN productos p ON p.id_producto = d.id_producto';
+        . 'LEFT JOIN detalle_facturas d ON d.id_factura = f.id_factura';
     if ($condiciones !== []) {
         $sqlFacturas .= ' WHERE ' . implode(' AND ', $condiciones);
     }
@@ -162,7 +161,7 @@ require __DIR__ . '/../includes/menu.php';
                     <th scope="col">Cliente</th>
                     <th scope="col">Estado</th>
                     <th scope="col" class="texto-centro">Líneas</th>
-                    <th scope="col" class="texto-derecha">Total vigente</th>
+                    <th scope="col" class="texto-derecha">Total</th>
                     <th scope="col" class="texto-derecha">Acciones</th>
                 </tr>
             </thead>

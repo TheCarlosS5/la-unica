@@ -60,7 +60,7 @@
 </g>
 </g>
 <g>
-<rect x="340" y="200" width="250" height="146" rx="8" class="caja">
+<rect x="340" y="200" width="250" height="174" rx="8" class="caja">
 </rect>
 <rect x="340" y="200" width="250" height="34" rx="8" class="cabecera">
 </rect>
@@ -82,6 +82,10 @@
 <g>
 <text x="352" y="337" class="campo">cantidad</text>
 <text x="570" y="337" class="tipo" text-anchor="end">INT &gt; 0</text>
+</g>
+<g>
+<text x="352" y="365" class="campo">precio_unitario</text>
+<text x="570" y="365" class="tipo" text-anchor="end">DECIMAL(10,2)</text>
 </g>
 </g>
 <g>
@@ -155,6 +159,7 @@
     id_factura INT NOT NULL,
     id_producto INT NOT NULL,
     cantidad INT NOT NULL CHECK (cantidad &gt; 0),
+    precio_unitario DECIMAL(10,2) NOT NULL CHECK (precio_unitario &gt;= 0),
     FOREIGN KEY (id_factura) REFERENCES facturas(id_factura),
     FOREIGN KEY (id_producto) REFERENCES productos(id_producto)
 );</code></pre>
@@ -205,9 +210,9 @@
 </tr>
 </tbody>
 </table></div>
-<div class="aviso aviso-caution">
-<p class="aviso-titulo">Sin precio histórico</p>
-<p><code>detalle_facturas</code> no guarda el precio de venta. Todo importe se calcula como <code>cantidad × productos.precio_unitario</code> <strong>vigente</strong>. Es la limitación más importante del modelo (SRS RF-07). Una evolución natural sería añadir <code>precio_unitario</code> a <code>detalle_facturas</code> y llenarlo al vender.</p>
+<div class="aviso aviso-note">
+<p class="aviso-titulo">Precio histórico</p>
+<p><code>detalle_facturas.precio_unitario</code> guarda el precio de la venta: <code>registrarVenta()</code> lo copia de <code>productos</code> dentro de la misma transacción. Todo importe se calcula como <code>cantidad × detalle_facturas.precio_unitario</code>, así que editar el catálogo no altera facturas anteriores. Las bases creadas antes de este cambio se actualizan con <code>referencias/migraciones/001_precio_historico.sql</code>.</p>
 </div>
 <p>Tampoco hay restricción <code>UNIQUE (id_factura, id_producto)</code>: la base permitiría dos líneas del mismo producto en una factura. La aplicación lo evita <strong>agrupando</strong> cantidades por producto antes de insertar.</p>
 <h2 id="vistas">Vistas</h2>
@@ -221,22 +226,23 @@ LEFT JOIN facturas ON clientes.id_cliente = facturas.id_cliente
 GROUP BY clientes.id_cliente, clientes.nombre;</code></pre>
 </div>
 <div class="pestana" data-titulo="vista_total_facturas">
-<p><pre class="highlight"><code class="language-sql">-- Total por factura con el precio vigente; solo incluye facturas con detalles.
-SELECT facturas.id_factura, clientes.nombre AS cliente,
-       SUM(detalle_facturas.cantidad * productos.precio_unitario) AS total_factura
+<pre class="highlight"><code class="language-sql">-- Total por factura con el precio de la venta; excluye canceladas y facturas sin detalles.
+SELECT facturas.id_factura, clientes.nombre AS cliente, facturas.estado_factura,
+       SUM(detalle_facturas.cantidad * detalle_facturas.precio_unitario) AS total_factura
 FROM facturas
 INNER JOIN clientes ON facturas.id_cliente = clientes.id_cliente
 INNER JOIN detalle_facturas ON facturas.id_factura = detalle_facturas.id_factura
-INNER JOIN productos ON detalle_facturas.id_producto = productos.id_producto
-GROUP BY facturas.id_factura, clientes.nombre;</code></pre>
-La app la usa también para calcular el total al <strong>crear</strong> una factura, así el aviso y los reportes siguen la misma regla.</p>
+WHERE facturas.estado_factura &lt;&gt; 'Cancelado'
+GROUP BY facturas.id_factura, clientes.nombre, facturas.estado_factura;</code></pre>
 </div>
 <div class="pestana" data-titulo="vista_unidades_productos">
-<pre class="highlight"><code class="language-sql">-- Suma cantidades de detalle por producto, de todos los estados.
+<pre class="highlight"><code class="language-sql">-- Unidades vendidas por producto; excluye los detalles de facturas canceladas.
 SELECT productos.id_producto, productos.nombre AS producto,
        SUM(detalle_facturas.cantidad) AS unidades_facturadas
 FROM productos
 INNER JOIN detalle_facturas ON productos.id_producto = detalle_facturas.id_producto
+INNER JOIN facturas ON detalle_facturas.id_factura = facturas.id_factura
+WHERE facturas.estado_factura &lt;&gt; 'Cancelado'
 GROUP BY productos.id_producto, productos.nombre;</code></pre>
 </div>
 </div>
@@ -282,25 +288,23 @@ GROUP BY productos.id_producto, productos.nombre;</code></pre>
 <pre class="highlight"><code class="language-sql">-- Productos con menos de 5 unidades
 SELECT id_producto, nombre, stock FROM productos WHERE stock &lt; 5 ORDER BY stock;
 
--- Ventas cobradas (solo Pagado) por mes, con precio vigente
+-- Ventas cobradas (solo Pagado) por mes, con el precio de cada venta
 SELECT DATE_FORMAT(f.fecha_factura, '%Y-%m') AS mes,
-       SUM(d.cantidad * p.precio_unitario)    AS total
+       SUM(d.cantidad * d.precio_unitario)    AS total
 FROM facturas f
 JOIN detalle_facturas d ON d.id_factura = f.id_factura
-JOIN productos p        ON p.id_producto = d.id_producto
 WHERE f.estado_factura = 'Pagado'
 GROUP BY mes ORDER BY mes;
 
 -- Mejores clientes por importe
-SELECT c.nombre, SUM(d.cantidad * p.precio_unitario) AS total
+SELECT c.nombre, SUM(d.cantidad * d.precio_unitario) AS total
 FROM clientes c
 JOIN facturas f         ON f.id_cliente = c.id_cliente AND f.estado_factura = 'Pagado'
 JOIN detalle_facturas d ON d.id_factura = f.id_factura
-JOIN productos p        ON p.id_producto = d.id_producto
 GROUP BY c.id_cliente, c.nombre ORDER BY total DESC LIMIT 5;</code></pre>
 <h2 id="respaldo-y-restauración">Respaldo y restauración</h2>
 <pre class="highlight"><code class="language-powershell"># Respaldo (incluye vistas y procedimientos)
-mysqldump -u root -h 127.0.0.1 -P 5000 --routines --databases la_unica &gt; respaldo.sql
+mysqldump -u root -h 127.0.0.1 -P 3306 --routines --databases la_unica &gt; respaldo.sql
 
 # Restaurar en un equipo sin la base
-mysql -u root -h 127.0.0.1 -P 5000 --default-character-set=utf8mb4 &lt; respaldo.sql</code></pre>
+mysql -u root -h 127.0.0.1 -P 3306 --default-character-set=utf8mb4 &lt; respaldo.sql</code></pre>

@@ -6,14 +6,14 @@
  * Funcionamiento: en POST valida tipos, token CSRF, ID positivo, nombre y fecha; inserta con
  * sentencia preparada y muestra errores junto al formulario. En éxito redirige con HTTP 303.
  * Puntos clave: ID único de la tienda; nombre obligatorio de hasta 100 caracteres; si la fecha
- * queda vacía, la base aplica su valor predeterminado. El formulario conserva los datos ante errores.
+ * queda vacía, la base aplica su valor predeterminado; una fecha manual no puede ser futura. El formulario conserva los datos ante errores.
  */
 
 require __DIR__ . '/../config/conexion.php';
 
 $titulo = 'Crear cliente';
 $seccionActiva = 'clientes';
-$mensajeExito = (($_GET['creado'] ?? '') === '1') ? 'Cliente creado correctamente.' : '';
+$mensajeExito = tomarMensajeFlash('cliente_creado');
 $mensajeError = '';
 $tokenCsrf = obtenerTokenCsrf();
 
@@ -55,6 +55,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $mensajeError = 'El nombre admite hasta 100 caracteres.';
     } elseif ($fechaLimpia !== '' && !validarFecha($fechaLimpia)) {
         $mensajeError = 'La fecha no es válida.';
+    } elseif ($fechaLimpia !== '' && $fechaLimpia > date('Y-m-d')) {
+        $mensajeError = 'La fecha de registro no puede ser posterior a hoy.';
     } else {
         $sentencia = null;
         $creacionExitosa = false;
@@ -87,7 +89,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
 
         if ($creacionExitosa) {
-            header('Location: crear_cliente.php?creado=1', true, 303);
+            guardarMensajeFlash('cliente_creado', 'Cliente creado correctamente.');
+            header('Location: crear_cliente.php', true, 303);
             exit;
         }
     }
@@ -157,8 +160,8 @@ require __DIR__ . '/../includes/menu.php';
                     <span>Fecha de registro</span>
                     <span class="ayuda" style="margin:0;">Opcional</span>
                 </label>
-                <input id="fecha_registro" name="fecha_registro" type="date" value="<?= h($fechaRegistro) ?>">
-                <span class="ayuda texto-ayuda">Déjala vacía para asignar automáticamente la fecha actual del sistema.</span>
+                <input id="fecha_registro" name="fecha_registro" type="date" max="<?= h(date('Y-m-d')) ?>" value="<?= h($fechaRegistro) ?>">
+                <span class="ayuda texto-ayuda">Déjala vacía para asignar automáticamente la fecha actual del sistema. Puede ser anterior (clientes antiguos), pero no posterior a hoy.</span>
             </div>
 
             <div class="fila-botones">

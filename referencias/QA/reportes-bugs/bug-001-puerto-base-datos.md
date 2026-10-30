@@ -17,3 +17,7 @@
 `$conexion = new mysqli('127.0.0.1', 'root', '', 'la_unica', 5000);`
 
 **Nota del QA:** Se deja documentado para revisión con el equipo. No se modifica el código en esta rama para mantener la separación entre QA y Desarrollo.
+
+**Estado:** Resuelto (30/10/2026).
+**Corrección:** `php/config/conexion.php` usa ahora el puerto `3306` por defecto. Cada equipo puede cambiarlo sin tocar el código compartido, con `php/config/conexion.local.php` (plantilla en `conexion.local.example.php`) o con la variable `DB_PORT`. El README, el RELEASE y la wiki se actualizaron.
+**Verificación pendiente de QA:** instalar desde cero en Laragon con MySQL en 3306, sin archivo local, y confirmar que carga la página de inicio.

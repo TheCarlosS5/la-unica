@@ -45,16 +45,18 @@ git clone https://github.com/TheCarlosS5/la-unica.git</code></pre>
 <p><strong>Inicia Laragon</strong> y pulsa <strong>Start All</strong> para encender Apache y MySQL.</p>
 </li>
 <li>
-<p><strong>Revisa el puerto de MySQL.</strong> La aplicación se conecta a <code>127.0.0.1</code>, puerto <strong><code>5000</code></strong>, usuario <code>root</code> sin contraseña. Si tu MySQL usa otro puerto (Laragon trae <code>3306</code> por defecto), elige una opción:</p>
-<ul>
-<li>Cambia el puerto en <em>Laragon → Menú → MySQL → my.ini</em> (<code>port=5000</code>), <strong>o</strong></li>
-<li>Edita la línea de conexión en <code>php/config/conexion.php</code> (ver <a href="index.php?pagina=configuracion/base-de-datos">Base de datos</a>).</li>
-</ul>
+<p><strong>Revisa la conexión a MySQL.</strong> Por defecto la aplicación usa <code>127.0.0.1</code>, puerto <strong><code>3306</code></strong> (el de Laragon), usuario <code>root</code> sin contraseña. Si tu MySQL es distinto, copia <code>php/config/conexion.local.example.php</code> como <code>conexion.local.php</code> y ajústalo (ver <a href="index.php?pagina=configuracion/base-de-datos">Base de datos</a>).</p>
 </li>
 <li>
 <p><strong>Crea la base de datos</strong> importando <code>referencias/db.sql</code> una sola vez. Con HeidiSQL (<em>Laragon → Database</em>): <strong>Archivo → Ejecutar archivo SQL…</strong> y elige <code>referencias\db.sql</code>. Con la consola:</p>
 <pre class="highlight"><code class="language-powershell">cd C:\laragon\www\la-unica
-mysql -u root -h 127.0.0.1 -P 5000 --default-character-set=utf8mb4 &lt; referencias\db.sql</code></pre>
+mysql -u root -h 127.0.0.1 -P 3306 --default-character-set=utf8mb4 &lt; referencias\db.sql</code></pre>
+</li>
+<li>
+<p><strong>Recomendado: crea el usuario de la aplicación.</strong> Cambia la contraseña dentro de <code>referencias/usuario_app.sql</code>, ejecútalo como <code>root</code> y escribe ese usuario y contraseña en <code>php/config/conexion.local.php</code>. Así la app no trabaja con el administrador de MySQL.</p>
+</li>
+<li>
+<p><strong>Limita Apache a este equipo.</strong> La app no tiene usuarios ni contraseñas, así que nadie más en la red debe poder abrirla. En <em>Laragon → Menú → Apache → httpd.conf</em> cambia <code>Listen 80</code> por <code>Listen 127.0.0.1:80</code> y reinicia Apache. El archivo <code>.htaccess</code> del proyecto, además, oculta <code>.git</code>, los scripts SQL y la configuración.</p>
 </li>
 <li>
 <p><strong>Abre la aplicación</strong> en el navegador. Con Laragon suele ser <code>http://la-unica.test/</code> o <code>http://localhost/la-unica/</code>. La raíz (<code>index.php</code>) te lleva al panel de inicio.</p>
@@ -87,7 +89,8 @@ php -S 127.0.0.1:8080 -t .</code></pre>
 </ul>
 </li>
 <li>php/<ul>
-<li>config/conexion.php <strong>aquí se configura la conexión</strong></li>
+<li>config/conexion.php valores por defecto (no lo edites)</li>
+<li>config/conexion.local.php <strong>tu configuración</strong> (cópialo de conexion.local.example.php)</li>
 <li>clientes/</li>
 <li>productos/</li>
 <li>facturas/</li>
@@ -109,17 +112,17 @@ php -S 127.0.0.1:8080 -t .</code></pre>
 <h2 id="actualizar">Actualizar</h2>
 <div class="pasos">
 <ol>
-<li>Haz una copia de tu base de datos (HeidiSQL → <em>Exportar base de datos como SQL</em>, o <code>mysqldump -u root -P 5000 la_unica &gt; respaldo.sql</code>).</li>
-<li>Si cambiaste <code>php/config/conexion.php</code>, guarda tus valores aparte.</li>
+<li>Haz una copia de tu base de datos (HeidiSQL → <em>Exportar base de datos como SQL</em>, o <code>mysqldump -u root -P 3306 --routines la_unica &gt; respaldo.sql</code>).</li>
+<li>Tu configuración está en <code>php/config/conexion.local.php</code>, que Git no toca. Si en una versión anterior editaste <code>conexion.php</code> directamente, pasa tus valores a <code>conexion.local.php</code>.</li>
 <li>
 <p>Descarga la versión nueva:</p>
 <pre class="highlight"><code class="language-powershell">cd C:\laragon\www\la-unica
 git pull</code></pre>
 </li>
 <li>
-<p>Vuelve a aplicar tu configuración de conexión si se sobrescribió.</p>
+<p>Aplica las migraciones nuevas de <code>referencias/migraciones/</code>, en orden y una sola vez. Si tu base se creó antes de que existiera el precio de venta en <code>detalle_facturas</code>, ejecuta <code>001_precio_historico.sql</code>.</p>
 </li>
-<li><strong>No</strong> vuelvas a importar <code>db.sql</code> sobre una base existente: si una versión nueva cambia el esquema, tendrá que venir con instrucciones de migración.</li>
+<li><strong>No</strong> vuelvas a importar <code>db.sql</code> sobre una base existente: es solo para instalaciones nuevas.</li>
 </ol>
 </div>
 <h2 id="desinstalar">Desinstalar</h2>
@@ -132,6 +135,6 @@ git pull</code></pre>
 <li>
 <p>Elimina la carpeta <code>C:\laragon\www\la-unica</code>.</p>
 </li>
-<li>Si cambiaste el puerto de MySQL solo para La Única, devuélvelo a su valor original en <code>my.ini</code>.</li>
+<li>Si creaste el usuario <code>la_unica_app</code>, bórralo con <code>DROP USER 'la_unica_app'@'localhost', 'la_unica_app'@'127.0.0.1';</code>.</li>
 </ol>
 </div>

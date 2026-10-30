@@ -5,8 +5,8 @@
  * Propósito: centralizar definición, columnas, textos, fuentes SQL y consulta de los siete reportes.
  * Funcionamiento: catalogoReportes() entrega metadatos; obtenerFilasReporte() selecciona la vista o
  * procedimiento correspondiente; consultarFilasReporte() lee resultados y limpia resultados adicionales.
- * Puntos clave: se compara la vista y el procedimiento de clientes; si difieren, el resumen/reporte falla
- * explícitamente. Los totales y subtotales usan el precio vigente almacenado en productos.
+ * Puntos clave: los totales y subtotales usan el precio guardado en cada línea de la venta; los reportes
+ * de ventas (totales y unidades) excluyen las facturas canceladas.
  */
 
 /**
@@ -20,8 +20,8 @@ function catalogoReportes(): array
             'archivo' => 'clientes_y_facturas.php',
             'titulo' => 'Clientes y cantidad de facturas',
             'descripcion' => 'Cuenta las facturas de cada cliente e incluye a quienes todavía no tienen ventas.',
-            'fuente' => 'Vista vista_clientes_total_facturas y procedimiento reporte_facturas_clientes()',
-            'nota' => 'El conteo incluye facturas Pagado, Cancelado y Pendiente. La vista y el procedimiento se comparan; si sus resultados difieren, el reporte no se muestra.',
+            'fuente' => 'Procedimiento reporte_facturas_clientes()',
+            'nota' => 'El conteo incluye facturas Pagado, Cancelado y Pendiente.',
             'vacio' => 'Todavía no hay clientes registrados.',
             'columnas' => [
                 ['campo' => 'id_cliente', 'titulo' => 'ID cliente', 'tipo' => 'id'],
@@ -32,25 +32,26 @@ function catalogoReportes(): array
         ],
         'total_facturas' => [
             'archivo' => 'total_vigente_por_factura.php',
-            'titulo' => 'Total vigente por factura',
-            'descripcion' => 'Calcula cantidad por precio unitario vigente para cada factura que tiene detalles.',
+            'titulo' => 'Total por factura',
+            'descripcion' => 'Suma cantidad por precio de venta de cada factura Pagado o Pendiente.',
             'fuente' => 'Vista vista_total_facturas',
-            'nota' => 'El total usa los precios actuales del catálogo y no filtra por estado; una factura cancelada también aparece. Las facturas sin detalles no están en esta vista.',
-            'vacio' => 'No hay facturas con detalles para calcular.',
+            'nota' => 'Usa el precio registrado en cada venta. Las facturas canceladas y las que no tienen detalles no aparecen.',
+            'vacio' => 'No hay ventas vigentes para calcular.',
             'columnas' => [
                 ['campo' => 'id_factura', 'titulo' => 'Factura', 'tipo' => 'id'],
                 ['campo' => 'cliente', 'titulo' => 'Cliente', 'tipo' => 'texto'],
-                ['campo' => 'total_factura', 'titulo' => 'Total vigente', 'tipo' => 'moneda'],
+                ['campo' => 'estado_factura', 'titulo' => 'Estado', 'tipo' => 'estado'],
+                ['campo' => 'total_factura', 'titulo' => 'Total', 'tipo' => 'moneda'],
             ],
             'enlace_factura' => true,
         ],
         'unidades_productos' => [
             'archivo' => 'unidades_facturadas_por_producto.php',
-            'titulo' => 'Unidades facturadas por producto',
-            'descripcion' => 'Suma las cantidades de detalle asociadas a cada producto.',
+            'titulo' => 'Unidades vendidas por producto',
+            'descripcion' => 'Suma las cantidades vendidas de cada producto en facturas Pagado o Pendiente.',
             'fuente' => 'Vista vista_unidades_productos',
-            'nota' => 'La suma incluye los detalles de facturas canceladas y pendientes, tal como está definido en la vista. Solo aparecen productos con al menos un detalle.',
-            'vacio' => 'Todavía no hay productos incluidos en detalles de factura.',
+            'nota' => 'Excluye las facturas canceladas, cuyas unidades ya volvieron al inventario. Solo aparecen productos con al menos una venta vigente.',
+            'vacio' => 'Todavía no hay productos vendidos.',
             'columnas' => [
                 ['campo' => 'id_producto', 'titulo' => 'ID producto', 'tipo' => 'id'],
                 ['campo' => 'producto', 'titulo' => 'Producto', 'tipo' => 'texto'],
@@ -61,9 +62,9 @@ function catalogoReportes(): array
         'detalle_facturas' => [
             'archivo' => 'detalle_facturas.php',
             'titulo' => 'Detalle de facturas',
-            'descripcion' => 'Consulta cada producto, cantidad, precio vigente y subtotal de sus facturas.',
+            'descripcion' => 'Consulta cada producto, cantidad, precio de venta y subtotal de sus facturas.',
             'fuente' => 'Procedimiento reporte_detalle_facturas()',
-            'nota' => 'Incluye todos los estados y ordena por ID de factura. Los subtotales usan el precio actual del producto; no representan un precio histórico.',
+            'nota' => 'Incluye todos los estados (revisa la columna Estado) y ordena por ID de factura. Precio y subtotal son los registrados en la venta.',
             'vacio' => 'Todavía no hay detalles de factura.',
             'columnas' => [
                 ['campo' => 'id_factura', 'titulo' => 'Factura', 'tipo' => 'id'],
@@ -72,8 +73,8 @@ function catalogoReportes(): array
                 ['campo' => 'fecha_factura', 'titulo' => 'Fecha', 'tipo' => 'fecha'],
                 ['campo' => 'producto', 'titulo' => 'Producto', 'tipo' => 'texto'],
                 ['campo' => 'cantidad', 'titulo' => 'Cantidad', 'tipo' => 'entero'],
-                ['campo' => 'precio_unitario', 'titulo' => 'Precio vigente', 'tipo' => 'moneda'],
-                ['campo' => 'subtotal', 'titulo' => 'Subtotal vigente', 'tipo' => 'moneda'],
+                ['campo' => 'precio_unitario', 'titulo' => 'Precio de venta', 'tipo' => 'moneda'],
+                ['campo' => 'subtotal', 'titulo' => 'Subtotal', 'tipo' => 'moneda'],
             ],
             'enlace_factura' => true,
         ],
@@ -82,7 +83,7 @@ function catalogoReportes(): array
             'titulo' => 'Existencias de productos',
             'descripcion' => 'Muestra stock y precio unitario vigente, desde la menor existencia.',
             'fuente' => 'Procedimiento reporte_stock_productos()',
-            'nota' => 'El orden ascendente permite revisar primero las existencias más bajas. El precio mostrado es el precio vigente del catálogo.',
+            'nota' => 'El orden ascendente permite revisar primero las existencias más bajas. El precio mostrado es el precio actual del catálogo.',
             'vacio' => 'Todavía no hay productos registrados.',
             'columnas' => [
                 ['campo' => 'id_producto', 'titulo' => 'ID producto', 'tipo' => 'id'],
@@ -108,10 +109,10 @@ function catalogoReportes(): array
         'pendientes' => [
             'archivo' => 'facturas_pendientes.php',
             'titulo' => 'Facturas pendientes',
-            'descripcion' => 'Lista las facturas cuyo estado actual es Pendiente, de la más antigua a la más reciente.',
+            'descripcion' => 'Lista las ventas por cobrar (estado Pendiente), de la más antigua a la más reciente.',
             'fuente' => 'Procedimiento reporte_facturas_pendientes()',
-            'nota' => 'Este reporte aplica el filtro Pendiente definido en la base de datos. No cambia el estado ni las existencias.',
-            'vacio' => 'No hay facturas pendientes.',
+            'nota' => 'Una venta queda Pendiente cuando se registra como «por cobrar». Desde su comprobante se puede registrar el pago o cancelarla.',
+            'vacio' => 'No hay ventas por cobrar.',
             'columnas' => [
                 ['campo' => 'id_factura', 'titulo' => 'Factura', 'tipo' => 'id'],
                 ['campo' => 'cliente', 'titulo' => 'Cliente', 'tipo' => 'texto'],
@@ -162,45 +163,21 @@ function consultarFilasReporte(mysqli $conexion, string $consulta, bool $esProce
 
 /**
  * Despacha una clave de reporte a su vista o procedimiento almacenado.
- * La salida de clientes se compara entre vista y procedimiento antes de devolverla.
  * @param mysqli $conexion Conexión compartida del aplicativo.
  * @param string $tipoReporte Clave definida en catalogoReportes().
  * @return array Filas normalizadas para la vista.
  * @throws InvalidArgumentException Si la clave no está disponible.
- * @throws UnexpectedValueException Si las dos fuentes de clientes no coinciden.
  */
 function obtenerFilasReporte(mysqli $conexion, string $tipoReporte): array
 {
     switch ($tipoReporte) {
         case 'clientes':
-            $filasVista = consultarFilasReporte(
-                $conexion,
-                'SELECT id_cliente, nombre, total_facturas FROM vista_clientes_total_facturas ORDER BY id_cliente'
-            );
-            $filasProcedimiento = consultarFilasReporte($conexion, 'CALL reporte_facturas_clientes()', true);
-
-            $normalizarClientes = static function (array $filas): array {
-                $normalizadas = [];
-                foreach ($filas as $fila) {
-                    $normalizadas[] = [
-                        'id_cliente' => (int)$fila['id_cliente'],
-                        'nombre' => (string)$fila['nombre'],
-                        'total_facturas' => (int)$fila['total_facturas'],
-                    ];
-                }
-                usort($normalizadas, static fn(array $a, array $b): int => $a['id_cliente'] <=> $b['id_cliente']);
-                return $normalizadas;
-            };
-
-            if ($normalizarClientes($filasVista) !== $normalizarClientes($filasProcedimiento)) {
-                throw new UnexpectedValueException('La vista y el procedimiento de clientes devolvieron valores diferentes.');
-            }
-            return $filasProcedimiento;
+            return consultarFilasReporte($conexion, 'CALL reporte_facturas_clientes()', true);
 
         case 'total_facturas':
             return consultarFilasReporte(
                 $conexion,
-                'SELECT id_factura, cliente, total_factura FROM vista_total_facturas ORDER BY id_factura DESC'
+                'SELECT id_factura, cliente, estado_factura, total_factura FROM vista_total_facturas ORDER BY id_factura DESC'
             );
 
         case 'unidades_productos':
