@@ -29,3 +29,15 @@ if (!function_exists('consultaPreparada')) {
         }
     }
 }
+
+if (!function_exists('patronLike')) {
+    /**
+     * Construye un patrón "contiene" para LIKE escapando los comodines % y _ del texto buscado.
+     * @param string $texto Texto ingresado por el usuario.
+     * @return string Patrón listo para pasar como parámetro de LIKE.
+     */
+    function patronLike(string $texto): string
+    {
+        return '%' . addcslashes($texto, '\\%_') . '%';
+    }
+}

@@ -8,7 +8,7 @@
 <pre class="highlight"><code class="language-php">$sentencia = $conexion-&gt;prepare('UPDATE clientes SET nombre = ? WHERE id_cliente = ?');
 $sentencia-&gt;bind_param('si', $nombreNuevo, $idCliente);
 $sentencia-&gt;execute();</code></pre>
-<p>Incluso las búsquedas con <code>LIKE</code> pasan el patrón (<code>'%' . $termino . '%'</code>) como parámetro. Las únicas consultas sin parámetros son las de reportes, que no reciben entrada del usuario.</p>
+<p>Incluso las búsquedas con <code>LIKE</code> pasan el patrón como parámetro, construido con <code>patronLike()</code>, que además escapa <code>%</code> y <code>_</code> para que se busquen literalmente. Las únicas consultas sin parámetros son las de reportes, que no reciben entrada del usuario.</p>
 <h2 id="xss--escape-de-salida">XSS → escape de salida</h2>
 <p>Cada valor dinámico impreso en HTML pasa por <code>h()</code>, definida en <code>php/config/entorno.php</code>:</p>
 <pre class="highlight"><code class="language-php">function h($valor): string {
@@ -95,11 +95,6 @@ $sentencia-&gt;execute();</code></pre>
 <td>Credenciales <code>root</code> sin clave (valor por defecto)</td>
 <td>Si MySQL se expone, acceso total</td>
 <td>Crear <code>la_unica_app</code> con <code>referencias/usuario_app.sql</code> (<a href="index.php?pagina=configuracion/base-de-datos#usar-un-usuario-con-contraseña">ver</a>).</td>
-</tr>
-<tr>
-<td>Mensajes en <code>?mensaje=</code></td>
-<td>Texto arbitrario mostrado (escapado)</td>
-<td>Solo afecta presentación; no ejecuta código.</td>
 </tr>
 <tr>
 <td>Sin <code>Content-Security-Policy</code></td>

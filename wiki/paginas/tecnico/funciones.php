@@ -53,6 +53,8 @@ validarId(['1']);   // null</code></pre>
 <h3 id="consultapreparada"><code>consultaPreparada(mysqli $conexion, string $sql, string $tipos = '', mixed ...$parametros): array</code></h3>
 <p>Prepara, ejecuta y devuelve todas las filas asociativas; cierra la sentencia en un <code>finally</code>, también cuando la consulta falla (<code>php/config/consultas.php</code>).</p>
 <pre class="highlight"><code class="language-php">$factura = consultaPreparada($conexion, 'SELECT * FROM facturas WHERE id_factura = ?', 'i', $id)[0] ?? null;</code></pre>
+<h3 id="patronlike"><code>patronLike(string $texto): string</code></h3>
+<p>Devuelve <code>%texto%</code> escapando <code>%</code>, <code>_</code> y <code>\</code>, para que buscar «50%» encuentre ese texto y no «todo lo que empiece por 50» (<code>php/config/consultas.php</code>).</p>
 <h2 id="sesión-y-csrf">Sesión y CSRF</h2>
 <h3 id="sesiondisponible-bool"><code>sesionDisponible(): bool</code></h3>
 <p>Inicia la sesión (cookie <code>HttpOnly</code>, <code>SameSite=Strict</code>, modo estricto) si aún no lo está y si las cabeceras no se han enviado. Devuelve si quedó activa.</p>
@@ -63,6 +65,8 @@ validarId(['1']);   // null</code></pre>
 <pre class="highlight"><code class="language-php">&lt;input type="hidden" name="csrf_token" value="&lt;?= h($tokenCsrf) ?&gt;"&gt;
 ...
 if (!validarTokenCsrf($_POST['csrf_token'] ?? null)) { /* rechazar */ }</code></pre>
+<h3 id="mensajes-flash"><code>guardarMensajeFlash(string $clave, string $texto): void</code> / <code>tomarMensajeFlash(string $clave): string</code></h3>
+<p>Guardan un mensaje en la sesión antes de redirigir y lo devuelven (y borran) en la página siguiente.</p>
 <h2 id="errores">Errores</h2>
 <h3 id="registrarerrorservidormixed-contexto-throwable-error-void"><code>registrarErrorServidor(mixed $contexto, Throwable $error): void</code></h3>
 <p>Escribe en el log de PHP: <code>[contexto] Clase (código): mensaje SQLSTATE=xxxxx</code>. No muestra nada al usuario.</p>

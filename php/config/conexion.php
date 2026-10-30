@@ -249,3 +249,35 @@ if (!function_exists('formatearMonedaCop')) {
         return '$' . $enteroAgrupado . ',' . $decimales . ' COP';
     }
 }
+
+if (!function_exists('guardarMensajeFlash')) {
+    /**
+     * Guarda un mensaje para mostrarlo una sola vez en la siguiente página (patrón POST-redirección-GET).
+     * @param string $clave Identificador del mensaje.
+     * @param string $texto Texto que verá el operador.
+     * @return void
+     */
+    function guardarMensajeFlash(string $clave, string $texto): void
+    {
+        if (sesionDisponible()) {
+            $_SESSION['flash'][$clave] = $texto;
+        }
+    }
+}
+
+if (!function_exists('tomarMensajeFlash')) {
+    /**
+     * Devuelve y borra un mensaje guardado con guardarMensajeFlash().
+     * @param string $clave Identificador del mensaje.
+     * @return string Texto del mensaje o cadena vacía si no hay.
+     */
+    function tomarMensajeFlash(string $clave): string
+    {
+        if (!sesionDisponible() || !isset($_SESSION['flash'][$clave]) || !is_string($_SESSION['flash'][$clave])) {
+            return '';
+        }
+        $texto = $_SESSION['flash'][$clave];
+        unset($_SESSION['flash'][$clave]);
+        return $texto;
+    }
+}

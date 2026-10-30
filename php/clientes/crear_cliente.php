@@ -13,7 +13,7 @@ require __DIR__ . '/../config/conexion.php';
 
 $titulo = 'Crear cliente';
 $seccionActiva = 'clientes';
-$mensajeExito = (($_GET['creado'] ?? '') === '1') ? 'Cliente creado correctamente.' : '';
+$mensajeExito = tomarMensajeFlash('cliente_creado');
 $mensajeError = '';
 $tokenCsrf = obtenerTokenCsrf();
 
@@ -87,7 +87,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
 
         if ($creacionExitosa) {
-            header('Location: crear_cliente.php?creado=1', true, 303);
+            guardarMensajeFlash('cliente_creado', 'Cliente creado correctamente.');
+            header('Location: crear_cliente.php', true, 303);
             exit;
         }
     }

@@ -6,13 +6,10 @@
  * Funcionamiento: valida el ID de GET, carga el artículo y procesa el POST con CSRF y validación
  * de nombre, unidad, existencias y precio. La modificación se realiza dentro de una transacción MySQL
  * con bloqueo de fila (FOR UPDATE) para serializar operaciones con ventas y cancelaciones concurrentes.
- * Detecta si el stock enviado desde el formulario está desactualizado ante movimientos recientes del inventario,
- * preserva las existencias vigentes cuando únicamente se actualizan nombre o precio, y coordina la validación
- * del historial de facturación con los cambios en la unidad de medida para mantener la integridad de los datos.
  * Puntos clave:
- * - Uso de begin_transaction() y SELECT ... FOR UPDATE sobre el producto para evitar condiciones de carrera.
- * - Coordinación de la comprobación en detalle_facturas antes de modificar unidad_medida.
- * - Detección de stock desactualizado y preservación atómica de existencias modificadas por ventas/cancelaciones.
+ * - Si el operador no cambia el stock, se conserva el de la base (no deshace ventas recientes).
+ * - Si lo cambia y otra operación también lo movió mientras editaba, se rechaza y se muestra el valor actual.
+ * - La unidad no se puede cambiar si el producto ya aparece en facturas.
  */
 
 require __DIR__ . '/../config/conexion.php';
@@ -71,7 +68,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $unidadRecibida = $_POST['unidad_medida'] ?? null;
     $stockRecibido = $_POST['stock'] ?? null;
     $precioRecibido = $_POST['precio_unitario'] ?? null;
-    $stockOriginalRecibido = $_POST['stock_original'] ?? $_POST['stock_previo'] ?? $_POST['stock_anterior'] ?? null;
+    $stockOriginalRecibido = $_POST['stock_original'] ?? null;
 
     $datosPostValidos = is_string($nombreRecibido)
         && is_string($unidadRecibida)
@@ -150,11 +147,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 }
             }
 
-            // Coordinar gestión de inventario: detectar stock desactualizado y preservar movimientos recientes
-            $cambioDatosNoStock = ($nombreNuevo !== $nombreActualBd
-                || number_format((float)$precioNuevo, 2, '.', '') !== number_format((float)$precioActualBd, 2, '.', '')
-                || $unidadNueva !== $unidadActualBd);
-
+            // Si el operador cambió el stock pero otra operación también lo movió, su valor ya no es fiable.
             if ($stockOriginal !== null) {
                 $usuarioModificoStock = ($stockNuevo !== $stockOriginal);
                 $inventarioCambioEnBd = ($stockActualBd !== $stockOriginal);
@@ -164,12 +157,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 }
 
                 if (!$usuarioModificoStock) {
-                    if ($inventarioCambioEnBd && !$cambioDatosNoStock) {
-                        // El stock del formulario difiere del vigente en BD y no se modificaron otros datos
-                        throw new DomainException('El stock enviado está desactualizado debido a movimientos recientes de inventario. Actualiza la página para consultar las existencias vigentes.');
-                    }
-                    // Si el usuario no modificó el stock pero sí nombre, precio o unidad,
-                    // se conserva el stock actual de la BD para no sobrescribir ventas o cancelaciones simultáneas.
+                    // El operador no tocó el stock: se conserva el de la BD para no deshacer ventas o
+                    // cancelaciones ocurridas mientras el formulario estaba abierto.
                     $stockFinal = $stockActualBd;
                 } else {
                     $stockFinal = $stockNuevo;
@@ -237,6 +226,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 }
                 $consultaReleer->close();
             } catch (Throwable $eReleer) {
+                registrarErrorServidor('editar_producto_releer', $eReleer);
             }
         } catch (Throwable $e) {
             if ($transaccionIniciada) {

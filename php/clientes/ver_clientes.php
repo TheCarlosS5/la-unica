@@ -34,13 +34,13 @@ $errorLectura = false;
 try {
     if ($busquedaActiva && $buscarPorId) {
         $consultaClientes = $conexion->prepare($sqlSeleccionClientes . ' WHERE c.id_cliente = ? OR c.nombre LIKE ?' . $sqlAgruparClientes);
-        $patronNombre = '%' . $terminoBusqueda . '%';
+        $patronNombre = patronLike($terminoBusqueda);
         $consultaClientes->bind_param('ss', $idBusquedaNormalizado, $patronNombre);
         $consultaClientes->execute();
         $resultadoClientes = $consultaClientes->get_result();
     } elseif ($busquedaActiva) {
         $consultaClientes = $conexion->prepare($sqlSeleccionClientes . ' WHERE c.nombre LIKE ?' . $sqlAgruparClientes);
-        $patronNombre = '%' . $terminoBusqueda . '%';
+        $patronNombre = patronLike($terminoBusqueda);
         $consultaClientes->bind_param('s', $patronNombre);
         $consultaClientes->execute();
         $resultadoClientes = $consultaClientes->get_result();
@@ -58,9 +58,6 @@ try {
     registrarErrorServidor('leer_clientes', $e);
     $errorLectura = true;
 }
-
-$mensajeUrl = $_GET['mensaje'] ?? null;
-$mensajeTexto = is_string($mensajeUrl) ? trim($mensajeUrl) : '';
 
 require __DIR__ . '/../includes/menu.php';
 ?>
@@ -84,16 +81,6 @@ require __DIR__ . '/../includes/menu.php';
         </a>
     </div>
 </div>
-
-<?php if ($mensajeTexto !== ''): ?>
-    <div class="mensaje alerta" role="status">
-        <svg class="alerta-icono" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
-            <polyline points="22 4 12 14.01 9 11.01" />
-        </svg>
-        <div class="alerta-contenido"><?= h($mensajeTexto) ?></div>
-    </div>
-<?php endif; ?>
 
 <form class="filtro-busqueda" method="get" action="ver_clientes.php" role="search">
     <div class="campo">

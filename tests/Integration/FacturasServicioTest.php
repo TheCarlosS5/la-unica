@@ -223,4 +223,21 @@ final class FacturasServicioTest extends TestCase
         $this->expectException(mysqli_sql_exception::class);
         consultaPreparada($this->db, 'SELECT columna_inexistente FROM facturas WHERE id_factura = ?', 'i', 1);
     }
+
+    public function testLikePatternTreatsWildcardsLiterally(): void
+    {
+        $this->db->query("UPDATE productos SET nombre = 'PHPUnit 50% descuento' WHERE id_producto = " . $this->productAId);
+        $this->db->query("UPDATE productos SET nombre = 'PHPUnit 500 gramos' WHERE id_producto = " . $this->productBId);
+
+        $filas = consultaPreparada(
+            $this->db,
+            'SELECT id_producto FROM productos WHERE nombre LIKE ? AND id_producto IN (?, ?)',
+            'sii',
+            patronLike('PHPUnit 50%'),
+            $this->productAId,
+            $this->productBId
+        );
+
+        self::assertSame([$this->productAId], array_map('intval', array_column($filas, 'id_producto')));
+    }
 }

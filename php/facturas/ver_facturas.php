@@ -45,11 +45,11 @@ if ($terminoBusqueda !== '') {
         $tipos .= 'iis';
         $parametros[] = $idBusqueda;
         $parametros[] = $idBusqueda;
-        $parametros[] = '%' . $terminoBusqueda . '%';
+        $parametros[] = patronLike($terminoBusqueda);
     } else {
         $condiciones[] = 'c.nombre LIKE ?';
         $tipos .= 's';
-        $parametros[] = '%' . $terminoBusqueda . '%';
+        $parametros[] = patronLike($terminoBusqueda);
     }
 }
 

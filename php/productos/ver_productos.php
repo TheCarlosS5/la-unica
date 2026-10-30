@@ -34,13 +34,13 @@ $errorLectura = false;
 try {
     if ($busquedaActiva && $buscarPorId) {
         $consultaProductos = $conexion->prepare($sqlSeleccionProductos . ' WHERE p.id_producto = ? OR p.nombre LIKE ?' . $sqlAgruparProductos);
-        $patronNombre = '%' . $terminoBusqueda . '%';
+        $patronNombre = patronLike($terminoBusqueda);
         $consultaProductos->bind_param('ss', $idBusquedaNormalizado, $patronNombre);
         $consultaProductos->execute();
         $resultadoProductos = $consultaProductos->get_result();
     } elseif ($busquedaActiva) {
         $consultaProductos = $conexion->prepare($sqlSeleccionProductos . ' WHERE p.nombre LIKE ?' . $sqlAgruparProductos);
-        $patronNombre = '%' . $terminoBusqueda . '%';
+        $patronNombre = patronLike($terminoBusqueda);
         $consultaProductos->bind_param('s', $patronNombre);
         $consultaProductos->execute();
         $resultadoProductos = $consultaProductos->get_result();
@@ -58,9 +58,6 @@ try {
     registrarErrorServidor('leer_productos', $e);
     $errorLectura = true;
 }
-
-$mensajeUrl = $_GET['mensaje'] ?? null;
-$mensajeTexto = is_string($mensajeUrl) ? trim($mensajeUrl) : '';
 
 require __DIR__ . '/../includes/menu.php';
 ?>
@@ -84,16 +81,6 @@ require __DIR__ . '/../includes/menu.php';
         </a>
     </div>
 </div>
-
-<?php if ($mensajeTexto !== ''): ?>
-    <div class="mensaje alerta" role="status">
-        <svg class="alerta-icono" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
-            <polyline points="22 4 12 14.01 9 11.01" />
-        </svg>
-        <div class="alerta-contenido"><?= h($mensajeTexto) ?></div>
-    </div>
-<?php endif; ?>
 
 <form class="filtro-busqueda" method="get" action="ver_productos.php" role="search">
     <div class="campo">

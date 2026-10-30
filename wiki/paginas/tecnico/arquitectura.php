@@ -40,7 +40,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {        // 3. Procesar el envío
             $sentencia = $conexion-&gt;prepare('INSERT ... VALUES (?, ?)');
             $sentencia-&gt;bind_param('is', $id, $nombre);
             $sentencia-&gt;execute();
-            header('Location: crear_cliente.php?creado=1', true, 303);  // 4. PRG
+            guardarMensajeFlash('cliente_creado', 'Cliente creado correctamente.');
+            header('Location: crear_cliente.php', true, 303);  // 4. PRG
             exit;
         } catch (Throwable $e) {
             registrarErrorServidor('crear_cliente', $e);  // detalle al log
@@ -58,8 +59,8 @@ require __DIR__ . '/../includes/menu.php';           // 6. Cabecera y menú
 <h3 id="postredirectget">Post/Redirect/Get</h3>
 <p>Toda escritura exitosa termina con <strong><code>303 See Other</code></strong> hacia una página de consulta. Así, recargar no reenvía el formulario (no se duplican ventas). Los mensajes de éxito viajan:</p>
 <ul>
-<li>por la URL (<code>crear_cliente.php?creado=1</code>, <code>crear_producto.php?creado=1</code>), o</li>
-<li>por la sesión (<code>$_SESSION['factura_creada']</code>) al crear facturas, para mostrar número y total; la cancelación redirige al comprobante (<code>imprimir_factura.php?id=N</code>).</li>
+<li>por la sesión con <code>guardarMensajeFlash()</code> / <code>tomarMensajeFlash()</code> al crear clientes y productos (se muestran una sola vez y no se pueden falsificar desde la URL), o</li>
+<li>por la sesión (<code>$_SESSION['factura_creada']</code>) al crear facturas, para mostrar número y total; el pago y la cancelación redirigen al comprobante (<code>imprimir_factura.php?id=N</code>).</li>
 </ul>
 <p>La edición y la eliminación muestran el resultado en la misma página.</p>
 <h3 id="errores-en-dos-niveles">Errores en dos niveles</h3>
