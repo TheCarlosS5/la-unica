@@ -1,0 +1,67 @@
+name: Database Integration Tests
+
+on:
+  push:
+    branches:
+      - camilo-pruebas-validaciones
+  pull_request:
+    branches:
+      - main
+
+permissions:
+  contents: read
+
+jobs:
+  database-tests:
+    name: PHPUnit with MariaDB
+    runs-on: ubuntu-latest
+
+    services:
+      mariadb:
+        image: mariadb:11.4
+        env:
+          MARIADB_ROOT_PASSWORD: root
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="healthcheck.sh --connect --innodb_initialized"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=10
+
+    env:
+      DB_TEST_HOST: 127.0.0.1
+      DB_TEST_PORT: 3306
+      DB_TEST_USERNAME: root
+      DB_TEST_PASSWORD: root
+      DB_TEST_DATABASE: la_unica_test
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+          extensions: mysqli
+          coverage: none
+
+      - name: Validate Composer configuration
+        run: composer validate --no-check-publish
+
+      - name: Install test dependencies
+        run: composer install --no-interaction --prefer-dist
+
+      - name: Create isolated test database from project schema
+        shell: bash
+        run: |
+          set -euo pipefail
+          sed \
+            -e 's/^CREATE DATABASE la_unica;$/CREATE DATABASE la_unica_test;/' \
+            -e 's/^USE la_unica;$/USE la_unica_test;/' \
+            referencias/db.sql |
+            mysql --host=127.0.0.1 --port=3306 --user=root --password="$DB_TEST_PASSWORD" --default-character-set=utf8mb4
+
+      - name: Run database integration tests
+        run: composer test:database
