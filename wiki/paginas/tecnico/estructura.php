@@ -96,7 +96,7 @@
 </li>
 <li>referencias/<ul>
 <li>db.sql esquema</li>
-<li>SRS.docx, SRS.pdf, SRS.md v1.4</li>
+<li>SRS.docx, SRS.pdf, SRS.md v1.5</li>
 <li>manual.docx, manual.pdf</li>
 </ul>
 </li>

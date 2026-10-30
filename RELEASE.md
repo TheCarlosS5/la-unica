@@ -10,8 +10,8 @@ La aplicación tampoco implementa autenticación ni roles. Está pensada para us
 
 ## Documentación del proyecto
 
-- El SRS vigente es [SRS.docx](referencias/SRS.docx), versión 1.4. [SRS.pdf](referencias/SRS.pdf) y [SRS.md](referencias/SRS.md) ofrecen copias de consulta de esa misma versión. Mantén los tres archivos sincronizados cuando cambien los requisitos.
-- [manual.docx](referencias/manual.docx) y [manual.pdf](referencias/manual.pdf) describen los módulos principales e incluyen capturas del aplicativo. La sección «Sobre nosotros» y su visor de manual se añadieron después y todavía no están detallados en el SRS 1.4 ni en el manual.
+- El SRS vigente es [SRS.docx](referencias/SRS.docx), versión 1.5. [SRS.pdf](referencias/SRS.pdf) y [SRS.md](referencias/SRS.md) ofrecen copias de consulta de esa misma versión. Mantén los tres archivos sincronizados cuando cambien los requisitos.
+- [manual.docx](referencias/manual.docx) y [manual.pdf](referencias/manual.pdf) describen los módulos principales e incluyen capturas del aplicativo. La sección «Sobre nosotros», la venta por cobrar y el registro de pago están en el SRS 1.5, pero todavía no en el manual.
 - [db.sql](referencias/db.sql) define el esquema inicial que requiere la aplicación.
 
 La versión del SRS y la etiqueta del release de software (`vMAYOR.MENOR.PARCHE`) son referencias independientes.

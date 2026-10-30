@@ -2,9 +2,9 @@
 
 Aplicación web local para administrar clientes, productos, ventas mediante facturas y reportes. Está desarrollada en PHP y se conecta a MySQL mediante MySQLi. Laragon es el entorno documentado para ejecutarla.
 
-La especificación de requisitos vigente es [referencias/SRS.docx](referencias/SRS.docx), versión 1.4. Para consulta están disponibles [referencias/SRS.pdf](referencias/SRS.pdf) y [referencias/SRS.md](referencias/SRS.md), también en versión 1.4. Los tres documentos describen el alcance central de clientes, productos, facturas y reportes.
+La especificación de requisitos vigente es [referencias/SRS.docx](referencias/SRS.docx), versión 1.5. Para consulta están disponibles [referencias/SRS.pdf](referencias/SRS.pdf) y [referencias/SRS.md](referencias/SRS.md), también en versión 1.5. Los tres documentos describen el alcance de clientes, productos, facturas, cobros, reportes y la sección Sobre nosotros, además de la arquitectura del aplicativo.
 
-El [manual de usuario en Word](referencias/manual.docx) y su [versión PDF](referencias/manual.pdf) incluyen instrucciones y capturas de los módulos principales. La sección «Sobre nosotros», añadida después, permite consultar el PDF dentro del aplicativo y acceder a la página del video explicativo; esa navegación nueva todavía no está detallada en el manual ni en el SRS 1.4.
+El [manual de usuario en Word](referencias/manual.docx) y su [versión PDF](referencias/manual.pdf) incluyen instrucciones y capturas de los módulos principales. La sección «Sobre nosotros», añadida después, permite consultar el PDF dentro del aplicativo y acceder a la página del video explicativo; esa navegación está en el SRS 1.5 (RF-15), pero todavía no en el manual.
 
 ## Funciones implementadas
 
@@ -17,7 +17,7 @@ El [manual de usuario en Word](referencias/manual.docx) y su [versión PDF](refe
 - **Wiki:** documentación completa en `wiki/` (abre `…/wiki/` o *Menú → Información → Wiki*): guías paso a paso con capturas señaladas, configuración, solución de problemas y notas técnicas. Está hecha en PHP plano y no necesita la base de datos.
 - Las operaciones validan los datos; se protegen las solicitudes de modificación con tokens CSRF y las eliminaciones requieren confirmación. No se permite eliminar clientes con facturas ni productos que aparezcan en detalles de factura.
 
-> **Cambios respecto al SRS 1.4:** el precio histórico en `detalle_facturas`, el flujo de ventas por cobrar (*Pendiente* → *Pagado*) y la exclusión de canceladas en los reportes de ventas todavía no están en el SRS ni en el manual. Hay que publicar un SRS 1.5.
+> **Pendiente de documentar en el manual de usuario:** la venta por cobrar, el botón *Registrar pago* y el precio guardado en cada factura ya están en el SRS 1.5, pero todavía no en `manual.docx`/`manual.pdf`.
 
 ## Funciones fuera del alcance actual
 
@@ -107,7 +107,7 @@ referencias/
   usuario_app.sql         Usuario MySQL con permisos mínimos
   manual.docx             Manual editable
   manual.pdf              Manual para consulta y visor integrado
-  SRS.docx                Especificación de requisitos, versión 1.4
-  SRS.pdf                 Copia de consulta del SRS, versión 1.4
-  SRS.md                  Versión Markdown del SRS, versión 1.4
+  SRS.docx                Especificación de requisitos, versión 1.5
+  SRS.pdf                 Copia de consulta del SRS, versión 1.5
+  SRS.md                  Versión Markdown del SRS, versión 1.5
 ```

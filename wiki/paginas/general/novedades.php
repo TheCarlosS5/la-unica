@@ -7,7 +7,8 @@
 <li><code>fix:</code> los reportes de ventas (totales y unidades) excluyen las facturas canceladas.</li>
 <li><code>fix:</code> el comprobante ya no falla con un error fatal cuando la consulta de detalles falla.</li>
 <li><code>fix:</code> puerto MySQL por defecto <code>3306</code> (BUG-001); usuario <code>la_unica_app</code>, cookies de sesión <code>HttpOnly</code>/<code>SameSite</code>, cabeceras de seguridad y <code>.htaccess</code>.</li>
-<li><code>test:</code> PHPUnit con 28 pruebas de integración (reportes, ventas, pagos y cancelaciones) que corren en GitHub Actions en cada push.</li>
+<li><code>docs:</code> <strong>SRS 1.5</strong> en <code>.docx</code>, <code>.pdf</code> y <code>.md</code>: requisitos alineados con el aplicativo, RF-14, RF-15, RNF-07, RNF-08 y nueva sección de arquitectura.</li>
+<li><code>test:</code> PHPUnit con 29 pruebas de integración (reportes, ventas, pagos y cancelaciones) que corren en GitHub Actions en cada push.</li>
 </ul>
 <h2 id="28-de-octubre-de-2026--versión-funcional-revisada">28 de octubre de 2026 — versión funcional revisada</h2>
 <ul>
@@ -69,7 +70,12 @@
 <tr>
 <td>1.4</td>
 <td>27/10/2026</td>
-<td><strong>Vigente.</strong> Ajustes a reportes, reglas, dependencias y aceptación.</td>
+<td>Ajustes a reportes, reglas, dependencias y aceptación.</td>
+</tr>
+<tr>
+<td>1.5</td>
+<td>30/10/2026</td>
+<td><strong>Vigente.</strong> Alineación con el aplicativo, arquitectura, seguridad y pruebas.</td>
 </tr>
 </tbody>
 </table></div>

@@ -31,7 +31,7 @@
 <tbody>
 <tr>
 <td><code>SRS.docx</code> / <code>SRS.pdf</code> / <code>SRS.md</code></td>
-<td>Especificación de requisitos <strong>v1.4</strong> (vigente). Resumida en <a href="index.php?pagina=tecnico/requisitos">Requisitos</a>.</td>
+<td>Especificación de requisitos <strong>v1.5</strong> (vigente). Resumida en <a href="index.php?pagina=tecnico/requisitos">Requisitos</a>.</td>
 </tr>
 <tr>
 <td><code>manual.docx</code> / <code>manual.pdf</code></td>

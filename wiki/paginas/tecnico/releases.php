@@ -28,7 +28,7 @@
 </tr>
 </tbody>
 </table></div>
-<p>Una etiqueta publicada <strong>no se mueve ni se reutiliza</strong>: si hay un problema, se publica una versión nueva. La versión del SRS (1.4) y la del software son independientes.</p>
+<p>Una etiqueta publicada <strong>no se mueve ni se reutiliza</strong>: si hay un problema, se publica una versión nueva. La versión del SRS (1.5) y la del software son independientes.</p>
 <h2 id="antes-de-publicar">Antes de publicar</h2>
 <ul>
 <li>[ ] Cambios revisados y subidos a <code>main</code>.</li>
