@@ -85,4 +85,6 @@ if ($missingTables !== []) {
     );
 }
 
+require_once dirname(__DIR__) . '/php/config/consultas.php';
 require_once dirname(__DIR__) . '/php/reportes/datos_reportes.php';
+require_once dirname(__DIR__) . '/php/facturas/servicio_facturas.php';

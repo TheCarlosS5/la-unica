@@ -3,17 +3,20 @@
  * Archivo: conexion.php
  * Módulo: Configuración y utilidades compartidas.
  * Propósito: abrir la conexión MySQL y proporcionar funciones comunes a los módulos.
- * Funcionamiento: habilita errores MySQLi como excepciones, establece UTF-8 y la zona horaria,
- * calcula la URL base a partir de la ruta solicitada y define validaciones y utilidades.
+ * Funcionamiento: carga entorno.php (URL base, cabeceras, h()), habilita errores MySQLi como
+ * excepciones, establece UTF-8 y la zona horaria, y define validaciones y utilidades.
  * Puntos clave:
- * - La conexión inicial usa 127.0.0.1, la base la_unica y el puerto local 5000; se ajusta aquí.
- * - h()/escaparHtml() codifican salida HTML; las consultas de los módulos usan sentencias preparadas.
+ * - Valores por defecto: 127.0.0.1:3306, base la_unica, usuario root sin contraseña (Laragon). Se
+ *   sobrescriben con variables DB_* o con conexion.local.php (ver conexion.local.example.php).
+ * - h() codifica salida HTML; las consultas de los módulos usan sentencias preparadas.
  * - Las funciones de sesión y token CSRF protegen los formularios que escriben datos.
  * - No implementa autenticación ni roles de usuario.
  */
 
+require_once __DIR__ . '/entorno.php';
+require_once __DIR__ . '/consultas.php';
+
 mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
-date_default_timezone_set('America/Bogota');
 
 
 try {
@@ -61,7 +64,7 @@ try {
         'base_datos', 'DB_DATABASE', 'la_unica'
     );
     $puerto = filter_var(
-        $obtenerConfig('puerto', 'DB_PORT', 5000),
+        $obtenerConfig('puerto', 'DB_PORT', 3306),
         FILTER_VALIDATE_INT,
         ['options' => ['min_range' => 1, 'max_range' => 65535]]
     );
@@ -86,35 +89,6 @@ try {
 }
 
 
-$scriptDir = str_replace('\\', '/', dirname((string)($_SERVER['SCRIPT_NAME'] ?? '/')));
-$baseUrl = preg_replace('#/php/(clientes|productos|facturas|reportes|inicio)$#', '', $scriptDir);
-if ($baseUrl === '/' || $baseUrl === '.') {
-    $baseUrl = '';
-}
-$baseUrl = rtrim($baseUrl, '/');
-
-if (!function_exists('escaparHtml')) {
-    /**
-     * Codifica un valor como texto HTML seguro en UTF-8.
-     * @param mixed $valor Valor proveniente de datos o entrada.
-     * @return string Texto escapado para colocar en HTML.
-     */
-    function escaparHtml($valor) {
-        return htmlspecialchars((string)$valor, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
-    }
-}
-
-if (!function_exists('h')) {
-    /**
-     * Alias breve de escaparHtml() usado por las vistas.
-     * @param mixed $valor Valor que se va a imprimir.
-     * @return string Valor escapado.
-     */
-    function h($valor) {
-        return escaparHtml($valor);
-    }
-}
-
 if (!function_exists('registrarErrorServidor')) {
     /**
      * Escribe el contexto y el detalle técnico en el log del servidor, sin mostrarlos al operador.
@@ -138,7 +112,7 @@ if (!function_exists('sesionDisponible')) {
      * @return bool Indica si la sesión quedó activa.
      */
     function sesionDisponible() {
-        if (!function_exists('session_status') || !function_exists('session_start') || session_status() === PHP_SESSION_DISABLED) {
+        if (session_status() === PHP_SESSION_DISABLED) {
             return false;
         }
 
@@ -147,7 +121,12 @@ if (!function_exists('sesionDisponible')) {
                 return false;
             }
             try {
-                if (!session_start()) {
+                $opcionesSesion = [
+                    'cookie_httponly' => true,
+                    'cookie_samesite' => 'Strict',
+                    'use_strict_mode' => true,
+                ];
+                if (!session_start($opcionesSesion)) {
                     return false;
                 }
             } catch (Throwable $e) {
@@ -214,17 +193,6 @@ if (!function_exists('validarId')) {
     }
 }
 
-if (!function_exists('id_valido')) {
-    /**
-     * Alias de compatibilidad que delega la validación en validarId().
-     * @param mixed $valor Entrada que se validará.
-     * @return int|null Resultado de validarId().
-     */
-    function id_valido($valor) {
-        return validarId($valor);
-    }
-}
-
 if (!function_exists('validarFecha')) {
     /**
      * Acepta fechas exactas con formato ISO YYYY-MM-DD.
@@ -237,17 +205,6 @@ if (!function_exists('validarFecha')) {
         }
         $fecha = DateTime::createFromFormat('!Y-m-d', (string)$valor);
         return $fecha !== false && $fecha->format('Y-m-d') === (string)$valor;
-    }
-}
-
-if (!function_exists('fecha_valida')) {
-    /**
-     * Alias de compatibilidad que delega la validación en validarFecha().
-     * @param mixed $valor Fecha recibida.
-     * @return bool Resultado de validarFecha().
-     */
-    function fecha_valida($valor) {
-        return validarFecha($valor);
     }
 }
 
@@ -270,17 +227,6 @@ if (!function_exists('longitudTexto')) {
         $coincidencias = [];
         $longitudUtf8 = preg_match_all('/./us', $texto, $coincidencias);
         return ($longitudUtf8 !== false) ? $longitudUtf8 : strlen($texto);
-    }
-}
-
-if (!function_exists('texto_largo')) {
-    /**
-     * Alias de compatibilidad que delega el conteo en longitudTexto().
-     * @param mixed $valor Texto que se va a medir.
-     * @return int Cantidad de caracteres.
-     */
-    function texto_largo($valor) {
-        return longitudTexto($valor);
     }
 }
 

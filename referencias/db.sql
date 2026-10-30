@@ -4,8 +4,12 @@
 -- Funcionamiento: debe ejecutarse en una instancia nueva; crea la base y después define sus objetos.
 -- Puntos clave:
 -- - No inserta datos de ejemplo ni es un script de actualización/reinicio.
--- - facturas.estado_factura admite Pagado, Cancelado y Pendiente; el flujo PHP crea ventas como Pagado.
--- - Las vistas calculan importes con productos.precio_unitario vigente; no almacenan precio histórico.
+-- - facturas.estado_factura admite Pagado, Cancelado y Pendiente (venta por cobrar). El flujo PHP crea
+--   ventas Pagado o Pendiente, registra el pago de una Pendiente y cancela cualquiera de las dos.
+-- - detalle_facturas.precio_unitario guarda el precio de la venta; los importes no cambian si después
+--   se edita el precio del catálogo.
+-- - Los reportes de ventas (totales y unidades) excluyen las facturas canceladas.
+-- - Para una base creada con una versión anterior usa referencias/migraciones/001_precio_historico.sql.
 -- - Las relaciones de detalle_facturas preservan la integridad entre facturas y productos.
 -- - Los procedimientos alimentan el resumen y los reportes individuales del módulo PHP.
 
@@ -37,12 +41,13 @@ CREATE TABLE productos (
     precio_unitario DECIMAL(10,2) NOT NULL CHECK (precio_unitario >= 0)
 );
 
--- Tabla detalle_facturas: cantidad positiva y claves foráneas a factura y producto.
+-- Tabla detalle_facturas: cantidad positiva, precio de la venta y claves foráneas a factura y producto.
 CREATE TABLE detalle_facturas (
     id_detalle_factura INT AUTO_INCREMENT PRIMARY KEY,
     id_factura INT NOT NULL,
     id_producto INT NOT NULL,
     cantidad INT NOT NULL CHECK (cantidad > 0),
+    precio_unitario DECIMAL(10,2) NOT NULL CHECK (precio_unitario >= 0),
     FOREIGN KEY (id_factura) REFERENCES facturas(id_factura),
     FOREIGN KEY (id_producto) REFERENCES productos(id_producto)
 );
@@ -57,19 +62,20 @@ FROM clientes
 LEFT JOIN facturas ON clientes.id_cliente = facturas.id_cliente
 GROUP BY clientes.id_cliente, clientes.nombre;
 
--- Vista: calcula el total por factura con el precio vigente; solo incluye facturas con detalles.
+-- Vista: total por factura con el precio guardado en la venta; excluye canceladas y facturas sin detalles.
 CREATE VIEW vista_total_facturas AS
 SELECT
     facturas.id_factura,
     clientes.nombre AS cliente,
-    SUM(detalle_facturas.cantidad * productos.precio_unitario) AS total_factura
+    facturas.estado_factura,
+    SUM(detalle_facturas.cantidad * detalle_facturas.precio_unitario) AS total_factura
 FROM facturas
 INNER JOIN clientes ON facturas.id_cliente = clientes.id_cliente
 INNER JOIN detalle_facturas ON facturas.id_factura = detalle_facturas.id_factura
-INNER JOIN productos ON detalle_facturas.id_producto = productos.id_producto
-GROUP BY facturas.id_factura, clientes.nombre;
+WHERE facturas.estado_factura <> 'Cancelado'
+GROUP BY facturas.id_factura, clientes.nombre, facturas.estado_factura;
 
--- Vista: suma cantidades de detalle por producto, incluidos detalles de todos los estados.
+-- Vista: unidades vendidas por producto; excluye los detalles de facturas canceladas.
 CREATE VIEW vista_unidades_productos AS
 SELECT
     productos.id_producto,
@@ -77,11 +83,13 @@ SELECT
     SUM(detalle_facturas.cantidad) AS unidades_facturadas
 FROM productos
 INNER JOIN detalle_facturas ON productos.id_producto = detalle_facturas.id_producto
+INNER JOIN facturas ON detalle_facturas.id_factura = facturas.id_factura
+WHERE facturas.estado_factura <> 'Cancelado'
 GROUP BY productos.id_producto, productos.nombre;
 
 -- Procedimientos almacenados usados por el catálogo de reportes PHP.
 DELIMITER //
--- Detalle: devuelve cada línea de todos los estados y calcula el subtotal al precio actual.
+-- Detalle: devuelve cada línea de todos los estados con el precio y subtotal guardados en la venta.
 CREATE PROCEDURE reporte_detalle_facturas()
 BEGIN
     SELECT
@@ -91,13 +99,13 @@ BEGIN
         facturas.fecha_factura,
         productos.nombre AS producto,
         detalle_facturas.cantidad,
-        productos.precio_unitario,
-        detalle_facturas.cantidad * productos.precio_unitario AS subtotal
+        detalle_facturas.precio_unitario,
+        detalle_facturas.cantidad * detalle_facturas.precio_unitario AS subtotal
     FROM facturas
     INNER JOIN clientes ON facturas.id_cliente = clientes.id_cliente
     INNER JOIN detalle_facturas ON facturas.id_factura = detalle_facturas.id_factura
     INNER JOIN productos ON detalle_facturas.id_producto = productos.id_producto
-    ORDER BY facturas.id_factura;
+    ORDER BY facturas.id_factura, detalle_facturas.id_detalle_factura;
 END //
 
 -- Clientes: cuenta facturas por cliente con LEFT JOIN para incluir clientes sin ventas.

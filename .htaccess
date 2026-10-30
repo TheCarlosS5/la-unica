@@ -1,0 +1,22 @@
+# Archivo: .htaccess
+# Propósito: que Apache no sirva archivos internos aunque la carpeta completa del proyecto sea pública.
+# Requiere AllowOverride FileInfo (Laragon trae AllowOverride All). Responde 404 en lugar de 403 para
+# no confirmar que el archivo existe.
+
+Options -Indexes
+
+# Historial de Git, dependencias y pruebas.
+RedirectMatch 404 /\.git(/|$)
+RedirectMatch 404 /\.github(/|$)
+RedirectMatch 404 /vendor(/|$)
+RedirectMatch 404 /tests(/|$)
+RedirectMatch 404 /(composer\.(json|lock)|phpunit\.xml)$
+RedirectMatch 404 /\.(gitignore|htaccess|phpunit\.cache)
+
+# Configuración, scripts SQL, documentos de QA y herramientas internas. manual.pdf sigue accesible
+# porque lo usa el visor de «Sobre nosotros».
+RedirectMatch 404 /php/config(/|$)
+RedirectMatch 404 /referencias/.*\.(sql|md|docx)$
+RedirectMatch 404 /referencias/(QA|migraciones)(/|$)
+RedirectMatch 404 /wiki/herramientas(/|$)
+RedirectMatch 404 /[^/]+\.md$

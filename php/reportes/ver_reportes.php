@@ -42,7 +42,7 @@ if (!$errorLectura) {
         static fn(array $fila): int => (int)$fila['total_facturas'],
         $filasPorReporte['clientes']
     ));
-    $totalVigente = array_reduce(
+    $totalVentas = array_reduce(
         $filasPorReporte['total_facturas'],
         static fn(float $total, array $fila): float => $total + (float)$fila['total_factura'],
         0.0
@@ -71,12 +71,12 @@ if (!$errorLectura) {
             'detalle' => number_format($totalFacturasClientes, 0, ',', '.') . ' facturas registradas entre todos los clientes, sin filtrar por estado.',
         ],
         'total_facturas' => [
-            'valor' => formatearMonedaCop(number_format($totalVigente, 2, '.', '')),
-            'detalle' => number_format(count($filasPorReporte['total_facturas']), 0, ',', '.') . ' facturas con detalle; los importes usan los precios vigentes e incluyen todos los estados.',
+            'valor' => formatearMonedaCop(number_format($totalVentas, 2, '.', '')),
+            'detalle' => number_format(count($filasPorReporte['total_facturas']), 0, ',', '.') . ' facturas Pagado o Pendiente; usa el precio de cada venta y excluye las canceladas.',
         ],
         'unidades_productos' => [
             'valor' => number_format($totalUnidades, 0, ',', '.'),
-            'detalle' => number_format(count($filasPorReporte['unidades_productos']), 0, ',', '.') . ' productos con unidades facturadas; incluye detalles de todos los estados.',
+            'detalle' => number_format(count($filasPorReporte['unidades_productos']), 0, ',', '.') . ' productos con unidades vendidas; excluye las facturas canceladas.',
         ],
         'detalle_facturas' => [
             'valor' => number_format(count($filasPorReporte['detalle_facturas']), 0, ',', '.'),
@@ -92,7 +92,7 @@ if (!$errorLectura) {
         ],
         'pendientes' => [
             'valor' => number_format(count($filasPorReporte['pendientes']), 0, ',', '.'),
-            'detalle' => 'Facturas cuyo estado actual es Pendiente.',
+            'detalle' => 'Ventas por cobrar (estado Pendiente).',
         ],
     ];
 }

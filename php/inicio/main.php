@@ -128,7 +128,7 @@ require __DIR__ . '/../includes/menu.php';
             </div>
             <div><h2 class="modulo-titulo">Facturas</h2></div>
         </div>
-        <p class="modulo-descripcion">Registra ventas y consulta o imprime comprobantes con el precio vigente de cada producto.</p>
+        <p class="modulo-descripcion">Registra ventas de contado o por cobrar y consulta o imprime sus comprobantes.</p>
         <div class="modulo-acciones">
             <a class="boton" href="<?= h($baseUrl) ?>/php/facturas/ver_facturas.php">
                 <span>Consultar facturas</span>

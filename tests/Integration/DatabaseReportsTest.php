@@ -59,7 +59,7 @@ final class DatabaseReportsTest extends TestCase
         $this->cancelledInvoiceId = $this->insertInvoice('Cancelado');
 
         $this->insertDetail($this->paidInvoiceId, $this->productAId, 2);
-        $this->insertDetail($this->paidInvoiceId, $this->productBId, 3);
+        $this->insertDetail($this->paidInvoiceId, $this->productBId, 3, '4.25');
         $this->insertDetail($this->pendingInvoiceId, $this->productAId, 1);
         $this->insertDetail($this->cancelledInvoiceId, $this->productAId, 4);
     }
@@ -99,13 +99,17 @@ final class DatabaseReportsTest extends TestCase
         return $id;
     }
 
-    private function insertDetail(int $invoiceId, int $productId, int $quantity): void
-    {
+    private function insertDetail(
+        int $invoiceId,
+        int $productId,
+        int $quantity,
+        string $price = '12.50'
+    ): void {
         $stmt = $this->db->prepare(
-            'INSERT INTO detalle_facturas (id_factura, id_producto, cantidad)
-             VALUES (?, ?, ?)'
+            'INSERT INTO detalle_facturas (id_factura, id_producto, cantidad, precio_unitario)
+             VALUES (?, ?, ?, ?)'
         );
-        $stmt->bind_param('iii', $invoiceId, $productId, $quantity);
+        $stmt->bind_param('iiis', $invoiceId, $productId, $quantity, $price);
         $stmt->execute();
         $stmt->close();
     }
@@ -163,8 +167,14 @@ final class DatabaseReportsTest extends TestCase
         self::assertSame(0, (int)$clientWithoutInvoices['total_facturas']);
     }
 
-    public function testInvoiceTotalsViewUsesCurrentProductPrices(): void
+    public function testInvoiceTotalsViewUsesStoredSalePrices(): void
     {
+        // Cambiar el catálogo después de la venta no debe alterar el total guardado.
+        $this->db->query(
+            'UPDATE productos SET precio_unitario = 999.99 WHERE id_producto IN ('
+            . $this->productAId . ', ' . $this->productBId . ')'
+        );
+
         $rows = $this->db->query(
             'SELECT id_factura, total_factura FROM vista_total_facturas'
         )->fetch_all(MYSQLI_ASSOC);
@@ -172,10 +182,21 @@ final class DatabaseReportsTest extends TestCase
         $invoice = $this->findRow($rows, 'id_factura', $this->paidInvoiceId);
 
         self::assertNotNull($invoice);
-        self::assertEqualsWithDelta(37.75, (float)$invoice['total_factura'], 0.001);
+        self::assertSame('37.75', (string)$invoice['total_factura']);
     }
 
-    public function testProductUnitsViewIncludesAllInvoiceStates(): void
+    public function testInvoiceTotalsViewExcludesCancelledInvoices(): void
+    {
+        $rows = $this->db->query(
+            'SELECT id_factura FROM vista_total_facturas'
+        )->fetch_all(MYSQLI_ASSOC);
+
+        self::assertNotNull($this->findRow($rows, 'id_factura', $this->paidInvoiceId));
+        self::assertNotNull($this->findRow($rows, 'id_factura', $this->pendingInvoiceId));
+        self::assertNull($this->findRow($rows, 'id_factura', $this->cancelledInvoiceId));
+    }
+
+    public function testProductUnitsViewExcludesCancelledInvoices(): void
     {
         $rows = $this->db->query(
             'SELECT id_producto, unidades_facturadas FROM vista_unidades_productos'
@@ -184,13 +205,14 @@ final class DatabaseReportsTest extends TestCase
         $productA = $this->findRow($rows, 'id_producto', $this->productAId);
         $productB = $this->findRow($rows, 'id_producto', $this->productBId);
 
+        // Pagada (2) + pendiente (1); las 4 unidades de la cancelada ya volvieron al inventario.
         self::assertNotNull($productA);
-        self::assertSame(7, (int)$productA['unidades_facturadas']);
+        self::assertSame(3, (int)$productA['unidades_facturadas']);
         self::assertNotNull($productB);
         self::assertSame(3, (int)$productB['unidades_facturadas']);
     }
 
-    public function testClientReportComparesViewAndStoredProcedure(): void
+    public function testClientReportCountsInvoicesOfAllStates(): void
     {
         $rows = obtenerFilasReporte($this->db, 'clientes');
         $client = $this->findRow($rows, 'id_cliente', $this->clientId);
