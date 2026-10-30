@@ -76,6 +76,7 @@ Cubren las vistas y los procedimientos, las restricciones de la base, y el flujo
 ## Estructura del proyecto
 
 ```text
+AUTORES.md                Integrantes del equipo, roles y asistencia de IA
 index.php                 Punto de entrada que redirige a main.php
 main.php                  Carga la página de inicio
 assets/
@@ -109,3 +110,7 @@ referencias/
   SRS.pdf                 Copia de consulta del SRS, versión 1.5
   SRS.md                  Versión Markdown del SRS, versión 1.5
 ```
+
+## Autores
+
+Proyecto de la ficha 3407799 (ADSO, SENA Regional Huila). Consulta los integrantes, sus roles y la asistencia de inteligencia artificial en [AUTORES.md](AUTORES.md).
