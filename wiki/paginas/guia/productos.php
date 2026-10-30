@@ -1,5 +1,5 @@
 <?php if (!defined('LA_UNICA_WIKI')) { exit; } ?>
-<p>Un <strong>producto</strong> es lo que vendes. Tiene una unidad de medida libre, existencias enteras y un precio vigente.</p>
+<p>Un <strong>producto</strong> es lo que vendes. Tiene una unidad de medida libre, existencias enteras y un precio de venta.</p>
 <div class="tabla-wiki"><table>
 <thead>
 <tr>
@@ -91,9 +91,9 @@
 </div>
 <p>Si intentas cambiar la unidad de un producto que ya se vendió, verás este error y no se guardará nada:</p>
 <figure class="captura"><img src="img/productos-editar-error.webp" alt="Error al cambiar la unidad" loading="lazy"><figcaption>Error al cambiar la unidad</figcaption></figure>
-<div class="aviso aviso-caution">
-<p class="aviso-titulo">Cambiar el precio afecta facturas anteriores</p>
-<p>La base de datos <strong>no guarda el precio del momento de la venta</strong>. Todos los totales (facturas, comprobantes y reportes) se calculan con el precio <strong>vigente</strong>. Si subes el arroz de $4.800 a $5.000, la factura #1 mostrará el total con $5.000. Ver <a href="index.php?pagina=guia/faq#por-qué-cambió-el-total-de-una-factura-vieja">Preguntas frecuentes</a>.</p>
+<div class="aviso aviso-note">
+<p class="aviso-titulo">Cambiar el precio no altera facturas anteriores</p>
+<p>Cada línea de factura guarda el precio <strong>del momento de la venta</strong>. Si subes el arroz de $4.800 a $5.000, las ventas nuevas usan $5.000 y la factura #1 conserva su total con $4.800.</p>
 </div>
 <h2 id="eliminar-un-producto">Eliminar un producto</h2>
 <div class="pasos">

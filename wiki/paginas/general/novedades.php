@@ -1,5 +1,14 @@
 <?php if (!defined('LA_UNICA_WIKI')) { exit; } ?>
 <p>Cronología del repositorio hasta la rama <code>revision-samuel</code> (79 commits entre el 22 y el 28 de octubre de 2026). Las fechas y mensajes salen de <code>git log</code>.</p>
+<h2 id="30-de-octubre-de-2026--precio-de-venta-y-ventas-por-cobrar">30 de octubre de 2026 — precio de venta, ventas por cobrar y pruebas</h2>
+<ul>
+<li><code>fix:</code> <code>detalle_facturas</code> guarda el <strong>precio de la venta</strong>; editar el catálogo ya no cambia facturas anteriores. Las bases existentes se actualizan con <code>referencias/migraciones/001_precio_historico.sql</code>.</li>
+<li><code>feat:</code> ventas <strong>por cobrar</strong> (estado <em>Pendiente</em>), con <em>Registrar pago</em> y cancelación desde el comprobante.</li>
+<li><code>fix:</code> los reportes de ventas (totales y unidades) excluyen las facturas canceladas.</li>
+<li><code>fix:</code> el comprobante ya no falla con un error fatal cuando la consulta de detalles falla.</li>
+<li><code>fix:</code> puerto MySQL por defecto <code>3306</code> (BUG-001); usuario <code>la_unica_app</code>, cookies de sesión <code>HttpOnly</code>/<code>SameSite</code>, cabeceras de seguridad y <code>.htaccess</code>.</li>
+<li><code>test:</code> PHPUnit con 28 pruebas de integración (reportes, ventas, pagos y cancelaciones) que corren en GitHub Actions en cada push.</li>
+</ul>
 <h2 id="28-de-octubre-de-2026--versión-funcional-revisada">28 de octubre de 2026 — versión funcional revisada</h2>
 <ul>
 <li><strong>Versión funcional</strong> subida por Samuel con la sección <strong>Sobre nosotros</strong> (manual PDF integrado y página del video explicativo).</li>

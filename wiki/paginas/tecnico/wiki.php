@@ -107,8 +107,8 @@
 <p>El orden del catálogo es el orden del menú lateral y de los botones «Anterior / Siguiente».</p>
 <h2 id="datos-de-ejemplo">Datos de ejemplo</h2>
 <p><code>wiki/herramientas/datos_ejemplo.sql</code> crea 8 clientes, 10 productos (uno agotado y uno con stock bajo) y 8 facturas en los tres estados. Se ejecuta <strong>después</strong> de <code>db.sql</code> en una base vacía:</p>
-<pre class="highlight"><code class="language-powershell">mysql -u root -h 127.0.0.1 -P 5000 --default-character-set=utf8mb4 &lt; referencias\db.sql
-mysql -u root -h 127.0.0.1 -P 5000 --default-character-set=utf8mb4 &lt; wiki\herramientas\datos_ejemplo.sql</code></pre>
+<pre class="highlight"><code class="language-powershell">mysql -u root -h 127.0.0.1 -P 3306 --default-character-set=utf8mb4 &lt; referencias\db.sql
+mysql -u root -h 127.0.0.1 -P 3306 --default-character-set=utf8mb4 &lt; wiki\herramientas\datos_ejemplo.sql</code></pre>
 <div class="aviso aviso-caution">
 <p class="aviso-titulo">Precaución</p>
 <p>Usa siempre <code>--default-character-set=utf8mb4</code> al importar desde la consola de Windows; si no, «Frutería Doña Rosa» se guarda como «Fruter├¡a Do├▒a Rosa».</p>

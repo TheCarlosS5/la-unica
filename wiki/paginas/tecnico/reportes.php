@@ -37,13 +37,14 @@
 
 <pre class="highlight"><code class="language-php">'total_facturas' =&gt; [
     'archivo'     =&gt; 'total_vigente_por_factura.php',
-    'titulo'      =&gt; 'Total vigente por factura',
-    'descripcion' =&gt; 'Calcula cantidad por precio unitario vigente para cada factura que tiene detalles.',
+    'titulo'      =&gt; 'Total por factura',
+    'descripcion' =&gt; 'Suma cantidad por precio de venta de cada factura Pagado o Pendiente.',
     'fuente'      =&gt; 'Vista vista_total_facturas',
     'columnas'    =&gt; [
-        ['campo' =&gt; 'id_factura',    'titulo' =&gt; 'Factura',       'tipo' =&gt; 'id'],
-        ['campo' =&gt; 'cliente',       'titulo' =&gt; 'Cliente',       'tipo' =&gt; 'texto'],
-        ['campo' =&gt; 'total_factura', 'titulo' =&gt; 'Total vigente', 'tipo' =&gt; 'moneda'],
+        ['campo' =&gt; 'id_factura',     'titulo' =&gt; 'Factura', 'tipo' =&gt; 'id'],
+        ['campo' =&gt; 'cliente',        'titulo' =&gt; 'Cliente', 'tipo' =&gt; 'texto'],
+        ['campo' =&gt; 'estado_factura', 'titulo' =&gt; 'Estado',  'tipo' =&gt; 'estado'],
+        ['campo' =&gt; 'total_factura',  'titulo' =&gt; 'Total',   'tipo' =&gt; 'moneda'],
     ],
     'enlace_factura' =&gt; true,   // la fila enlaza al comprobante
 ],</code></pre>
@@ -59,7 +60,7 @@
 <tbody>
 <tr>
 <td><code>clientes</code></td>
-<td><code>SELECT … FROM vista_clientes_total_facturas</code> <strong>y</strong> <code>CALL reporte_facturas_clientes()</code> — se comparan</td>
+<td><code>CALL reporte_facturas_clientes()</code></td>
 </tr>
 <tr>
 <td><code>total_facturas</code></td>

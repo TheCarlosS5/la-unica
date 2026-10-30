@@ -141,9 +141,19 @@
 </thead>
 <tbody>
 <tr>
-<td>Factura #N registrada como Pagado. Total: …</td>
+<td>Factura #N registrada como Pagado / Pendiente. Total: …</td>
 <td>✅</td>
-<td>Venta guardada; stock descontado.</td>
+<td>Venta guardada con el precio de cada producto; stock descontado.</td>
+</tr>
+<tr>
+<td>Pago registrado. La factura quedó como Pagado.</td>
+<td>✅</td>
+<td>Se cobró una venta por cobrar; el inventario no cambia.</td>
+</tr>
+<tr>
+<td>Solo se puede registrar el pago de una factura Pendiente.</td>
+<td>🔒</td>
+<td>La factura ya estaba pagada o cancelada.</td>
 </tr>
 <tr>
 <td>Selecciona un cliente válido.</td>
@@ -223,24 +233,14 @@
 <td>Segundo intento de cancelación.</td>
 </tr>
 <tr>
-<td>Solo se pueden cancelar facturas con estado Pagado.</td>
-<td>🔒</td>
-<td>Intento sobre una <em>Pendiente</em>.</td>
-</tr>
-<tr>
 <td>La factura no tiene detalles; no se puede reponer el inventario.</td>
 <td>❌</td>
 <td>Factura sin líneas (solo posible si se creó por SQL).</td>
 </tr>
 <tr>
-<td>La reposición superaría el máximo de stock permitido…</td>
+<td>No se encontró un producto de la factura; no se modificó el inventario.</td>
 <td>❌</td>
-<td>El stock pasaría de 2.147.483.647.</td>
-</tr>
-<tr>
-<td>El inventario / La factura cambió … durante la cancelación; no se aplicaron cambios.</td>
-<td>⚠️</td>
-<td>Operación concurrente; reintenta.</td>
+<td>Una línea apunta a un producto que ya no existe (solo posible por SQL).</td>
 </tr>
 <tr>
 <td>No existe una factura con ese identificador. / El identificador de factura no es válido.</td>
@@ -278,12 +278,8 @@
 <td>La tabla consultada está vacía.</td>
 </tr>
 <tr>
-<td>No hay facturas pendientes.</td>
+<td>No hay ventas por cobrar.</td>
 <td>Ninguna factura en estado <em>Pendiente</em>.</td>
-</tr>
-<tr>
-<td>La vista y el procedimiento de clientes devolvieron valores diferentes.</td>
-<td>Control de coherencia: <code>vista_clientes_total_facturas</code> y <code>reporte_facturas_clientes()</code> no coinciden. Revisa que la base se haya creado con el <code>db.sql</code> original.</td>
 </tr>
 <tr>
 <td>El reporte solicitado no está disponible.</td>

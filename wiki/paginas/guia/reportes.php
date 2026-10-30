@@ -31,14 +31,14 @@
 <td>Facturas entre todos los clientes (todos los estados)</td>
 </tr>
 <tr>
-<td>Total vigente por factura</td>
+<td>Total por factura</td>
 <td>Suma en COP</td>
-<td>Cuántas facturas tienen detalle</td>
+<td>Cuántas ventas Pagado o Pendiente</td>
 </tr>
 <tr>
-<td>Unidades facturadas por producto</td>
+<td>Unidades vendidas por producto</td>
 <td>Unidades</td>
-<td>Cuántos productos se han facturado</td>
+<td>Cuántos productos se han vendido</td>
 </tr>
 <tr>
 <td>Detalle de facturas</td>
@@ -62,15 +62,15 @@
 </tr>
 </tbody>
 </table></div>
-<div class="aviso aviso-caution">
-<p class="aviso-titulo">El total incluye facturas canceladas</p>
-<p>«Total vigente» suma <strong>todas</strong> las facturas con detalle, también las <em>Cancelado</em> y <em>Pendiente</em>, y con los <strong>precios actuales</strong>. No es «lo que entró a caja». Para saber lo cobrado, revisa el <em>Detalle de facturas</em> mirando solo las de estado <em>Pagado</em>.</p>
+<div class="aviso aviso-note">
+<p class="aviso-titulo">Qué incluye el total</p>
+<p>«Total por factura» suma las ventas <em>Pagado</em> y <em>Pendiente</em> con el precio registrado en cada venta; las <em>Cancelado</em> no cuentan. Lo cobrado es la parte <em>Pagado</em>; lo que falta por cobrar está en <em>Facturas pendientes</em>.</p>
 </div>
 <h2 id="leer-un-reporte-individual">Leer un reporte individual</h2>
 <figure class="captura"><img src="img/reportes-individual-partes.webp" alt="Partes de un reporte individual" loading="lazy"><figcaption>Partes de un reporte individual</figcaption></figure>
 <ul>
 <li><span class="marca-num">1</span> <strong>Cabecera</strong>: la fuente en MySQL (vista o procedimiento), el título, qué calcula y cuántos registros hay.</li>
-<li><span class="marca-num">2</span> <strong>Nota</strong>: cómo interpretar el reporte (orden, estados incluidos, precio vigente).</li>
+<li><span class="marca-num">2</span> <strong>Nota</strong>: cómo interpretar el reporte (orden, estados incluidos, precio usado).</li>
 <li><span class="marca-num">3</span> <strong>Filas</strong>: en este reporte, la primera es el producto con <strong>menos existencias</strong>.</li>
 </ul>
 <p>En los reportes que tienen número de factura, cada fila tiene un botón para abrir el comprobante.</p>
@@ -95,17 +95,17 @@
 </tr>
 <tr>
 <td>2</td>
-<td><strong>Total vigente por factura</strong></td>
+<td><strong>Total por factura</strong></td>
 <td>Importe de cada venta</td>
 <td>Factura más reciente primero</td>
-<td>Solo facturas con detalles; todos los estados.</td>
+<td>Solo facturas con detalles; excluye las canceladas.</td>
 </tr>
 <tr>
 <td>3</td>
-<td><strong>Unidades facturadas por producto</strong></td>
+<td><strong>Unidades vendidas por producto</strong></td>
 <td>Qué se vende más</td>
 <td>Más unidades primero</td>
-<td>Solo productos facturados alguna vez.</td>
+<td>Excluye las canceladas, cuyas unidades volvieron al inventario.</td>
 </tr>
 <tr>
 <td>4</td>
@@ -139,7 +139,7 @@
 </table></div>
 <div class="galeria" style="--columnas: 3">
 <figure class="captura"><img src="img/reporte-clientes-y-facturas.webp" alt="Clientes y cantidad de facturas" loading="lazy"><figcaption>Clientes y cantidad de facturas</figcaption></figure>
-<figure class="captura"><img src="img/reporte-total-vigente-por-factura.webp" alt="Total vigente por factura" loading="lazy"><figcaption>Total vigente por factura</figcaption></figure>
+<figure class="captura"><img src="img/reporte-total-vigente-por-factura.webp" alt="Total por factura" loading="lazy"><figcaption>Total por factura</figcaption></figure>
 <figure class="captura"><img src="img/reporte-unidades-facturadas-por-producto.webp" alt="Unidades facturadas por producto" loading="lazy"><figcaption>Unidades facturadas por producto</figcaption></figure>
 <figure class="captura"><img src="img/reporte-existencias-productos.webp" alt="Existencias de productos" loading="lazy"><figcaption>Existencias de productos</figcaption></figure>
 <figure class="captura"><img src="img/reporte-facturas-por-estado.webp" alt="Facturas por estado" loading="lazy"><figcaption>Facturas por estado</figcaption></figure>

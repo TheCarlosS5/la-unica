@@ -1,5 +1,9 @@
 <?php if (!defined('LA_UNICA_WIKI')) { exit; } ?>
 <p>Resumen de <code>referencias/SRS.md</code> <strong>versión 1.4</strong> (27/10/2026, vigente). Las tres copias (<code>.docx</code>, <code>.pdf</code>, <code>.md</code>) deben mantenerse sincronizadas.</p>
+<div class="aviso aviso-caution">
+<p class="aviso-titulo">Cambios pendientes de llevar al SRS</p>
+<p>La versión del 30/10/2026 se aparta del SRS 1.4 en tres puntos, marcados abajo como <em>Modificado</em>: el detalle guarda el precio de la venta (RF-07), las ventas pueden quedar <em>Pendiente</em> y cobrarse después (RF-06 y RF-10), y los reportes de ventas excluyen las canceladas (RF-13). Hay que publicar un SRS 1.5 que lo recoja.</p>
+</div>
 <h2 id="resumen-ejecutivo">Resumen ejecutivo</h2>
 <blockquote>
 <p>La Única será una aplicación web local para registrar clientes y productos, gestionar facturas y consultar reportes. La base de datos <code>la_unica</code> se crea con cuatro tablas, tres vistas y cinco procedimientos almacenados definidos en <code>db.sql</code>. […] El esquema no guarda el precio histórico en cada detalle: los subtotales y totales se calculan con el precio actual del producto.</p>
@@ -81,14 +85,14 @@
 <tr>
 <td>RF-06</td>
 <td>Generar la factura (estado <em>Pagado</em> explícito)</td>
-<td><code>crear_factura.php</code> — <code>INSERT … 'Pagado'</code></td>
-<td><span class="insignia insignia-success">Cumple</span></td>
+<td><code>registrarVenta()</code> — <em>Pagado</em> o <em>Pendiente</em> según la forma de pago</td>
+<td><span class="insignia insignia-caution">Modificado</span></td>
 </tr>
 <tr>
 <td>RF-07</td>
 <td>Calcular importes con precio vigente</td>
-<td>Vistas + <code>imprimir_factura.php</code>, <code>ver_facturas.php</code></td>
-<td><span class="insignia insignia-success">Cumple</span></td>
+<td>Se usa el precio guardado en <code>detalle_facturas</code> al vender</td>
+<td><span class="insignia insignia-caution">Modificado</span></td>
 </tr>
 <tr>
 <td>RF-08</td>
@@ -105,8 +109,8 @@
 <tr>
 <td>RF-10</td>
 <td>Cancelar facturas (Pagado → Cancelado, una vez)</td>
-<td><code>facturas/cancelar_factura.php</code></td>
-<td><span class="insignia insignia-success">Cumple</span></td>
+<td><code>cancelarFactura()</code> — también Pendiente → Cancelado; <code>registrarPagoFactura()</code> para Pendiente → Pagado</td>
+<td><span class="insignia insignia-caution">Modificado</span></td>
 </tr>
 <tr>
 <td>RF-11</td>
@@ -123,8 +127,8 @@
 <tr>
 <td>RF-13</td>
 <td>Resumen + 7 reportes</td>
-<td><code>reportes/ver_reportes.php</code> + 7 rutas</td>
-<td><span class="insignia insignia-success">Cumple</span></td>
+<td><code>reportes/ver_reportes.php</code> + 7 rutas; totales y unidades excluyen canceladas</td>
+<td><span class="insignia insignia-caution">Modificado</span></td>
 </tr>
 </tbody>
 </table></div>
@@ -182,10 +186,9 @@
 <li>Toda factura referencia un cliente; todo detalle, una factura y un producto existentes (FK).</li>
 <li>Al menos <strong>un detalle por venta</strong> — lo valida PHP (el esquema no lo impone).</li>
 <li><code>unidad_medida</code> es texto libre; <code>stock</code> y <code>cantidad</code> son enteros (<code>stock ≥ 0</code>, <code>cantidad &gt; 0</code>).</li>
-<li>No se copian nombre ni precio al detalle: se muestran los <strong>vigentes</strong>.</li>
-<li>Cambiar el precio cambia los importes de ventas anteriores.</li>
+<li>El detalle guarda el <strong>precio de la venta</strong>; cambiar el precio del catálogo no altera ventas anteriores. El nombre sí se muestra el actual.</li>
 <li>Cancelar suma al stock <strong>vigente</strong> las cantidades del detalle, una sola vez.</li>
-<li>Solo transición <strong>Pagado → Cancelado</strong>; <em>Pendiente</em> no tiene flujo en esta versión.</li>
+<li>Transiciones: <strong>Pendiente → Pagado</strong>, <strong>Pagado → Cancelado</strong> y <strong>Pendiente → Cancelado</strong>.</li>
 <li>No se modifican ni eliminan facturas ni detalles.</li>
 <li>Un producto con stock 0 sigue visible pero no se puede agregar a una venta.</li>
 </ul>

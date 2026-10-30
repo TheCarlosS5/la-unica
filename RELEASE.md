@@ -33,7 +33,7 @@ Una versión publicada conserva su etiqueta. Si encuentras un problema después 
 - PHP con la extensión `mysqli`.
 - MySQL y un navegador web.
 - Laragon es el entorno documentado para la ejecución local.
-- La configuración inicial de [conexion.php](php/config/conexion.php) usa `127.0.0.1`, puerto MySQL `5000`, base `la_unica`, usuario `root` y contraseña vacía. Ajusta el puerto y los demás valores a la instancia local; el puerto no es fijo para todos los entornos.
+- [conexion.php](php/config/conexion.php) usa por defecto `127.0.0.1`, puerto `3306`, base `la_unica`, usuario `root` y contraseña vacía. Cada equipo ajusta sus valores en `php/config/conexion.local.php` (copia de `conexion.local.example.php`, ignorada por Git) o con variables `DB_*`.
 - [db.sql](referencias/db.sql) crea el esquema, pero no inserta datos de ejemplo. Importa el script solo en una instancia donde todavía no exista la base `la_unica`, porque contiene `CREATE DATABASE la_unica`.
 
 ## Antes de publicar
@@ -44,13 +44,15 @@ Completa esta lista para la versión que vas a etiquetar:
 - [ ] Verifica que el repositorio no contiene archivos de configuración personales, contraseñas reales ni datos de clientes.
 - [ ] Revisa que el README y estas instrucciones coincidan con los archivos y funciones presentes.
 - [ ] Confirma que `SRS.docx`, `SRS.pdf` y `SRS.md` contienen la misma versión vigente y que `manual.docx` describe los módulos principales; recuerda que la sección «Sobre nosotros» aún no está desarrollada en la documentación formal.
-- [ ] Prueba la instalación desde cero en una base vacía: inicia Apache y MySQL, importa `referencias/db.sql`, ajusta `php/config/conexion.php` y abre la ruta local configurada, por ejemplo `http://localhost/la-unica/`.
+- [ ] Confirma que GitHub Actions está en verde en `main`: validación de sintaxis y pruebas de base de datos (incluida la migración desde el esquema anterior).
+- [ ] Prueba la instalación desde cero en una base vacía: inicia Apache y MySQL, importa `referencias/db.sql`, ajusta `php/config/conexion.local.php` si hace falta y abre la ruta local configurada, por ejemplo `http://localhost/la-unica/`.
 - [ ] Recorre manualmente la creación, consulta, edición y eliminación de un cliente y de un producto. Comprueba que las bajas con registros relacionados se bloquean y que las eliminaciones solicitan confirmación.
+- [ ] Registra una venta de contado y otra por cobrar; registra el pago de la segunda, cancela una de ellas y comprueba el inventario y el reporte de pendientes.
 - [ ] Recorre el resumen general y los siete reportes individuales; verifica sus resultados frente a las vistas y procedimientos de `referencias/db.sql`. Comprueba «Sobre nosotros → Manual del Usuario» y, si existe `assets/video/1.mp4`, la página «Video explicativo».
 - [ ] Comprueba que los estilos y las fuentes locales cargan sin Bootstrap ni `assets/vendor`, y que los errores de conexión o validación se muestran de forma comprensible.
 - [ ] Prepara notas de versión que describan solo los cambios incluidos en esta etiqueta. Esas notas se guardarán en GitHub al publicar el release.
 
-El repositorio no define una suite de pruebas automatizadas ni un proceso de compilación. Registra como verificación únicamente las pruebas manuales que efectivamente hayas completado.
+Las pruebas automatizadas (`composer test`, ver el README) cubren las vistas, los procedimientos y el flujo de ventas, pagos y cancelaciones. No cubren la interfaz: registra también las pruebas manuales que efectivamente hayas completado.
 
 ## Crear y subir la etiqueta
 

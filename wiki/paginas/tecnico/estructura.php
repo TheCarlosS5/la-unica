@@ -34,7 +34,10 @@
 </li>
 <li>php/<ul>
 <li>config/<ul>
+<li>entorno.php URL base, cabeceras de seguridad y <code>h()</code> (sin base de datos)</li>
+<li>consultas.php <code>consultaPreparada()</code></li>
 <li>conexion.php conexión MySQLi + utilidades compartidas</li>
+<li>conexion.local.example.php plantilla de <code>conexion.local.php</code> (ignorado por Git)</li>
 </ul>
 </li>
 <li>includes/<ul>
@@ -62,9 +65,11 @@
 </li>
 <li>facturas/<ul>
 <li>ver_facturas.php búsqueda</li>
-<li>crear_factura.php venta con transacción</li>
+<li>servicio_facturas.php reglas de venta, pago y cancelación (transacciones)</li>
+<li>crear_factura.php formulario de venta</li>
 <li>imprimir_factura.php comprobante</li>
-<li>cancelar_factura.php cancelación con transacción</li>
+<li>registrar_pago_factura.php Pendiente → Pagado</li>
+<li>cancelar_factura.php cancelación</li>
 </ul>
 </li>
 <li>reportes/<ul>
@@ -72,7 +77,7 @@
 <li>datos_reportes.php catálogo + acceso a datos</li>
 <li>reporte_individual.php plantilla común</li>
 <li>clientes_y_facturas.php</li>
-<li>total_vigente_por_factura.php</li>
+<li>total_vigente_por_factura.php total por factura (nombre conservado)</li>
 <li>unidades_facturadas_por_producto.php</li>
 <li>detalle_facturas.php</li>
 <li>existencias_productos.php</li>
@@ -170,5 +175,5 @@
 <li><strong>Archivos en <code>snake_case</code></strong> con verbo + entidad: <code>crear_cliente.php</code>, <code>ver_facturas.php</code>.</li>
 <li><strong>Cabecera de documentación</strong> obligatoria en cada archivo: <em>Archivo, Módulo, Propósito, Funcionamiento, Puntos clave</em>.</li>
 <li><strong>Funciones compartidas</strong> envueltas en <code>if (!function_exists(...))</code> para poder incluir <code>conexion.php</code> más de una vez sin errores.</li>
-<li><strong>Alias de compatibilidad</strong> (<code>id_valido</code>, <code>fecha_valida</code>, <code>texto_largo</code>) para código antiguo que use los nombres en snake_case.</li>
+<li><strong>Reglas de negocio fuera de la vista</strong>: lo que mueve dinero o inventario vive en funciones (<code>servicio_facturas.php</code>) que las páginas llaman y <code>tests/</code> prueba.</li>
 </ul>

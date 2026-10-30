@@ -1,62 +1,55 @@
 <?php if (!defined('LA_UNICA_WIKI')) { exit; } ?>
-<p>Toda la conexión vive en <strong>una sola línea</strong> de <code>php/config/conexion.php</code>:</p>
-<p class="codigo-titulo">php/config/conexion.php</p>
-
-<pre class="highlight"><code class="language-php">mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
-date_default_timezone_set('America/Bogota');
-
-try {
-    $conexion = new mysqli('127.0.0.1', 'root', '', 'la_unica', 5000);
-    $conexion-&gt;set_charset('utf8mb4');
-    $conexion-&gt;query("SET time_zone = '-05:00'");
-} catch (Throwable $e) {
-    http_response_code(500);
-    exit('Error de conexión a la base de datos.');
-}</code></pre>
-<p>Los parámetros de <code>new mysqli(...)</code> son, en orden:</p>
+<p>La conexión se abre en <code>php/config/conexion.php</code>. <strong>No edites ese archivo</strong> para tu equipo: cada valor se toma, en este orden, de</p>
+<ol>
+<li>una <strong>variable de entorno</strong> (<code>DB_HOST</code>, <code>DB_PORT</code>, <code>DB_DATABASE</code>, <code>DB_USERNAME</code>, <code>DB_PASSWORD</code>);</li>
+<li>el archivo <code>php/config/conexion.local.php</code>, que Git ignora;</li>
+<li>el valor por defecto de la tabla.</li>
+</ol>
 <div class="tabla-wiki"><table>
 <thead>
 <tr>
-<th>#</th>
+<th>Clave en conexion.local.php</th>
 <th>Valor por defecto</th>
 <th>Significado</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td>1</td>
+<td><code>host</code></td>
 <td><code>'127.0.0.1'</code></td>
 <td>Equipo donde corre MySQL. Déjalo en local (ver <a href="index.php?pagina=tecnico/requisitos#requisitos-no-funcionales">RNF-03</a>).</td>
 </tr>
 <tr>
-<td>2</td>
-<td><code>'root'</code></td>
-<td>Usuario de MySQL.</td>
+<td><code>puerto</code></td>
+<td><code>3306</code></td>
+<td><strong>Puerto</strong> de MySQL (el estándar de Laragon y XAMPP).</td>
 </tr>
 <tr>
-<td>3</td>
-<td><code>''</code></td>
-<td>Contraseña (vacía en Laragon).</td>
-</tr>
-<tr>
-<td>4</td>
+<td><code>base_datos</code></td>
 <td><code>'la_unica'</code></td>
 <td>Nombre de la base que crea <code>db.sql</code>.</td>
 </tr>
 <tr>
-<td>5</td>
-<td><code>5000</code></td>
-<td><strong>Puerto</strong> de MySQL.</td>
+<td><code>usuario</code></td>
+<td><code>'root'</code></td>
+<td>Usuario de MySQL. Recomendado: <code>la_unica_app</code> (ver abajo).</td>
+</tr>
+<tr>
+<td><code>contrasena</code></td>
+<td><code>''</code></td>
+<td>Contraseña (vacía en Laragon para <code>root</code>).</td>
 </tr>
 </tbody>
 </table></div>
-<h2 id="cambiar-el-puerto">Cambiar el puerto</h2>
+<h2 id="cambiar-el-puerto">Cambiar el puerto u otros valores</h2>
 <div class="pasos">
 <ol>
-<li>Averigua en qué puerto escucha tu MySQL. En Laragon: <em>Menú → MySQL → my.ini</em> y busca <code>port=</code>. Por defecto es <code>3306</code>.</li>
+<li>Averigua en qué puerto escucha tu MySQL. En Laragon: <em>Menú → MySQL → my.ini</em> y busca <code>port=</code>. Si es <code>3306</code>, no tienes que hacer nada.</li>
 <li>
-<p>Cambia el último número de la línea de conexión, por ejemplo:</p>
-<pre class="highlight"><code class="language-php">$conexion = new mysqli('127.0.0.1', 'root', '', 'la_unica', 3306);</code></pre>
+<p>Si es otro, copia <code>php/config/conexion.local.example.php</code> como <code>php/config/conexion.local.php</code> y ajusta los valores, por ejemplo:</p>
+<pre class="highlight"><code class="language-php">return [
+    'puerto' =&gt; 5000,
+];</code></pre>
 </li>
 <li>
 <p>Recarga cualquier página. Si ves la lista de clientes (aunque esté vacía), funciona.</p>
@@ -64,16 +57,18 @@ try {
 </ol>
 </div>
 <div class="aviso aviso-note">
-<p class="aviso-titulo">¿Por qué 5000?</p>
-<p>El equipo eligió <code>5000</code> para no chocar con otros MySQL instalados en el mismo equipo (el <code>3306</code> de siempre). El README lo aclara: <em>el puerto depende del entorno local</em>. En el historial verás que antes se usó <code>8000</code>; la rama <code>revision-samuel</code> lo dejó definitivamente en <code>5000</code>.</p>
+<p class="aviso-titulo">¿No era 5000?</p>
+<p>Hasta la versión anterior el puerto <code>5000</code> estaba fijo en el código, y la app no arrancaba en una instalación estándar (reporte de QA <em>BUG-001</em>). Ahora el valor por defecto es <code>3306</code> y cada equipo ajusta el suyo en <code>conexion.local.php</code> sin tocar el código compartido.</p>
 </div>
-<h2 id="usar-un-usuario-con-contraseña">Usar un usuario con contraseña</h2>
-<p>Es buena idea no usar <code>root</code>. En MySQL:</p>
-<pre class="highlight"><code class="language-sql">CREATE USER 'la_unica'@'localhost' IDENTIFIED BY 'una-clave-segura';
-GRANT SELECT, INSERT, UPDATE, DELETE, EXECUTE ON la_unica.* TO 'la_unica'@'localhost';
-FLUSH PRIVILEGES;</code></pre>
-<p>y en <code>conexion.php</code>:</p>
-<pre class="highlight"><code class="language-php">$conexion = new mysqli('127.0.0.1', 'la_unica', 'una-clave-segura', 'la_unica', 5000);</code></pre>
+<h2 id="usar-un-usuario-con-contraseña">Usar un usuario con contraseña (recomendado)</h2>
+<p>No uses <code>root</code> para la aplicación: si alguien llega a la app, tendría control total de MySQL. El proyecto trae <code>referencias/usuario_app.sql</code>, que crea <code>la_unica_app</code> con permisos solo sobre <code>la_unica</code>:</p>
+<pre class="highlight"><code class="language-sql">CREATE USER 'la_unica_app'@'localhost' IDENTIFIED BY 'cambia-esta-contrasena';
+GRANT SELECT, INSERT, UPDATE, DELETE, EXECUTE ON la_unica.* TO 'la_unica_app'@'localhost';</code></pre>
+<p>Cambia la contraseña en el script, ejecútalo como <code>root</code> y pon el mismo usuario y contraseña en <code>conexion.local.php</code>:</p>
+<pre class="highlight"><code class="language-php">return [
+    'usuario' =&gt; 'la_unica_app',
+    'contrasena' =&gt; 'cambia-esta-contrasena',
+];</code></pre>
 <p><code>EXECUTE</code> es necesario porque los reportes llaman <strong>procedimientos almacenados</strong>.</p>
 <h2 id="juego-de-caracteres-y-zona-horaria">Juego de caracteres y zona horaria</h2>
 <p>La conexión fija:</p>
