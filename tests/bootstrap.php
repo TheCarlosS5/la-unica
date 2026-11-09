@@ -76,12 +76,55 @@ while ($row = $result->fetch_row()) {
         $foundTables[] = $row[0];
     }
 }
+$result->free();
 
 $missingTables = array_diff($requiredTables, $foundTables);
 
 if ($missingTables !== []) {
     throw new RuntimeException(
         'Faltan tablas en la base de pruebas: ' . implode(', ', $missingTables)
+    );
+}
+
+/*
+ * Detecta esquemas antiguos antes de ejecutar los tests. Sin esta comprobación,
+ * cada INSERT que usa precio_unitario falla por separado y PHPUnit muestra una
+ * cascada de errores que oculta la causa real.
+ */
+$requiredColumns = [
+    'productos' => ['precio_unitario'],
+    'detalle_facturas' => ['precio_unitario'],
+];
+
+$missingColumns = [];
+
+foreach ($requiredColumns as $table => $columns) {
+    $columnResult = $GLOBALS['dbTestConnection']->query(
+        'SHOW COLUMNS FROM `' . $table . '`'
+    );
+    $foundColumns = [];
+
+    while ($column = $columnResult->fetch_assoc()) {
+        $foundColumns[] = $column['Field'];
+    }
+    $columnResult->free();
+
+    foreach ($columns as $column) {
+        if (!in_array($column, $foundColumns, true)) {
+            $missingColumns[] = $table . '.' . $column;
+        }
+    }
+}
+
+if ($missingColumns !== []) {
+    throw new RuntimeException(
+        'El esquema de la base de pruebas "' . $database . '" está desactualizado. '
+        . 'Faltan columnas: ' . implode(', ', $missingColumns) . '. '
+        . 'No se ejecutó ninguna prueba. Haz una copia de seguridad y actualiza '
+        . 'EXCLUSIVAMENTE la base de pruebas con el esquema vigente de referencias/db.sql '
+        . 'o con la migración referencias/migraciones/001_precio_historico.sql, '
+        . 'adaptando primero su USE la_unica a USE ' . $database . '. '
+        . 'No ejecutes esa migración sin adaptar sobre la base de producción.'
     );
 }
 
