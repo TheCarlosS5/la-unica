@@ -11,7 +11,7 @@ assert MYSQL, 'Se requiere un cliente mysql disponible'
 env=os.environ.copy(); env['MYSQL_PWD']=os.environ.get('DB_TEST_PASSWORD','')
 def sql(q):
     assert 'la_unica.' not in q and 'la_unica_2_demo_20261110.' not in q
-    p=subprocess.run([MYSQL,'-h',os.environ.get('DB_TEST_HOST','127.0.0.1'),'-P',os.environ.get('DB_TEST_PORT','3306'),'-u',os.environ.get('DB_TEST_USERNAME','root'),'--default-character-set=utf8mb4','-N',DB],input=q,text=True,encoding='utf8',capture_output=True,env=env)
+    p=subprocess.run([MYSQL,'-h',os.environ.get('DB_TEST_HOST','127.0.0.1'),'-P',os.environ.get('DB_TEST_PORT','3306'),'-u',os.environ.get('DB_TEST_USERNAME','root'),'--default-character-set=utf8mb4','-N',DB],input="SET time_zone = '-05:00';\n"+q,text=True,encoding='utf8',capture_output=True,env=env)
     if p.returncode: raise RuntimeError(p.stderr)
     return p.stdout.strip()
 
