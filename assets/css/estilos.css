@@ -2151,3 +2151,14 @@ button[disabled] {
     max-height: 60vh;
   }
 }
+/* Vista del modelo entidad-relación. */
+.mer-figura {
+    margin: 0;
+}
+
+.mer-imagen {
+    display: block;
+    max-width: 100%;
+    height: auto;
+    margin-inline: auto;
+}
