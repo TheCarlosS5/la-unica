@@ -19,6 +19,19 @@ $reportesMenu = [
     ['archivo' => 'detalle_facturas.php', 'titulo' => 'Detalle de facturas'],
 ];
 $baseUrl = $baseUrl ?? '';
+
+// Los enlaces directos a las vistas también deben pasar por los términos.
+if (session_status() === PHP_SESSION_NONE && !headers_sent()) {
+    session_start();
+}
+$terminosAceptados = !empty($_SESSION['terminos_aceptados'])
+    || (($_COOKIE['la_unica_terminos'] ?? '') === 'aceptados');
+if (!$terminosAceptados) {
+    header('Location: ' . $baseUrl . '/terminos.php');
+    exit;
+}
+$_SESSION['terminos_aceptados'] = true;
+
 $titulo = $titulo ?? 'La Única';
 $seccionActual = $seccionActiva ?? '';
 $paginaActual = basename(str_replace('\\', '/', (string)($_SERVER['SCRIPT_NAME'] ?? '')));
