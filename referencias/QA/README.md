@@ -1,6 +1,6 @@
 # Material histórico de QA
 
-Estos documentos corresponden a la versión anterior a la publicación de la-unica-2. Se conservan como evidencia del equipo; no certifican la versión actual. Para las pruebas vigentes, consultar tests/README.md y GitHub Actions.
+Estos documentos corresponden a la versión anterior a la publicación de la-unica-2 y se conservan como evidencia histórica del equipo.
 
 # QA — La Única
 

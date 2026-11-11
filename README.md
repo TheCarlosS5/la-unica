@@ -15,16 +15,15 @@ No implementa ventas a crédito, registro de pagos pendientes, autenticación, r
 
 ## Requisitos
 
-PHP 8.2 o posterior con `mysqli`, `mysqlnd` y `mbstring`; Apache con AllowOverride para aplicar `.htaccess`; MySQL 8.0.16 o posterior o un MariaDB compatible con las restricciones del esquema. La validación local se realizó con PHP 8.3.33 y MariaDB 13.0.2. Laragon es el entorno de referencia. Composer se necesita para las pruebas PHPUnit, no para abrir el aplicativo.
+PHP 8.2 o posterior con `mysqli`, `mysqlnd` y `mbstring`; Apache con AllowOverride para aplicar `.htaccess`; MySQL 8.0.16 o posterior o un MariaDB compatible con las restricciones del esquema. Laragon es el entorno de referencia.
 
 ## Instalación nueva
 
 1. Copiar o clonar la carpeta y servirla desde Laragon, por ejemplo en `C:\laragon\www\la-unica-2`.
 2. Iniciar Apache y la base de datos. Comprobar el puerto real; el ejemplo usa 3306 y la demostración local utiliza 3307.
 3. Importar `referencias/db.sql` **solo donde no exista la base la_unica**. Para mantener otra copia aislada, cambiar CREATE DATABASE y USE en una copia del script por un nombre exclusivo. No reutilizar la base de otro proyecto.
-4. Opcionalmente importar `clientes_prueba.sql` y `productos_prueba.sql`, ajustando antes sus USE al mismo nombre. Son datos ficticios, no datos operativos.
-5. Copiar `php/config/conexion.local.example.php` como `php/config/conexion.local.php` y ajustar host, puerto, base, usuario y contraseña. Este último archivo está ignorado por Git. Las variables `DB_HOST`, `DB_PORT`, `DB_DATABASE`, `DB_USERNAME` y `DB_PASSWORD` tienen prioridad si se definen. No publicar credenciales.
-6. Abrir la URL de la carpeta, por ejemplo `http://localhost/la-unica-2/`. Verificar una venta de demostración y sus reportes antes de usar datos reales.
+4. Copiar `php/config/conexion.local.example.php` como `php/config/conexion.local.php` y ajustar host, puerto, base, usuario y contraseña. Este último archivo está ignorado por Git. Las variables `DB_HOST`, `DB_PORT`, `DB_DATABASE`, `DB_USERNAME` y `DB_PASSWORD` tienen prioridad si se definen. No publicar credenciales.
+5. Abrir la URL de la carpeta, por ejemplo `http://localhost/la-unica-2/`. Verificar una venta de demostración y sus reportes en una instalación aislada.
 
 ### Si ya usabas la versión anterior
 
@@ -40,19 +39,13 @@ No reimportar el esquema sobre una base existente. Esta publicación cambia el m
 
 Los PDF de SRS, manuales y PAC se muestran dentro de Sobre nosotros; SRS también ofrece descarga Word. El manual técnico y el PAC 1.3 documentan la configuración modular, el diagnóstico seguro y las pruebas de concurrencia y rendimiento. La wiki contiene 29 artículos actuales. El SRS y el manual de usuario mantienen sus versiones originales; no se declara aceptación total de requisitos por haber publicado el código.
 
+Los archivos de validación citados en el manual técnico y el PAC se pueden consultar en el [historial de Git](https://github.com/TheCarlosS5/la-unica/tree/98d6261cbb40116cce128c2b6c06d1a0860800f6).
+
 ## Imprimir y guardar reportes
 
 Configurar y aplicar los filtros y pulsar **Imprimir reporte** o **Guardar como PDF**. Ambos abren el diálogo del navegador. Para PDF, elegir ese destino y dónde guardar el archivo. Usar A4, escala 100 % y desactivar encabezados/pies del navegador: el documento ya incluye su propia fecha, período y numeración. Orientación vertical salvo Detalle de facturas, horizontal.
 
 Se verificaron PDF con el motor de Brave, incluidos inventarios de varias páginas. El resultado puede variar con el navegador, el papel o la escala seleccionados.
-
-## Pruebas
-
-`composer install` y `composer test:database` ejecutan PHPUnit con una base cuyo nombre debe comenzar por `la_unica_test`. Ver [tests/README.md](tests/README.md). `python tests/functional.py` inicia un servidor PHP aislado y verifica el flujo real por HTTP contra esa base de pruebas. Requiere cargar previamente los datos de ejemplo y definir las variables DB_TEST indicadas en ese documento. Usar una base nueva en cada ejecución.
-
-`python tests/advanced.py` añade ventas y cancelaciones concurrentes con dos servidores y bloqueo real, 60 búsquedas con 1000 registros por entidad y comprobaciones de errores seguros y wiki. Ver [evidencias y límites](referencias/REVISION_TECNICA.md).
-
-GitHub Actions ejecuta sintaxis PHP/JavaScript, esquema, restricciones, reportes, flujos HTTP y la batería ampliada sobre MariaDB; conserva sus resultados como artefacto del workflow. Se retiró la prueba de migración del esquema anterior porque esta versión no incluye esa migración. Los tests anteriores permanecen en el historial Git.
 
 ## Protección y límites
 
@@ -66,9 +59,7 @@ El código está organizado por módulos. Esta estructura corresponde a la versi
 AUTORES.md                            Equipo, roles, aportes y asistencia de IA
 index.php                             Entrada que redirige a main.php
 main.php                              Carga el módulo de Inicio
-.github/workflows/                    Validaciones automáticas en GitHub Actions
 .htaccess                             Protección de archivos internos en Apache
-composer.json                         Requisitos PHP y comandos de pruebas
 assets/                               Recursos visuales del aplicativo
   css/estilos.css                     Estilos de la interfaz y diseño adaptable
   fonts/                              Fuentes locales y sus licencias
@@ -97,24 +88,14 @@ wiki/                                 Documentación navegable sin conexión SQL
   paginas/                            Guías, configuración y notas técnicas
   includes/                           Catálogo, buscador y plantillas de la wiki
   img/actuales/                       41 capturas reales actuales con datos ficticios
-  herramientas/                       Generación aislada y comprobación de capturas
   css/ y js/                          Diseño e interacciones de la documentación
-tests/                                Pruebas sobre una base de datos exclusiva
-  bootstrap.php                       Conexión protegida para las pruebas
-  Integration/                        Pruebas PHPUnit de esquema, reglas y reportes
-  functional.py                       Flujos reales por HTTP con servidor PHP aislado
-  advanced.py                         Concurrencia, rendimiento, errores y wiki
-  lock_fixture.php                    Bloqueo de filas exclusivo de pruebas
-  README.md                           Preparación y ejecución de las pruebas
-referencias/                          Esquema, ejemplos y documentos del proyecto
+referencias/                          Esquema y documentos del proyecto
   db.sql                              Cinco tablas y cuatro procedimientos; instalación nueva
-  clientes_prueba.sql                 Diez clientes ficticios para demostración
-  productos_prueba.sql                Treinta productos ficticios para demostración
   SRS.docx / SRS.pdf                  Especificación de requisitos, versión 1.5
   manual.docx / manual.pdf            Manual del usuario, versión 2.0
   manual_tecnico.docx / .pdf          Manual técnico, versión 1.3
   PAC.docx / PAC.pdf                  Plan de Acción de Mejora Continua, versión 1.3
-  QA/                                 Evidencias actuales e históricas identificadas
+  QA/                                 Documentación histórica de calidad
 logs/                                 Diagnóstico local; los archivos .log no se publican
 RELEASE.md                            Notas de publicación y diferencias con versiones previas
 ```
