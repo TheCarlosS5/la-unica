@@ -1,5 +1,5 @@
 <?php if (!defined('LA_UNICA_WIKI')) { exit; } ?>
-<p>Este recorrido asume que ya <a href="index.php?pagina=guia/instalacion">instalaste</a> La Única. En unos cinco minutos tendrás un cliente, un producto y una factura impresa.</p>
+<p>Este recorrido asume que ya <a href="index.php?pagina=guia/instalacion">instalaste</a> La Única. Al terminar el recorrido tendrás un cliente, un producto y una factura impresa.</p>
 <h2 id="conoce-la-pantalla">Conoce la pantalla</h2>
 <h3 id="el-menú-lateral">El menú lateral</h3>
 <p>Siempre está a la izquierda (en celular, detrás del botón ☰). Tiene tres grupos:</p>
@@ -7,7 +7,7 @@
 <ul>
 <li><span class="marca-num">1</span> <strong>Ventas</strong>: la lista de <em>Facturas</em> y el acceso directo <em>Nueva factura</em>.</li>
 <li><span class="marca-num">2</span> <strong>Catálogo</strong>: <em>Clientes</em> y <em>Productos</em>, cada uno con su acceso <em>Nuevo…</em>.</li>
-<li><span class="marca-num">3</span> <strong>Información</strong>: <em>Reportes</em> (resumen y los 7 reportes), <em>Sobre nosotros</em> (manual y video) y esta <em>Wiki</em>.</li>
+<li><span class="marca-num">3</span> <strong>Información</strong>: <em>Reportes</em> (resumen y cinco reportes), <em>Historial</em> y <em>Sobre nosotros</em> (SRS, manuales, PAC, video y wiki).</li>
 </ul>
 <h3 id="la-barra-superior">La barra superior</h3>
 <figure class="captura"><img src="img/inicio-barra-superior.webp" alt="Barra superior" loading="lazy"><figcaption>Barra superior</figcaption></figure>

@@ -1,0 +1,212 @@
+{
+  "fecha": "2026-11-11",
+  "codigo_funcional_base": "200ce3472ff9c299458bc0c331ebd9e9eedbfec5",
+  "aporte_remoto_conservado": "1b8de6013599c05c0d4c23321bb34186b23ec853",
+  "php": "8.3.33",
+  "motor": "MariaDB 13.0.2",
+  "base_pruebas": "la_unica_test_coherencia_http_20261111",
+  "servidor_http": "PHP independiente sobre 127.0.0.1, con configuración DB_TEST_*",
+  "ejecucion": "Script externo de verificación; no se distribuye una suite en main.",
+  "resultados": [
+    {
+      "prueba": "HTTP inicio",
+      "requisitos": "RF-01 a RF-16 (disponibilidad)",
+      "resultado": "APROBADA"
+    },
+    {
+      "prueba": "HTTP php/clientes/ver_clientes.php",
+      "requisitos": "RF-01 a RF-16 (disponibilidad)",
+      "resultado": "APROBADA"
+    },
+    {
+      "prueba": "HTTP php/productos/ver_productos.php",
+      "requisitos": "RF-01 a RF-16 (disponibilidad)",
+      "resultado": "APROBADA"
+    },
+    {
+      "prueba": "HTTP php/facturas/ver_facturas.php",
+      "requisitos": "RF-01 a RF-16 (disponibilidad)",
+      "resultado": "APROBADA"
+    },
+    {
+      "prueba": "HTTP php/facturas/crear_factura.php",
+      "requisitos": "RF-01 a RF-16 (disponibilidad)",
+      "resultado": "APROBADA"
+    },
+    {
+      "prueba": "HTTP php/reportes/ver_reportes.php",
+      "requisitos": "RF-01 a RF-16 (disponibilidad)",
+      "resultado": "APROBADA"
+    },
+    {
+      "prueba": "HTTP php/reportes/ventas.php",
+      "requisitos": "RF-01 a RF-16 (disponibilidad)",
+      "resultado": "APROBADA"
+    },
+    {
+      "prueba": "HTTP php/reportes/unidades_vendidas_por_producto.php",
+      "requisitos": "RF-01 a RF-16 (disponibilidad)",
+      "resultado": "APROBADA"
+    },
+    {
+      "prueba": "HTTP php/reportes/existencias_productos.php",
+      "requisitos": "RF-01 a RF-16 (disponibilidad)",
+      "resultado": "APROBADA"
+    },
+    {
+      "prueba": "HTTP php/historial/acciones.php",
+      "requisitos": "RF-01 a RF-16 (disponibilidad)",
+      "resultado": "APROBADA"
+    },
+    {
+      "prueba": "HTTP php/historial/errores.php",
+      "requisitos": "RF-01 a RF-16 (disponibilidad)",
+      "resultado": "APROBADA"
+    },
+    {
+      "prueba": "HTTP php/sobre_nosotros/index.php",
+      "requisitos": "RF-01 a RF-16 (disponibilidad)",
+      "resultado": "APROBADA"
+    },
+    {
+      "prueba": "Rechazo sin CSRF",
+      "requisitos": "RNF-03",
+      "resultado": "APROBADA"
+    },
+    {
+      "prueba": "Alta de cliente y fecha automática",
+      "requisitos": "RF-01",
+      "resultado": "APROBADA"
+    },
+    {
+      "prueba": "Documento duplicado rechazado",
+      "requisitos": "RF-01, RF-11",
+      "resultado": "APROBADA"
+    },
+    {
+      "prueba": "Nombre vacío rechazado",
+      "requisitos": "RF-11",
+      "resultado": "APROBADA"
+    },
+    {
+      "prueba": "Edición y búsqueda de cliente",
+      "requisitos": "RF-02",
+      "resultado": "APROBADA"
+    },
+    {
+      "prueba": "Alta de producto con ID automático",
+      "requisitos": "RF-03",
+      "resultado": "APROBADA"
+    },
+    {
+      "prueba": "Stock negativo rechazado",
+      "requisitos": "RF-11, RNF-04",
+      "resultado": "APROBADA"
+    },
+    {
+      "prueba": "Venta y descuento de stock",
+      "requisitos": "RF-05, RF-06, RF-08",
+      "resultado": "APROBADA"
+    },
+    {
+      "prueba": "Líneas repetidas agrupadas y total exacto",
+      "requisitos": "RF-05, RF-07",
+      "resultado": "APROBADA"
+    },
+    {
+      "prueba": "Factura conserva nombres y precio histórico",
+      "requisitos": "RF-06, RF-07, RF-09",
+      "resultado": "APROBADA"
+    },
+    {
+      "prueba": "Edición y búsqueda de productos",
+      "requisitos": "RF-04",
+      "resultado": "APROBADA"
+    },
+    {
+      "prueba": "Venta sin stock revierte todos los cambios",
+      "requisitos": "RF-06, RF-08, RNF-04",
+      "resultado": "APROBADA"
+    },
+    {
+      "prueba": "Bloqueo de borrado con facturas",
+      "requisitos": "RF-12",
+      "resultado": "APROBADA"
+    },
+    {
+      "prueba": "Confirmación previa sin cancelar",
+      "requisitos": "RF-10",
+      "resultado": "APROBADA"
+    },
+    {
+      "prueba": "Cancelación repone stock",
+      "requisitos": "RF-10",
+      "resultado": "APROBADA"
+    },
+    {
+      "prueba": "Cancelación repetida no duplica inventario",
+      "requisitos": "RF-10, RNF-04",
+      "resultado": "APROBADA"
+    },
+    {
+      "prueba": "Factura anterior no se puede cancelar",
+      "requisitos": "RF-10",
+      "resultado": "APROBADA"
+    },
+    {
+      "prueba": "Reporte Ventas por factura",
+      "requisitos": "RF-13",
+      "resultado": "APROBADA"
+    },
+    {
+      "prueba": "Reporte Ventas por dia",
+      "requisitos": "RF-13",
+      "resultado": "APROBADA"
+    },
+    {
+      "prueba": "Reporte Ventas por semana",
+      "requisitos": "RF-13",
+      "resultado": "APROBADA"
+    },
+    {
+      "prueba": "Reporte Ventas por mes",
+      "requisitos": "RF-13",
+      "resultado": "APROBADA"
+    },
+    {
+      "prueba": "Reporte Ventas por anio",
+      "requisitos": "RF-13",
+      "resultado": "APROBADA"
+    },
+    {
+      "prueba": "Reporte diario excluye canceladas y coincide con SQL",
+      "requisitos": "RF-13",
+      "resultado": "APROBADA"
+    },
+    {
+      "prueba": "Unidades excluyen canceladas",
+      "requisitos": "RF-13",
+      "resultado": "APROBADA"
+    },
+    {
+      "prueba": "Eliminación de cliente y producto sin ventas",
+      "requisitos": "RF-12",
+      "resultado": "APROBADA"
+    },
+    {
+      "prueba": "Historial registra crear, editar, eliminar y cancelar",
+      "requisitos": "RF-14",
+      "resultado": "APROBADA"
+    },
+    {
+      "prueba": "Historial se consulta con filtro",
+      "requisitos": "RF-14",
+      "resultado": "APROBADA"
+    },
+    {
+      "prueba": "Sintaxis de 81 archivos PHP",
+      "requisitos": "RNF-08",
+      "resultado": "APROBADA"
+    }
+  ]
+}

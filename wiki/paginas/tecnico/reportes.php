@@ -1,115 +1,13 @@
 <?php if (!defined('LA_UNICA_WIKI')) { exit; } ?>
-<p>El módulo de reportes está diseñado para que <strong>agregar un reporte sea añadir datos, no copiar HTML</strong>.</p>
-<h2 id="piezas">Piezas</h2>
-<div class="tabla-wiki"><table>
-<thead>
-<tr>
-<th>Archivo</th>
-<th>Rol</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>datos_reportes.php</code></td>
-<td><code>catalogoReportes()</code> (metadatos), <code>obtenerFilasReporte()</code> (qué SQL ejecutar) y <code>consultarFilasReporte()</code> (ejecutar y limpiar).</td>
-</tr>
-<tr>
-<td><code>reporte_individual.php</code></td>
-<td>Plantilla única: valida el tipo, consulta, y pinta error, estado vacío o tabla.</td>
-</tr>
-<tr>
-<td><code>clientes_y_facturas.php</code> … (7 archivos)</td>
-<td>Rutas públicas de ~12 líneas: <code>$tipoReporte = 'clientes'; require 'reporte_individual.php';</code></td>
-</tr>
-<tr>
-<td><code>ver_reportes.php</code></td>
-<td>Resumen: consulta los 7 y calcula indicadores.</td>
-</tr>
-<tr>
-<td><code>includes/menu.php</code></td>
-<td>Construye los enlaces del menú recorriendo el catálogo.</td>
-</tr>
-</tbody>
-</table></div>
-<h2 id="el-catálogo">El catálogo</h2>
-<p>Cada entrada describe un reporte:</p>
-<p class="codigo-titulo">php/reportes/datos_reportes.php</p>
+<h2 id="piezas">Piezas del módulo</h2>
+<div class="tabla-wiki"><table><thead><tr><th>Archivo</th><th>Función</th></tr></thead><tbody><tr><td>ventas.php</td><td>Filtros, agrupaciones y resultados de ventas.</td></tr><tr><td>unidades_vendidas_por_producto.php</td><td>Cantidades e importe por fechas.</td></tr><tr><td>existencias_productos.php</td><td>Stock y precio vigentes.</td></tr><tr><td>datos_reportes.php y reporte_individual.php</td><td>Catálogo y presentación auxiliar para clientes/detalle y rutas de compatibilidad.</td></tr><tr><td>ver_reportes.php</td><td>Resumen del día y accesos a las cinco consultas.</td></tr><tr><td>acciones_impresion.php</td><td>Controles, datos del documento y estilos de impresión.</td></tr></tbody></table></div>
 
-<pre class="highlight"><code class="language-php">'total_facturas' =&gt; [
-    'archivo'     =&gt; 'total_vigente_por_factura.php',
-    'titulo'      =&gt; 'Total por factura',
-    'descripcion' =&gt; 'Suma cantidad por precio de venta de cada factura Pagado o Pendiente.',
-    'fuente'      =&gt; 'Vista vista_total_facturas',
-    'columnas'    =&gt; [
-        ['campo' =&gt; 'id_factura',     'titulo' =&gt; 'Factura', 'tipo' =&gt; 'id'],
-        ['campo' =&gt; 'cliente',        'titulo' =&gt; 'Cliente', 'tipo' =&gt; 'texto'],
-        ['campo' =&gt; 'estado_factura', 'titulo' =&gt; 'Estado',  'tipo' =&gt; 'estado'],
-        ['campo' =&gt; 'total_factura',  'titulo' =&gt; 'Total',   'tipo' =&gt; 'moneda'],
-    ],
-    'enlace_factura' =&gt; true,   // la fila enlaza al comprobante
-],</code></pre>
-<p>Los <strong>tipos de columna</strong> deciden el formato: <code>id</code> (insignia <code>#N</code>), <code>texto</code>, <code>entero</code> (miles con punto), <code>moneda</code> (<code>formatearMonedaCop</code>), <code>fecha</code> y <code>estado</code> (insignia de color).</p>
 <h2 id="fuentes-sql-por-reporte">Fuentes SQL por reporte</h2>
-<div class="tabla-wiki"><table>
-<thead>
-<tr>
-<th>Clave</th>
-<th>SQL ejecutado</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>clientes</code></td>
-<td><code>CALL reporte_facturas_clientes()</code></td>
-</tr>
-<tr>
-<td><code>total_facturas</code></td>
-<td><code>SELECT … FROM vista_total_facturas ORDER BY id_factura DESC</code></td>
-</tr>
-<tr>
-<td><code>unidades_productos</code></td>
-<td><code>SELECT … FROM vista_unidades_productos ORDER BY unidades_facturadas DESC, id_producto</code></td>
-</tr>
-<tr>
-<td><code>detalle_facturas</code></td>
-<td><code>CALL reporte_detalle_facturas()</code></td>
-</tr>
-<tr>
-<td><code>stock_productos</code></td>
-<td><code>CALL reporte_stock_productos()</code></td>
-</tr>
-<tr>
-<td><code>por_estado</code></td>
-<td><code>CALL reporte_facturas_por_estado()</code></td>
-</tr>
-<tr>
-<td><code>pendientes</code></td>
-<td><code>CALL reporte_facturas_pendientes()</code></td>
-</tr>
-</tbody>
-</table></div>
-<h3 id="control-de-coherencia-en-clientes">Control de coherencia en «clientes»</h3>
-<p>El reporte de clientes lee <strong>dos</strong> fuentes que deberían dar lo mismo (la vista y el procedimiento), las normaliza (tipos y orden por ID) y si difieren lanza <code>UnexpectedValueException</code>. Así se detecta una base creada con un <code>db.sql</code> modificado.</p>
-<h3 id="resultados-extra-de-call">Resultados extra de <code>CALL</code></h3>
-<p>Un <code>CALL</code> en MySQLi deja un conjunto de resultados adicional pendiente. Si no se consume, la siguiente consulta falla con <em>«Commands out of sync»</em>. <code>consultarFilasReporte(…, true)</code> recorre <code>more_results()</code> / <code>next_result()</code> y libera todo.</p>
-<h2 id="agregar-un-reporte-nuevo">Agregar un reporte nuevo</h2>
-<div class="pasos">
-<ol>
-<li>Crea la vista o procedimiento en MySQL (y añádelo a <code>referencias/db.sql</code>).</li>
-<li>Añade una entrada a <code>catalogoReportes()</code> con <code>archivo</code>, <code>titulo</code>, <code>descripcion</code>, <code>fuente</code> y <code>columnas</code>.</li>
-<li>Añade un <code>case</code> en <code>obtenerFilasReporte()</code> con el SQL.</li>
-<li>
-<p>Crea la ruta pública, por ejemplo <code>php/reportes/ventas_por_mes.php</code>:</p>
-<pre class="highlight"><code class="language-php">&lt;?php
-$tipoReporte = 'ventas_mes';
-require __DIR__ . '/reporte_individual.php';</code></pre>
-</li>
-<li>
-<p>El enlace aparece solo en el menú. Si quieres una tarjeta en el resumen, añade su indicador en <code>ver_reportes.php</code>.</p>
-</li>
-</ol>
-</div>
-<div class="aviso aviso-caution">
-<p class="aviso-titulo">Precaución</p>
-<p><code>ver_reportes.php</code> consulta <strong>todas</strong> las fuentes: si una falla, no se muestra un resumen parcial. Prueba tu SQL antes de registrarlo.</p>
-</div>
+<div class="tabla-wiki"><table><thead><tr><th>Reporte</th><th>Ruta</th><th>Fuente</th><th>Interpretación</th></tr></thead><tbody><tr><td>Ventas</td><td>ventas.php</td><td>Cuatro procedimientos en el esquema; este reporte usa ventas por fecha o por período.</td><td>Lista facturas con su estado o agrupa por día, semana, mes o año. Solo Pagado suma al total vendido.</td></tr><tr><td>Unidades vendidas por producto</td><td>unidades_vendidas_por_producto.php</td><td>reporte_unidades_vendidas</td><td>Cantidades e importes por fechas, excluyendo Cancelado.</td></tr><tr><td>Existencias</td><td>existencias_productos.php</td><td>reporte_existencias</td><td>Stock y precio actual; Bajo es de 1 a 5 y Agotado es 0.</td></tr><tr><td>Clientes y cantidad de facturas</td><td>clientes_y_facturas.php</td><td>Consulta preparada/SQL de las tablas actuales</td><td>Incluye clientes sin facturas y cuenta Pagado y Cancelado.</td></tr><tr><td>Detalle de facturas</td><td>detalle_facturas.php</td><td>Consulta de facturas y detalle_facturas</td><td>Líneas con precio histórico, fecha, estado y subtotal. Incluye ambos estados.</td></tr></tbody></table></div>
+
+<h2 id="compatibilidad">Rutas de compatibilidad</h2>
+<p>total_vigente_por_factura.php y facturas_por_estado.php redirigen a Ventas; unidades_facturadas_por_producto.php a Unidades vendidas; facturas_pendientes.php vuelve a Reportes. No son funciones adicionales ni implementan crédito. El catálogo auxiliar conserva entradas compatibles que no se presentan como siete opciones del menú.</p>
+<h2 id="cálculos">Cálculos y resultados</h2>
+<p>Ventas y Unidades usan el precio histórico del detalle. Los totales vendidos excluyen Cancelado. Clientes cuenta ambos estados y conserva cero facturas; Detalle muestra ambos estados y el subtotal de cada línea. llamarProcedimiento limpia resultados extra después de CALL para reutilizar mysqli.</p>
+<h2 id="impresión">Impresión y PDF</h2>
+<p>Los estilos ocultan navegación y controles, incorporan título, filtros y fecha, y organizan las tablas. Los botones abren window.print(): el usuario elige imprimir o Guardar como PDF. Detalle se imprime horizontal. La vista previa depende del papel y la escala seleccionados.</p>

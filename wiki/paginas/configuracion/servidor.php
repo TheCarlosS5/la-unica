@@ -1,59 +1,16 @@
 <?php if (!defined('LA_UNICA_WIKI')) { exit; } ?>
-<h2 id="apache-o-el-servidor-embebido">Apache o el servidor embebido</h2>
-<p>La Única no necesita reglas de reescritura (<code>.htaccess</code>) ni Composer: cada pantalla es un archivo PHP que se abre directamente, por ejemplo <code>/php/clientes/ver_clientes.php</code>. Funciona igual en:</p>
-<ul>
-<li><strong>Laragon / Apache</strong>, con la carpeta en <code>www/</code> (<code>http://la-unica.test/</code> o <code>http://localhost/la-unica/</code>).</li>
-<li><strong>Servidor embebido de PHP</strong> (<code>php -S 127.0.0.1:8080 -t .</code>), útil para pruebas.</li>
-</ul>
+<h2 id="apache-o-el-servidor-embebido">Apache y servidor de desarrollo</h2>
+<p>Las páginas son archivos PHP directos y no requieren reescritura de rutas ni Composer. La protección de archivos internos sí depende de Apache y .htaccess con AllowOverride. El servidor integrado de PHP no interpreta .htaccess: úsalo únicamente para pruebas aisladas en 127.0.0.1, nunca como sustituto de esa protección.</p>
 <h2 id="url-base-automática">URL base automática</h2>
-<p>No hay que configurar la ruta de instalación. <code>conexion.php</code> la calcula a partir de la página solicitada:</p>
-<pre class="highlight"><code class="language-php">$scriptDir = str_replace('\\', '/', dirname((string)($_SERVER['SCRIPT_NAME'] ?? '/')));
-$baseUrl = preg_replace('#/php/(clientes|productos|facturas|reportes|inicio)$#', '', $scriptDir);</code></pre>
-<p>Así, si la app está en <code>http://localhost/la-unica/</code>, <code>$baseUrl</code> vale <code>/la-unica</code>, y si está en la raíz, vale <code>''</code>. Todos los enlaces del menú, el CSS y las fuentes se construyen con esa base.</p>
-<h2 id="extensiones-de-php">Extensiones de PHP</h2>
-<div class="tabla-wiki"><table>
-<thead>
-<tr>
-<th>Extensión</th>
-<th>Para qué</th>
-<th>¿Obligatoria?</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>mysqli</code> + <code>mysqlnd</code></td>
-<td>Conexión y <code>get_result()</code> en consultas preparadas</td>
-<td>Sí</td>
-</tr>
-<tr>
-<td><code>session</code></td>
-<td>Token CSRF y mensajes después de redirigir</td>
-<td>Sí (sin ella no se puede guardar nada)</td>
-</tr>
-<tr>
-<td><code>mbstring</code></td>
-<td>Contar caracteres UTF-8 en los límites de 100/20</td>
-<td>No: hay un respaldo con expresiones regulares</td>
-</tr>
-</tbody>
-</table></div>
-<p>Compruébalo con <code>php -m</code>.</p>
+<p>entorno.php calcula la base a partir de SCRIPT_NAME y elimina el sufijo de módulo /php/&lt;módulo&gt;. Así la instalación funciona en la raíz o en una carpeta como /la-unica-2.</p>
+<h2 id="extensiones-de-php">PHP y extensiones</h2>
+<p>El mínimo documentado es PHP 8.2. Comprueba la versión con php -v y las extensiones con php -m.</p><div class="tabla-wiki"><table><thead><tr><th>Extensión</th><th>Uso</th><th>Requisito</th></tr></thead><tbody><tr><td>mysqli y mysqlnd</td><td>Conexión y get_result de consultas preparadas.</td><td>Obligatorios</td></tr><tr><td>mbstring</td><td>Longitud UTF-8 y buscador de la wiki.</td><td>Obligatoria; no existe respaldo automático</td></tr><tr><td>session</td><td>CSRF y mensajes de factura/cancelación.</td><td>Sesiones operativas</td></tr></tbody></table></div>
+
 <h2 id="sesiones">Sesiones</h2>
-<p>La app usa la sesión de PHP solo para dos cosas: el <strong>token CSRF</strong> y el mensaje de «Factura creada» tras la redirección. No hay usuarios. Si PHP no puede iniciar la sesión (carpeta temporal sin permisos, por ejemplo), los formularios muestran:</p>
-<blockquote>
-<p>No fue posible iniciar la sesión de seguridad. Recarga la página e inténtalo de nuevo.</p>
-</blockquote>
+<p>seguridad.php inicia sesiones PHP para CSRF y mensajes temporales; no autentica usuarios. Revisa session.save_path y las cookies si no puede validarse un formulario. El código no fija por sí mismo HttpOnly, SameSite ni use_strict_mode: sus valores dependen de la configuración PHP del equipo.</p>
 <h2 id="zona-horaria-y-moneda">Zona horaria y moneda</h2>
-<ul>
-<li>PHP: <code>date_default_timezone_set('America/Bogota')</code>.</li>
-<li>MySQL (por conexión): <code>SET time_zone = '-05:00'</code>.</li>
-<li>Moneda: pesos colombianos con el formato <code>$1.234.567,89 COP</code> (punto de miles, coma decimal), generado por <code>formatearMonedaCop()</code> en PHP y por <code>Intl.NumberFormat('es-CO')</code> en el formulario de facturas.</li>
-</ul>
+<p>PHP usa America/Bogota y cada conexión SQL UTC−05:00. Los importes son COP con dos decimales. El formulario usa centavos BigInt para estimar y SQL calcula el total persistido desde los detalles.</p>
 <h2 id="registro-de-errores">Registro de errores</h2>
-<p>Los errores técnicos se envían al <strong>log de PHP</strong> con <code>error_log()</code> mediante <code>registrarErrorServidor()</code>, con el contexto, la clase de excepción y el <code>SQLSTATE</code>. Por ejemplo:</p>
-<pre class="highlight"><code class="language-text">[crear_factura] mysqli_sql_exception (1452): Cannot add or update a child row... SQLSTATE=23000</code></pre>
-<p>En Laragon el log está en <code>C:\laragon\tmp\php_errors.log</code> (o donde indique <code>error_log</code> en <code>php.ini</code>). Con <code>php -S</code>, aparece en la misma consola.</p>
-<div class="aviso aviso-danger">
-<p class="aviso-titulo">Solo en local</p>
-<p>La app no tiene autenticación. El SRS (RNF-03) exige que Apache y MySQL escuchen <strong>solo en 127.0.0.1</strong>. No abras los puertos en el firewall ni la publiques en Internet.</p>
-</div>
+<p>El registro principal es logs/errores.log: una línea JSON por error con fecha, operación, tipo, código, mensaje, ubicación y página. Si no puede escribirse se utiliza error_log como respaldo. El historial permite consulta por fechas aunque SQL falle; no hay rotación automática ni límite de 200 filas.</p>
+<h2 id="acceso-local">Acceso local</h2>
+<p>La ausencia de autenticación exige restringir Apache, SQL y el equipo al uso local previsto. Una etiqueta visual no verifica el firewall ni la escucha de red. El responsable comprueba esta configuración antes de usar datos reales.</p>

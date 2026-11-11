@@ -1,67 +1,7 @@
 <?php if (!defined('LA_UNICA_WIKI')) { exit; } ?>
-<p>Resumen de <code>RELEASE.md</code>. Las notas de cada versión viven en <strong>GitHub Releases</strong>, no en un archivo del repositorio.</p>
-<h2 id="versionado">Versionado</h2>
-<p>Etiquetas <code>vMAYOR.MENOR.PARCHE</code>:</p>
-<div class="tabla-wiki"><table>
-<thead>
-<tr>
-<th>Cambio</th>
-<th>Ejemplo</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>Primera versión estable</td>
-<td><code>v1.0.0</code></td>
-</tr>
-<tr>
-<td>Corrección compatible</td>
-<td><code>v1.0.1</code></td>
-</tr>
-<tr>
-<td>Función nueva compatible</td>
-<td><code>v1.1.0</code></td>
-</tr>
-<tr>
-<td>Cambio incompatible</td>
-<td><code>v2.0.0</code></td>
-</tr>
-</tbody>
-</table></div>
-<p>Una etiqueta publicada <strong>no se mueve ni se reutiliza</strong>: si hay un problema, se publica una versión nueva. La versión del SRS (1.5) y la del software son independientes.</p>
-<h2 id="antes-de-publicar">Antes de publicar</h2>
-<ul>
-<li>[ ] Cambios revisados y subidos a <code>main</code>.</li>
-<li>[ ] Sin configuraciones personales, contraseñas reales ni datos de clientes.</li>
-<li>[ ] README y RELEASE coinciden con lo que hay.</li>
-<li>[ ] <code>SRS.docx</code>, <code>SRS.pdf</code> y <code>SRS.md</code> en la misma versión; manual al día.</li>
-<li>[ ] Instalación desde cero en base vacía.</li>
-<li>[ ] CRUD de clientes y productos, bloqueos y confirmaciones.</li>
-<li>[ ] Resumen + 7 reportes contra las vistas/procedimientos.</li>
-<li>[ ] Sobre nosotros (manual y video).</li>
-<li>[ ] Estilos y fuentes cargan sin Bootstrap ni <code>assets/vendor</code>.</li>
-<li>[ ] Notas de versión preparadas.</li>
-</ul>
-<h2 id="etiquetar">Etiquetar</h2>
-<div class="pasos">
-<ol>
-<li>
-<p>Sincroniza <code>main</code> y comprueba que no hay cambios pendientes:</p>
-<pre class="highlight"><code class="language-powershell">git switch main
-git pull --ff-only origin main
-git status --short</code></pre>
-</li>
-<li>
-<p>Crea y sube la etiqueta anotada:</p>
-<pre class="highlight"><code class="language-powershell">git tag -a v1.0.0 -m "Release v1.0.0"
-git push origin v1.0.0</code></pre>
-</li>
-<li>
-<p>En GitHub: <strong>Releases → Draft a new release</strong>, elige la etiqueta, título <code>La Única v1.0.0</code>, escribe las notas y publica (sin marcar <em>pre-release</em> si es estable).</p>
-</li>
-</ol>
-</div>
-<div class="aviso aviso-tip">
-<p class="aviso-titulo">Consejo</p>
-<p>Registra como verificación solo las pruebas manuales que de verdad hiciste: el proyecto no tiene pruebas automatizadas ni proceso de compilación.</p>
-</div>
+<h2 id="preparar-la-entrega">Preparar la entrega</h2>
+<ol><li>Identifica el commit, la copia y su base; respalda antes de cambiar datos o esquema.</li><li>Ejecuta el plan de QA en una instalación independiente y registra resultados reales.</li><li>Comprueba los cinco reportes, sus PDF, el comprobante, documentos y video.</li><li>Revisa la diferencia de Git y excluye configuración privada y datos reales.</li><li>Confirma que SRS 1.6, manual de usuario 2.1, manual técnico/PAC 1.4 y wiki describan la misma operación.</li></ol>
+<h2 id="publicación">Publicación</h2>
+<p>Integra sin sobrescribir trabajo ajeno ni usar force push. Comprueba el SHA remoto. main no tiene workflows activos en esta distribución; una publicación no permite afirmar que existan comprobaciones automáticas actuales.</p>
+<h2 id="etiquetas-y-versiones">Etiquetas y versiones</h2>
+<p>Actualizar main no crea una etiqueta ni un release. Cuando el equipo acuerde un número y autorice publicarlo, etiqueta el commit verificado y escribe notas de sus cambios reales. No existe RELEASE.md vigente; esta página y el README describen la preparación de entrega.</p>

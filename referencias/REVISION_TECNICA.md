@@ -1,3 +1,5 @@
+> Registro histórico del corte del 10/11/2026. No es una guía vigente ni acredita que las herramientas o capturas descritas sigan distribuidas. Consulta README y la revisión de coherencia documental del 11/11/2026 para el estado actual.
+
 # Revisión técnica de las mejoras
 
 Fecha: 10 de noviembre de 2026. Copia: la-unica-2. Base exclusiva de pruebas; no se modifican los datos de las copias de trabajo.

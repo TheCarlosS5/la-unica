@@ -2,7 +2,7 @@
 /**
  * Archivo: srs.php
  * Módulo: Sobre nosotros — Especificación de requisitos (SRS).
- * Propósito: mostrar el manual PDF dentro de la interfaz administrativa.
+ * Propósito: mostrar el SRS completo en PDF dentro de la interfaz administrativa.
  * Funcionamiento: incrusta referencias/SRS.pdf en un visor integrado del navegador, conservando
  * el menú, la cabecera y la navegación del sistema.
  */
@@ -34,7 +34,7 @@ require __DIR__ . '/../includes/menu.php';
             <span aria-current="page">Especificación de requisitos (SRS)</span>
         </nav>
         <h1 class="encabezado-titulo">Especificación de requisitos (SRS)</h1>
-        <p class="encabezado-descripcion">Consulta el SRS completo de La Única, versión 1.5: alcance, requisitos funcionales y no funcionales, reglas de negocio y criterios de aceptación. Usa los controles del visor para cambiar de página, buscar texto y ajustar el zoom.</p>
+        <p class="encabezado-descripcion">Consulta el SRS completo de La Única, versión 1.6: alcance, requisitos funcionales y no funcionales, reglas de negocio y criterios de aceptación. Usa los controles del visor para cambiar de página, buscar texto y ajustar el zoom.</p>
     </div>
     <div class="encabezado-acciones">
         <a class="boton secundario" href="<?= h($baseUrl) ?>/php/sobre_nosotros/index.php">

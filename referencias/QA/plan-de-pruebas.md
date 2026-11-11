@@ -1,66 +1,36 @@
-# Plan de Pruebas — La Única
+# Plan de pruebas de La Única
 
-## 1. Información del documento
-- **Proyecto:** La Única
-- **Versión del documento:** 1.0
-- **Autor:** Santiago — Responsable de Calidad, Pruebas y Seguridad
-- **Estado:** Borrador inicial
-- **Referencia:** SRS v1.4 del proyecto
+Versión documental **1.1**, revisión **11/11/2026**. Referencia: **SRS 1.6**. Este plan actualiza el borrador 1.0 asociado al SRS 1.4, conservado en el historial Git. Responsable de QA según el SRS: Santiago Ortiz Claros.
 
-## 2. Objetivo
-Definir la estrategia, el alcance y los recursos para verificar que la aplicación **La Única** cumple con los requisitos especificados en el SRS v1.4 y no presenta defectos críticos en sus módulos de clientes, productos, ventas, facturas y reportes, incluyendo una revisión de seguridad básica del código PHP/MySQL.
+## Objetivo y alcance
 
-## 3. Alcance
+Verificar las reglas de clientes, productos, ventas, comprobantes, cancelaciones, cinco reportes, historial y ayuda. Incluye integridad, entradas, CSRF, salida HTML, diagnóstico, rendimiento RNF-02, concurrencia RNF-04, impresión/PDF y revisión de pantallas estrechas. El estado Pendiente, registro de pagos, autenticación, roles y factura electrónica están fuera de alcance.
 
-### 3.1 Dentro del alcance
-- Módulo de **Clientes** (CRUD).
-- Módulo de **Productos** (CRUD).
-- Módulo de **Ventas** (creación de facturas y descuento de stock).
-- Módulo de **Facturas** (consulta, impresión y cancelación con reposición de inventario).
-- Módulo de **Reportes**.
-- **Revisión de seguridad** del código: inyección SQL, XSS, validación de entradas y manejo de errores.
+Las pruebas no constituyen una auditoría de penetración ni autorización para desplegar el sistema públicamente. La configuración de acceso local y las restauraciones deben comprobarse en el entorno correspondiente.
 
-### 3.2 Fuera del alcance
-- Autenticación y roles de usuario (no implementados en esta versión).
-- Despliegue en producción.
-- Pruebas de rendimiento y carga.
-- Pruebas en dispositivos móviles.
+## Entorno y datos
 
-## 4. Estrategia de pruebas
+Usar una carpeta y base nuevas, separadas de datos operativos, con esquema de referencias/db.sql. Para verificaciones automatizadas externas se utiliza un nombre con prefijo la_unica_test_. Importar uno de los conjuntos ficticios ajustando su USE; no acumular conjuntos ni reimportar sobre una base existente.
 
-| Tipo de prueba | Descripción | Responsable |
-|---|---|---|
-| Funcionales | Verificar cada funcionalidad contra el SRS. | QA |
-| Regresión | Re-ejecutar casos tras cada cambio de código. | QA |
-| Integridad de datos | Validar transacciones y consistencia del stock. | QA |
-| Seguridad | Revisar validación, inyección SQL, XSS y manejo de errores. | QA |
-| Humo | Verificación rápida antes de cada Pull Request. | QA |
+Registrar PHP, motor SQL, puerto real, navegador, fecha y commit. La revisión de referencia utiliza Windows/Laragon, PHP 8.3.33, MariaDB 13.0.2, SQL en 3307 y Brave. El mínimo distribuido sigue siendo PHP 8.2 y MySQL 8.0.16 o MariaDB compatible; estos valores no obligan a otra instalación a usar el mismo puerto.
 
-## 5. Entorno de pruebas
-- **SO:** Windows
-- **Servidor local:** Laragon (Apache + MySQL + PHP)
-- **Navegador:** por definir
-- **Base de datos:** script `referencias/db.sql`
-- **Datos de prueba:** se requiere crear un set mínimo, ya que `db.sql` no incluye datos de ejemplo.
+## Estrategia
 
-## 6. Criterios de aceptación
-- 100% de los casos de prueba críticos ejecutados.
-- 0 defectos críticos o bloqueantes abiertos.
-- 0 hallazgos de seguridad de severidad alta sin mitigar o documentar.
+| Área | Comprobación |
+| --- | --- |
+| Funcional | Ejecutar los pasos de casos-de-prueba.md y comparar resultados con el SRS. |
+| Integridad | Comprobar stock, precios históricos, rollback y reposición única, también con solicitudes simultáneas. |
+| Seguridad | CSRF, validación en servidor, escape HTML, mensajes generales y bloqueo de archivos internos. |
+| Documentación | Rutas reales, versiones iguales en Word/PDF/visores, imágenes y numeración de las guías. |
+| Rendimiento | Con 1000 clientes, productos y facturas, al menos el 95 % de las búsquedas por ID en 2 s o menos. Registrar muestra y entorno. |
+| Navegador | Formulario dinámico, confirmaciones, documentos integrados, impresión/PDF, video y pantallas estrechas. |
 
-## 7. Criterios de salida
-- Informe de resultados entregado.
-- Matriz de trazabilidad SRS ↔ casos de prueba completa.
+## Registro y criterios de salida
 
-## 8. Riesgos identificados
-- **Falta de datos de ejemplo en `db.sql`** → crear set mínimo de datos de prueba.
-- **Cambios concurrentes entre ramas** → ejecutar pruebas de regresión antes de cada merge.
-- **Ausencia de autenticación** → revisar que no existan endpoints o vistas expuestas innecesariamente.
+Cada resultado incluye ID de caso, requisito, fecha, commit, entorno, datos, esperado, obtenido, estado y evidencia. Los estados Aprobado/Fallido se asignan solo a ejecuciones registradas; Por verificar no significa defecto ni aceptación.
 
-## 9. Entregables
-- Plan de pruebas (este documento).
-- Casos de prueba por módulo.
-- Informes de revisión de código.
-- Checklist de seguridad.
-- Matriz de trazabilidad.
-- Reporte de bugs.
+Para aceptación completa: ejecutar el 100 % de los casos críticos planificados, resolver o justificar los bloqueantes, conservar evidencia y completar la matriz de criterios. La revisión del equipo/instructor debe quedar registrada. No deducir el 100 % del SRS a partir de una batería parcial ni de una publicación de Git.
+
+## Evidencia y regresión
+
+Los resultados del 10/11/2026 se conservan como históricos. La revisión del 11/11/2026 repite los flujos HTTP en una base nueva y verifica documentación e imágenes. main no contiene tests, Composer ni workflows activos; no se exige ejecutar comandos que no se distribuyen. Repetir los criterios afectados al cambiar consultas, transacciones, entorno o documentos.

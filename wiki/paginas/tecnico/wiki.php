@@ -6,7 +6,7 @@
 <li>index.php enrutador: valida la página pedida y arma la plantilla</li>
 <li>includes/<ul>
 <li>paginas.php <strong>catálogo</strong>: secciones, títulos y descripciones</li>
-<li>funciones.php URL base, h(), índice «En esta página», búsqueda</li>
+<li>funciones.php h(), índice «En esta página», búsqueda y carga por catálogo</li>
 <li>cabecera.php barra superior y menú lateral</li>
 <li>pie.php navegación anterior/siguiente y cierre</li>
 </ul>
@@ -105,39 +105,12 @@
 </ol>
 </div>
 <p>El orden del catálogo es el orden del menú lateral y de los botones «Anterior / Siguiente».</p>
-<h2 id="datos-de-ejemplo">Datos de ejemplo</h2>
-<p><code>wiki/herramientas/datos_ejemplo.sql</code> crea 8 clientes, 10 productos (uno agotado y uno con stock bajo) y 8 facturas en los tres estados. Se ejecuta <strong>después</strong> de <code>db.sql</code> en una base vacía:</p>
-<pre class="highlight"><code class="language-powershell">mysql -u root -h 127.0.0.1 -P 3306 --default-character-set=utf8mb4 &lt; referencias\db.sql
-mysql -u root -h 127.0.0.1 -P 3306 --default-character-set=utf8mb4 &lt; wiki\herramientas\datos_ejemplo.sql</code></pre>
-<div class="aviso aviso-caution">
-<p class="aviso-titulo">Precaución</p>
-<p>Usa siempre <code>--default-character-set=utf8mb4</code> al importar desde la consola de Windows; si no, «Frutería Doña Rosa» se guarda como «Fruter├¡a Do├▒a Rosa».</p>
-</div>
-<h2 id="regenerar-las-capturas">Regenerar las capturas</h2>
-<p>Las imágenes con recuadros y números naranjas <strong>no se editan a mano</strong>: las dibuja el script <code>capturas.mjs</code> sobre la aplicación real, marcando los elementos de la página por su selector CSS y recortando solo la zona que importa. Si cambia la interfaz, se vuelven a generar todas en un minuto.</p>
-<div class="pasos">
-<ol>
-<li>Crea una base nueva con <code>db.sql</code> + <code>datos_ejemplo.sql</code> (el script registra un cliente, una venta y cancela esa venta, así que necesita empezar desde cero).</li>
-<li>Sirve la aplicación, por ejemplo: <code>php -S 127.0.0.1:8765 -t C:\ruta\la-unica</code>.</li>
-<li>
-<p>Instala la herramienta (solo la primera vez; necesita <a href="https://nodejs.org" target="_blank" rel="noopener">Node.js</a>):</p>
-<pre class="highlight"><code class="language-powershell">cd wiki\herramientas
-npm install</code></pre>
-</li>
-<li>
-<p>Ejecuta:</p>
-<pre class="highlight"><code class="language-powershell">node capturas.mjs http://127.0.0.1:8765 "C:/Program Files/Google/Chrome/Application/chrome.exe"</code></pre>
-<p>Sirve cualquier navegador basado en Chromium (Chrome, Edge, Brave). Las imágenes quedan en <code>wiki/img/</code>.</p>
-</li>
-</ol>
-</div>
-<p>Cada captura se declara así dentro del script:</p>
-<pre class="highlight"><code class="language-js">await foto('clientes-crear-formulario', {
-  recorte: '.tarjeta-formulario',          // zona que se recorta
-  marcas: [
-    { sel: '#id_cliente', n: 1 },          // recuadro con el número 1
-    { sel: '#nombre', n: 2 },
-    { sel: '.tarjeta-formulario button[type=submit]', n: 3, num: 'esquina' },
-  ],
-});</code></pre>
-<p>Opciones de cada marca: <code>sel</code> (selector CSS), <code>contiene</code> (filtra por texto), <code>dentro</code> (elemento interno), <code>n</code> (número), <code>num</code> (<code>izquierda</code>, <code>derecha</code> o <code>esquina</code>), <code>texto</code> y <code>lado</code> (etiqueta con flecha de texto), <code>margen</code>.</p>
+<h2 id="datos-de-ejemplo">Datos de ejemplo actuales</h2>
+<p>wiki/herramientas/datos_ejemplo.sql contiene ocho clientes, diez productos y ocho facturas ficticias en Pagado y Cancelado, con los nombres, unidades y precios históricos requeridos por las cinco tablas. Las fechas de factura se calculan respecto del día de importación para demostrar la regla de cancelación. El stock del catálogo representa una existencia actual de ejemplo.</p>
+<p>Importa primero una copia de db.sql en una base nueva con prefijo la_unica_test_. Ajusta CREATE DATABASE y USE al mismo nombre en ambas copias. No es una migración ni un conjunto para una base de trabajo ya poblada.</p>
+<h2 id="regenerar-las-capturas">Regenerar las capturas numeradas</h2>
+<p>capturas.mjs conserva los recuadros y números naranjas de esta wiki y toma imágenes de la aplicación real. Requiere Node.js 20 o posterior, Playwright, Sharp, Brave/Chromium y PHP. Las dependencias de esta herramienta no son necesarias para ejecutar el aplicativo.</p>
+<ol><li>Prepara la base exclusiva nueva con el esquema y los datos ficticios.</li><li>Define DB_TEST_HOST, DB_TEST_PORT, DB_TEST_DATABASE, DB_TEST_USERNAME y DB_TEST_PASSWORD; conserva la clave fuera del repositorio. PHP_BINARY puede señalar el ejecutable de PHP.</li><li>En wiki/herramientas ejecuta npm install y después node capturas.mjs. Opcionalmente pasa la ruta del navegador como único argumento.</li><li>El script inicia su propio PHP en un puerto libre de 127.0.0.1 y lo cierra al terminar. Nunca usa conexion.local.php como destino: los valores DB_TEST_* prevalecen para la conexión de ese servidor.</li><li>Revisa imágenes, texto, numeración, datos ficticios y visores antes de publicar. Si una captura queda obsoleta, actualízala sin retirar los pasos de la guía.</li></ol>
+<p>Los nombres de bases de pruebas se validan por prefijo. Usa una base nueva en cada ejecución: el recorrido registra un cliente y una venta y confirma su cancelación. CAPTURAS_NODE_MODULES permite utilizar dependencias ya instaladas en un entorno de automatización.</p>
+<h2 id="marcas">Marcas y recortes</h2>
+<p>foto() acepta marcas con selector, número, posición y margen, y puede recortar una tarjeta o el conjunto de controles. La capa de anotaciones existe solo en el navegador de captura y no modifica el HTML del aplicativo ni su base. Conserva los números de los pies y del texto al actualizar una imagen.</p>

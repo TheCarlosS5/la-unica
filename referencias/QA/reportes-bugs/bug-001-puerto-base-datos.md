@@ -1,23 +1,7 @@
-# Reporte de Bug: Puerto de conexión a base de datos
+# BUG-001 Configuración del puerto SQL
 
-**ID del Bug:** BUG-001
-**Módulo:** Configuración / Base de datos (`php/config/conexion.php`)
-**Descripción:** La conexión a la base de datos tiene "quemado" (hardcoded) el puerto 5000. Esto impide que el sistema funcione por defecto en entornos locales estándar (como Laragon o XAMPP), los cuales utilizan el puerto 3306 por defecto.
+Estado vigente al **11/11/2026: corregido en el código**. El puerto predeterminado es 3306 y puede cambiarse con DB_PORT o conexion.local.php; la demostración local utiliza 3307. No existe un puerto 5000 fijo en la implementación actual.
 
-**Pasos para reproducir el error:**
-1. Instalar el proyecto en un entorno local con el puerto por defecto de MySQL (3306).
-2. Importar la base de datos `db.sql` correctamente.
-3. Abrir el proyecto en el navegador (`http://localhost/la-unica`).
-4. Ocurre el error en pantalla: "Error de conexión a la base de datos".
+El reporte original describía una versión anterior con puerto 5000 y se conserva en el historial Git. Ese fragmento de código no debe presentarse como una línea vigente de conexion.php. La configuración se lee en configuracion.php y la conexión se coordina en conexion.php.
 
-**Resultado Esperado:** El sistema debe conectar y cargar la página de inicio sin problemas, usando el puerto estándar 3306 o leyendo el puerto desde un archivo de configuración externo.
-**Resultado Actual:** La página lanza un error de conexión fatal porque intenta buscar MySQL en el puerto 5000.
-**Severidad:** Alta (Bloquea la ejecución del proyecto en otros equipos).
-**Evidencia:** Línea 19 de `php/config/conexion.php`:
-`$conexion = new mysqli('127.0.0.1', 'root', '', 'la_unica', 5000);`
-
-**Nota del QA:** Se deja documentado para revisión con el equipo. No se modifica el código en esta rama para mantener la separación entre QA y Desarrollo.
-
-**Estado:** Resuelto (30/10/2026).
-**Corrección:** `php/config/conexion.php` usa ahora el puerto `3306` por defecto. Cada equipo puede cambiarlo sin tocar el código compartido, con `php/config/conexion.local.php` (plantilla en `conexion.local.example.php`) o con la variable `DB_PORT`. El README, el RELEASE y la wiki se actualizaron.
-**Verificación pendiente de QA:** instalar desde cero en Laragon con MySQL en 3306, sin archivo local, y confirmar que carga la página de inicio.
+Verificación de entrega: iniciar SQL en su puerto real, configurar una base propia, abrir Inicio y comprobar reportes. No cambiar puertos globales ni reutilizar la base de otro proyecto. La corrección no equivale a haber probado todas las instalaciones posibles.

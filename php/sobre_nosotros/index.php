@@ -3,7 +3,7 @@
  * Archivo: index.php
  * Módulo: Sobre nosotros.
  * Propósito: presentar los recursos de ayuda y documentación de La Única.
- * Funcionamiento: muestra tarjetas de acceso a los dos manuales, al PAC y al video integrado.
+ * Funcionamiento: muestra tarjetas de acceso al SRS, los dos manuales, el PAC, el video y la wiki.
  */
 
 require __DIR__ . '/../config/conexion.php';
@@ -36,7 +36,7 @@ require __DIR__ . '/../includes/menu.php';
             </div>
             <h2 class="modulo-titulo">Especificación de requisitos (SRS)</h2>
         </div>
-        <p class="reportes-resumen-descripcion">Consulta el SRS completo, versión 1.5, con el alcance, los requisitos, las reglas del negocio y los criterios de aceptación.</p>
+        <p class="reportes-resumen-descripcion">Consulta el SRS completo, versión 1.6, con el alcance, los requisitos, las reglas del negocio y los criterios de aceptación.</p>
         <p class="reportes-resumen-detalle">El documento PDF se muestra integrado en la página, sin abrir una pestaña externa.</p>
         <div class="modulo-acciones">
             <a class="boton" href="<?= h($baseUrl) ?>/php/sobre_nosotros/srs.php">

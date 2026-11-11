@@ -1,114 +1,117 @@
 # La Única
 
-Versión integrada desde la copia `la-unica`, preparada el 10 de noviembre de 2026. Aplicación PHP local para administrar clientes, productos, ventas e inventario. El repositorio conserva el historial de la versión anterior; esta publicación usa cinco tablas, cuatro procedimientos y los estados **Pagado** y **Cancelado**.
+Aplicación PHP local para administrar clientes, productos, ventas e inventario. Esta documentación se revisó el **11 de noviembre de 2026** contra la operación de `main`. El nombre de una carpeta o una versión documental no identifica por sí solo una versión de software.
 
 ## Funciones
 
-- Clientes: documento único, nombre y fecha automática; consulta, búsqueda y edición del nombre. Eliminación solo sin facturas.
-- Productos: nombre, unidad, stock entero y precio; búsqueda y edición. Las ventas conservan sus nombres y precios históricos.
-- Ventas: factura Pagado, descuento transaccional del inventario y comprobante imprimible. Cancelación únicamente el mismo día, con reposición de stock una sola vez.
-- Reportes: Ventas por factura o período, Unidades vendidas por fechas, Existencias, Clientes y cantidad de facturas y Detalle de facturas. Resumen diario y salida de impresión/PDF.
-- Historial de acciones y errores. El historial de errores y la wiki funcionan sin conexión SQL.
-- Sobre nosotros: SRS completo, manual de usuario, manual técnico, PAC, video y wiki.
+- Clientes: documento único, nombre y fecha automática; búsqueda y edición del nombre. Eliminación solo sin facturas.
+- Productos: nombre, unidad, stock entero y precio. Editar el catálogo no altera los nombres, unidades ni precios guardados en ventas anteriores.
+- Facturas: ventas **Pagado**, descuento transaccional de stock y comprobante imprimible. Cancelación únicamente el mismo día en America/Bogota, con reposición una sola vez. Las facturas no se editan ni se eliminan.
+- Cinco reportes: **Ventas**, **Unidades vendidas por producto**, **Existencias**, **Clientes y cantidad de facturas** y **Detalle de facturas**; resumen diario e impresión/PDF.
+- Historial de acciones en SQL y errores técnicos en archivo. La wiki y el historial de errores funcionan sin SQL.
+- Sobre nosotros: SRS completo, manual del usuario, manual técnico, PAC, video y wiki ilustrada.
 
-No implementa ventas a crédito, registro de pagos pendientes, autenticación, roles, impuestos ni factura electrónica. Debe utilizarse solo en el equipo local; subir el código a GitHub no significa desplegar públicamente la aplicación.
+No implementa crédito, pagos pendientes, autenticación, roles, impuestos ni factura electrónica. El uso previsto es un equipo local controlado; publicar el código en GitHub no despliega la aplicación ni añade autorización de acceso.
 
 ## Requisitos
 
-PHP 8.2 o posterior con `mysqli`, `mysqlnd` y `mbstring`; Apache con AllowOverride para aplicar `.htaccess`; MySQL 8.0.16 o posterior o un MariaDB compatible con las restricciones del esquema. Laragon es el entorno de referencia.
+PHP **8.2 o posterior** con `mysqli`, `mysqlnd`, `mbstring` y sesiones operativas; Apache con `AllowOverride` para `.htaccess`; MySQL **8.0.16 o posterior** o MariaDB compatible con las restricciones del esquema. Laragon es el entorno de referencia. La revisión local usa PHP 8.3.33 y MariaDB 13.0.2; no certifica todas las versiones de ambos motores. Composer no es necesario para abrir el aplicativo.
 
-## Instalación nueva
+## Instalación nueva e independiente
 
-1. Copiar o clonar la carpeta y servirla desde Laragon, por ejemplo en `C:\laragon\www\la-unica-2`.
-2. Iniciar Apache y la base de datos. Comprobar el puerto real; el ejemplo usa 3306 y la demostración local utiliza 3307.
-3. Importar `referencias/db.sql` **solo donde no exista la base la_unica**. Para mantener otra copia aislada, cambiar CREATE DATABASE y USE en una copia del script por un nombre exclusivo. No reutilizar la base de otro proyecto.
-4. Opcionalmente, en una instalación de demostración aislada, importar `referencias/clientes_prueba.sql` y `referencias/productos_prueba.sql`, ajustando sus instrucciones `USE` al nombre de esa base.
-5. Copiar `php/config/conexion.local.example.php` como `php/config/conexion.local.php` y ajustar host, puerto, base, usuario y contraseña. Este último archivo está ignorado por Git. Las variables `DB_HOST`, `DB_PORT`, `DB_DATABASE`, `DB_USERNAME` y `DB_PASSWORD` tienen prioridad si se definen. No publicar credenciales.
-6. Abrir la URL de la carpeta, por ejemplo `http://localhost/la-unica-2/`. Verificar una venta de demostración y sus reportes en una instalación aislada.
+1. Clona o copia el repositorio en una **carpeta nueva** de Laragon. Si ya tienes otro proyecto, conserva su carpeta y su base. Los ejemplos `la-unica` y `la-unica-2` son rutas de instalación, no nombres de bases obligatorios.
+2. Inicia Apache y SQL y comprueba el puerto real. `3306` es el predeterminado; la demostración de este equipo usa `3307`.
+3. Importa `referencias/db.sql` solo en una instalación nueva. Crea `la_unica`; para otra copia cambia `CREATE DATABASE` y `USE` en una copia del script por un nombre exclusivo. No reimportes el esquema sobre datos de trabajo.
+4. Opcionalmente carga `referencias/clientes_prueba.sql` y `referencias/productos_prueba.sql`, ajustando sus `USE`: diez clientes y treinta productos ficticios. El conjunto alternativo de `wiki/herramientas/datos_ejemplo.sql` es para las capturas; no se acumula sobre una base ya poblada.
+5. Copia `php/config/conexion.local.example.php` a `conexion.local.php` y configura host, puerto, base, usuario y contraseña del equipo. Git ignora este archivo. `DB_HOST`, `DB_PORT`, `DB_DATABASE`, `DB_USERNAME` y `DB_PASSWORD` tienen prioridad; no se carga `.env` automáticamente. Usa una cuenta limitada a esa base, con SELECT, INSERT, UPDATE, DELETE y EXECUTE.
+6. Abre la URL de esa carpeta, por ejemplo `http://localhost/la-unica-2/`. Comprueba una venta y sus reportes en la instalación ficticia antes de usar datos reales.
 
-### Si ya usabas la versión anterior
+No se incluye migración automática desde el modelo anterior con Pendiente. Un traslado requiere respaldo, revisión del esquema y ensayo en otra base. No borres una base para resolver un error de conexión o importación.
 
-No reimportar el esquema sobre una base existente. Esta publicación cambia el modelo y las reglas respecto de la versión con Pendiente. Hacer un respaldo y una revisión del esquema antes de planificar cualquier traslado de datos. Esta publicación **no ejecuta ni incluye una migración automática** de bases previas; la instalación documentada es sobre una base nueva. El historial Git conserva el código y las migraciones anteriores.
+## Documentación vigente
 
-## Documentación
+| Documento | Versión | Archivos |
+| --- | --- | --- |
+| SRS completo | 1.6 | [Word](referencias/SRS.docx) · [PDF](referencias/SRS.pdf) |
+| Manual del usuario | 2.1 | [Word](referencias/manual.docx) · [PDF](referencias/manual.pdf) |
+| Manual técnico | 1.4 | [Word](referencias/manual_tecnico.docx) · [PDF](referencias/manual_tecnico.pdf) |
+| Plan de Acción de Mejora Continua | 1.4 | [Word](referencias/PAC.docx) · [PDF](referencias/PAC.pdf) |
 
-- [SRS 1.5 en Word](referencias/SRS.docx) y [PDF completo](referencias/SRS.pdf).
-- [Manual de usuario 2.0 en Word](referencias/manual.docx) y [PDF](referencias/manual.pdf).
-- [Manual técnico 1.3 en Word](referencias/manual_tecnico.docx) y [PDF](referencias/manual_tecnico.pdf).
-- [PAC 1.3 en Word](referencias/PAC.docx) y [PDF](referencias/PAC.pdf).
-- [Wiki](wiki/): instrucciones vigentes y material histórico identificado en desplegables. Las capturas heredadas pueden mostrar otra versión.
+La [wiki](wiki/) conserva la estructura, pasos y capturas numeradas elegidos para la entrega y describe las reglas actuales. Sus páginas PHP se consultan a través del servidor. Sobre nosotros integra los cuatro PDF. Los visores de esa sección cargan SQL; la wiki y el historial de errores lo omiten. Los PDF públicos también pueden abrirse directamente si el servidor web funciona.
 
-Los PDF de SRS, manuales y PAC se muestran dentro de Sobre nosotros; SRS también ofrece descarga Word. El manual técnico y el PAC 1.3 documentan la configuración modular, el diagnóstico seguro y las pruebas de concurrencia y rendimiento. La wiki contiene 29 artículos actuales. El SRS y el manual de usuario mantienen sus versiones originales; no se declara aceptación total de requisitos por haber publicado el código.
+La [revisión de coherencia](referencias/COHERENCIA_DOCUMENTAL.md) registra las correcciones y comprobaciones del 11/11/2026. QA conserva el [plan vigente](referencias/QA/plan-de-pruebas.md), [casos manuales](referencias/QA/casos-de-prueba.md), [checklist](referencias/QA/checklist-seguridad.md) y evidencias históricas identificadas por fecha. No hay suite `tests/`, Composer ni workflows activos en esta distribución; no se anuncian como comandos o CI vigentes.
 
-Los [casos de prueba manuales](referencias/QA/casos-de-prueba.md) incluyen los pasos de la interfaz. Los resultados de la revisión anterior se conservan en la [revisión técnica](referencias/REVISION_TECNICA.md) y sus evidencias en [QA](referencias/QA/).
+El [modelo de entidades y relaciones](referencias/mer.png) representa las cinco tablas del esquema actual.
 
-## Imprimir y guardar reportes
+## Imprimir y guardar como PDF
 
-Configurar y aplicar los filtros y pulsar **Imprimir reporte** o **Guardar como PDF**. Ambos abren el diálogo del navegador. Para PDF, elegir ese destino y dónde guardar el archivo. Usar A4, escala 100 % y desactivar encabezados/pies del navegador: el documento ya incluye su propia fecha, período y numeración. Orientación vertical salvo Detalle de facturas, horizontal.
+Aplica los filtros y pulsa **Imprimir reporte** o **Guardar como PDF**. Ambos abren el diálogo del navegador; para exportar selecciona el destino PDF y dónde guardarlo. Usa A4, escala 100 % y desactiva encabezados y pies del navegador: el documento incorpora su propio título, período, fecha y numeración. Detalle de facturas utiliza horizontal; los demás, vertical.
 
-Se verificaron PDF con el motor de Brave, incluidos inventarios de varias páginas. El resultado puede variar con el navegador, el papel o la escala seleccionados.
+La revisión visual de reportes del 10/11/2026 se realizó en Brave, incluidos ejemplos multipágina. El resultado puede variar con navegador, papel o escala. El comprobante también se imprime desde su vista.
 
 ## Protección y límites
 
-`.htaccess` impide servir configuración, Git, pruebas, logs y scripts SQL; permite los PDF y Word públicos del proyecto. Estas reglas requieren Apache/AllowOverride. La aplicación no tiene control de acceso: mantener Apache y SQL restringidos al equipo local. Los fallos de conexión y configuración responden HTTP 500 con un mensaje general; el diagnóstico queda en el log local. Las pruebas cubren el volumen y los escenarios medidos; el PAC conserva las tareas de aceptación y mantenimiento que requieren seguimiento del equipo.
+`.htaccess` bloquea Git, configuración, herramientas, logs, SQL y Markdown internos; permite los PDF y Word públicos. Requiere Apache/AllowOverride: PHP `-S` no aplica esas reglas. Los errores generales no exponen trazas, credenciales, SQL ni rutas; el detalle se conserva en el historial técnico local. La aplicación no tiene control de acceso por usuarios: la restricción al equipo local debe comprobarse en Apache, SQL y firewall.
+
+Las evidencias de concurrencia y rendimiento corresponden a los escenarios medidos y a su fecha. El PAC conserva tareas de respaldo, mantenimiento y aceptación humana; una documentación coherente no equivale a aceptación formal de todos los requisitos.
 
 ## Estructura del proyecto
 
-El código está organizado por módulos. Esta estructura corresponde a la versión actual publicada en `main`:
-
 ```text
-AUTORES.md                            Equipo, roles, aportes y asistencia de IA
-index.php                             Entrada que redirige a main.php
-main.php                              Carga el módulo de Inicio
-.htaccess                             Protección de archivos internos en Apache
-.github/workflows/php-lint.yml         Comprobación de sintaxis PHP y JavaScript
-assets/                               Recursos visuales del aplicativo
-  css/estilos.css                     Estilos de la interfaz y diseño adaptable
-  fonts/                              Fuentes locales y sus licencias
-  img/                                Logotipo del proyecto
-  js/facturas.js                      Filas, cantidades y total estimado de la venta
-  video/1.mp4                         Video explicativo integrado
-php/                                  Módulos y plantillas PHP
-  config/conexion.php                 Arranque y conexión SQL de cada página
-  config/configuracion.php            Valores privados y variables DB_*
-  config/entorno.php                  Zona horaria, constantes y URL base
-  config/utilidades.php               Validación, escape HTML y formato
-  config/seguridad.php                Sesión y tokens CSRF
-  config/consultas.php                Historial y procedimientos almacenados
-  config/errores.php                  Diagnóstico local y respuestas seguras
-  config/conexion.local.example.php   Ejemplo de configuración privada del equipo
-  includes/                           Menú, cabecera y pie compartidos
-  inicio/                             Portada y accesos a los módulos
-  clientes/                           Registro, búsqueda, edición y eliminación protegida
-  productos/                          Catálogo, precios y existencias
-  facturas/                           Ventas, comprobantes y cancelación del mismo día
-  reportes/                           Cinco reportes, resumen diario e impresión/PDF
-  historial/                          Consulta de acciones y errores técnicos
-  sobre_nosotros/                     Visores de documentos y acceso a video y wiki
-wiki/                                 Documentación navegable sin conexión SQL
-  index.php                           Entrada, búsqueda y selección de artículos
-  paginas/                            Guías, configuración y notas técnicas
-  includes/                           Catálogo, buscador y plantillas de la wiki
-  img/actuales/                       41 capturas reales actuales con datos ficticios
-  herramientas/                       Generación de capturas de la wiki
-  css/ y js/                          Diseño e interacciones de la documentación
-referencias/                          Esquema y documentos del proyecto
-  db.sql                              Cinco tablas y cuatro procedimientos; instalación nueva
-  clientes_prueba.sql                 Diez clientes ficticios para demostración
-  productos_prueba.sql                Treinta productos ficticios para demostración
-  SRS.docx / SRS.pdf                  Especificación de requisitos, versión 1.5
-  manual.docx / manual.pdf            Manual del usuario, versión 2.0
-  manual_tecnico.docx / .pdf          Manual técnico, versión 1.3
-  PAC.docx / PAC.pdf                  Plan de Acción de Mejora Continua, versión 1.3
-  QA/                                 Plan, casos manuales, reportes y evidencias
-logs/                                 Diagnóstico local; los archivos .log no se publican
-RELEASE.md                            Notas de publicación y diferencias con versiones previas
+index.php / main.php                 Entrada e inicio
+README.md                            Instalación y referencia vigente
+.htaccess                            Protección de archivos internos en Apache
+assets/
+  css/estilos.css                     Estilos y diseño adaptable
+  fonts/ y LICENCIAS.txt              Fuentes locales y licencias
+  img/logo.png                       Marca del aplicativo
+  js/facturas.js                     Líneas y total estimado de la venta
+  video/1.mp4                        Video explicativo
+php/
+  config/conexion.php                Arranque y conexión SQL
+  config/configuracion.php           Valores privados y variables DB_*
+  config/entorno.php                 Hora, constantes y URL base
+  config/utilidades.php              Validación, escape y formato
+  config/seguridad.php               Sesión y tokens CSRF
+  config/consultas.php               Historial y procedimientos
+  config/errores.php                 Diagnóstico y respuestas generales
+  config/conexion.local.example.php  Plantilla privada; conexion.local.php se ignora
+  includes/                         Menú y pie compartidos
+  inicio/ clientes/ productos/       Catálogos y portada
+  facturas/                         Venta, comprobante y cancelación del día
+  reportes/                         Cinco consultas, resumen e impresión
+  historial/                        Acciones SQL y diagnóstico en archivo
+  sobre_nosotros/                    SRS, manuales, PAC, video y acceso a wiki
+wiki/
+  index.php / includes/              Enrutador por catálogo, búsqueda y plantillas
+  paginas/                          Guías, configuración y notas técnicas
+  img/                              Capturas numeradas WebP
+  herramientas/                     Datos ficticios y generación aislada de capturas
+  css/ y js/                        Diseño, menú y visor de imágenes
+referencias/
+  db.sql                            Cinco tablas, cuatro procedimientos, sin vistas
+  mer.png                           Modelo de entidades y relaciones
+  clientes_prueba.sql                Diez clientes ficticios
+  productos_prueba.sql               Treinta productos ficticios
+  SRS.docx / SRS.pdf                SRS 1.6
+  manual.docx / manual.pdf          Manual del usuario 2.1
+  manual_tecnico.docx / .pdf        Manual técnico 1.4
+  PAC.docx / PAC.pdf                PAC 1.4
+  QA/                               Plan, casos, hallazgos y evidencia fechada
+  COHERENCIA_DOCUMENTAL.md           Revisión de documentos y referencias
+logs/                               Diagnóstico privado; no se publican archivos .log
 ```
 
-La configuración personal se guarda en `php/config/conexion.local.php`, creado a partir del ejemplo. Git ignora ese archivo y los logs para conservar privados los datos del equipo.
+## Equipo
 
-## Autores
+Proyecto de la ficha **3407799**, programa **Análisis y Desarrollo de Software**, SENA Regional Huila, Centro de la Industria, la Empresa y los Servicios. Instructor: **José de Jesús Motta Vargas**.
 
-Proyecto de la ficha **3407799**, programa **Análisis y Desarrollo de Software (ADSO)** del SENA Regional Huila, Centro de la Industria, la Empresa y los Servicios.
+| Integrante | Responsabilidad principal documentada en el SRS |
+| --- | --- |
+| Carlos Stiven Gutiérrez Ramírez | Interfaces y navegación |
+| Camilo Andrés Tamayo Duran | Lógica del aplicativo |
+| Kevin Fernando Martínez Pérez | Requisitos y documentación |
+| Samuel Santiago Ramírez Fierro | Base de datos |
+| Santiago Ortiz Claros | Calidad, pruebas y seguridad |
 
-Consulta los integrantes, sus roles y los aportes en [AUTORES.md](AUTORES.md).
+El historial conserva los aportes de cada integrante. Codex asistió en la revisión de coherencia documental del 11/11/2026; esta asistencia no implica aprobación individual de los demás integrantes ni del instructor.

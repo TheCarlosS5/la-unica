@@ -22,7 +22,7 @@
 <tr>
 <td>Fecha de registro</td>
 <td>fecha</td>
-<td>Opcional. Si la dejas vacía se usa la fecha de hoy. Puede ser anterior, pero no posterior a hoy.</td>
+<td>Automática: se asigna el día del registro. En la edición es de solo lectura; no se introduce desde el formulario.</td>
 </tr>
 </tbody>
 </table></div>
@@ -65,8 +65,7 @@
 <ul>
 <li><span class="marca-num">1</span> <strong>ID del cliente</strong>: el número que identifica al cliente en tu negocio. No se puede cambiar después.</li>
 <li><span class="marca-num">2</span> <strong>Nombre completo</strong>: hasta 100 caracteres.</li>
-<li><span class="marca-num">3</span> <strong>Fecha de registro</strong>: déjala vacía para usar la fecha de hoy.</li>
-<li><span class="marca-num">4</span> Pulsa <strong>Crear cliente</strong>.</li>
+<li><span class="marca-num">3</span> Pulsa <strong>Crear cliente</strong>. La fecha del día se asigna automáticamente.</li>
 </ul>
 </li>
 <li>
@@ -98,7 +97,7 @@
 </li>
 </ol>
 </div>
-<p>Las facturas guardan el <strong>ID</strong> y no una copia del nombre: al cambiar el nombre, todas sus facturas anteriores muestran el nombre nuevo.</p>
+<p>Las facturas guardan el <strong>ID y una copia del nombre</strong> del cliente al vender. Cambiar el nombre actual no modifica sus comprobantes anteriores.</p>
 <h2 id="eliminar-un-cliente">Eliminar un cliente</h2>
 <div class="pasos">
 <ol>

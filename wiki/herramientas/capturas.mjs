@@ -1,43 +1,63 @@
 /**
  * Archivo: capturas.mjs
  * Módulo: Wiki — herramienta de capturas.
- * Propósito: generar las imágenes de la wiki recorriendo La Única en un navegador Chromium sin ventana.
+ * Propósito: generar las imágenes de la wiki recorriendo La Única en Brave/Chromium sobre una base nueva la_unica_test_, con servidor independiente.
  * Funcionamiento: abre cada pantalla, rellena formularios cuando hace falta, dibuja recuadros numerados
  * sobre los elementos importantes y recorta solo la zona que explica cada paso.
  * Uso:
  *   cd wiki/herramientas
  *   npm install
- *   node capturas.mjs [URL_BASE] [RUTA_NAVEGADOR]
+ *   node capturas.mjs [RUTA_NAVEGADOR] con variables DB_TEST_* y PHP_BINARY
  * Requisitos: la base debe estar recién creada con referencias/db.sql + datos_ejemplo.sql, porque el
  * recorrido registra un cliente, una venta y cancela esa venta.
  */
-import puppeteer from 'puppeteer-core';
+import { createRequire } from 'node:module';
+import { resolve } from 'node:path';
+import { spawn } from 'node:child_process';
+import net from 'node:net';
+const cargar = createRequire(process.env.CAPTURAS_NODE_MODULES ? resolve(process.env.CAPTURAS_NODE_MODULES, '__capturas__.cjs') : import.meta.url);
+const { chromium } = cargar('playwright');
+const sharp = cargar('sharp');
 import { mkdirSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 
-const BASE = process.argv[2] || 'http://127.0.0.1:8765';
-const NAVEGADOR = process.argv[3] || 'C:/Program Files/BraveSoftware/Brave-Browser/Application/brave.exe';
+const basePruebas = process.env.DB_TEST_DATABASE || '';
+if (!/^la_unica_test_[a-zA-Z0-9_]+$/.test(basePruebas)) throw new Error('Se exige una base nueva con prefijo la_unica_test_');
+const env = { ...process.env };
+for (const [clave, defecto] of [['HOST','127.0.0.1'],['PORT','3306'],['DATABASE',basePruebas],['USERNAME','root'],['PASSWORD','']]) env['DB_' + clave] = process.env['DB_TEST_' + clave] ?? defecto;
+const puertoLibre = net.createServer();
+await new Promise(r => puertoLibre.listen(0, '127.0.0.1', r));
+const puerto = puertoLibre.address().port;
+await new Promise(r => puertoLibre.close(r));
+const BASE = 'http://127.0.0.1:' + puerto;
+const servidor = spawn(process.env.PHP_BINARY || 'php', ['-S', '127.0.0.1:' + puerto, '-t', fileURLToPath(new URL('../../', import.meta.url))], { env, windowsHide:true, stdio:'ignore' });
+for(let i=0;i<100;i++){const listo=await new Promise(r=>{const c=net.createConnection({host:'127.0.0.1',port:puerto},()=>{c.destroy();r(true);});c.on('error',()=>r(false));});if(listo)break;await new Promise(r=>setTimeout(r,50));}
+const NAVEGADOR = process.argv[2] || 'C:/Program Files/BraveSoftware/Brave-Browser/Application/brave.exe';
 const SALIDA = fileURLToPath(new URL('../img/', import.meta.url));
 mkdirSync(SALIDA, { recursive: true });
 
 const COLOR_MARCA = '#e8590c';
-const ESCRITORIO = { width: 1280, height: 800, deviceScaleFactor: 2 };
-const MOVIL = { width: 390, height: 844, deviceScaleFactor: 2, isMobile: true, hasTouch: true };
+const ESCRITORIO = { width: 1280, height: 800 };
+const MOVIL = { width: 390, height: 844 };
 
-const navegador = await puppeteer.launch({
+let navegador;
+try {
+navegador = await chromium.launch({
   executablePath: NAVEGADOR,
   headless: true,
+  ignoreDefaultArgs: ['--no-sandbox'],
   args: ['--no-first-run', '--disable-extensions', '--hide-scrollbars'],
 });
-const pagina = await navegador.newPage();
+const contexto = await navegador.newContext({viewport:{width:1280,height:800},deviceScaleFactor:2,locale:'es-CO',timezoneId:'America/Bogota'});
+const pagina = await contexto.newPage();
 pagina.on('dialog', (dialogo) => dialogo.accept());
 let vistaActual = ESCRITORIO;
-await pagina.setViewport(vistaActual);
+await pagina.setViewportSize(vistaActual);
 
 const esperar = (ms) => new Promise((r) => setTimeout(r, ms));
 
 async function ir(ruta) {
-  await pagina.goto(BASE + ruta, { waitUntil: 'networkidle0' });
+  await pagina.goto(BASE + ruta, { waitUntil: 'networkidle' });
   await pagina.evaluate(() => document.fonts.ready);
 }
 
@@ -51,7 +71,7 @@ async function escribir(selector, texto) {
 
 async function enviar(selectorFormulario) {
   await Promise.all([
-    pagina.waitForNavigation({ waitUntil: 'networkidle0' }),
+    pagina.waitForNavigation({ waitUntil: 'networkidle' }),
     pagina.$eval(selectorFormulario, (f) => f.requestSubmit()),
   ]);
   await pagina.evaluate(() => document.fonts.ready);
@@ -63,7 +83,7 @@ async function enviar(selectorFormulario) {
  *               texto?, lado? ('derecha'|'izquierda'|'arriba'|'abajo') }.
  */
 async function dibujarMarcas(marcas) {
-  return pagina.evaluate((marcas, color) => {
+  return pagina.evaluate(({marcas, color}) => {
     document.getElementById('capa-anotaciones')?.remove();
     const capa = document.createElement('div');
     capa.id = 'capa-anotaciones';
@@ -146,7 +166,7 @@ async function dibujarMarcas(marcas) {
       x2 = Math.max(x2, r.right + scrollX); y2 = Math.max(y2, r.bottom + scrollY);
     }
     return { x1, y1, x2, y2 };
-  }, marcas, COLOR_MARCA);
+  }, {marcas, color: COLOR_MARCA});
 }
 
 async function rectanguloDe(selector) {
@@ -164,11 +184,11 @@ async function rectanguloDe(selector) {
  *  - completa: true para capturar todo el alto de la página.
  */
 async function foto(nombre, opciones = {}) {
-  const { marcas = [], recorte = null, margen = 24, completa = false } = opciones;
+  const { marcas = [], recorte = null, margen = 24, completa = false, altoMaximo = null } = opciones;
   const alto = await pagina.evaluate(() => document.documentElement.scrollHeight);
   if (completa || recorte) {
     // Se agranda la ventana para que el menú lateral fijo y todo el contenido queden dentro.
-    await pagina.setViewport({ ...vistaActual, height: Math.max(vistaActual.height, alto) });
+    await pagina.setViewportSize({ ...vistaActual, height: Math.max(vistaActual.height, alto) });
     await esperar(200);
   }
   let zona = marcas.length ? await dibujarMarcas(marcas) : null;
@@ -183,14 +203,13 @@ async function foto(nombre, opciones = {}) {
     const x = Math.max(0, r.x1 - margen);
     const y = Math.max(0, r.y1 - margen);
     clip = { x, y, width: Math.min(anchoDoc, r.x2 + margen) - x, height: Math.min(altoDoc, r.y2 + margen) - y };
+    if (altoMaximo !== null) clip.height = Math.min(clip.height, altoMaximo);
   }
   await esperar(150);
-  await pagina.screenshot({
-    path: SALIDA + nombre + '.webp', type: 'webp', quality: 88,
-    clip, captureBeyondViewport: Boolean(clip) || completa,
-  });
+  const imagen = await pagina.screenshot({ type:'png', clip, fullPage: !clip && completa });
+  await sharp(imagen).webp({quality:90}).toFile(SALIDA + nombre + '.webp');
   await pagina.evaluate(() => document.getElementById('capa-anotaciones')?.remove());
-  await pagina.setViewport(vistaActual);
+  await pagina.setViewportSize(vistaActual);
   console.log('ok', nombre);
 }
 
@@ -249,12 +268,12 @@ await foto('clientes-crear-formulario', {
   marcas: [
     { sel: '#id_cliente', n: 1 },
     { sel: '#nombre', n: 2 },
-    { sel: '#fecha_registro', n: 3 },
-    { sel: '.tarjeta-formulario button[type=submit]', n: 4 },
+    { sel: '.tarjeta-formulario button[type=submit]', n: 3 },
   ],
 });
 await enviar('.tarjeta-formulario form');
 await foto('clientes-crear-exito', { recorte: '.mensaje.alerta', margen: 16, marcas: [{ sel: '.mensaje.alerta', margen: 3 }] });
+await ir('/php/clientes/crear_cliente.php');
 await escribir('#id_cliente', '1001');
 await escribir('#nombre', 'Cliente repetido');
 await enviar('.tarjeta-formulario form');
@@ -274,8 +293,7 @@ await foto('clientes-editar-formulario', {
   marcas: [
     { sel: '.tarjeta-id-fijo', n: 1 },
     { sel: '#nombre', n: 2 },
-    { sel: '#fecha_registro', n: 3 },
-    { sel: '.tarjeta-formulario button[type=submit]', n: 4 },
+    { sel: '.tarjeta-formulario button[type=submit]', n: 3 },
   ],
 });
 
@@ -285,7 +303,7 @@ await foto('clientes-eliminar-boton', {
   marcas: [{ sel: 'tbody tr', contiene: 'Droguería', dentro: '.boton-peligro', n: 1 }],
 });
 await Promise.all([
-  pagina.waitForNavigation({ waitUntil: 'networkidle0' }),
+  pagina.waitForNavigation({ waitUntil: 'networkidle' }),
   pagina.$eval('input[name="id_cliente"][value="1007"]', (i) => i.form.submit()),
 ]);
 await foto('clientes-eliminar-confirmar', {
@@ -337,12 +355,13 @@ await foto('productos-editar-formulario', {
     { sel: '#precio_unitario', n: 3 },
   ],
 });
-await escribir('#unidad_medida', 'bulto');
+await escribir('#stock', '-1');
+await pagina.$eval('.tarjeta-formulario form', f => {f.noValidate=true;});
 await enviar('.tarjeta-formulario form');
 await foto('productos-editar-error', { recorte: '.alerta-error', margen: 16, marcas: [{ sel: '.alerta-error', margen: 3 }] });
 await ir('/php/productos/ver_productos.php');
 await Promise.all([
-  pagina.waitForNavigation({ waitUntil: 'networkidle0' }),
+  pagina.waitForNavigation({ waitUntil: 'networkidle' }),
   pagina.$eval('input[name="id_producto"][value="7"]', (i) => i.form.submit()),
 ]);
 await foto('productos-eliminar-confirmar', {
@@ -357,13 +376,13 @@ await foto('facturas-menu', {
   marcas: [{ sel: menu('ver_facturas.php'), n: 1, num: 'derecha', margen: 2 }, { sel: menu('crear_factura.php'), n: 2, num: 'derecha', margen: 2 }],
 });
 await ir('/php/facturas/crear_factura.php');
-await pagina.select('#id_cliente', '1008');
+await pagina.selectOption('#id_cliente', '1008');
 await foto('facturas-paso-cliente', {
   recorte: 'marcas', margen: 30,
-  marcas: [{ sel: '#id_cliente', n: 1 }, { sel: '.campo-opciones', n: 2 }],
+  marcas: [{ sel: '#id_cliente', n: 1 }],
 });
 const lineas = () => pagina.$$('[data-linea-factura]');
-await (await (await lineas())[0].$('[data-producto-select]')).select('5');
+await (await (await lineas())[0].$('[data-producto-select]')).selectOption('5');
 await (await (await lineas())[0].$('[data-cantidad]')).evaluate((c) => { c.value = '4'; c.dispatchEvent(new Event('input', { bubbles: true })); });
 await foto('facturas-paso-linea', {
   recorte: '.factura-linea', margen: 24,
@@ -377,7 +396,7 @@ await pagina.click('#agregar-linea-factura');
 await pagina.click('#agregar-linea-factura');
 const llenar = async (i, producto, cantidad) => {
   const fila = (await lineas())[i];
-  await (await fila.$('[data-producto-select]')).select(producto);
+  await (await fila.$('[data-producto-select]')).selectOption(producto);
   await (await fila.$('[data-cantidad]')).evaluate((c, v) => { c.value = v; c.dispatchEvent(new Event('input', { bubbles: true })); }, String(cantidad));
 };
 await llenar(1, '6', 1);
@@ -396,6 +415,7 @@ await foto('facturas-paso-total', {
     { sel: '#formulario-factura button[type=submit]', n: 2 },
   ],
 });
+await foto('manual-venta-completa',{recorte:'#contenido-principal',margen:16});
 await enviar('#formulario-factura');
 await foto('facturas-paso-exito', { recorte: '.mensaje.alerta', margen: 16, marcas: [{ sel: '.mensaje.alerta', margen: 3 }] });
 
@@ -432,16 +452,18 @@ await foto('facturas-comprobante-detalle', {
   recorte: '.comprobante-factura', margen: 16,
   marcas: [{ sel: '.comprobante-factura .estado-factura', n: 1 }, { sel: '.comprobante-factura tfoot', n: 2, margen: 2 }],
 });
-await pagina.emulateMediaType('print');
+await pagina.emulateMedia({media:'print'});
 await ir('/php/facturas/imprimir_factura.php?id=1');
 await foto('facturas-impresion', { completa: true });
-await pagina.emulateMediaType('screen');
+await pagina.emulateMedia({media:'screen'});
 
 await ir('/php/facturas/imprimir_factura.php?id=9');
 await Promise.all([
-  pagina.waitForNavigation({ waitUntil: 'networkidle0' }),
+  pagina.waitForNavigation({ waitUntil: 'networkidle' }),
   pagina.$eval('.form-cancelar-factura', (f) => f.submit()),
 ]);
+await foto('facturas-cancelar-confirmacion', {recorte:'.panel-confirmacion',margen:20});
+await enviar('.panel-confirmacion form');
 await foto('facturas-cancelada', {
   recorte: 'marcas', margen: 24,
   marcas: [{ sel: '.mensaje.alerta', n: 1, margen: 3 }, { sel: '.comprobante-factura .estado-factura', n: 2 }],
@@ -455,38 +477,53 @@ await foto('reportes-menu', {
 });
 await foto('reportes-resumen', { completa: true });
 await foto('reportes-tarjeta', {
-  recorte: '.reportes-resumen-card:nth-of-type(6)', margen: 20,
+  recorte: '.reportes-resumen-card:nth-of-type(1)', margen: 20,
   marcas: [
-    { sel: '.reportes-resumen-card:nth-of-type(6) .reportes-resumen-valor', n: 1 },
-    { sel: '.reportes-resumen-card:nth-of-type(6) .reportes-resumen-detalle', n: 2 },
-    { sel: '.reportes-resumen-card:nth-of-type(6) .modulo-acciones a', n: 3 },
+    { sel: '.reportes-resumen-card:nth-of-type(1) .reportes-resumen-valor', n: 1 },
+    { sel: '.reportes-resumen-card:nth-of-type(1) .reportes-resumen-detalle', n: 2 },
+    { sel: '.reportes-resumen-card:nth-of-type(1) .modulo-acciones a', n: 3 },
   ],
 });
-for (const reporte of [
-  'clientes_y_facturas', 'total_vigente_por_factura', 'unidades_facturadas_por_producto',
-  'existencias_productos', 'facturas_por_estado', 'facturas_pendientes',
+for (const [ruta, archivo] of [
+ ['clientes_y_facturas','reporte-clientes-y-facturas'], ['ventas','reporte-total-vigente-por-factura'],
+ ['unidades_vendidas_por_producto','reporte-unidades-facturadas-por-producto'],
+ ['existencias_productos','reporte-existencias-productos'], ['detalle_facturas','reporte-detalle-facturas']
 ]) {
-  await ir(`/php/reportes/${reporte}.php`);
-  await foto('reporte-' + reporte.replaceAll('_', '-'), { recorte: '.panel-reporte', margen: 16 });
+ await ir('/php/reportes/'+ruta+'.php');
+ await foto(archivo,{recorte:'#contenido-principal',margen:16});
+ if (ruta === 'detalle_facturas') await foto('manual-detalle-primeras-filas',{recorte:'.panel-reporte',margen:16,altoMaximo:750});
 }
+await ir('/php/reportes/ventas.php');
+await pagina.emulateMedia({media:'print'});
+await foto('reporte-ventas-impresion',{completa:true});
+await pagina.emulateMedia({media:'screen'});
 await ir('/php/reportes/existencias_productos.php');
 await foto('reportes-individual-partes', {
-  recorte: '.panel-reporte', margen: 20,
+  recorte: '#contenido-principal', margen: 20,
   marcas: [
-    { sel: '.panel-reporte-cabecera', n: 1, margen: 3 },
-    { sel: '#nota-reporte', n: 2, margen: 3 },
+    { sel: '.encabezado-vista', n: 1, margen: 3 },
+    { sel: '.acciones-impresion-reporte', n: 2, margen: 3 },
     { sel: 'tbody tr', indice: 0, n: 3, margen: 1 },
   ],
 });
+
+await ir('/php/facturas/imprimir_factura.php?id=2');
+await foto('manual-factura-anterior',{recorte:'#contenido-principal',margen:16});
+await ir('/php/reportes/ventas.php?ver=dia');
+await foto('manual-ventas-dia',{recorte:'#contenido-principal',margen:16});
+await ir('/php/historial/acciones.php');
+await foto('manual-historial',{recorte:'#contenido-principal',margen:16});
+await ir('/php/historial/errores.php?desde=2000-01-01&hasta=2000-01-01');
+await foto('manual-errores',{recorte:'#contenido-principal',margen:16});
 
 // ───────────────────────── Sobre nosotros ─────────────────────────
 await ir('/php/sobre_nosotros/index.php');
 await foto('sobre-nosotros', {
   recorte: '.reportes-resumen-grid', margen: 20,
   marcas: [
-    { sel: '.reportes-resumen-card', indice: 0, dentro: 'a.boton', n: 1 },
-    { sel: '.reportes-resumen-card', indice: 1, dentro: 'a.boton', n: 2, num: 'esquina' },
-    { sel: '.reportes-resumen-card', indice: 2, dentro: 'a.boton', n: 3, num: 'esquina' },
+    { sel: '.reportes-resumen-card', indice: 1, dentro: 'a.boton', n: 1 },
+    { sel: '.reportes-resumen-card', indice: 4, dentro: 'a.boton', n: 2, num: 'esquina' },
+    { sel: '.reportes-resumen-card', indice: 5, dentro: 'a.boton', n: 3, num: 'esquina' },
   ],
 });
 await ir('/php/sobre_nosotros/manual_usuario.php');
@@ -497,7 +534,7 @@ await foto('sobre-nosotros-video');
 
 // ───────────────────────── Celular ─────────────────────────
 vistaActual = MOVIL;
-await pagina.setViewport(vistaActual);
+await pagina.setViewportSize(vistaActual);
 await ir('/main.php');
 await foto('movil-boton-menu', {
   recorte: 'marcas', margen: 20,
@@ -511,4 +548,7 @@ await foto('movil-clientes');
 await ir('/php/facturas/crear_factura.php');
 await foto('movil-factura');
 
-await navegador.close();
+} finally {
+  try { if (navegador) await navegador.close(); }
+  finally { servidor.kill(); }
+}

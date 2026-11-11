@@ -1,5 +1,6 @@
 -- Datos de ejemplo usados para las capturas de la wiki.
--- Ejecutar DESPUÉS de referencias/db.sql, sobre una base la_unica vacía.
+-- Solo demostración aislada: ajustar USE al mismo nombre exclusivo del esquema nuevo.
+-- No es migración ni limpieza de una base existente. Stock del catálogo = existencia actual ficticia.
 USE la_unica;
 
 INSERT INTO clientes VALUES
@@ -15,16 +16,20 @@ INSERT INTO productos (nombre,unidad_medida,stock,precio_unitario) VALUES
 ('Panela','unidad',0,3500.00),('Frijol cargamanto','kg',25,9800.00),
 ('Harina PAN','kg',40,5200.00),('Sal Refisal','kg',3,1900.00);
 
--- Pendiente = venta por cobrar; la aplicación también puede crearla desde «Nueva factura».
-INSERT INTO facturas (id_cliente,estado_factura,fecha_factura) VALUES
-(1001,'Pagado','2026-10-02 09:15:00'),(1002,'Pagado','2026-10-05 11:40:00'),
-(1001,'Cancelado','2026-10-08 16:05:00'),(1003,'Pagado','2026-10-14 08:30:00'),
-(1004,'Pendiente','2026-10-18 13:20:00'),(1002,'Pagado','2026-10-22 10:00:00'),
-(1005,'Pendiente','2026-10-25 17:45:00'),(1006,'Pagado','2026-10-28 12:10:00');
+-- Dos estados vigentes. Se guarda la copia histórica del nombre del cliente.
+INSERT INTO facturas (id_factura,id_cliente,nombre_cliente,estado_factura,fecha_factura)
+SELECT d.id_factura,c.id_cliente,c.nombre,d.estado,TIMESTAMP(CURDATE() - INTERVAL d.dias DAY,d.hora)
+FROM (
+ SELECT 1 id_factura,1001 id_cliente,'Pagado' estado,0 dias,'09:15:00' hora UNION ALL
+ SELECT 2,1002,'Pagado',1,'11:40:00' UNION ALL SELECT 3,1001,'Cancelado',1,'16:05:00' UNION ALL
+ SELECT 4,1003,'Pagado',2,'08:30:00' UNION ALL SELECT 5,1004,'Pagado',0,'13:20:00' UNION ALL
+ SELECT 6,1002,'Pagado',0,'10:00:00' UNION ALL SELECT 7,1005,'Cancelado',1,'17:45:00' UNION ALL
+ SELECT 8,1006,'Pagado',0,'12:10:00'
+) d INNER JOIN clientes c ON c.id_cliente=d.id_cliente;
 
 -- Cada línea guarda el precio de la venta; aquí se copia el precio del catálogo al momento de cargar.
-INSERT INTO detalle_facturas (id_factura,id_producto,cantidad,precio_unitario)
-SELECT d.id_factura, d.id_producto, d.cantidad, p.precio_unitario
+INSERT INTO detalle_facturas (id_factura,id_producto,nombre_producto,unidad_medida,cantidad,precio_unitario)
+SELECT d.id_factura, d.id_producto, p.nombre, p.unidad_medida, d.cantidad, p.precio_unitario
 FROM (
     SELECT 1 AS id_factura, 1 AS id_producto, 10 AS cantidad UNION ALL SELECT 1,2,2 UNION ALL SELECT 1,5,6
     UNION ALL SELECT 2,3,15 UNION ALL SELECT 2,4,4 UNION ALL SELECT 2,9,5 UNION ALL SELECT 3,6,2

@@ -39,7 +39,7 @@ function catalogoWiki()
             ],
             'guia/reportes' => [
                 'titulo' => 'Reportes',
-                'descripcion' => 'El resumen general y los siete reportes: cómo abrirlos y cómo leerlos.',
+                'descripcion' => 'Resumen diario, cinco reportes, impresión y PDF.',
             ],
             'guia/sobre-nosotros' => [
                 'titulo' => 'Sobre nosotros y ayuda',
@@ -89,7 +89,7 @@ function catalogoWiki()
             ],
             'tecnico/base-de-datos' => [
                 'titulo' => 'Base de datos',
-                'descripcion' => 'Tablas, relaciones, restricciones, vistas y procedimientos de referencias/db.sql.',
+                'descripcion' => 'Tablas, relaciones, restricciones y procedimientos de referencias/db.sql.',
             ],
             'tecnico/flujo-de-ventas' => [
                 'titulo' => 'Flujo de ventas y cancelaciones',
@@ -105,15 +105,15 @@ function catalogoWiki()
             ],
             'tecnico/funciones' => [
                 'titulo' => 'Referencia de funciones',
-                'descripcion' => 'API de las funciones compartidas de php/config/conexion.php y del módulo de reportes.',
+                'descripcion' => 'Funciones compartidas de php/config y del módulo de reportes.',
             ],
             'tecnico/interfaz' => [
                 'titulo' => 'Interfaz (CSS y JS)',
                 'descripcion' => 'Sistema visual, plantilla de páginas, menú adaptable y el script del formulario de facturas.',
             ],
             'tecnico/requisitos' => [
-                'titulo' => 'Requisitos (SRS 1.5)',
-                'descripcion' => 'Resumen del SRS vigente y matriz de trazabilidad requisito → código.',
+                'titulo' => 'Requisitos (SRS 1.6)',
+                'descripcion' => 'SRS 1.6 y trazabilidad entre requisitos y código.',
             ],
             'tecnico/contribuir' => [
                 'titulo' => 'Contribuir al proyecto',
@@ -121,7 +121,7 @@ function catalogoWiki()
             ],
             'tecnico/releases' => [
                 'titulo' => 'Publicar un release',
-                'descripcion' => 'Convención de versiones y pasos para etiquetar y publicar La Única en GitHub (resumen de RELEASE.md).',
+                'descripcion' => 'Convención de versiones y pasos para etiquetar y publicar La Única en GitHub (preparación documentada de una entrega).',
             ],
             'tecnico/wiki' => [
                 'titulo' => 'Mantener esta wiki',

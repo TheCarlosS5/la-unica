@@ -13,11 +13,11 @@
 </div>
 <div class="tarjeta-wiki">
 <p class="tarjeta-titulo">Facturas</p>
-<p>Ventas de 1 a 100 productos con <strong>total en vivo</strong>, descuento automático del stock, comprobante imprimible y <strong>cancelación</strong> que repone el inventario.</p>
+<p>Ventas con uno o varios productos con <strong>total en vivo</strong>, descuento automático del stock, comprobante imprimible y <strong>cancelación</strong> que repone el inventario.</p>
 </div>
 <div class="tarjeta-wiki">
 <p class="tarjeta-titulo">Reportes</p>
-<p>Un resumen con indicadores y <strong>siete reportes</strong>: clientes, totales, unidades, detalle, existencias, estados y pendientes.</p>
+<p>Un resumen con indicadores y <strong>cinco reportes</strong>: Ventas, Unidades vendidas, Existencias, Clientes y cantidad de facturas y Detalle de facturas.</p>
 </div>
 </div>
 <h2 id="cómo-usar-esta-wiki">Cómo usar esta wiki</h2>
@@ -53,7 +53,7 @@
 </table></div>
 <p>En las guías, los números naranjas como <span class="marca-num">1</span> <span class="marca-num">2</span> <span class="marca-num">3</span> del texto corresponden a los recuadros numerados de cada imagen. Haz clic en cualquier imagen para verla en grande.</p>
 <h2 id="cómo-funciona-en-una-frase">Cómo funciona en una frase</h2>
-<p>El navegador habla con <strong>Apache + PHP</strong> en tu propio equipo, y PHP guarda y consulta todo en <strong>MySQL</strong>. Nada sale a Internet.</p>
+<p>El navegador habla con <strong>Apache + PHP</strong> en tu propio equipo, y PHP guarda y consulta los datos en <strong>MySQL o MariaDB compatible</strong>. El uso previsto es local y la configuración del equipo debe mantenerlo así.</p>
 <pre class="highlight"><code class="language-text">Navegador ──► Apache + PHP (php/…) ──► MySQL (base la_unica)
     ▲                                         │
     └────────── páginas HTML ◄────────────────┘</code></pre>
@@ -63,7 +63,7 @@
 <ul>
 <li><strong>No hay inicio de sesión, usuarios ni roles.</strong> Cualquiera con acceso al equipo puede usarla.</li>
 <li><strong>No es facturación electrónica</strong> ni factura fiscal: el comprobante es interno.</li>
-<li><strong>No guarda precio histórico</strong>: si cambias el precio de un producto, cambian los importes mostrados en facturas anteriores.</li>
+<li><strong>Conserva los datos históricos</strong>: cada factura guarda el nombre del cliente y cada detalle el nombre, la unidad y el precio del producto al vender. Editar el catálogo no modifica ventas anteriores.</li>
 <li>No procesa pagos: una venta registrada se marca como <em>Pagado</em> directamente.</li>
 <li>No está pensada para publicarse en Internet.</li>
 </ul>

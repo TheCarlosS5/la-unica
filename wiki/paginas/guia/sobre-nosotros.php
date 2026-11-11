@@ -1,45 +1,12 @@
 <?php if (!defined('LA_UNICA_WIKI')) { exit; } ?>
-<p>La sección <strong>Sobre nosotros</strong> reúne la ayuda del aplicativo. Está en <em>Menú → Información → Sobre nosotros</em>.</p>
-<figure class="captura"><img src="img/sobre-nosotros.webp" alt="Tarjetas de Sobre nosotros" loading="lazy"><figcaption>Tarjetas de Sobre nosotros</figcaption></figure>
-<ul>
-<li><span class="marca-num">1</span> <strong>Manual del Usuario</strong>: abre el manual en PDF dentro de la aplicación.</li>
-<li><span class="marca-num">2</span> <strong>Video explicativo</strong>: abre el video de presentación.</li>
-<li><span class="marca-num">3</span> <strong>Wiki</strong>: abre esta wiki. También está en <em>Menú → Información → Wiki</em>.</li>
-</ul>
-<div class="aviso aviso-tip">
-<p class="aviso-titulo">Consejo</p>
-<p>Esta sección y la wiki <strong>funcionan aunque MySQL esté apagado</strong>: no abren conexión a la base de datos. Útil para leer la ayuda mientras arreglas un problema de conexión.</p>
-</div>
-<h2 id="manual-del-usuario">Manual del Usuario</h2>
-<p>Muestra <code>referencias/manual.pdf</code> (35 páginas, con capturas de los módulos) con el visor de PDF del navegador: puedes cambiar de página, buscar texto, hacer zoom, descargar o imprimir sin salir de La Única.</p>
-<figure class="captura"><img src="img/sobre-nosotros-manual.webp" alt="Manual de usuario integrado" loading="lazy"><figcaption>Manual de usuario integrado</figcaption></figure>
+<p>La sección <strong>Sobre nosotros</strong> reúne SRS, manual del usuario, manual técnico, PAC, video y esta wiki.</p><figure class="captura"><img src="img/sobre-nosotros.webp" alt="Recursos integrados en Sobre nosotros" loading="lazy"><figcaption>Recursos integrados en Sobre nosotros</figcaption></figure>
+<ul><li><span class="marca-num">1</span> Manual del Usuario.</li><li><span class="marca-num">2</span> Video explicativo.</li><li><span class="marca-num">3</span> Wiki.</li></ul><p>También están las tarjetas del SRS completo, manual técnico y PAC. Los PDF se abren dentro de la interfaz.</p><h2 id="manual-del-usuario">Manual del Usuario</h2>
+<p>La versión 2.1 de <code>referencias/manual.pdf</code> explica los módulos con capturas. Usa el visor para cambiar de página, buscar, hacer zoom, descargar o imprimir.</p><figure class="captura"><img src="img/sobre-nosotros-manual.webp" alt="Manual del usuario integrado" loading="lazy"><figcaption>Manual del usuario integrado</figcaption></figure>
+
 <h2 id="video-explicativo">Video explicativo</h2>
-<p>Reproduce <code>assets/video/1.mp4</code> con el reproductor del navegador. No se reproduce solo ni abre pestañas externas.</p>
-<figure class="captura"><img src="img/sobre-nosotros-video.webp" alt="Página del video explicativo" loading="lazy"><figcaption>Página del video explicativo</figcaption></figure>
-<p>Si el archivo no existe, la página muestra: <em>«Coloca el archivo 1.mp4 en la carpeta assets/video/ del proyecto y vuelve a cargar esta página.»</em> Ver <a href="index.php?pagina=configuracion/personalizar#video-explicativo">Personalizar → Video</a>.</p>
+<p>El reproductor usa <code>assets/video/1.mp4</code>. No inicia automáticamente. Sus controles permiten reproducir, pausar, ajustar volumen y abrir pantalla completa. Es una presentación complementaria; las instrucciones operativas vigentes están en los manuales y esta wiki.</p><figure class="captura"><img src="img/sobre-nosotros-video.webp" alt="Video explicativo integrado" loading="lazy"><figcaption>Video explicativo integrado</figcaption></figure>
+
 <h2 id="esta-wiki">Esta wiki</h2>
-<p>La wiki vive en la carpeta <code>wiki/</code> del mismo proyecto y se abre desde <em>Menú → Información → Wiki</em> o en la dirección <code>…/la-unica/wiki/</code>. Está hecha en PHP plano, igual que la aplicación. Ver <a href="index.php?pagina=tecnico/wiki">Mantener esta wiki</a>.</p>
-<h2 id="otros-documentos-del-proyecto">Otros documentos del proyecto</h2>
-<p>En la carpeta <code>referencias/</code> del repositorio:</p>
-<div class="tabla-wiki"><table>
-<thead>
-<tr>
-<th>Archivo</th>
-<th>Contenido</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><code>SRS.docx</code> / <code>SRS.pdf</code> / <code>SRS.md</code></td>
-<td>Especificación de requisitos <strong>v1.5</strong> (vigente). Resumida en <a href="index.php?pagina=tecnico/requisitos">Requisitos</a>.</td>
-</tr>
-<tr>
-<td><code>manual.docx</code> / <code>manual.pdf</code></td>
-<td>Manual de usuario.</td>
-</tr>
-<tr>
-<td><code>db.sql</code></td>
-<td>Esquema de la base de datos. Explicado en <a href="index.php?pagina=tecnico/base-de-datos">Base de datos</a>.</td>
-</tr>
-</tbody>
-</table></div>
+<p>Se abre desde Sobre nosotros o en <code>…/wiki/</code>. La wiki y el Historial de errores funcionan sin SQL. Las páginas de Sobre nosotros sí cargan la conexión SQL; sus archivos PDF públicos pueden abrirse directamente si el servidor web funciona.</p>
+<h2 id="otros-documentos-del-proyecto">Documentos vigentes</h2>
+<div class="tabla-wiki"><table><thead><tr><th>Archivo</th><th>Versión y contenido</th></tr></thead><tbody><tr><td>SRS.docx / SRS.pdf</td><td>1.6 — requisitos y criterios de aceptación.</td></tr><tr><td>manual.docx / manual.pdf</td><td>2.1 — operación del aplicativo.</td></tr><tr><td>manual_tecnico.docx / manual_tecnico.pdf</td><td>1.4 — instalación, arquitectura y mantenimiento.</td></tr><tr><td>PAC.docx / PAC.pdf</td><td>1.4 — acciones de mejora y estados sustentados.</td></tr><tr><td>db.sql</td><td>Instalación nueva: cinco tablas y cuatro procedimientos.</td></tr></tbody></table></div>

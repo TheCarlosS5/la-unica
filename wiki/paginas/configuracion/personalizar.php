@@ -34,9 +34,9 @@
 <p>Coloca un archivo MP4 en <code>assets/video/1.mp4</code>. La página <em>Sobre nosotros → Video explicativo</em> lo detecta con <code>file_exists()</code>; si falta, muestra un aviso con la instrucción en lugar del reproductor. El video no se reproduce solo.</p>
 <div class="aviso aviso-tip">
 <p class="aviso-titulo">Consejo</p>
-<p>Usa H.264 + AAC para que funcione en cualquier navegador, y mantenlo por debajo de ~100 MB para que GitHub lo acepte.</p>
+<p>Usa un formato de video compatible con los navegadores de la presentación y comprueba imagen, audio y controles en esos navegadores. El recurso actual es un MP4 local; la disponibilidad del archivo no acredita reproducción completa.</p>
 </div>
 <h2 id="manual-de-usuario">Manual de usuario</h2>
 <p><em>Sobre nosotros → Manual del Usuario</em> incrusta <code>referencias/manual.pdf</code>. Para actualizarlo, edita <code>referencias/manual.docx</code>, expórtalo a PDF con el mismo nombre y reemplaza el archivo.</p>
 <h2 id="textos">Textos</h2>
-<p>Los títulos y descripciones de los reportes están centralizados en <code>catalogoReportes()</code> de <code>php/reportes/datos_reportes.php</code>; el resto de textos está directamente en cada vista PHP.</p>
+<p>El catálogo de datos_reportes.php centraliza metadatos auxiliares. Ventas, Unidades y Existencias tienen sus entradas y títulos propios, y el resumen y menú seleccionan las cinco consultas visibles. Revisa esas vistas al cambiar un texto.</p>

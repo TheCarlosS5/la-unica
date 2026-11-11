@@ -16,8 +16,8 @@
 </tr>
 <tr>
 <td>PHP</td>
-<td>8.x recomendado</td>
-<td>Extensiones <code>mysqli</code>, <code>mysqlnd</code>, <code>session</code> y preferiblemente <code>mbstring</code>.</td>
+<td>8.2 o posterior</td>
+<td>Extensiones <code>mysqli</code>, <code>mysqlnd</code>, <code>session</code> y <code>mbstring</code>, todas necesarias.</td>
 </tr>
 <tr>
 <td>MySQL</td>
@@ -48,12 +48,15 @@ git clone https://github.com/TheCarlosS5/la-unica.git</code></pre>
 <p><strong>Revisa la conexión a MySQL.</strong> Por defecto la aplicación usa <code>127.0.0.1</code>, puerto <strong><code>3306</code></strong> (el de Laragon), usuario <code>root</code> sin contraseña. Si tu MySQL es distinto, copia <code>php/config/conexion.local.example.php</code> como <code>conexion.local.php</code> y ajústalo (ver <a href="index.php?pagina=configuracion/base-de-datos">Base de datos</a>).</p>
 </li>
 <li>
-<p><strong>Crea la base de datos</strong> importando <code>referencias/db.sql</code> una sola vez. Con HeidiSQL (<em>Laragon → Database</em>): <strong>Archivo → Ejecutar archivo SQL…</strong> y elige <code>referencias\db.sql</code>. Con la consola:</p>
+<p><strong>Crea una base nueva y exclusiva.</strong> En una copia de <code>referencias/db.sql</code> sustituye <code>CREATE DATABASE la_unica</code> y <code>USE la_unica</code> por el mismo nombre nuevo. Importa esa copia una sola vez. Con HeidiSQL (<em>Laragon → Database</em>): <strong>Archivo → Ejecutar archivo SQL…</strong>. Con la consola, sustituye el puerto y usuario del ejemplo por los de tu equipo:</p>
 <pre class="highlight"><code class="language-powershell">cd C:\laragon\www\la-unica
-mysql -u root -h 127.0.0.1 -P 3306 --default-character-set=utf8mb4 &lt; referencias\db.sql</code></pre>
+mysql -u USUARIO_INSTALACION -h 127.0.0.1 -P 3306 --default-character-set=utf8mb4 --password</code></pre>
+<p>Dentro del cliente SQL, importa la copia preparada con el nombre exclusivo:</p>
+<pre class="highlight"><code class="language-sql">SOURCE C:/ruta/privada/esquema_preparado.sql;</code></pre>
+<p>Configura ese mismo nombre de base en <code>conexion.local.php</code>. No importes sobre una base con datos de otro proyecto.</p>
 </li>
 <li>
-<p><strong>Recomendado: crea el usuario de la aplicación.</strong> Cambia la contraseña dentro de <code>referencias/usuario_app.sql</code>, ejecútalo como <code>root</code> y escribe ese usuario y contraseña en <code>php/config/conexion.local.php</code>. Así la app no trabaja con el administrador de MySQL.</p>
+<p><strong>Recomendado: crea el usuario de la aplicación.</strong> El administrador crea una cuenta con SELECT, INSERT, UPDATE, DELETE y EXECUTE solo sobre esta base y configura sus valores privados en <code>php/config/conexion.local.php</code>. No hay un script usuario_app.sql en esta entrega. Así la app no trabaja con el administrador de MySQL.</p>
 </li>
 <li>
 <p><strong>Limita Apache a este equipo.</strong> La app no tiene usuarios ni contraseñas, así que nadie más en la red debe poder abrirla. En <em>Laragon → Menú → Apache → httpd.conf</em> cambia <code>Listen 80</code> por <code>Listen 127.0.0.1:80</code> y reinicia Apache. El archivo <code>.htaccess</code> del proyecto, además, oculta <code>.git</code>, los scripts SQL y la configuración.</p>
@@ -67,13 +70,13 @@ mysql -u root -h 127.0.0.1 -P 3306 --default-character-set=utf8mb4 &lt; referenc
 <p class="aviso-titulo">Precaución</p>
 <p>El script <code>db.sql</code> empieza con <code>CREATE DATABASE la_unica</code>. Si la base ya existe, fallará. No es un script de actualización ni de reinicio, y <strong>no trae datos de ejemplo</strong>.</p>
 </div>
-<p>¿Quieres datos para probar? Ejecuta además <a href="index.php?pagina=tecnico/wiki#datos-de-ejemplo"><code>wiki/herramientas/datos_ejemplo.sql</code></a> y tendrás clientes, productos y facturas como los de las capturas.</p>
-<p>La wiki queda disponible en la misma instalación, en <code>…/la-unica/wiki/</code> (o <em>Menú → Información → Wiki</em>). No necesita configuración ni base de datos.</p>
+<p>En una base nueva de demostración, ajusta las instrucciones USE al mismo nombre exclusivo antes de importar. ¿Quieres datos para probar? Ejecuta además <a href="index.php?pagina=tecnico/wiki#datos-de-ejemplo"><code>wiki/herramientas/datos_ejemplo.sql</code></a> y tendrás clientes, productos y facturas como los de las capturas.</p>
+<p>La wiki queda disponible en la misma instalación, en <code>…/la-unica/wiki/</code> (desde <em>Sobre nosotros → Wiki</em>). No necesita configuración ni base de datos.</p>
 <h2 id="instalar-sin-laragon-avanzado">Instalar sin Laragon (avanzado)</h2>
 <p>Si ya tienes PHP y MySQL sueltos, puedes usar el servidor embebido de PHP:</p>
 <pre class="highlight"><code class="language-powershell">cd C:\ruta\a\la-unica
 php -S 127.0.0.1:8080 -t .</code></pre>
-<p>y abrir <code>http://127.0.0.1:8080/</code>. Asegúrate de que <code>php -m</code> liste <code>mysqli</code>.</p>
+<p>y abrir <code>http://127.0.0.1:8080/</code>. Asegúrate de que <code>php -m</code> liste las extensiones requeridas. El servidor integrado no aplica las protecciones .htaccess; úsalo solo en pruebas independientes sobre 127.0.0.1.</p>
 <h2 id="estructura-que-debes-tener">Estructura que debes tener</h2>
 <div class="arbol">
 <ul>
@@ -102,7 +105,7 @@ php -S 127.0.0.1:8080 -t .</code></pre>
 <li>referencias/<ul>
 <li>db.sql</li>
 <li>manual.pdf</li>
-<li>SRS.md</li>
+<li>SRS.docx y SRS.pdf</li><li>manual_tecnico.docx y manual_tecnico.pdf</li><li>PAC.docx y PAC.pdf</li><li>QA/ documentación y evidencias fechadas</li>
 </ul>
 </li>
 </ul>
@@ -112,7 +115,7 @@ php -S 127.0.0.1:8080 -t .</code></pre>
 <h2 id="actualizar">Actualizar</h2>
 <div class="pasos">
 <ol>
-<li>Haz una copia de tu base de datos (HeidiSQL → <em>Exportar base de datos como SQL</em>, o <code>mysqldump -u root -P 3306 --routines la_unica &gt; respaldo.sql</code>).</li>
+<li>Haz un respaldo de la base exclusiva con HeidiSQL → <em>Exportar base de datos como SQL</em>. Incluye datos y los cuatro procedimientos. Comprueba usuario, puerto y nombre reales, guarda fuera de la carpeta pública y ensaya la restauración en otra base nueva. El manual técnico incluye un patrón de consola para el entorno comprobado.</li>
 <li>Tu configuración está en <code>php/config/conexion.local.php</code>, que Git no toca. Si en una versión anterior editaste <code>conexion.php</code> directamente, pasa tus valores a <code>conexion.local.php</code>.</li>
 <li>
 <p>Descarga la versión nueva:</p>
@@ -120,21 +123,9 @@ php -S 127.0.0.1:8080 -t .</code></pre>
 git pull</code></pre>
 </li>
 <li>
-<p>Aplica las migraciones nuevas de <code>referencias/migraciones/</code>, en orden y una sola vez. Si tu base se creó antes de que existiera el precio de venta en <code>detalle_facturas</code>, ejecuta <code>001_precio_historico.sql</code>.</p>
+<p>Esta entrega no incluye migraciones automáticas. Si vienes de otro modelo, respalda y revisa un traslado en una base independiente antes de usar los datos. No apliques scripts de versiones anteriores sin revisar sus diferencias.</p>
 </li>
 <li><strong>No</strong> vuelvas a importar <code>db.sql</code> sobre una base existente: es solo para instalaciones nuevas.</li>
 </ol>
 </div>
-<h2 id="desinstalar">Desinstalar</h2>
-<div class="pasos">
-<ol>
-<li>
-<p>Borra la base de datos (esto elimina <strong>todos</strong> los datos):</p>
-<pre class="highlight"><code class="language-sql">DROP DATABASE la_unica;</code></pre>
-</li>
-<li>
-<p>Elimina la carpeta <code>C:\laragon\www\la-unica</code>.</p>
-</li>
-<li>Si creaste el usuario <code>la_unica_app</code>, bórralo con <code>DROP USER 'la_unica_app'@'localhost', 'la_unica_app'@'127.0.0.1';</code>.</li>
-</ol>
-</div>
+<h2 id="desinstalar">Retirar una copia</h2><p>Identifica la carpeta y la base exclusivas de la copia; respalda y comprueba su recuperación antes de retirarla. No borres una base compartida ni la de otro proyecto. La desinstalación es una decisión del responsable; el aplicativo y esta revisión no eliminan datos automáticamente.</p>

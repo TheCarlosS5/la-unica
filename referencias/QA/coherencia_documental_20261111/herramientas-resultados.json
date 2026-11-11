@@ -1,0 +1,8 @@
+{
+  "fecha": "2026-11-11",
+  "sintaxis_generador": "APROBADA",
+  "rechazo_base_sin_prefijo": "APROBADA antes de abrir el servidor",
+  "navegador_ausente": "APROBADA; finaliza con error y cierra el servidor independiente",
+  "capturas_regeneradas": 58,
+  "base_capturas": "la_unica_test_coherencia_wiki_20261111_v8"
+}

@@ -32,7 +32,7 @@
 </tbody>
 </table></div>
 <p><strong>Instructor:</strong> José de Jesús Motta Vargas.</p>
-<p>La rama documentada en esta wiki es <a href="https://github.com/TheCarlosS5/la-unica/tree/revision-samuel" target="_blank" rel="noopener"><code>revision-samuel</code></a>, que reúne la versión funcional revisada (corrección del puerto MySQL, el menú, la sección «Sobre nosotros» y limpieza de archivos huérfanos).</p>
+<p>Esta revisión documenta la rama <a href="https://github.com/TheCarlosS5/la-unica/tree/main" target="_blank" rel="noopener"><code>main</code></a>. El historial Git conserva los aportes y versiones anteriores. Las responsabilidades del equipo se describen en el SRS 1.6.</p>
 <h2 id="recursos-de-terceros">Recursos de terceros</h2>
 <div class="tabla-wiki"><table>
 <thead>

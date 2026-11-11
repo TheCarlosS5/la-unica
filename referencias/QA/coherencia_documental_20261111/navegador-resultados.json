@@ -1,0 +1,286 @@
+{
+  "fecha": "2026-11-11",
+  "navegador": "157.0.8103.50",
+  "paginas": [
+    {
+      "pagina": "guia/introduccion",
+      "http": 200,
+      "titulo": "Bienvenido a la wiki de La Única",
+      "ancho": 1440,
+      "anchoDocumento": 1440,
+      "imagenes": [],
+      "secciones": 4
+    },
+    {
+      "pagina": "guia/instalacion",
+      "http": 200,
+      "titulo": "Instalar / Actualizar / Desinstalar",
+      "ancho": 1440,
+      "anchoDocumento": 1440,
+      "imagenes": [],
+      "secciones": 6
+    },
+    {
+      "pagina": "guia/primeros-pasos",
+      "http": 200,
+      "titulo": "Primeros pasos",
+      "ancho": 1440,
+      "anchoDocumento": 1440,
+      "imagenes": [],
+      "secciones": 5
+    },
+    {
+      "pagina": "guia/clientes",
+      "http": 200,
+      "titulo": "Clientes",
+      "ancho": 1440,
+      "anchoDocumento": 1440,
+      "imagenes": [],
+      "secciones": 8
+    },
+    {
+      "pagina": "guia/productos",
+      "http": 200,
+      "titulo": "Productos",
+      "ancho": 1440,
+      "anchoDocumento": 1440,
+      "imagenes": [],
+      "secciones": 5
+    },
+    {
+      "pagina": "guia/facturas",
+      "http": 200,
+      "titulo": "Facturas",
+      "ancho": 1440,
+      "anchoDocumento": 1440,
+      "imagenes": [],
+      "secciones": 8
+    },
+    {
+      "pagina": "guia/reportes",
+      "http": 200,
+      "titulo": "Reportes",
+      "ancho": 1440,
+      "anchoDocumento": 1440,
+      "imagenes": [],
+      "secciones": 10
+    },
+    {
+      "pagina": "guia/sobre-nosotros",
+      "http": 200,
+      "titulo": "Sobre nosotros y ayuda",
+      "ancho": 1440,
+      "anchoDocumento": 1440,
+      "imagenes": [],
+      "secciones": 4
+    },
+    {
+      "pagina": "guia/movil",
+      "http": 200,
+      "titulo": "En celular y tableta",
+      "ancho": 1440,
+      "anchoDocumento": 1440,
+      "imagenes": [],
+      "secciones": 2
+    },
+    {
+      "pagina": "configuracion/base-de-datos",
+      "http": 200,
+      "titulo": "Conexión a la base de datos",
+      "ancho": 1440,
+      "anchoDocumento": 1440,
+      "imagenes": [],
+      "secciones": 5
+    },
+    {
+      "pagina": "configuracion/servidor",
+      "http": 200,
+      "titulo": "Servidor y entorno",
+      "ancho": 1440,
+      "anchoDocumento": 1440,
+      "imagenes": [],
+      "secciones": 7
+    },
+    {
+      "pagina": "configuracion/personalizar",
+      "http": 200,
+      "titulo": "Personalizar",
+      "ancho": 1440,
+      "anchoDocumento": 1440,
+      "imagenes": [],
+      "secciones": 7
+    },
+    {
+      "pagina": "guia/problemas",
+      "http": 200,
+      "titulo": "Solución de problemas",
+      "ancho": 1440,
+      "anchoDocumento": 1440,
+      "imagenes": [],
+      "secciones": 14
+    },
+    {
+      "pagina": "guia/faq",
+      "http": 200,
+      "titulo": "Preguntas frecuentes",
+      "ancho": 1440,
+      "anchoDocumento": 1440,
+      "imagenes": [],
+      "secciones": 16
+    },
+    {
+      "pagina": "guia/mensajes",
+      "http": 200,
+      "titulo": "Catálogo de mensajes",
+      "ancho": 1440,
+      "anchoDocumento": 1440,
+      "imagenes": [],
+      "secciones": 5
+    },
+    {
+      "pagina": "tecnico/arquitectura",
+      "http": 200,
+      "titulo": "Arquitectura",
+      "ancho": 1440,
+      "anchoDocumento": 1440,
+      "imagenes": [],
+      "secciones": 6
+    },
+    {
+      "pagina": "tecnico/estructura",
+      "http": 200,
+      "titulo": "Estructura de carpetas",
+      "ancho": 1440,
+      "anchoDocumento": 1440,
+      "imagenes": [],
+      "secciones": 2
+    },
+    {
+      "pagina": "tecnico/base-de-datos",
+      "http": 200,
+      "titulo": "Base de datos",
+      "ancho": 1440,
+      "anchoDocumento": 1440,
+      "imagenes": [],
+      "secciones": 6
+    },
+    {
+      "pagina": "tecnico/flujo-de-ventas",
+      "http": 200,
+      "titulo": "Flujo de ventas y cancelaciones",
+      "ancho": 1440,
+      "anchoDocumento": 1440,
+      "imagenes": [],
+      "secciones": 4
+    },
+    {
+      "pagina": "tecnico/reportes",
+      "http": 200,
+      "titulo": "Cómo funcionan los reportes",
+      "ancho": 1440,
+      "anchoDocumento": 1440,
+      "imagenes": [],
+      "secciones": 5
+    },
+    {
+      "pagina": "tecnico/seguridad",
+      "http": 200,
+      "titulo": "Seguridad",
+      "ancho": 1440,
+      "anchoDocumento": 1440,
+      "imagenes": [],
+      "secciones": 9
+    },
+    {
+      "pagina": "tecnico/funciones",
+      "http": 200,
+      "titulo": "Referencia de funciones",
+      "ancho": 1440,
+      "anchoDocumento": 1440,
+      "imagenes": [],
+      "secciones": 4
+    },
+    {
+      "pagina": "tecnico/interfaz",
+      "http": 200,
+      "titulo": "Interfaz (CSS y JS)",
+      "ancho": 1440,
+      "anchoDocumento": 1440,
+      "imagenes": [],
+      "secciones": 6
+    },
+    {
+      "pagina": "tecnico/requisitos",
+      "http": 200,
+      "titulo": "Requisitos (SRS 1.6)",
+      "ancho": 1440,
+      "anchoDocumento": 1440,
+      "imagenes": [],
+      "secciones": 3
+    },
+    {
+      "pagina": "tecnico/contribuir",
+      "http": 200,
+      "titulo": "Contribuir al proyecto",
+      "ancho": 1440,
+      "anchoDocumento": 1440,
+      "imagenes": [],
+      "secciones": 4
+    },
+    {
+      "pagina": "tecnico/releases",
+      "http": 200,
+      "titulo": "Publicar un release",
+      "ancho": 1440,
+      "anchoDocumento": 1440,
+      "imagenes": [],
+      "secciones": 3
+    },
+    {
+      "pagina": "tecnico/wiki",
+      "http": 200,
+      "titulo": "Mantener esta wiki",
+      "ancho": 1440,
+      "anchoDocumento": 1440,
+      "imagenes": [],
+      "secciones": 6
+    },
+    {
+      "pagina": "general/creditos",
+      "http": 200,
+      "titulo": "Créditos",
+      "ancho": 1440,
+      "anchoDocumento": 1440,
+      "imagenes": [],
+      "secciones": 3
+    },
+    {
+      "pagina": "general/novedades",
+      "http": 200,
+      "titulo": "Historial del proyecto",
+      "ancho": 1440,
+      "anchoDocumento": 1440,
+      "imagenes": [],
+      "secciones": 3
+    },
+    {
+      "pagina": "guia/reportes",
+      "movil": true,
+      "ancho": 390,
+      "anchoDocumento": 390
+    },
+    {
+      "pagina": "guia/facturas",
+      "movil": true,
+      "ancho": 390,
+      "anchoDocumento": 390
+    },
+    {
+      "pagina": "tecnico/funciones",
+      "movil": true,
+      "ancho": 390,
+      "anchoDocumento": 390
+    }
+  ],
+  "erroresJavaScript": []
+}
