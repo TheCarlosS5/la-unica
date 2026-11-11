@@ -1,18 +1,4 @@
 <?php
-/*
- * ============================================================================
- * MODULO  VENTAS Y FACTURAS
- * ============================================================================
- * Relaciona un cliente con sus productos y cantidades. Las ventas guardan nombres y
- * precios históricos; la cancelación del mismo día repone el inventario una sola
- * vez. Las transacciones mantienen juntos los cambios y su historial.
- *
- * RESPONSABILIDAD DE ESTE ARCHIVO
- * Valida las líneas de venta, bloquea y comprueba existencias y confirma factura,
- * detalle, inventario e historial en una transacción.
- * ============================================================================
- */
-
 /**
  * Archivo: crear_factura.php
  * Módulo: Facturas — registro de ventas.
@@ -48,12 +34,6 @@ if (sesionDisponible() && isset($_SESSION['factura_creada']) && is_array($_SESSI
         . formatearMonedaCop($facturaCreada['total'] ?? '0.00') . '.';
 }
 
-/*
- * ============================================================================
- * PROCESAMIENTO DEL FORMULARIO
- * Valida la solicitud y sus campos antes de ejecutar la operación; conserva los mensajes y valores que la página necesita presentar.
- * ============================================================================
- */
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $clienteSeleccionado = leerTexto($_POST, 'id_cliente');
     $idClienteValido = validarId($clienteSeleccionado);
@@ -229,12 +209,6 @@ foreach ($productos as $producto) {
         . ($stockProducto < 1 ? ' disabled' : '') . '>' . h($etiqueta) . '</option>';
 }
 
-/*
- * ============================================================================
- * PRESENTACION DEL MODULO
- * Con los datos y mensajes preparados, carga la navegación compartida y presenta el contenido de esta pantalla.
- * ============================================================================
- */
 require __DIR__ . '/../includes/menu.php';
 ?>
 <div class="encabezado-vista">

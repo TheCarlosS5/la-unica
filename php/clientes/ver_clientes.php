@@ -1,17 +1,4 @@
 <?php
-/*
- * ============================================================================
- * MODULO  CLIENTES
- * ============================================================================
- * Administra la información de los compradores: registro, búsqueda, edición del
- * nombre y eliminación cuando no hay facturas relacionadas. La fecha es automática y
- * el documento identifica al cliente.
- *
- * RESPONSABILIDAD DE ESTE ARCHIVO
- * Lista compradores, permite buscar y muestra la cantidad de facturas relacionadas.
- * ============================================================================
- */
-
 /**
  * Archivo: ver_clientes.php
  * Módulo: Clientes — consulta.
@@ -67,12 +54,6 @@ try {
 
 $mensajeTexto = leerTexto($_GET, 'mensaje');
 
-/*
- * ============================================================================
- * PRESENTACION DEL MODULO
- * Con los datos y mensajes preparados, carga la navegación compartida y presenta el contenido de esta pantalla.
- * ============================================================================
- */
 require __DIR__ . '/../includes/menu.php';
 ?>
 <div class="encabezado-vista acciones-superiores">

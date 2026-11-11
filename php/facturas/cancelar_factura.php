@@ -1,18 +1,4 @@
 <?php
-/*
- * ============================================================================
- * MODULO  VENTAS Y FACTURAS
- * ============================================================================
- * Relaciona un cliente con sus productos y cantidades. Las ventas guardan nombres y
- * precios históricos; la cancelación del mismo día repone el inventario una sola
- * vez. Las transacciones mantienen juntos los cambios y su historial.
- *
- * RESPONSABILIDAD DE ESTE ARCHIVO
- * Confirma la solicitud y comprueba fecha y estado antes de reponer existencias y
- * cancelar una sola vez.
- * ============================================================================
- */
-
 /**
  * Archivo: cancelar_factura.php
  * Módulo: Facturas — cancelación.
@@ -86,13 +72,7 @@ if (($_POST['confirmar'] ?? '') !== 'si') {
     $titulo = 'Cancelar factura';
     $seccionActiva = 'facturas';
     $tokenCsrf = obtenerTokenCsrf();
-    /*
- * ============================================================================
- * PRESENTACION DEL MODULO
- * Con los datos y mensajes preparados, carga la navegación compartida y presenta el contenido de esta pantalla.
- * ============================================================================
- */
-require __DIR__ . '/../includes/menu.php';
+    require __DIR__ . '/../includes/menu.php';
     ?>
 <div class="encabezado-vista">
     <div class="encabezado-info">

@@ -1,17 +1,4 @@
 <?php
-/*
- * ============================================================================
- * MODULO  VENTAS Y FACTURAS
- * ============================================================================
- * Relaciona un cliente con sus productos y cantidades. Las ventas guardan nombres y
- * precios históricos; la cancelación del mismo día repone el inventario una sola
- * vez. Las transacciones mantienen juntos los cambios y su historial.
- *
- * RESPONSABILIDAD DE ESTE ARCHIVO
- * Busca y lista comprobantes por los filtros admitidos, conservando la consulta del historial.
- * ============================================================================
- */
-
 /**
  * Archivo: ver_facturas.php
  * Módulo: Facturas — consulta.
@@ -107,12 +94,6 @@ if ($errorFiltro === '') {
     }
 }
 
-/*
- * ============================================================================
- * PRESENTACION DEL MODULO
- * Con los datos y mensajes preparados, carga la navegación compartida y presenta el contenido de esta pantalla.
- * ============================================================================
- */
 require __DIR__ . '/../includes/menu.php';
 ?>
 <div class="encabezado-vista acciones-superiores">

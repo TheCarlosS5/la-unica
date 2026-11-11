@@ -1,17 +1,4 @@
 <?php
-/*
- * ============================================================================
- * MODULO  PRODUCTOS E INVENTARIO
- * ============================================================================
- * Mantiene el catálogo con nombre, unidad, existencias y precio. Las consultas
- * permiten revisar disponibilidad; las operaciones validan los datos y protegen
- * productos que ya forman parte de una venta.
- *
- * RESPONSABILIDAD DE ESTE ARCHIVO
- * Valida nombre, unidad, stock y precio antes de añadir el artículo al catálogo.
- * ============================================================================
- */
-
 /**
  * Archivo: crear_producto.php
  * Módulo: Productos — alta.
@@ -35,12 +22,6 @@ $unidadMedida = '';
 $stockInicial = '';
 $precioUnitario = '';
 
-/*
- * ============================================================================
- * PROCESAMIENTO DEL FORMULARIO
- * Valida la solicitud y sus campos antes de ejecutar la operación; conserva los mensajes y valores que la página necesita presentar.
- * ============================================================================
- */
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Se conservan los valores escritos para devolverlos al formulario si hay un error.
     $nombreProducto = leerTexto($_POST, 'nombre');
@@ -82,12 +63,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 
-/*
- * ============================================================================
- * PRESENTACION DEL MODULO
- * Con los datos y mensajes preparados, carga la navegación compartida y presenta el contenido de esta pantalla.
- * ============================================================================
- */
 require __DIR__ . '/../includes/menu.php';
 ?>
 <div class="encabezado-vista">

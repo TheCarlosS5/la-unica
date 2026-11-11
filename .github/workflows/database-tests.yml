@@ -77,3 +77,16 @@ jobs:
 
       - name: Test actual HTTP application flows
         run: python3 tests/functional.py
+
+      - name: Test concurrent operations, performance and safe errors
+        env:
+          QA_REPORT_PATH: qa-results/advanced-results.json
+        run: python3 tests/advanced.py
+
+      - name: Preserve validation evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: validation-results
+          path: qa-results/advanced-results.json
+          if-no-files-found: ignore

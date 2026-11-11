@@ -1,18 +1,4 @@
 <?php
-/*
- * ============================================================================
- * MODULO  HISTORIAL Y DIAGNOSTICO
- * ============================================================================
- * Permite consultar las acciones realizadas y los errores registrados. El historial
- * de acciones usa SQL; el de errores lee un archivo para seguir disponible cuando
- * falla la conexión a la base.
- *
- * RESPONSABILIDAD DE ESTE ARCHIVO
- * Consulta las operaciones registradas y permite filtrar el historial sin ofrecer
- * borrado desde la interfaz.
- * ============================================================================
- */
-
 /**
  * Archivo: acciones.php
  * Módulo: Historial — log general de acciones.
@@ -57,12 +43,6 @@ if (!validarFecha($desde) || !validarFecha($hasta)) {
     }
 }
 
-/*
- * ============================================================================
- * PRESENTACION DEL MODULO
- * Con los datos y mensajes preparados, carga la navegación compartida y presenta el contenido de esta pantalla.
- * ============================================================================
- */
 require __DIR__ . '/../includes/menu.php';
 ?>
 <div class="encabezado-vista">

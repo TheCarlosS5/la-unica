@@ -1,17 +1,4 @@
 <?php
-/*
- * ============================================================================
- * MODULO  CLIENTES
- * ============================================================================
- * Administra la información de los compradores: registro, búsqueda, edición del
- * nombre y eliminación cuando no hay facturas relacionadas. La fecha es automática y
- * el documento identifica al cliente.
- *
- * RESPONSABILIDAD DE ESTE ARCHIVO
- * Recibe documento y nombre; valida la solicitud antes de registrar al comprador.
- * ============================================================================
- */
-
 /**
  * Archivo: crear_cliente.php
  * Módulo: Clientes — alta.
@@ -33,12 +20,6 @@ $tokenCsrf = obtenerTokenCsrf();
 $idCliente = '';
 $nombreCliente = '';
 
-/*
- * ============================================================================
- * PROCESAMIENTO DEL FORMULARIO
- * Valida la solicitud y sus campos antes de ejecutar la operación; conserva los mensajes y valores que la página necesita presentar.
- * ============================================================================
- */
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Se conservan los valores escritos para devolverlos al formulario si hay un error.
     $idCliente = leerTexto($_POST, 'id_cliente');
@@ -90,12 +71,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 
-/*
- * ============================================================================
- * PRESENTACION DEL MODULO
- * Con los datos y mensajes preparados, carga la navegación compartida y presenta el contenido de esta pantalla.
- * ============================================================================
- */
 require __DIR__ . '/../includes/menu.php';
 ?>
 <div class="encabezado-vista">

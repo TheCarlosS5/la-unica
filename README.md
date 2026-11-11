@@ -34,11 +34,11 @@ No reimportar el esquema sobre una base existente. Esta publicación cambia el m
 
 - [SRS 1.5 en Word](referencias/SRS.docx) y [PDF completo](referencias/SRS.pdf).
 - [Manual de usuario 2.0 en Word](referencias/manual.docx) y [PDF](referencias/manual.pdf).
-- [Manual técnico 1.2 en Word](referencias/manual_tecnico.docx) y [PDF](referencias/manual_tecnico.pdf).
-- [PAC 1.2 en Word](referencias/PAC.docx) y [PDF](referencias/PAC.pdf).
+- [Manual técnico 1.3 en Word](referencias/manual_tecnico.docx) y [PDF](referencias/manual_tecnico.pdf).
+- [PAC 1.3 en Word](referencias/PAC.docx) y [PDF](referencias/PAC.pdf).
 - [Wiki](wiki/): instrucciones vigentes y material histórico identificado en desplegables. Las capturas heredadas pueden mostrar otra versión.
 
-Los PDF de SRS, manuales y PAC se muestran dentro de Sobre nosotros; SRS también ofrece descarga Word. Los documentos 1.2 incorporan la configuración portable y el estado de publicación. El SRS y el manual de usuario mantienen sus versiones originales; no se declara aceptación total de requisitos por haber publicado el código.
+Los PDF de SRS, manuales y PAC se muestran dentro de Sobre nosotros; SRS también ofrece descarga Word. El manual técnico y el PAC 1.3 documentan la configuración modular, el diagnóstico seguro y las pruebas de concurrencia y rendimiento. La wiki contiene 29 artículos actuales. El SRS y el manual de usuario mantienen sus versiones originales; no se declara aceptación total de requisitos por haber publicado el código.
 
 ## Imprimir y guardar reportes
 
@@ -50,11 +50,13 @@ Se verificaron PDF con el motor de Brave, incluidos inventarios de varias págin
 
 `composer install` y `composer test:database` ejecutan PHPUnit con una base cuyo nombre debe comenzar por `la_unica_test`. Ver [tests/README.md](tests/README.md). `python tests/functional.py` inicia un servidor PHP aislado y verifica el flujo real por HTTP contra esa base de pruebas. Requiere cargar previamente los datos de ejemplo y definir las variables DB_TEST indicadas en ese documento. Usar una base nueva en cada ejecución.
 
-GitHub Actions comprueba sintaxis PHP/JavaScript, esquema, restricciones, reportes y flujos HTTP sobre MariaDB. Se retiró la prueba de migración del esquema anterior porque esta versión no incluye esa migración. Los tests anteriores permanecen en el historial Git.
+`python tests/advanced.py` añade ventas y cancelaciones concurrentes con dos servidores y bloqueo real, 60 búsquedas con 1000 registros por entidad y comprobaciones de errores seguros y wiki. Ver [evidencias y límites](referencias/REVISION_TECNICA.md).
+
+GitHub Actions ejecuta sintaxis PHP/JavaScript, esquema, restricciones, reportes, flujos HTTP y la batería ampliada sobre MariaDB; conserva sus resultados como artefacto del workflow. Se retiró la prueba de migración del esquema anterior porque esta versión no incluye esa migración. Los tests anteriores permanecen en el historial Git.
 
 ## Protección y límites
 
-`.htaccess` impide servir configuración, Git, pruebas, logs y scripts SQL; permite los PDF y Word públicos del proyecto. Estas reglas requieren Apache/AllowOverride. La aplicación no tiene control de acceso: mantener Apache y SQL restringidos al equipo local. El PAC registra como pendiente la exposición de detalles técnicos en los errores de conexión, y las verificaciones exhaustivas de carga y concurrencia.
+`.htaccess` impide servir configuración, Git, pruebas, logs y scripts SQL; permite los PDF y Word públicos del proyecto. Estas reglas requieren Apache/AllowOverride. La aplicación no tiene control de acceso: mantener Apache y SQL restringidos al equipo local. Los fallos de conexión y configuración responden HTTP 500 con un mensaje general; el diagnóstico queda en el log local. Las pruebas cubren el volumen y los escenarios medidos; el PAC conserva las tareas de aceptación y mantenimiento que requieren seguimiento del equipo.
 
 ## Estructura del proyecto
 
@@ -74,7 +76,13 @@ assets/                               Recursos visuales del aplicativo
   js/facturas.js                      Filas, cantidades y total estimado de la venta
   video/1.mp4                         Video explicativo integrado
 php/                                  Módulos y plantillas PHP
-  config/conexion.php                 Conexión SQL, validaciones, CSRF e historial
+  config/conexion.php                 Arranque y conexión SQL de cada página
+  config/configuracion.php            Valores privados y variables DB_*
+  config/entorno.php                  Zona horaria, constantes y URL base
+  config/utilidades.php               Validación, escape HTML y formato
+  config/seguridad.php                Sesión y tokens CSRF
+  config/consultas.php                Historial y procedimientos almacenados
+  config/errores.php                  Diagnóstico local y respuestas seguras
   config/conexion.local.example.php   Ejemplo de configuración privada del equipo
   includes/                           Menú, cabecera y pie compartidos
   inicio/                             Portada y accesos a los módulos
@@ -94,6 +102,8 @@ tests/                                Pruebas sobre una base de datos exclusiva
   bootstrap.php                       Conexión protegida para las pruebas
   Integration/                        Pruebas PHPUnit de esquema, reglas y reportes
   functional.py                       Flujos reales por HTTP con servidor PHP aislado
+  advanced.py                         Concurrencia, rendimiento, errores y wiki
+  lock_fixture.php                    Bloqueo de filas exclusivo de pruebas
   README.md                           Preparación y ejecución de las pruebas
 referencias/                          Esquema, ejemplos y documentos del proyecto
   db.sql                              Cinco tablas y cuatro procedimientos; instalación nueva
@@ -101,9 +111,9 @@ referencias/                          Esquema, ejemplos y documentos del proyect
   productos_prueba.sql                Treinta productos ficticios para demostración
   SRS.docx / SRS.pdf                  Especificación de requisitos, versión 1.5
   manual.docx / manual.pdf            Manual del usuario, versión 2.0
-  manual_tecnico.docx / .pdf          Manual técnico, versión 1.2
-  PAC.docx / PAC.pdf                  Plan de Acción de Mejora Continua, versión 1.2
-  QA/                                 Evidencias históricas de la versión anterior
+  manual_tecnico.docx / .pdf          Manual técnico, versión 1.3
+  PAC.docx / PAC.pdf                  Plan de Acción de Mejora Continua, versión 1.3
+  QA/                                 Evidencias actuales e históricas identificadas
 logs/                                 Diagnóstico local; los archivos .log no se publican
 RELEASE.md                            Notas de publicación y diferencias con versiones previas
 ```

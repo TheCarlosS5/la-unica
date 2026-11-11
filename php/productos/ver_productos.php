@@ -1,17 +1,4 @@
 <?php
-/*
- * ============================================================================
- * MODULO  PRODUCTOS E INVENTARIO
- * ============================================================================
- * Mantiene el catálogo con nombre, unidad, existencias y precio. Las consultas
- * permiten revisar disponibilidad; las operaciones validan los datos y protegen
- * productos que ya forman parte de una venta.
- *
- * RESPONSABILIDAD DE ESTE ARCHIVO
- * Permite buscar y revisar el catálogo, su precio y las existencias disponibles.
- * ============================================================================
- */
-
 /**
  * Archivo: ver_productos.php
  * Módulo: Productos — consulta.
@@ -67,12 +54,6 @@ try {
 
 $mensajeTexto = leerTexto($_GET, 'mensaje');
 
-/*
- * ============================================================================
- * PRESENTACION DEL MODULO
- * Con los datos y mensajes preparados, carga la navegación compartida y presenta el contenido de esta pantalla.
- * ============================================================================
- */
 require __DIR__ . '/../includes/menu.php';
 ?>
 <div class="encabezado-vista acciones-superiores">

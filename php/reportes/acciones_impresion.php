@@ -1,19 +1,4 @@
 <?php
-/*
- * ============================================================================
- * MODULO  REPORTES E IMPRESION
- * ============================================================================
- * Transforma los datos de ventas, clientes e inventario en consultas para revisar la
- * tienda. Las consultas conservan las reglas de cada reporte; la presentación ofrece
- * impresión y guardado PDF mediante el navegador.
- *
- * RESPONSABILIDAD DE ESTE ARCHIVO
- * Añade los controles de impresión y las reglas de página: encabezado, período,
- * tablas, numeración y orientación del papel. El PDF se guarda desde el diálogo
- * nativo.
- * ============================================================================
- */
-
 /** Controles de impresión y PDF nativo para la consulta actualmente visible. */
 if (!isset($seccionActiva) || $seccionActiva !== 'reportes') {
     http_response_code(404);

@@ -1,18 +1,4 @@
 <?php
-/*
- * ============================================================================
- * MODULO  REPORTES E IMPRESION
- * ============================================================================
- * Transforma los datos de ventas, clientes e inventario en consultas para revisar la
- * tienda. Las consultas conservan las reglas de cada reporte; la presentación ofrece
- * impresión y guardado PDF mediante el navegador.
- *
- * RESPONSABILIDAD DE ESTE ARCHIVO
- * Recibe una clave de reporte, consulta sus filas y genera una tabla con formatos y
- * escape HTML.
- * ============================================================================
- */
-
 /**
  * Archivo: reporte_individual.php
  * Módulo: Reportes — plantilla individual reutilizable.
@@ -46,12 +32,6 @@ try {
     $errorLectura = true;
 }
 
-/*
- * ============================================================================
- * PRESENTACION DEL MODULO
- * Con los datos y mensajes preparados, carga la navegación compartida y presenta el contenido de esta pantalla.
- * ============================================================================
- */
 require __DIR__ . '/../includes/menu.php';
 require __DIR__ . '/acciones_impresion.php';
 ?>

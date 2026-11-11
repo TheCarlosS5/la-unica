@@ -1,17 +1,4 @@
 <?php
-/*
- * ============================================================================
- * MODULO  REPORTES E IMPRESION
- * ============================================================================
- * Transforma los datos de ventas, clientes e inventario en consultas para revisar la
- * tienda. Las consultas conservan las reglas de cada reporte; la presentación ofrece
- * impresión y guardado PDF mediante el navegador.
- *
- * RESPONSABILIDAD DE ESTE ARCHIVO
- * Muestra indicadores del día y los accesos a los cinco reportes útiles de esta copia.
- * ============================================================================
- */
-
 /**
  * Archivo: ver_reportes.php
  * Módulo: Reportes — resumen del día.
@@ -58,12 +45,6 @@ if (!$errorLectura) {
     }
 }
 
-/*
- * ============================================================================
- * PRESENTACION DEL MODULO
- * Con los datos y mensajes preparados, carga la navegación compartida y presenta el contenido de esta pantalla.
- * ============================================================================
- */
 require __DIR__ . '/../includes/menu.php';
 require __DIR__ . '/acciones_impresion.php';
 ?>

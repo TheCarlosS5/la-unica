@@ -1,18 +1,4 @@
 <?php
-/*
- * ============================================================================
- * MODULO  REPORTES E IMPRESION
- * ============================================================================
- * Transforma los datos de ventas, clientes e inventario en consultas para revisar la
- * tienda. Las consultas conservan las reglas de cada reporte; la presentación ofrece
- * impresión y guardado PDF mediante el navegador.
- *
- * RESPONSABILIDAD DE ESTE ARCHIVO
- * Ordena los productos por stock, identifica agotados y bajos y calcula el valor del
- * inventario actual.
- * ============================================================================
- */
-
 /**
  * Archivo: existencias_productos.php
  * Módulo: Reportes — existencias de productos.
@@ -48,12 +34,6 @@ foreach ($productos as $producto) {
     }
 }
 
-/*
- * ============================================================================
- * PRESENTACION DEL MODULO
- * Con los datos y mensajes preparados, carga la navegación compartida y presenta el contenido de esta pantalla.
- * ============================================================================
- */
 require __DIR__ . '/../includes/menu.php';
 require __DIR__ . '/acciones_impresion.php';
 ?>

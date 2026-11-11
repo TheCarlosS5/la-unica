@@ -1,18 +1,4 @@
 <?php
-/*
- * ============================================================================
- * MODULO  DOCUMENTACION Y AYUDA
- * ============================================================================
- * Reúne SRS, manuales, PAC, wiki y video. Los documentos se consultan dentro de la
- * interfaz; los PDF utilizan una huella de contenido para actualizar su enlace
- * cuando se reemplaza el archivo.
- *
- * RESPONSABILIDAD DE ESTE ARCHIVO
- * Presenta las tarjetas de acceso a SRS, manuales, PAC, video y wiki dentro de la
- * sección de ayuda.
- * ============================================================================
- */
-
 /**
  * Archivo: index.php
  * Módulo: Sobre nosotros.
@@ -24,12 +10,6 @@ require __DIR__ . '/../config/conexion.php';
 
 $titulo = 'Sobre nosotros';
 $seccionActiva = 'sobre_nosotros';
-/*
- * ============================================================================
- * PRESENTACION DEL MODULO
- * Con los datos y mensajes preparados, carga la navegación compartida y presenta el contenido de esta pantalla.
- * ============================================================================
- */
 require __DIR__ . '/../includes/menu.php';
 ?>
 

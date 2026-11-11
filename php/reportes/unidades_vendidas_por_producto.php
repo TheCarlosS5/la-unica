@@ -1,18 +1,4 @@
 <?php
-/*
- * ============================================================================
- * MODULO  REPORTES E IMPRESION
- * ============================================================================
- * Transforma los datos de ventas, clientes e inventario en consultas para revisar la
- * tienda. Las consultas conservan las reglas de cada reporte; la presentación ofrece
- * impresión y guardado PDF mediante el navegador.
- *
- * RESPONSABILIDAD DE ESTE ARCHIVO
- * Resume cantidades e importes vendidos por producto dentro del rango consultado;
- * solo suman facturas Pagado.
- * ============================================================================
- */
-
 /**
  * Archivo: unidades_vendidas_por_producto.php
  * Módulo: Reportes — unidades vendidas por producto.
@@ -48,12 +34,6 @@ if (!validarFecha($desde) || !validarFecha($hasta)) {
 $totalUnidades = array_sum(array_column($productos, 'unidades_vendidas'));
 $totalVendido = array_sum(array_map('floatval', array_column($productos, 'total_vendido')));
 
-/*
- * ============================================================================
- * PRESENTACION DEL MODULO
- * Con los datos y mensajes preparados, carga la navegación compartida y presenta el contenido de esta pantalla.
- * ============================================================================
- */
 require __DIR__ . '/../includes/menu.php';
 require __DIR__ . '/acciones_impresion.php';
 ?>

@@ -1,16 +1,4 @@
 <?php
-/*
- * ============================================================================
- * MODULO  INICIO DEL APLICATIVO
- * ============================================================================
- * Presenta los accesos principales y orienta al operador hacia clientes, productos,
- * facturas, reportes e información del proyecto.
- *
- * RESPONSABILIDAD DE ESTE ARCHIVO
- * Delega la pantalla de entrada al módulo de Inicio.
- * ============================================================================
- */
-
 /**
  * Archivo: main.php
  * Módulo: Enrutamiento inicial.

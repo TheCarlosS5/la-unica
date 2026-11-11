@@ -1,18 +1,4 @@
 <?php
-/*
- * ============================================================================
- * MODULO  ESTRUCTURA VISUAL COMPARTIDA
- * ============================================================================
- * Construye las partes comunes de las pantallas: navegación, encabezado, contenido y
- * pie. Las páginas del módulo preparan sus variables antes de cargar la plantilla
- * correspondiente.
- *
- * RESPONSABILIDAD DE ESTE ARCHIVO
- * Genera el menú, la cabecera y el inicio del área de contenido; resalta la página
- * seleccionada.
- * ============================================================================
- */
-
 /**
  * Archivo: menu.php
  * Módulo: Plantilla compartida de navegación.

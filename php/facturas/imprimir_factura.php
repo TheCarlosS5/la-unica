@@ -1,18 +1,4 @@
 <?php
-/*
- * ============================================================================
- * MODULO  VENTAS Y FACTURAS
- * ============================================================================
- * Relaciona un cliente con sus productos y cantidades. Las ventas guardan nombres y
- * precios históricos; la cancelación del mismo día repone el inventario una sola
- * vez. Las transacciones mantienen juntos los cambios y su historial.
- *
- * RESPONSABILIDAD DE ESTE ARCHIVO
- * Presenta el comprobante con los datos históricos, importes y acciones disponibles
- * para esa venta.
- * ============================================================================
- */
-
 /**
  * Archivo: imprimir_factura.php
  * Módulo: Facturas — consulta y comprobante.
@@ -97,12 +83,6 @@ if ($idFactura === null) {
 
 $titulo = $idFactura === null ? 'Comprobante' : 'Factura #' . $idFactura;
 $seccionActiva = 'facturas';
-/*
- * ============================================================================
- * PRESENTACION DEL MODULO
- * Con los datos y mensajes preparados, carga la navegación compartida y presenta el contenido de esta pantalla.
- * ============================================================================
- */
 require __DIR__ . '/../includes/menu.php';
 ?>
 <div class="encabezado-vista acciones-superiores solo-pantalla">

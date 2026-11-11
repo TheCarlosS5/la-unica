@@ -1,17 +1,4 @@
 <?php
-/*
- * ============================================================================
- * MODULO  CLIENTES
- * ============================================================================
- * Administra la información de los compradores: registro, búsqueda, edición del
- * nombre y eliminación cuando no hay facturas relacionadas. La fecha es automática y
- * el documento identifica al cliente.
- *
- * RESPONSABILIDAD DE ESTE ARCHIVO
- * Carga un cliente existente y permite corregir únicamente su nombre.
- * ============================================================================
- */
-
 /**
  * Archivo: editar_cliente.php
  * Módulo: Clientes — edición.
@@ -57,12 +44,6 @@ if (!$existe) {
 
 $nombreFormulario = $nombreCliente;
 
-/*
- * ============================================================================
- * PROCESAMIENTO DEL FORMULARIO
- * Valida la solicitud y sus campos antes de ejecutar la operación; conserva los mensajes y valores que la página necesita presentar.
- * ============================================================================
- */
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $nombreLimpio = leerTexto($_POST, 'nombre');
     $nombreFormulario = $nombreLimpio;
@@ -92,12 +73,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 
-/*
- * ============================================================================
- * PRESENTACION DEL MODULO
- * Con los datos y mensajes preparados, carga la navegación compartida y presenta el contenido de esta pantalla.
- * ============================================================================
- */
 require __DIR__ . '/../includes/menu.php';
 ?>
 <div class="encabezado-vista">

@@ -1,16 +1,4 @@
 <?php
-/*
- * ============================================================================
- * MODULO  INICIO DEL APLICATIVO
- * ============================================================================
- * Presenta los accesos principales y orienta al operador hacia clientes, productos,
- * facturas, reportes e información del proyecto.
- *
- * RESPONSABILIDAD DE ESTE ARCHIVO
- * Punto de entrada: redirige hacia la pantalla principal sin registrar operaciones.
- * ============================================================================
- */
-
 /**
  * Archivo: index.php
  * Módulo: Entrada de la aplicación.

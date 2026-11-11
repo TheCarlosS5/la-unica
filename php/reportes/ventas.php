@@ -1,18 +1,4 @@
 <?php
-/*
- * ============================================================================
- * MODULO  REPORTES E IMPRESION
- * ============================================================================
- * Transforma los datos de ventas, clientes e inventario en consultas para revisar la
- * tienda. Las consultas conservan las reglas de cada reporte; la presentación ofrece
- * impresión y guardado PDF mediante el navegador.
- *
- * RESPONSABILIDAD DE ESTE ARCHIVO
- * Consulta un rango de fechas y muestra ventas por factura, día, semana, mes o año,
- * separando las canceladas.
- * ============================================================================
- */
-
 /**
  * Archivo: ventas.php
  * Módulo: Reportes — ventas.
@@ -100,12 +86,6 @@ function etiquetaPeriodo($inicio, $ver) {
     return $dias[(int)date('w', $fecha)] . ' ' . date('d/m/Y', $fecha);
 }
 
-/*
- * ============================================================================
- * PRESENTACION DEL MODULO
- * Con los datos y mensajes preparados, carga la navegación compartida y presenta el contenido de esta pantalla.
- * ============================================================================
- */
 require __DIR__ . '/../includes/menu.php';
 require __DIR__ . '/acciones_impresion.php';
 ?>

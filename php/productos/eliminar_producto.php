@@ -1,17 +1,4 @@
 <?php
-/*
- * ============================================================================
- * MODULO  PRODUCTOS E INVENTARIO
- * ============================================================================
- * Mantiene el catálogo con nombre, unidad, existencias y precio. Las consultas
- * permiten revisar disponibilidad; las operaciones validan los datos y protegen
- * productos que ya forman parte de una venta.
- *
- * RESPONSABILIDAD DE ESTE ARCHIVO
- * Solicita confirmación y bloquea la eliminación si el producto tiene detalles de venta.
- * ============================================================================
- */
-
 /**
  * Archivo: eliminar_producto.php
  * Módulo: Productos — eliminación protegida.
@@ -100,12 +87,6 @@ if (($_SERVER['REQUEST_METHOD'] ?? 'GET') !== 'POST') {
     }
 }
 
-/*
- * ============================================================================
- * PRESENTACION DEL MODULO
- * Con los datos y mensajes preparados, carga la navegación compartida y presenta el contenido de esta pantalla.
- * ============================================================================
- */
 require __DIR__ . '/../includes/menu.php';
 ?>
 <div class="encabezado-vista">

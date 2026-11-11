@@ -1,18 +1,4 @@
 <?php
-/*
- * ============================================================================
- * MODULO  WIKI Y GUIAS DEL PROYECTO
- * ============================================================================
- * Organiza guías y notas técnicas con navegación, búsqueda e imágenes. Funciona con
- * archivos sin conectar a SQL y distingue las indicaciones vigentes de la
- * documentación histórica de otra versión.
- *
- * RESPONSABILIDAD DE ESTE ARCHIVO
- * Este archivo participa en la presentación y navegación del módulo; el comentario
- * existente detalla su responsabilidad específica.
- * ============================================================================
- */
-
 /**
  * Archivo: funciones.php
  * Módulo: Wiki — utilidades compartidas.

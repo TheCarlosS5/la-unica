@@ -1,15 +1,3 @@
-/*
- * ============================================================================
- * MODULO  INTERACCIONES DE LA WIKI
- * ============================================================================
- * Controla menú móvil, pestañas, copia de código, visor de imágenes y seguimiento
- * del índice, sin cambiar el contenido de las guías.
- *
- * RESPONSABILIDAD DE ESTE ARCHIVO
- * Los bloques de este archivo describen comportamientos o estilos del navegador; no
- * guardan operaciones en la base de datos.
- * ============================================================================
- */
 /**
  * Archivo: wiki.js
  * Módulo: Wiki — interacciones.

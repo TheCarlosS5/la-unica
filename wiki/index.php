@@ -1,18 +1,4 @@
 <?php
-/*
- * ============================================================================
- * MODULO  WIKI Y GUIAS DEL PROYECTO
- * ============================================================================
- * Organiza guías y notas técnicas con navegación, búsqueda e imágenes. Funciona con
- * archivos sin conectar a SQL y distingue las indicaciones vigentes de la
- * documentación histórica de otra versión.
- *
- * RESPONSABILIDAD DE ESTE ARCHIVO
- * Valida la página contra el catálogo o ejecuta la búsqueda y compone el artículo
- * con la cabecera y el pie de la wiki.
- * ============================================================================
- */
-
 /**
  * Archivo: index.php
  * Módulo: Wiki — enrutador.

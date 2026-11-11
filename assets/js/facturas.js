@@ -1,16 +1,3 @@
-/*
- * ============================================================================
- * MODULO  FORMULARIO DE VENTAS EN EL NAVEGADOR
- * ============================================================================
- * Coordina las filas de productos, sus cantidades y el total estimado. Usa centavos
- * enteros para calcular importes; la validación definitiva y el guardado siguen a
- * cargo del servidor.
- *
- * RESPONSABILIDAD DE ESTE ARCHIVO
- * Los bloques de este archivo describen comportamientos o estilos del navegador; no
- * guardan operaciones en la base de datos.
- * ============================================================================
- */
 (function () {
   'use strict';
 

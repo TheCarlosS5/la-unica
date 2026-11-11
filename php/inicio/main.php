@@ -1,16 +1,4 @@
 <?php
-/*
- * ============================================================================
- * MODULO  INICIO DEL APLICATIVO
- * ============================================================================
- * Presenta los accesos principales y orienta al operador hacia clientes, productos,
- * facturas, reportes e información del proyecto.
- *
- * RESPONSABILIDAD DE ESTE ARCHIVO
- * Renderiza la portada y los accesos a los módulos del aplicativo.
- * ============================================================================
- */
-
 /**
  * Archivo: php/inicio/main.php
  * Módulo: Inicio.
@@ -24,12 +12,6 @@
 require __DIR__ . '/../config/conexion.php';
 $titulo = 'Inicio';
 $seccionActiva = 'inicio';
-/*
- * ============================================================================
- * PRESENTACION DEL MODULO
- * Con los datos y mensajes preparados, carga la navegación compartida y presenta el contenido de esta pantalla.
- * ============================================================================
- */
 require __DIR__ . '/../includes/menu.php';
 ?>
 <section class="hero" aria-labelledby="titulo-hero">

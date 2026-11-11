@@ -1,18 +1,4 @@
 <?php
-/*
- * ============================================================================
- * MODULO  WIKI Y GUIAS DEL PROYECTO
- * ============================================================================
- * Organiza guías y notas técnicas con navegación, búsqueda e imágenes. Funciona con
- * archivos sin conectar a SQL y distingue las indicaciones vigentes de la
- * documentación histórica de otra versión.
- *
- * RESPONSABILIDAD DE ESTE ARCHIVO
- * Este archivo participa en la presentación y navegación del módulo; el comentario
- * existente detalla su responsabilidad específica.
- * ============================================================================
- */
-
 /**
  * Archivo: paginas.php
  * Módulo: Wiki — catálogo de páginas.
@@ -53,11 +39,11 @@ function catalogoWiki()
             ],
             'guia/reportes' => [
                 'titulo' => 'Reportes',
-                'descripcion' => 'El resumen general y los siete reportes: cómo abrirlos y cómo leerlos.',
+                'descripcion' => 'Resumen diario y cinco reportes: consulta, impresión y PDF.',
             ],
             'guia/sobre-nosotros' => [
                 'titulo' => 'Sobre nosotros y ayuda',
-                'descripcion' => 'Manual de usuario integrado, video explicativo y esta wiki.',
+                'descripcion' => 'SRS, manuales, PAC, video y wiki de la versión actual.',
             ],
             'guia/movil' => [
                 'titulo' => 'En celular y tableta',
@@ -89,7 +75,7 @@ function catalogoWiki()
             ],
             'guia/mensajes' => [
                 'titulo' => 'Catálogo de mensajes',
-                'descripcion' => 'Todos los mensajes que muestra La Única, qué significan y qué hacer.',
+                'descripcion' => 'Los principales mensajes de La Única, qué significan y qué hacer.',
             ],
         ],
         'Notas técnicas' => [
@@ -103,7 +89,7 @@ function catalogoWiki()
             ],
             'tecnico/base-de-datos' => [
                 'titulo' => 'Base de datos',
-                'descripcion' => 'Tablas, relaciones, restricciones, vistas y procedimientos de referencias/db.sql.',
+                'descripcion' => 'Tablas, relaciones, restricciones y procedimientos de referencias/db.sql.',
             ],
             'tecnico/flujo-de-ventas' => [
                 'titulo' => 'Flujo de ventas y cancelaciones',
@@ -119,7 +105,7 @@ function catalogoWiki()
             ],
             'tecnico/funciones' => [
                 'titulo' => 'Referencia de funciones',
-                'descripcion' => 'API de las funciones compartidas de php/config/conexion.php y del módulo de reportes.',
+                'descripcion' => 'Funciones compartidas de php/config y del módulo de reportes.',
             ],
             'tecnico/interfaz' => [
                 'titulo' => 'Interfaz (CSS y JS)',
@@ -139,7 +125,7 @@ function catalogoWiki()
             ],
             'tecnico/wiki' => [
                 'titulo' => 'Mantener esta wiki',
-                'descripcion' => 'Cómo está hecha la wiki en PHP, cómo agregar o editar páginas y cómo regenerar las capturas numeradas.',
+                'descripcion' => 'Cómo está hecha la wiki en PHP, cómo agregar o editar páginas y cómo verificar sus enlaces y mantener instrucciones actuales.',
             ],
         ],
         'General' => [
@@ -149,7 +135,7 @@ function catalogoWiki()
             ],
             'general/novedades' => [
                 'titulo' => 'Historial del proyecto',
-                'descripcion' => 'Cronología de La Única reconstruida a partir del historial de Git.',
+                'descripcion' => 'Integración actual y mejoras de la revisión técnica.',
             ],
         ],
     ];

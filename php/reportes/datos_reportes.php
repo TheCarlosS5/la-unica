@@ -1,30 +1,16 @@
 <?php
-/*
- * ============================================================================
- * MODULO  REPORTES E IMPRESION
- * ============================================================================
- * Transforma los datos de ventas, clientes e inventario en consultas para revisar la
- * tienda. Las consultas conservan las reglas de cada reporte; la presentación ofrece
- * impresión y guardado PDF mediante el navegador.
- *
- * RESPONSABILIDAD DE ESTE ARCHIVO
- * Centraliza columnas y consultas adicionales: los precios de ventas salen del
- * detalle histórico. Las claves de reporte se validan contra una lista fija.
- * ============================================================================
- */
-
 /**
  * Archivo: datos_reportes.php
  * Módulo: Reportes — catálogo y acceso a datos.
  * Propósito: centralizar los reportes adicionales adaptados a la base de la-unica-2.
- * Funcionamiento: catalogoReportes() entrega metadatos; obtenerFilasReporte() selecciona la vista o
+ * Funcionamiento: catalogoReportes() entrega metadatos; obtenerFilasReporte() selecciona la consulta o
  * procedimiento correspondiente; consultarFilasReporte() lee resultados y limpia resultados adicionales.
  * Puntos clave: los totales y subtotales usan el precio guardado en cada línea de la venta; los reportes
  * de ventas (totales y unidades) excluyen las facturas canceladas.
  */
 
 /**
- * Devuelve títulos, descripción, fuente de datos, columnas y reglas de los siete reportes.
+ * Devuelve títulos, descripción, fuente de datos, columnas y reglas de los reportes auxiliares y sus rutas de compatibilidad.
  * @return array Catálogo indexado por la clave interna de cada reporte.
  */
 function catalogoReportes(): array

@@ -1,17 +1,4 @@
 <?php
-/*
- * ============================================================================
- * MODULO  CLIENTES
- * ============================================================================
- * Administra la información de los compradores: registro, búsqueda, edición del
- * nombre y eliminación cuando no hay facturas relacionadas. La fecha es automática y
- * el documento identifica al cliente.
- *
- * RESPONSABILIDAD DE ESTE ARCHIVO
- * Presenta confirmación y verifica que no existan facturas antes de eliminar.
- * ============================================================================
- */
-
 /**
  * Archivo: eliminar_cliente.php
  * Módulo: Clientes — eliminación protegida.
@@ -100,12 +87,6 @@ if (($_SERVER['REQUEST_METHOD'] ?? 'GET') !== 'POST') {
     }
 }
 
-/*
- * ============================================================================
- * PRESENTACION DEL MODULO
- * Con los datos y mensajes preparados, carga la navegación compartida y presenta el contenido de esta pantalla.
- * ============================================================================
- */
 require __DIR__ . '/../includes/menu.php';
 ?>
 <div class="encabezado-vista">

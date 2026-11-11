@@ -1,17 +1,4 @@
 <?php
-/*
- * ============================================================================
- * MODULO  DOCUMENTACION Y AYUDA
- * ============================================================================
- * Reúne SRS, manuales, PAC, wiki y video. Los documentos se consultan dentro de la
- * interfaz; los PDF utilizan una huella de contenido para actualizar su enlace
- * cuando se reemplaza el archivo.
- *
- * RESPONSABILIDAD DE ESTE ARCHIVO
- * Muestra el SRS completo de esta copia y permite descargar su PDF o su documento Word.
- * ============================================================================
- */
-
 /**
  * Archivo: srs.php
  * Módulo: Sobre nosotros — Especificación de requisitos (SRS).
@@ -34,12 +21,6 @@ if ($manualDisponible) {
     }
 }
 
-/*
- * ============================================================================
- * PRESENTACION DEL MODULO
- * Con los datos y mensajes preparados, carga la navegación compartida y presenta el contenido de esta pantalla.
- * ============================================================================
- */
 require __DIR__ . '/../includes/menu.php';
 ?>
 

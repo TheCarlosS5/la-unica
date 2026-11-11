@@ -1,8 +1,4 @@
 <!--
-ESTRUCTURA VISUAL COMPARTIDA
-Construye las partes comunes de las pantallas: navegación, encabezado, contenido y pie. Las páginas del módulo preparan sus variables antes de cargar la plantilla correspondiente.
--->
-<!--
 /**
  * Archivo: pie.php
  * Módulo: Plantilla compartida de cierre.
