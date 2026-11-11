@@ -96,7 +96,8 @@ wiki/                                 Documentación navegable sin conexión SQL
   index.php                           Entrada, búsqueda y selección de artículos
   paginas/                            Guías, configuración y notas técnicas
   includes/                           Catálogo, buscador y plantillas de la wiki
-  img/                                Capturas de referencia del proyecto original
+  img/actuales/                       41 capturas reales actuales con datos ficticios
+  herramientas/                       Generación aislada y comprobación de capturas
   css/ y js/                          Diseño e interacciones de la documentación
 tests/                                Pruebas sobre una base de datos exclusiva
   bootstrap.php                       Conexión protegida para las pruebas

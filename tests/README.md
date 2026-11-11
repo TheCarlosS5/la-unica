@@ -11,6 +11,8 @@ Todas las pruebas escriben en una base **nueva y exclusiva**, llamada la_unica_t
 
 PHP y mysql deben estar en PATH; alternativamente define PHP_BINARY y MYSQL_BINARY con sus rutas completas. Los scripts Python usan la biblioteca estándar. Sus servidores escuchan en puertos libres de 127.0.0.1 y se cierran al terminar. QA_REPORT_PATH permite elegir dónde guardar el JSON ampliado; por defecto se imprime su ubicación temporal.
 
+`python tests/wiki_visual.py` no necesita base de datos. Comprueba que las guías esenciales conserven sus capturas actuales, con archivos existentes, dimensiones, texto alternativo y pies de imagen, y que coincidan con el manifiesto. GitHub Actions lo ejecuta para prevenir que una limpieza documental retire otra vez esa ayuda visual.
+
 ## Batería ampliada
 
 - Diez carreras por la última unidad: dos procesos HTTP y dos sesiones distintas deben producir una venta y un rechazo por stock, sin factura parcial ni stock negativo.

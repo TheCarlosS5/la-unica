@@ -33,3 +33,9 @@ Seguir [tests/README.md](../tests/README.md) sobre una base nueva exclusiva. Git
 La concurrencia probada corresponde a dos solicitudes por carrera y el rendimiento a 1000 registros por entidad, con búsquedas secuenciales en este entorno. No se certifican otras cargas ni todas las versiones de SQL. La aceptación completa requiere la revisión del equipo de interfaz, multimedia y acceso local, además del seguimiento de respaldos y mantenimiento del PAC. La aplicación sigue sin autenticación ni roles y debe utilizarse localmente.
 
 Revisión visual adicional en Brave: wiki de escritorio y móvil, apertura/cierre de menú, selección de producto, cálculo y agregado de filas sin persistir ventas, disponibilidad de los dos PDF y bloqueo Apache de configuración, Git, logs y pruebas. No se detectaron errores JavaScript. Manual técnico de ocho páginas y PAC de siete páginas revisados visualmente.
+
+## Capturas de la wiki restauradas y actualizadas
+
+Se incorporaron 41 capturas reales en wiki/img/actuales, con ejemplos ficticios de la interfaz vigente y pasos ilustrados para clientes, productos, facturas, cinco reportes, documentos y pantallas estrechas. Los archivos anteriores se conservaron. La generación se ejecutó sobre una base nueva la_unica_test_, con servidor PHP separado y configuración de entorno; no se cambió la base del aplicativo.
+
+Se revisaron las 41 capturas y las 29 páginas por HTTP en Brave. Aprobaron carga de imágenes, ampliación con clic y Enter, cierre con Escape y botón, y ajuste móvil sin desbordamiento de las imágenes. No hubo errores JavaScript. El registro está en [wiki-capturas.json](QA/revision_mejoras/wiki-capturas.json). tests/wiki_visual.py comprueba archivos, referencias, dimensiones, descripciones y pies, y conserva mínimos de capturas por guía esencial.

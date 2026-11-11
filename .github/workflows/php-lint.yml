@@ -47,5 +47,8 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          find . \( -name '*.js' -o -name '*.mjs' \) -not -path './.git/*' -not -path '*/node_modules/*' -not -path './vendor/*' -print0 |
+          find . \( -name '*.js' -o -name '*.mjs' -o -name '*.cjs' \) -not -path './.git/*' -not -path '*/node_modules/*' -not -path './vendor/*' -print0 |
             xargs -0 -n1 node --check
+
+      - name: Preserve essential wiki screenshots
+        run: python3 tests/wiki_visual.py
