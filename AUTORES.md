@@ -16,17 +16,4 @@ Proyecto formativo del programa **Análisis y Desarrollo de Software (ADSO)** de
 
 Los roles corresponden a la sección 1.6 del SRS. Cada integrante apoya otras actividades cuando el proyecto lo necesita.
 
-## Asistencia de inteligencia artificial
 
-**Claude** (modelo de lenguaje de Anthropic, usado a través de Claude Code) apoyó al equipo el 30 de octubre de 2026 con:
-
-- Una revisión de código del aplicativo y la corrección de los hallazgos: precio de venta guardado en cada factura, flujo de ventas por cobrar, reportes sin facturas canceladas y endurecimiento de la seguridad local.
-- Pruebas de integración adicionales y la ampliación de la integración continua.
-- La actualización del SRS a la versión 1.5, del manual de usuario a la versión 1.1 y de la wiki, incluida la regeneración de capturas.
-- Una revisión del trabajo de QA.
-
-Los cambios propuestos por la IA fueron revisados, aceptados e integrados al repositorio por el equipo. La autoría de los commits corresponde a los integrantes que los integraron.
-
-## Revisión de la copia la-unica-2 del 10 de noviembre de 2026
-
-Codex (OpenAI) asistió a Camilo Tamayo en la preparación de documentación, integración de reportes y ayuda, maquetación PDF, comentarios por módulos y validaciones. La publicación directa en main fue solicitada expresamente por el usuario responsable de esta tarea; esto no implica aprobación o revisión individual de los demás integrantes. Los aportes históricos de cada integrante se conservan.
