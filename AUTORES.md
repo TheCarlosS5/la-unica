@@ -26,3 +26,7 @@ Los roles corresponden a la sección 1.6 del SRS. Cada integrante apoya otras ac
 - Una revisión del trabajo de QA.
 
 Los cambios propuestos por la IA fueron revisados, aceptados e integrados al repositorio por el equipo. La autoría de los commits corresponde a los integrantes que los integraron.
+
+## Revisión de la copia la-unica-2 del 10 de noviembre de 2026
+
+Codex (OpenAI) asistió a Camilo Tamayo en la preparación de documentación, integración de reportes y ayuda, maquetación PDF, comentarios por módulos y validaciones. La publicación directa en main fue solicitada expresamente por el usuario responsable de esta tarea; esto no implica aprobación o revisión individual de los demás integrantes. Los aportes históricos de cada integrante se conservan.

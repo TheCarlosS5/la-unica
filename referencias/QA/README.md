@@ -1,3 +1,7 @@
+# Material histórico de QA
+
+Estos documentos corresponden a la versión anterior a la publicación de la-unica-2. Se conservan como evidencia del equipo; no certifican la versión actual. Para las pruebas vigentes, consultar tests/README.md y GitHub Actions.
+
 # QA — La Única
 
 Documentación de aseguramiento de calidad, pruebas y seguridad del proyecto **La Única**.

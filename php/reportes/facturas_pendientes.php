@@ -1,12 +1,18 @@
 <?php
-/**
- * Archivo: facturas_pendientes.php
- * Módulo: Reportes — facturas pendientes.
- * Propósito: listar facturas cuyo estado registrado es Pendiente.
- * Funcionamiento: asigna el tipo pendientes y reutiliza reporte_individual.php para consultar
- * reporte_facturas_pendientes() y mostrar sus resultados.
- * Punto clave: es una consulta; no cambia estado ni inventario.
+/*
+ * ============================================================================
+ * MODULO  REPORTES E IMPRESION
+ * ============================================================================
+ * Transforma los datos de ventas, clientes e inventario en consultas para revisar la
+ * tienda. Las consultas conservan las reglas de cada reporte; la presentación ofrece
+ * impresión y guardado PDF mediante el navegador.
+ *
+ * RESPONSABILIDAD DE ESTE ARCHIVO
+ * Mantiene un enlace anterior y lo redirige al resumen: esta copia no implementa
+ * ventas por cobrar.
+ * ============================================================================
  */
 
-$tipoReporte = 'pendientes';
-require __DIR__ . '/reporte_individual.php';
+/** Compatibilidad: esta versión no tiene ventas por cobrar. */
+header('Location: ver_reportes.php', true, 302);
+exit;

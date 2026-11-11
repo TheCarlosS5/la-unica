@@ -1,13 +1,19 @@
 <?php
-/**
- * Archivo: unidades_facturadas_por_producto.php
- * Módulo: Reportes — unidades vendidas por producto.
- * Propósito: exponer la suma de cantidades de detalle por artículo.
- * Funcionamiento: asigna el tipo unidades_productos y delega lectura y presentación a
- * reporte_individual.php.
- * Punto clave: consulta vista_unidades_productos; excluye las facturas canceladas y solo muestra
- * productos con al menos una venta vigente.
+/*
+ * ============================================================================
+ * MODULO  REPORTES E IMPRESION
+ * ============================================================================
+ * Transforma los datos de ventas, clientes e inventario en consultas para revisar la
+ * tienda. Las consultas conservan las reglas de cada reporte; la presentación ofrece
+ * impresión y guardado PDF mediante el navegador.
+ *
+ * RESPONSABILIDAD DE ESTE ARCHIVO
+ * Redirige el acceso acumulado al reporte de unidades por fechas, usando un rango
+ * que cubre el historial.
+ * ============================================================================
  */
 
-$tipoReporte = 'unidades_productos';
-require __DIR__ . '/reporte_individual.php';
+/** Ruta anterior: redirige al reporte consolidado de todo el historial. */
+date_default_timezone_set('America/Bogota');
+header('Location: unidades_vendidas_por_producto.php?desde=1900-01-01&hasta=' . date('Y-m-d'), true, 302);
+exit;

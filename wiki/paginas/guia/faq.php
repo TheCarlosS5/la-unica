@@ -1,4 +1,11 @@
 <?php if (!defined('LA_UNICA_WIKI')) { exit; } ?>
+<p>Esta wiki corresponde a <strong>La Única 2</strong>. Consulta los <a href="../php/sobre_nosotros/index.php">manuales vigentes, el PAC y el video</a> o <a href="../main.php">vuelve al aplicativo</a>.</p>
+<h2 id="version-la-unica-2">Indicaciones vigentes de La Única 2</h2>
+<p>En esta versión no existe el estado Pendiente en el flujo de ventas. Las facturas solo se cancelan el mismo día. La configuración local usa el puerto 3307 y una base exclusiva. Los textos que describen otra configuración se conservan abajo solo como referencia histórica.</p>
+<p>Los manuales 1.1 preceden las últimas ampliaciones de reportes y wiki; el README local registra esas incorporaciones. La reproducción, impresión y revisión visual en navegador siguen pendientes de verificación.</p>
+<details><summary>Referencia histórica del proyecto original y sus capturas</summary>
+<p><strong>Este material describe otra versión.</strong> Sus ejemplos de conexión, ramas, tablas, pagos y cancelaciones no deben aplicarse directamente a La Única 2. Para esta copia prevalecen las indicaciones de arriba y sus manuales.</p>
+
 <h2 id="necesito-internet">¿Necesito Internet?</h2>
 <p>No. Todo (PHP, MySQL, fuentes, íconos, manual) es local. Solo necesitas Internet para descargar el proyecto la primera vez.</p>
 <h2 id="tiene-usuarios-y-contraseñas">¿Tiene usuarios y contraseñas?</h2>
@@ -31,3 +38,5 @@
 <p>No. El aplicativo y esta wiki usan solo el tema claro de «papel y marcador». Los colores se pueden cambiar en <code>assets/css/estilos.css</code> (ver <a href="index.php?pagina=configuracion/personalizar#colores">Personalizar</a>).</p>
 <h2 id="hay-pruebas-automatizadas">¿Hay pruebas automatizadas?</h2>
 <p>No. El repositorio no define una suite de pruebas ni proceso de compilación; la verificación es manual siguiendo la lista de <a href="index.php?pagina=tecnico/releases">Publicar un release</a>.</p>
+
+</details>

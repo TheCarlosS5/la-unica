@@ -1,4 +1,17 @@
 <?php
+/*
+ * ============================================================================
+ * MODULO  PRODUCTOS E INVENTARIO
+ * ============================================================================
+ * Mantiene el catálogo con nombre, unidad, existencias y precio. Las consultas
+ * permiten revisar disponibilidad; las operaciones validan los datos y protegen
+ * productos que ya forman parte de una venta.
+ *
+ * RESPONSABILIDAD DE ESTE ARCHIVO
+ * Solicita confirmación y bloquea la eliminación si el producto tiene detalles de venta.
+ * ============================================================================
+ */
+
 /**
  * Archivo: eliminar_producto.php
  * Módulo: Productos — eliminación protegida.
@@ -20,11 +33,7 @@ $mostrarConfirmacion = false;
 $nombreProducto = '';
 $tokenCsrf = obtenerTokenCsrf();
 
-$idRecibido = $_POST['id_producto'] ?? null;
-$confirmarRecibido = $_POST['confirmar'] ?? null;
-$datosPostValidos = is_string($idRecibido)
-    && ($confirmarRecibido === null || is_string($confirmarRecibido));
-$idProducto = validarId($idRecibido);
+$idProducto = validarId($_POST['id_producto'] ?? '');
 
 if (($_SERVER['REQUEST_METHOD'] ?? 'GET') !== 'POST') {
     http_response_code(400);
@@ -34,7 +43,7 @@ if (($_SERVER['REQUEST_METHOD'] ?? 'GET') !== 'POST') {
     http_response_code(403);
     $mensajeResultado = 'No se pudo validar la solicitud. Actualiza la página e inténtalo de nuevo.';
     $esError = true;
-} elseif (!$datosPostValidos || $idProducto === null) {
+} elseif ($idProducto === null) {
     http_response_code(400);
     $mensajeResultado = 'Solicitud no válida.';
     $esError = true;
@@ -52,7 +61,7 @@ if (($_SERVER['REQUEST_METHOD'] ?? 'GET') !== 'POST') {
             $mensajeResultado = 'No se encontró el producto.';
             $esError = true;
         } else {
-            $esConfirmado = ($confirmarRecibido === 'si');
+            $esConfirmado = (($_POST['confirmar'] ?? '') === 'si');
 
             if (!$esConfirmado) {
                 $mostrarConfirmacion = true;
@@ -73,6 +82,7 @@ if (($_SERVER['REQUEST_METHOD'] ?? 'GET') !== 'POST') {
                     $ejecutado = $eliminar->execute();
 
                     if ($ejecutado && $eliminar->affected_rows === 1) {
+                        registrarAccion($conexion, 'Productos', 'Eliminar', 'Producto #' . $idProducto . ' «' . $nombreProducto . '» eliminado.');
                         $mensajeResultado = 'Producto eliminado correctamente.';
                         $esError = false;
                     } else {
@@ -90,6 +100,12 @@ if (($_SERVER['REQUEST_METHOD'] ?? 'GET') !== 'POST') {
     }
 }
 
+/*
+ * ============================================================================
+ * PRESENTACION DEL MODULO
+ * Con los datos y mensajes preparados, carga la navegación compartida y presenta el contenido de esta pantalla.
+ * ============================================================================
+ */
 require __DIR__ . '/../includes/menu.php';
 ?>
 <div class="encabezado-vista">

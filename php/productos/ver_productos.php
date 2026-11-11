@@ -1,4 +1,17 @@
 <?php
+/*
+ * ============================================================================
+ * MODULO  PRODUCTOS E INVENTARIO
+ * ============================================================================
+ * Mantiene el catálogo con nombre, unidad, existencias y precio. Las consultas
+ * permiten revisar disponibilidad; las operaciones validan los datos y protegen
+ * productos que ya forman parte de una venta.
+ *
+ * RESPONSABILIDAD DE ESTE ARCHIVO
+ * Permite buscar y revisar el catálogo, su precio y las existencias disponibles.
+ * ============================================================================
+ */
+
 /**
  * Archivo: ver_productos.php
  * Módulo: Productos — consulta.
@@ -15,32 +28,25 @@ $titulo = 'Productos';
 $seccionActiva = 'productos';
 $tokenCsrf = obtenerTokenCsrf();
 
-$terminoBusqueda = $_GET['buscar'] ?? '';
-$terminoBusqueda = is_string($terminoBusqueda) ? trim($terminoBusqueda) : '';
+$terminoBusqueda = leerTexto($_GET, 'buscar');
 $busquedaActiva = $terminoBusqueda !== '';
-$idBusquedaNormalizado = ctype_digit($terminoBusqueda) ? ltrim($terminoBusqueda, '0') : '';
-if ($idBusquedaNormalizado === '' && $busquedaActiva && ctype_digit($terminoBusqueda)) {
-    $idBusquedaNormalizado = '0';
-}
-$buscarPorId = $busquedaActiva
-    && ctype_digit($terminoBusqueda)
-    && strlen($idBusquedaNormalizado) <= 10
-    && (float)$idBusquedaNormalizado <= 2147483647;
+// Si lo escrito es un número válido, también se busca como ID de producto.
+$idBuscado = validarId($terminoBusqueda);
 
 $sqlSeleccionProductos = 'SELECT p.id_producto, p.nombre, p.unidad_medida, p.stock, p.precio_unitario, COUNT(d.id_producto) AS total_detalles FROM productos p LEFT JOIN detalle_facturas d ON d.id_producto = p.id_producto';
 $sqlAgruparProductos = ' GROUP BY p.id_producto, p.nombre, p.unidad_medida, p.stock, p.precio_unitario ORDER BY p.id_producto';
 $productos = [];
 $errorLectura = false;
 try {
-    if ($busquedaActiva && $buscarPorId) {
+    if ($idBuscado !== null) {
         $consultaProductos = $conexion->prepare($sqlSeleccionProductos . ' WHERE p.id_producto = ? OR p.nombre LIKE ?' . $sqlAgruparProductos);
-        $patronNombre = patronLike($terminoBusqueda);
-        $consultaProductos->bind_param('ss', $idBusquedaNormalizado, $patronNombre);
+        $patronNombre = '%' . $terminoBusqueda . '%';
+        $consultaProductos->bind_param('is', $idBuscado, $patronNombre);
         $consultaProductos->execute();
         $resultadoProductos = $consultaProductos->get_result();
     } elseif ($busquedaActiva) {
         $consultaProductos = $conexion->prepare($sqlSeleccionProductos . ' WHERE p.nombre LIKE ?' . $sqlAgruparProductos);
-        $patronNombre = patronLike($terminoBusqueda);
+        $patronNombre = '%' . $terminoBusqueda . '%';
         $consultaProductos->bind_param('s', $patronNombre);
         $consultaProductos->execute();
         $resultadoProductos = $consultaProductos->get_result();
@@ -59,6 +65,14 @@ try {
     $errorLectura = true;
 }
 
+$mensajeTexto = leerTexto($_GET, 'mensaje');
+
+/*
+ * ============================================================================
+ * PRESENTACION DEL MODULO
+ * Con los datos y mensajes preparados, carga la navegación compartida y presenta el contenido de esta pantalla.
+ * ============================================================================
+ */
 require __DIR__ . '/../includes/menu.php';
 ?>
 <div class="encabezado-vista acciones-superiores">
@@ -81,6 +95,16 @@ require __DIR__ . '/../includes/menu.php';
         </a>
     </div>
 </div>
+
+<?php if ($mensajeTexto !== ''): ?>
+    <div class="mensaje alerta" role="status">
+        <svg class="alerta-icono" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
+            <polyline points="22 4 12 14.01 9 11.01" />
+        </svg>
+        <div class="alerta-contenido"><?= h($mensajeTexto) ?></div>
+    </div>
+<?php endif; ?>
 
 <form class="filtro-busqueda" method="get" action="ver_productos.php" role="search">
     <div class="campo">
@@ -170,7 +194,7 @@ require __DIR__ . '/../includes/menu.php';
                                     <span>Editar</span>
                                 </a>
                                 <?php if ((int)$producto['total_detalles'] === 0): ?>
-                                    <form method="post" action="eliminar_producto.php" onsubmit="return confirm('¿Eliminar este producto?')">
+                                    <form method="post" action="eliminar_producto.php">
                                         <?php if ($tokenCsrf !== null): ?>
                                             <input type="hidden" name="csrf_token" value="<?= h($tokenCsrf) ?>">
                                         <?php endif; ?>

@@ -1,4 +1,11 @@
 <?php if (!defined('LA_UNICA_WIKI')) { exit; } ?>
+<p>Esta wiki corresponde a <strong>La Única 2</strong>. Consulta los <a href="../php/sobre_nosotros/index.php">manuales vigentes, el PAC y el video</a> o <a href="../main.php">vuelve al aplicativo</a>.</p>
+<h2 id="version-la-unica-2">Indicaciones vigentes de La Única 2</h2>
+<p>El SRS de referencia es 1.5. Se comprobó PHP 8.3.33 con mysqli, mysqlnd y mbstring, y MariaDB 13.0.2 en el puerto 3307. No se certificaron todas las versiones de motores o navegadores ni las mediciones de rendimiento y concurrencia del SRS.</p>
+<p>Los manuales 1.1 preceden las últimas ampliaciones de reportes y wiki; el README local registra esas incorporaciones. La reproducción, impresión y revisión visual en navegador siguen pendientes de verificación.</p>
+<details><summary>Referencia histórica del proyecto original y sus capturas</summary>
+<p><strong>Este material describe otra versión.</strong> Sus ejemplos de conexión, ramas, tablas, pagos y cancelaciones no deben aplicarse directamente a La Única 2. Para esta copia prevalecen las indicaciones de arriba y sus manuales.</p>
+
 <p>Resumen de <code>referencias/SRS.md</code> <strong>versión 1.5</strong> (30/10/2026, vigente). Las tres copias (<code>.docx</code>, <code>.pdf</code>, <code>.md</code>) deben mantenerse sincronizadas.</p>
 <div class="aviso aviso-note">
 <p class="aviso-titulo">Novedades de la versión 1.5</p>
@@ -286,3 +293,5 @@
 </tr>
 </tbody>
 </table></div>
+
+</details>

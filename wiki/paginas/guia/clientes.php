@@ -1,4 +1,11 @@
 <?php if (!defined('LA_UNICA_WIKI')) { exit; } ?>
+<p>Esta wiki corresponde a <strong>La Única 2</strong>. Consulta los <a href="../php/sobre_nosotros/index.php">manuales vigentes, el PAC y el video</a> o <a href="../main.php">vuelve al aplicativo</a>.</p>
+<h2 id="version-la-unica-2">Indicaciones vigentes de La Única 2</h2>
+<p>El cliente se registra con documento entero positivo y nombre. La fecha es automática; solo se edita el nombre. No se elimina un cliente con facturas, incluso si están canceladas.</p>
+<p>Los manuales 1.1 preceden las últimas ampliaciones de reportes y wiki; el README local registra esas incorporaciones. La reproducción, impresión y revisión visual en navegador siguen pendientes de verificación.</p>
+<details><summary>Referencia histórica del proyecto original y sus capturas</summary>
+<p><strong>Este material describe otra versión.</strong> Sus ejemplos de conexión, ramas, tablas, pagos y cancelaciones no deben aplicarse directamente a La Única 2. Para esta copia prevalecen las indicaciones de arriba y sus manuales.</p>
+
 <p>Un <strong>cliente</strong> es quien compra. Cada factura queda asociada a uno. Los datos son mínimos a propósito:</p>
 <div class="tabla-wiki"><table>
 <thead>
@@ -127,3 +134,5 @@
 <h2 id="preguntas-rápidas">Preguntas rápidas</h2>
 <p><strong>¿Puedo cambiar el ID de un cliente?</strong> No. Si te equivocaste y aún no tiene facturas, elimínalo y créalo de nuevo.</p>
 <p><strong>¿Por qué no hay teléfono, correo o dirección?</strong> El SRS (desde la versión 1.2) se alineó con <code>db.sql</code>, que solo define ID, nombre y fecha. Ver <a href="index.php?pagina=tecnico/requisitos">Requisitos</a>.</p>
+
+</details>

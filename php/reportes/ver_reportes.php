@@ -1,103 +1,71 @@
 <?php
+/*
+ * ============================================================================
+ * MODULO  REPORTES E IMPRESION
+ * ============================================================================
+ * Transforma los datos de ventas, clientes e inventario en consultas para revisar la
+ * tienda. Las consultas conservan las reglas de cada reporte; la presentación ofrece
+ * impresión y guardado PDF mediante el navegador.
+ *
+ * RESPONSABILIDAD DE ESTE ARCHIVO
+ * Muestra indicadores del día y los accesos a los cinco reportes útiles de esta copia.
+ * ============================================================================
+ */
+
 /**
  * Archivo: ver_reportes.php
- * Módulo: Reportes — resumen general.
- * Propósito: reunir los resultados de los siete reportes y presentar sus indicadores en tarjetas.
- * Funcionamiento: carga cada conjunto mediante obtenerFilasReporte(), agrega clientes, facturas,
- * totales, unidades, detalles, existencias y estados, y enlaza cada tarjeta con su reporte individual.
- * Punto clave: conserva redirección de compatibilidad para enlaces antiguos con ?reporte=; un error
- * al consultar cualquier fuente impide mostrar un resumen parcial.
+ * Módulo: Reportes — resumen del día.
+ * Propósito: mostrar de un vistazo las ventas de hoy, los productos vendidos hoy y las existencias
+ * agotadas o bajas, con acceso a cada uno de los tres reportes.
+ * Funcionamiento: llama a los procedimientos de reportes con la fecha de hoy.
  */
 
 require __DIR__ . '/../config/conexion.php';
 require_once __DIR__ . '/datos_reportes.php';
 
-$reportes = catalogoReportes();
-
-// Conserva compatibilidad con los enlaces antiguos basados en ?reporte=.
-$reporteSolicitado = $_GET['reporte'] ?? null;
-if (is_string($reporteSolicitado) && isset($reportes[$reporteSolicitado])) {
-    header('Location: ' . $baseUrl . '/php/reportes/' . rawurlencode($reportes[$reporteSolicitado]['archivo']));
-    exit;
-}
-
 $titulo = 'Reportes';
 $seccionActiva = 'reportes';
+$hoy = date('Y-m-d');
 $errorLectura = false;
-$filasPorReporte = [];
 
 try {
-    foreach ($reportes as $claveReporte => $reporte) {
-        $filasPorReporte[$claveReporte] = obtenerFilasReporte($conexion, $claveReporte);
-    }
+    $facturasHoy = llamarProcedimiento($conexion, 'CALL reporte_ventas_por_fecha(?, ?)', 'ss', [$hoy, $hoy]);
+    $productosHoy = llamarProcedimiento($conexion, 'CALL reporte_unidades_vendidas(?, ?)', 'ss', [$hoy, $hoy]);
+    $existencias = llamarProcedimiento($conexion, 'CALL reporte_existencias()');
 } catch (Throwable $e) {
-    registrarErrorServidor('leer_resumen_reportes', $e);
-    http_response_code(500);
+    registrarErrorServidor('resumen_reportes', $e);
     $errorLectura = true;
 }
 
 if (!$errorLectura) {
-    $totalClientes = count($filasPorReporte['clientes']);
-    $totalFacturasClientes = array_sum(array_map(
-        static fn(array $fila): int => (int)$fila['total_facturas'],
-        $filasPorReporte['clientes']
-    ));
-    $totalVentas = array_reduce(
-        $filasPorReporte['total_facturas'],
-        static fn(float $total, array $fila): float => $total + (float)$fila['total_factura'],
-        0.0
-    );
-    $totalUnidades = array_sum(array_map(
-        static fn(array $fila): int => (int)$fila['unidades_facturadas'],
-        $filasPorReporte['unidades_productos']
-    ));
-    $totalStock = array_sum(array_map(
-        static fn(array $fila): int => (int)$fila['stock'],
-        $filasPorReporte['stock_productos']
-    ));
-    $totalFacturasPorEstado = array_sum(array_map(
-        static fn(array $fila): int => (int)$fila['total_facturas'],
-        $filasPorReporte['por_estado']
-    ));
-    $desgloseEstados = array_map(
-        static fn(array $fila): string => (string)$fila['estado_factura'] . ': ' . number_format((int)$fila['total_facturas'], 0, ',', '.'),
-        $filasPorReporte['por_estado']
-    );
-    $facturasEnDetalle = count(array_unique(array_column($filasPorReporte['detalle_facturas'], 'id_factura')));
-
-    $resumen = [
-        'clientes' => [
-            'valor' => number_format($totalClientes, 0, ',', '.'),
-            'detalle' => number_format($totalFacturasClientes, 0, ',', '.') . ' facturas registradas entre todos los clientes, sin filtrar por estado.',
-        ],
-        'total_facturas' => [
-            'valor' => formatearMonedaCop(number_format($totalVentas, 2, '.', '')),
-            'detalle' => number_format(count($filasPorReporte['total_facturas']), 0, ',', '.') . ' facturas Pagado o Pendiente; usa el precio de cada venta y excluye las canceladas.',
-        ],
-        'unidades_productos' => [
-            'valor' => number_format($totalUnidades, 0, ',', '.'),
-            'detalle' => number_format(count($filasPorReporte['unidades_productos']), 0, ',', '.') . ' productos con unidades vendidas; excluye las facturas canceladas.',
-        ],
-        'detalle_facturas' => [
-            'valor' => number_format(count($filasPorReporte['detalle_facturas']), 0, ',', '.'),
-            'detalle' => 'Líneas de detalle distribuidas en ' . number_format($facturasEnDetalle, 0, ',', '.') . ' facturas.',
-        ],
-        'stock_productos' => [
-            'valor' => number_format($totalStock, 0, ',', '.'),
-            'detalle' => 'Unidades disponibles en ' . number_format(count($filasPorReporte['stock_productos']), 0, ',', '.') . ' productos registrados.',
-        ],
-        'por_estado' => [
-            'valor' => number_format($totalFacturasPorEstado, 0, ',', '.'),
-            'detalle' => $desgloseEstados === [] ? 'No hay facturas registradas.' : implode(' · ', $desgloseEstados) . '.',
-        ],
-        'pendientes' => [
-            'valor' => number_format(count($filasPorReporte['pendientes']), 0, ',', '.'),
-            'detalle' => 'Ventas por cobrar (estado Pendiente).',
-        ],
-    ];
+    $ventasHoy = 0;
+    $totalHoy = 0.0;
+    foreach ($facturasHoy as $factura) {
+        if ($factura['estado_factura'] === 'Pagado') {
+            $ventasHoy++;
+            $totalHoy += (float)$factura['total_factura'];
+        }
+    }
+    $unidadesHoy = array_sum(array_column($productosHoy, 'unidades_vendidas'));
+    $agotados = 0;
+    $bajos = 0;
+    foreach ($existencias as $producto) {
+        if ((int)$producto['stock'] === 0) {
+            $agotados++;
+        } elseif ((int)$producto['stock'] <= STOCK_BAJO) {
+            $bajos++;
+        }
+    }
 }
 
+/*
+ * ============================================================================
+ * PRESENTACION DEL MODULO
+ * Con los datos y mensajes preparados, carga la navegación compartida y presenta el contenido de esta pantalla.
+ * ============================================================================
+ */
 require __DIR__ . '/../includes/menu.php';
+require __DIR__ . '/acciones_impresion.php';
 ?>
 <div class="encabezado-vista">
     <div class="encabezado-info">
@@ -106,35 +74,47 @@ require __DIR__ . '/../includes/menu.php';
             <span class="miga-separador" aria-hidden="true">/</span>
             <span>Reportes</span>
         </nav>
-        <h1 class="encabezado-titulo">Resumen de reportes</h1>
-        <p class="encabezado-descripcion">Vista general de clientes, ventas, productos, existencias y estados. Abre cada reporte para consultar su detalle.</p>
+        <h1 class="encabezado-titulo">Reportes</h1>
+        <p class="encabezado-descripcion">Resumen de hoy, <?= h(date('d/m/Y')) ?>. Abre cada reporte para ver el detalle o consultar otras fechas.</p>
     </div>
 </div>
 
 <?php if ($errorLectura): ?>
-    <div class="mensaje error alerta alerta-error" role="alert">No se pudo generar el resumen. Revisa la conexión y que estén disponibles las vistas y procedimientos definidos en <code>referencias/db.sql</code>.</div>
+    <div class="mensaje error alerta alerta-error" role="alert">No se pudo generar el resumen. Revisa que los procedimientos de <code>referencias/db.sql</code> existan en la base de datos.</div>
 <?php else: ?>
-    <section class="tarjetas reportes-resumen-grid" aria-label="Resumen general de los reportes">
-        <?php foreach ($reportes as $claveReporte => $reporte): ?>
-            <article class="reportes-resumen-card">
-                <div class="modulo-cabecera">
-                    <div class="modulo-icono" aria-hidden="true">
-                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M3 3v18h18" />
-                            <path d="M18 17V9M13 17V5M8 17v-3" />
-                        </svg>
-                    </div>
-                    <h2 class="modulo-titulo"><?= h($reporte['titulo']) ?></h2>
-                </div>
-                <p class="reportes-resumen-valor"><?= h($resumen[$claveReporte]['valor']) ?></p>
-                <p class="reportes-resumen-descripcion"><?= h($reporte['descripcion']) ?></p>
-                <p class="reportes-resumen-detalle"><?= h($resumen[$claveReporte]['detalle']) ?></p>
-                <div class="modulo-acciones">
-                    <a class="boton" href="<?= h($baseUrl) ?>/php/reportes/<?= h($reporte['archivo']) ?>">Abrir reporte</a>
-                </div>
-            </article>
-        <?php endforeach; ?>
+    <section class="tarjetas reportes-resumen-grid" aria-label="Resumen de hoy">
+        <article class="reportes-resumen-card">
+            <h2 class="modulo-titulo">Ventas de hoy</h2>
+            <p class="reportes-resumen-valor"><?= h(formatearMonedaCop($totalHoy)) ?></p>
+            <p class="reportes-resumen-detalle"><?= $ventasHoy ?> <?= $ventasHoy === 1 ? 'factura pagada' : 'facturas pagadas' ?>.</p>
+            <div class="modulo-acciones"><a class="boton" href="ventas.php">Ventas</a></div>
+        </article>
+        <article class="reportes-resumen-card">
+            <h2 class="modulo-titulo">Unidades vendidas hoy</h2>
+            <p class="reportes-resumen-valor"><?= number_format($unidadesHoy, 0, ',', '.') ?></p>
+            <p class="reportes-resumen-detalle">De <?= count($productosHoy) ?> <?= count($productosHoy) === 1 ? 'producto' : 'productos distintos' ?>.</p>
+            <div class="modulo-acciones"><a class="boton" href="unidades_vendidas_por_producto.php">Unidades vendidas</a></div>
+        </article>
+        <article class="reportes-resumen-card">
+            <h2 class="modulo-titulo">Existencias</h2>
+            <p class="reportes-resumen-valor"><?= $agotados ?> agotados · <?= $bajos ?> bajos</p>
+            <p class="reportes-resumen-detalle">«Bajo» = <?= STOCK_BAJO ?> unidades o menos.</p>
+            <div class="modulo-acciones"><a class="boton" href="existencias_productos.php">Existencias</a></div>
+        </article>
     </section>
 <?php endif; ?>
-
+<section class="panel-reporte solo-pantalla" aria-labelledby="reportes-adicionales">
+    <h2 id="reportes-adicionales" class="modulo-titulo">Clientes y detalle de ventas</h2>
+    <p>Consulta el historial completo. Estos reportes no se limitan a las ventas de hoy.</p>
+    <div class="tarjetas reportes-resumen-grid">
+        <?php foreach (catalogoReportes() as $clave => $reporte): ?>
+            <?php if (!in_array($clave, ['clientes', 'detalle_facturas'], true)) { continue; } ?>
+            <article class="reportes-resumen-card">
+                <h3 class="modulo-titulo"><?= h($reporte['titulo']) ?></h3>
+                <p class="reportes-resumen-descripcion"><?= h($reporte['descripcion']) ?></p>
+                <a class="boton secundario" href="<?= h($reporte['archivo']) ?>">Consultar reporte</a>
+            </article>
+        <?php endforeach; ?>
+    </div>
+</section>
 <?php require __DIR__ . '/../includes/pie.php'; ?>

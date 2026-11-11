@@ -1,3 +1,15 @@
+# Publicación de la copia la-unica-2
+
+Fecha: 10 de noviembre de 2026. Cambio preparado para main sobre el commit 5e899382d7e7274cf1985bbb8753375b248ee31f, sin reescribir el historial ni modificar dev o QA.
+
+Incluye módulos de la-unica-2, cinco reportes, PDF/impresión, SRS/manuales/PAC integrados, wiki identificada por versión y comentarios por módulos. La conexión local se separa en un archivo ignorado; el repositorio no contiene credenciales ni datos de las bases de trabajo.
+
+El esquema actual tiene cinco tablas y cuatro procedimientos. Las ventas se registran Pagado y solo se cancelan el mismo día. No hay flujo Pendiente. Los scripts de esquema son para instalaciones nuevas; no ejecutar sobre una base operativa previa. Conservar un respaldo antes de cualquier revisión o traslado de datos.
+
+Se adaptaron las pruebas a este modelo. El material siguiente se conserva como historial de la versión anterior y no describe necesariamente la versión publicada desde la-unica-2.
+
+---
+
 # Publicar un release
 
 Esta guía describe el proceso para publicar versiones de **La Única** en GitHub. No es el historial de cambios: las notas de cada versión se escriben en el release correspondiente de GitHub, que conserva las versiones publicadas y sus etiquetas. No es necesario duplicar ese historial en este archivo.

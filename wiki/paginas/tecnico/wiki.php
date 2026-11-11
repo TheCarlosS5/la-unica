@@ -1,4 +1,11 @@
 <?php if (!defined('LA_UNICA_WIKI')) { exit; } ?>
+<p>Esta wiki corresponde a <strong>La Única 2</strong>. Consulta los <a href="../php/sobre_nosotros/index.php">manuales vigentes, el PAC y el video</a> o <a href="../main.php">vuelve al aplicativo</a>.</p>
+<h2 id="version-la-unica-2">Indicaciones vigentes de La Única 2</h2>
+<p>Consulte los manuales vigentes para la instalación, los módulos y el mantenimiento de esta copia. La documentación y las capturas del proyecto original se conservan abajo como referencia; pueden mostrar pantallas, archivos o funciones diferentes.</p>
+<p>Los manuales 1.1 preceden las últimas ampliaciones de reportes y wiki; el README local registra esas incorporaciones. La reproducción, impresión y revisión visual en navegador siguen pendientes de verificación.</p>
+<details><summary>Referencia histórica del proyecto original y sus capturas</summary>
+<p><strong>Este material describe otra versión.</strong> Sus ejemplos de conexión, ramas, tablas, pagos y cancelaciones no deben aplicarse directamente a La Única 2. Para esta copia prevalecen las indicaciones de arriba y sus manuales.</p>
+
 <p>La wiki vive en la carpeta <code>wiki/</code> del mismo repositorio y la sirve el mismo Apache que la aplicación. Está hecha en <strong>PHP plano</strong>, sin Composer ni frameworks, y <strong>no se conecta a MySQL</strong>: funciona aunque la base de datos esté apagada.</p>
 <div class="arbol">
 <ul>
@@ -141,3 +148,5 @@ npm install</code></pre>
   ],
 });</code></pre>
 <p>Opciones de cada marca: <code>sel</code> (selector CSS), <code>contiene</code> (filtra por texto), <code>dentro</code> (elemento interno), <code>n</code> (número), <code>num</code> (<code>izquierda</code>, <code>derecha</code> o <code>esquina</code>), <code>texto</code> y <code>lado</code> (etiqueta con flecha de texto), <code>margen</code>.</p>
+
+</details>

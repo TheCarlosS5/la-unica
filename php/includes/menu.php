@@ -1,18 +1,37 @@
 <?php
+/*
+ * ============================================================================
+ * MODULO  ESTRUCTURA VISUAL COMPARTIDA
+ * ============================================================================
+ * Construye las partes comunes de las pantallas: navegación, encabezado, contenido y
+ * pie. Las páginas del módulo preparan sus variables antes de cargar la plantilla
+ * correspondiente.
+ *
+ * RESPONSABILIDAD DE ESTE ARCHIVO
+ * Genera el menú, la cabecera y el inicio del área de contenido; resalta la página
+ * seleccionada.
+ * ============================================================================
+ */
+
 /**
  * Archivo: menu.php
  * Módulo: Plantilla compartida de navegación.
  * Propósito: construir la cabecera, el menú lateral y el contenedor principal que usan las vistas.
  * Funcionamiento: consume las variables de título/sección preparadas por cada módulo, identifica
- * la página actual y renderiza enlaces con estado activo. Obtiene los enlaces de reportes del catálogo.
+ * la página actual y renderiza enlaces con estado activo.
  * Puntos clave:
  * - Se incluye después de preparar los datos de la página.
  * - Escapa valores dinámicos con h() y define el inicio de <main>; pie.php lo cierra.
  * - Carga CSS, fuentes locales, favicon y controles accesibles del menú.
  */
 
-require_once __DIR__ . '/../reportes/datos_reportes.php';
-$catalogoReportes = catalogoReportes();
+$reportesMenu = [
+    ['archivo' => 'ventas.php', 'titulo' => 'Ventas'],
+    ['archivo' => 'unidades_vendidas_por_producto.php', 'titulo' => 'Unidades vendidas'],
+    ['archivo' => 'existencias_productos.php', 'titulo' => 'Existencias'],
+    ['archivo' => 'clientes_y_facturas.php', 'titulo' => 'Clientes y facturas'],
+    ['archivo' => 'detalle_facturas.php', 'titulo' => 'Detalle de facturas'],
+];
 $baseUrl = $baseUrl ?? '';
 $titulo = $titulo ?? 'La Única';
 $seccionActual = $seccionActiva ?? '';
@@ -28,6 +47,8 @@ if ($seccionActual === '') {
         $seccionActual = 'facturas';
     } elseif (strpos($scriptActual, '/reportes/') !== false) {
         $seccionActual = 'reportes';
+    } elseif (strpos($scriptActual, '/historial/') !== false) {
+        $seccionActual = 'historial';
     } elseif (strpos($scriptActual, '/sobre_nosotros/') !== false) {
         $seccionActual = 'sobre_nosotros';
     } else {
@@ -162,7 +183,7 @@ if ($seccionActual === '') {
                                 </svg>
                                 <span>Reportes</span>
                             </a>
-                            <?php foreach ($catalogoReportes as $reporteNav): ?>
+                            <?php foreach ($reportesMenu as $reporteNav): ?>
                                 <a class="nav-subenlace<?= $paginaActual === $reporteNav['archivo'] ? ' activo' : '' ?>" href="<?= h($baseUrl) ?>/php/reportes/<?= h($reporteNav['archivo']) ?>" title="Ver reporte: <?= h($reporteNav['titulo']) ?>" <?= $paginaActual === $reporteNav['archivo'] ? ' aria-current="page"' : '' ?>>
                                     <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                                         <path d="M3 3v18h18" />
@@ -174,6 +195,30 @@ if ($seccionActual === '') {
                         </div>
 
                         <div class="nav-item-complejo">
+                            <a class="nav-enlace<?= $seccionActual === 'historial' ? ' activo' : '' ?>" href="<?= h($baseUrl) ?>/php/historial/acciones.php">
+                                <svg class="nav-icono" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                    <circle cx="12" cy="12" r="9" />
+                                    <polyline points="12 7 12 12 15 14" />
+                                </svg>
+                                <span>Historial</span>
+                            </a>
+                            <a class="nav-subenlace<?= $seccionActual === 'historial' && $paginaActual === 'acciones.php' ? ' activo' : '' ?>" href="<?= h($baseUrl) ?>/php/historial/acciones.php" title="Ver el historial de acciones" <?= $seccionActual === 'historial' && $paginaActual === 'acciones.php' ? ' aria-current="page"' : '' ?>>
+                                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                    <line x1="8" y1="6" x2="21" y2="6" /><line x1="8" y1="12" x2="21" y2="12" /><line x1="8" y1="18" x2="21" y2="18" />
+                                    <line x1="3" y1="6" x2="3.01" y2="6" /><line x1="3" y1="12" x2="3.01" y2="12" /><line x1="3" y1="18" x2="3.01" y2="18" />
+                                </svg>
+                                <span>Acciones</span>
+                            </a>
+                            <a class="nav-subenlace<?= $seccionActual === 'historial' && $paginaActual === 'errores.php' ? ' activo' : '' ?>" href="<?= h($baseUrl) ?>/php/historial/errores.php" title="Ver el log de errores" <?= $seccionActual === 'historial' && $paginaActual === 'errores.php' ? ' aria-current="page"' : '' ?>>
+                                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                    <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" />
+                                    <line x1="12" y1="9" x2="12" y2="13" /><line x1="12" y1="17" x2="12.01" y2="17" />
+                                </svg>
+                                <span>Errores</span>
+                            </a>
+                        </div>
+
+                        <div class="nav-item-complejo">
                             <a class="nav-enlace<?= $seccionActual === 'sobre_nosotros' ? ' activo' : '' ?>" href="<?= h($baseUrl) ?>/php/sobre_nosotros/index.php" <?= $paginaActual === 'index.php' && $seccionActual === 'sobre_nosotros' ? ' aria-current="page"' : '' ?>>
                                 <svg class="nav-icono" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                                     <circle cx="12" cy="12" r="10" />
@@ -182,6 +227,13 @@ if ($seccionActual === '') {
                                 </svg>
                                 <span>Sobre nosotros</span>
                             </a>
+                            <a class="nav-subenlace<?= $paginaActual === 'srs.php' ? ' activo' : '' ?>" href="<?= h($baseUrl) ?>/php/sobre_nosotros/srs.php" title="Consultar la especificación de requisitos" <?= $paginaActual === 'srs.php' ? ' aria-current="page"' : '' ?>>
+                                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                    <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />
+                                    <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" />
+                                </svg>
+                                <span>SRS completo</span>
+                            </a>
                             <a class="nav-subenlace<?= $paginaActual === 'manual_usuario.php' ? ' activo' : '' ?>" href="<?= h($baseUrl) ?>/php/sobre_nosotros/manual_usuario.php" title="Consultar el manual del usuario" <?= $paginaActual === 'manual_usuario.php' ? ' aria-current="page"' : '' ?>>
                                 <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                                     <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />
@@ -189,19 +241,27 @@ if ($seccionActual === '') {
                                 </svg>
                                 <span>Manual del Usuario</span>
                             </a>
+                            <a class="nav-subenlace<?= $paginaActual === 'manual_tecnico.php' ? ' activo' : '' ?>" href="<?= h($baseUrl) ?>/php/sobre_nosotros/manual_tecnico.php" title="Consultar Manual técnico" <?= $paginaActual === 'manual_tecnico.php' ? ' aria-current="page"' : '' ?>>
+                                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                    <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />
+                                    <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" />
+                                </svg>
+                                <span>Manual técnico</span>
+                            </a>
+                            <a class="nav-subenlace<?= $paginaActual === 'pac.php' ? ' activo' : '' ?>" href="<?= h($baseUrl) ?>/php/sobre_nosotros/pac.php" title="Consultar PAC" <?= $paginaActual === 'pac.php' ? ' aria-current="page"' : '' ?>>
+                                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                    <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />
+                                    <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" />
+                                </svg>
+                                <span>PAC</span>
+                            </a>
+                            <a class="nav-subenlace" href="<?= h($baseUrl) ?>/wiki/" title="Consultar la wiki del proyecto"><span>Wiki del proyecto</span></a>
                             <a class="nav-subenlace<?= $paginaActual === 'video_explicativo.php' ? ' activo' : '' ?>" href="<?= h($baseUrl) ?>/php/sobre_nosotros/video_explicativo.php" title="Ver el video explicativo" <?= $paginaActual === 'video_explicativo.php' ? ' aria-current="page"' : '' ?>>
                                 <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                                     <rect x="3" y="5" width="18" height="14" rx="2" />
                                     <path d="m10 9 5 3-5 3z" />
                                 </svg>
                                 <span>Video explicativo</span>
-                            </a>
-                            <a class="nav-subenlace" href="<?= h($baseUrl) ?>/wiki/index.php" title="Abrir la wiki con guías paso a paso">
-                                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                                    <path d="M2 4h6a4 4 0 0 1 4 4v12a3 3 0 0 0-3-3H2z" />
-                                    <path d="M22 4h-6a4 4 0 0 0-4 4v12a3 3 0 0 1 3-3h7z" />
-                                </svg>
-                                <span>Wiki</span>
                             </a>
                         </div>
                     </nav>

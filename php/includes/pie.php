@@ -1,4 +1,8 @@
-<?php
+<!--
+ESTRUCTURA VISUAL COMPARTIDA
+Construye las partes comunes de las pantallas: navegación, encabezado, contenido y pie. Las páginas del módulo preparan sus variables antes de cargar la plantilla correspondiente.
+-->
+<!--
 /**
  * Archivo: pie.php
  * Módulo: Plantilla compartida de cierre.
@@ -7,7 +11,7 @@
  * Puntos clave: abrir/cerrar menú, cerrar al pulsar el fondo o Escape, actualizar aria-expanded
  * y devolver el foco al botón que lo abrió.
  */
-?>
+-->
         </main>
         <footer class="pie-app" role="contentinfo">
             <div class="pie-inner">

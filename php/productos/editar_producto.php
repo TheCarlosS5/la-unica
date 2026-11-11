@@ -1,15 +1,25 @@
 <?php
+/*
+ * ============================================================================
+ * MODULO  PRODUCTOS E INVENTARIO
+ * ============================================================================
+ * Mantiene el catálogo con nombre, unidad, existencias y precio. Las consultas
+ * permiten revisar disponibilidad; las operaciones validan los datos y protegen
+ * productos que ya forman parte de una venta.
+ *
+ * RESPONSABILIDAD DE ESTE ARCHIVO
+ * Actualiza los datos vigentes del catálogo sin reescribir las ventas históricas.
+ * ============================================================================
+ */
+
 /**
  * Archivo: editar_producto.php
  * Módulo: Productos — edición.
- * Propósito: cargar y actualizar los datos vigentes de un producto de forma segura y coordinada.
+ * Propósito: cargar y actualizar los datos vigentes de un producto.
  * Funcionamiento: valida el ID de GET, carga el artículo y procesa el POST con CSRF y validación
- * de nombre, unidad, existencias y precio. La modificación se realiza dentro de una transacción MySQL
- * con bloqueo de fila (FOR UPDATE) para serializar operaciones con ventas y cancelaciones concurrentes.
- * Puntos clave:
- * - Si el operador no cambia el stock, se conserva el de la base (no deshace ventas recientes).
- * - Si lo cambia y otra operación también lo movió mientras editaba, se rechaza y se muestra el valor actual.
- * - La unidad no se puede cambiar si el producto ya aparece en facturas.
+ * de nombre, unidad, existencias y precio antes de ejecutar UPDATE.
+ * Puntos clave: stock representa la nueva cantidad total. Todos los campos se pueden cambiar aunque el
+ * producto tenga facturas: cada factura guarda su propia copia del nombre, la unidad y el precio.
  */
 
 require __DIR__ . '/../config/conexion.php';
@@ -20,10 +30,9 @@ $mensajeExito = '';
 $mensajeError = '';
 $tokenCsrf = obtenerTokenCsrf();
 
-$idRecibido = $_GET['id'] ?? null;
-$idProducto = validarId($idRecibido);
+$idProducto = validarId($_GET['id'] ?? '');
 
-if ($idRecibido === null || $idProducto === null) {
+if ($idProducto === null) {
     http_response_code(400);
     exit('ID de producto no válido.');
 }
@@ -50,198 +59,84 @@ $nombreFormulario = $nombreProducto;
 $unidadFormulario = $unidadMedida;
 $stockFormulario = $stockActual;
 $precioFormulario = $precioUnitario;
-$stockOriginalFormulario = (string)$stockActual;
 
-if (($_SERVER['REQUEST_METHOD'] ?? 'GET') === 'GET') {
-    if (sesionDisponible()) {
-        if (!isset($_SESSION['edicion_productos']) || !is_array($_SESSION['edicion_productos'])) {
-            $_SESSION['edicion_productos'] = [];
-        }
-        $_SESSION['edicion_productos'][$idProducto] = [
-            'stock' => (int)$stockActual,
-        ];
-    }
-}
-
+/*
+ * ============================================================================
+ * PROCESAMIENTO DEL FORMULARIO
+ * Valida la solicitud y sus campos antes de ejecutar la operación; conserva los mensajes y valores que la página necesita presentar.
+ * ============================================================================
+ */
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $nombreRecibido = $_POST['nombre'] ?? null;
-    $unidadRecibida = $_POST['unidad_medida'] ?? null;
-    $stockRecibido = $_POST['stock'] ?? null;
-    $precioRecibido = $_POST['precio_unitario'] ?? null;
-    $stockOriginalRecibido = $_POST['stock_original'] ?? null;
+    $nombreNuevo = leerTexto($_POST, 'nombre');
+    $unidadNueva = leerTexto($_POST, 'unidad_medida');
+    $stockTexto = leerTexto($_POST, 'stock');
+    $precioNuevo = leerTexto($_POST, 'precio_unitario');
+    $stockNuevo = validarEntero($stockTexto, 0);
 
-    $datosPostValidos = is_string($nombreRecibido)
-        && is_string($unidadRecibida)
-        && is_string($stockRecibido)
-        && is_string($precioRecibido)
-        && ($stockOriginalRecibido === null || is_string($stockOriginalRecibido));
-
-    $nombreFormulario = is_string($nombreRecibido) ? $nombreRecibido : '';
-    $unidadFormulario = is_string($unidadRecibida) ? $unidadRecibida : '';
-    $stockFormulario = is_string($stockRecibido) ? $stockRecibido : '';
-    $precioFormulario = is_string($precioRecibido) ? $precioRecibido : '';
-    $stockOriginalFormulario = is_string($stockOriginalRecibido) ? $stockOriginalRecibido : (string)$stockActual;
-
-    $nombreNuevo = is_string($nombreRecibido) ? trim($nombreRecibido) : '';
-    $unidadNueva = is_string($unidadRecibida) ? trim($unidadRecibida) : '';
-    $stockTexto = is_string($stockRecibido) ? trim($stockRecibido) : '';
-    $precioNuevo = is_string($precioRecibido) ? trim($precioRecibido) : '';
-
-    $stockNuevo = filter_var($stockTexto, FILTER_VALIDATE_INT);
-
-    $stockOriginal = null;
-    if (is_string($stockOriginalRecibido) && trim($stockOriginalRecibido) !== '') {
-        $stockOriginalValidado = filter_var(trim($stockOriginalRecibido), FILTER_VALIDATE_INT);
-        if ($stockOriginalValidado !== false && $stockOriginalValidado >= 0 && $stockOriginalValidado <= 2147483647) {
-            $stockOriginal = $stockOriginalValidado;
-        }
-    } elseif (sesionDisponible() && isset($_SESSION['edicion_productos'][$idProducto]['stock'])) {
-        $stockOriginalEnSesion = filter_var($_SESSION['edicion_productos'][$idProducto]['stock'], FILTER_VALIDATE_INT);
-        if ($stockOriginalEnSesion !== false && $stockOriginalEnSesion >= 0 && $stockOriginalEnSesion <= 2147483647) {
-            $stockOriginal = $stockOriginalEnSesion;
-        }
-    }
+    // Si hay un error, el formulario muestra lo que se escribió.
+    $nombreFormulario = $nombreNuevo;
+    $unidadFormulario = $unidadNueva;
+    $stockFormulario = $stockTexto;
+    $precioFormulario = $precioNuevo;
 
     if (!validarTokenCsrf($_POST['csrf_token'] ?? null)) {
         http_response_code(403);
         $mensajeError = 'No se pudo validar la solicitud. Actualiza la página e inténtalo de nuevo.';
-    } elseif (!$datosPostValidos) {
-        $mensajeError = 'Los datos enviados no tienen el formato esperado.';
     } elseif ($nombreNuevo === '' || longitudTexto($nombreNuevo) > 100) {
         $mensajeError = 'El nombre es obligatorio y admite hasta 100 caracteres.';
     } elseif ($unidadNueva === '' || longitudTexto($unidadNueva) > 20) {
         $mensajeError = 'La unidad es obligatoria y admite hasta 20 caracteres.';
-    } elseif ($stockTexto === '' || $stockNuevo === false || $stockNuevo < 0 || $stockNuevo > 2147483647) {
+    } elseif ($stockNuevo === null) {
         $mensajeError = 'El stock debe ser un entero no negativo.';
-    } elseif ($precioNuevo === '' || !preg_match('/^\d{1,8}(?:\.\d{1,2})?$/', $precioNuevo)) {
+    } elseif (!preg_match('/^\d{1,8}(?:\.\d{1,2})?$/', $precioNuevo)) {
         $mensajeError = 'El precio debe ser no negativo y tener máximo dos decimales.';
     } else {
-        $transaccionIniciada = false;
         try {
-            $conexion->begin_transaction();
-            $transaccionIniciada = true;
-
-            // Bloquear la fila del producto para coordinar ventas, cancelaciones y ediciones simultáneas
-            $consultaProducto = $conexion->prepare('SELECT nombre, unidad_medida, stock, precio_unitario FROM productos WHERE id_producto = ? FOR UPDATE');
-            $consultaProducto->bind_param('i', $idProducto);
-            $consultaProducto->execute();
-            $consultaProducto->bind_result($nombreActualBd, $unidadActualBd, $stockActualBd, $precioActualBd);
-            $existeProducto = $consultaProducto->fetch();
-            $consultaProducto->close();
-
-            if (!$existeProducto) {
-                throw new DomainException('No se encontró el producto.');
-            }
-
-            // Coordinar validación del historial de facturación con la modificación de unidad de medida
-            if ($unidadNueva !== $unidadActualBd) {
-                $checkDetalles = $conexion->prepare('SELECT COUNT(*) FROM detalle_facturas WHERE id_producto = ? FOR UPDATE');
-                $checkDetalles->bind_param('i', $idProducto);
-                $checkDetalles->execute();
-                $checkDetalles->bind_result($totalDetalles);
-                $checkDetalles->fetch();
-                $checkDetalles->close();
-
-                if ($totalDetalles > 0) {
-                    throw new DomainException('No se puede cambiar la unidad: el producto ya aparece en facturas.');
-                }
-            }
-
-            // Si el operador cambió el stock pero otra operación también lo movió, su valor ya no es fiable.
-            if ($stockOriginal !== null) {
-                $usuarioModificoStock = ($stockNuevo !== $stockOriginal);
-                $inventarioCambioEnBd = ($stockActualBd !== $stockOriginal);
-
-                if ($usuarioModificoStock && $inventarioCambioEnBd && $stockNuevo !== $stockActualBd) {
-                    throw new DomainException('El stock enviado está desactualizado debido a movimientos recientes de inventario. Actualiza la página para consultar las existencias vigentes.');
-                }
-
-                if (!$usuarioModificoStock) {
-                    // El operador no tocó el stock: se conserva el de la BD para no deshacer ventas o
-                    // cancelaciones ocurridas mientras el formulario estaba abierto.
-                    $stockFinal = $stockActualBd;
-                } else {
-                    $stockFinal = $stockNuevo;
-                }
-            } else {
-                $stockFinal = $stockNuevo;
-            }
-
             $actualizar = $conexion->prepare('UPDATE productos SET nombre = ?, unidad_medida = ?, stock = ?, precio_unitario = ? WHERE id_producto = ?');
-            $actualizar->bind_param('ssisi', $nombreNuevo, $unidadNueva, $stockFinal, $precioNuevo, $idProducto);
-            $actualizar->execute();
+            $actualizar->bind_param('ssisi', $nombreNuevo, $unidadNueva, $stockNuevo, $precioNuevo, $idProducto);
+
+            if ($actualizar->execute()) {
+                $cambios = [];
+                if ($nombreNuevo !== $nombreProducto) {
+                    $cambios[] = 'nombre «' . $nombreProducto . '» → «' . $nombreNuevo . '»';
+                }
+                if ($unidadNueva !== $unidadMedida) {
+                    $cambios[] = 'unidad ' . $unidadMedida . ' → ' . $unidadNueva;
+                }
+                if ((int)$stockNuevo !== (int)$stockActual) {
+                    $cambios[] = 'stock ' . $stockActual . ' → ' . $stockNuevo;
+                }
+                if ((float)$precioNuevo !== (float)$precioUnitario) {
+                    $cambios[] = 'precio ' . formatearMonedaCop($precioUnitario) . ' → ' . formatearMonedaCop($precioNuevo);
+                }
+                registrarAccion($conexion, 'Productos', 'Editar', 'Producto #' . $idProducto . ': '
+                    . ($cambios === [] ? 'guardado sin cambios' : implode('; ', $cambios)) . '.');
+                $nombreProducto = $nombreNuevo;
+                $unidadMedida = $unidadNueva;
+                $stockActual = $stockNuevo;
+                $precioUnitario = $precioNuevo;
+                $nombreFormulario = $nombreNuevo;
+                $unidadFormulario = $unidadNueva;
+                $stockFormulario = $stockNuevo;
+                $precioFormulario = $precioNuevo;
+                $mensajeExito = 'Producto actualizado correctamente.';
+            } else {
+                $mensajeError = 'No se pudo actualizar el producto.';
+            }
             $actualizar->close();
-
-            $conexion->commit();
-            $transaccionIniciada = false;
-
-            $nombreProducto = $nombreNuevo;
-            $unidadMedida = $unidadNueva;
-            $stockActual = $stockFinal;
-            $precioUnitario = $precioNuevo;
-
-            $nombreFormulario = $nombreNuevo;
-            $unidadFormulario = $unidadNueva;
-            $stockFormulario = $stockFinal;
-            $precioFormulario = $precioNuevo;
-            $stockOriginalFormulario = (string)$stockFinal;
-
-            if (sesionDisponible()) {
-                if (!isset($_SESSION['edicion_productos']) || !is_array($_SESSION['edicion_productos'])) {
-                    $_SESSION['edicion_productos'] = [];
-                }
-                $_SESSION['edicion_productos'][$idProducto] = [
-                    'stock' => (int)$stockFinal,
-                ];
-            }
-
-            $mensajeExito = 'Producto actualizado correctamente.';
-        } catch (DomainException $e) {
-            if ($transaccionIniciada) {
-                try {
-                    $conexion->rollback();
-                } catch (Throwable $errorRollback) {
-                    registrarErrorServidor('editar_producto_rollback', $errorRollback);
-                }
-            }
-            $mensajeError = $e->getMessage();
-
-            try {
-                $consultaReleer = $conexion->prepare('SELECT nombre, unidad_medida, stock, precio_unitario FROM productos WHERE id_producto = ?');
-                $consultaReleer->bind_param('i', $idProducto);
-                $consultaReleer->execute();
-                $consultaReleer->bind_result($nombreReleido, $unidadReleida, $stockReleido, $precioReleido);
-                if ($consultaReleer->fetch()) {
-                    $stockActual = $stockReleido;
-                    $stockOriginalFormulario = (string)$stockReleido;
-                    $stockFormulario = (string)$stockReleido;
-                    if (sesionDisponible()) {
-                        if (!isset($_SESSION['edicion_productos']) || !is_array($_SESSION['edicion_productos'])) {
-                            $_SESSION['edicion_productos'] = [];
-                        }
-                        $_SESSION['edicion_productos'][$idProducto] = [
-                            'stock' => (int)$stockReleido,
-                        ];
-                    }
-                }
-                $consultaReleer->close();
-            } catch (Throwable $eReleer) {
-                registrarErrorServidor('editar_producto_releer', $eReleer);
-            }
         } catch (Throwable $e) {
-            if ($transaccionIniciada) {
-                try {
-                    $conexion->rollback();
-                } catch (Throwable $errorRollback) {
-                    registrarErrorServidor('editar_producto_rollback', $errorRollback);
-                }
-            }
             registrarErrorServidor('editar_producto', $e);
             $mensajeError = 'No se pudo actualizar el producto.';
         }
     }
 }
 
+/*
+ * ============================================================================
+ * PRESENTACION DEL MODULO
+ * Con los datos y mensajes preparados, carga la navegación compartida y presenta el contenido de esta pantalla.
+ * ============================================================================
+ */
 require __DIR__ . '/../includes/menu.php';
 ?>
 <div class="encabezado-vista">
@@ -290,7 +185,6 @@ require __DIR__ . '/../includes/menu.php';
             <?php if ($tokenCsrf !== null): ?>
                 <input type="hidden" name="csrf_token" value="<?= h($tokenCsrf) ?>">
             <?php endif; ?>
-            <input type="hidden" name="stock_original" value="<?= h($stockOriginalFormulario) ?>">
             <div class="formulario-grid">
                 <div class="campo col-completa">
                     <label for="nombre">
@@ -306,7 +200,7 @@ require __DIR__ . '/../includes/menu.php';
                         <span class="ayuda" style="margin:0;">Hasta 20 car.</span>
                     </label>
                     <input id="unidad_medida" name="unidad_medida" type="text" maxlength="20" value="<?= h($unidadFormulario) ?>" required>
-                    <span class="ayuda texto-ayuda">Nota: No se puede modificar si el producto ya cuenta con facturas registradas.</span>
+                    <span class="ayuda texto-ayuda">Las facturas anteriores conservan la unidad con la que se vendieron.</span>
                 </div>
 
                 <div class="campo">

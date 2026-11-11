@@ -1,4 +1,11 @@
 <?php if (!defined('LA_UNICA_WIKI')) { exit; } ?>
+<p>Esta wiki corresponde a <strong>La Única 2</strong>. Consulta los <a href="../php/sobre_nosotros/index.php">manuales vigentes, el PAC y el video</a> o <a href="../main.php">vuelve al aplicativo</a>.</p>
+<h2 id="version-la-unica-2">Indicaciones vigentes de La Única 2</h2>
+<p>Esta copia tiene cinco tablas y cuatro procedimientos. La demostración usa la_unica_2_demo_20261110 en 127.0.0.1:3307. La configuración privada se guarda en php/config/conexion.local.php; las variables DB_HOST, DB_PORT, DB_DATABASE, DB_USERNAME y DB_PASSWORD tienen prioridad. El archivo .env no se carga automáticamente. No importe scripts sobre la base de otro proyecto.</p>
+<p>Los manuales 1.1 preceden las últimas ampliaciones de reportes y wiki; el README local registra esas incorporaciones. La reproducción, impresión y revisión visual en navegador siguen pendientes de verificación.</p>
+<details><summary>Referencia histórica del proyecto original y sus capturas</summary>
+<p><strong>Este material describe otra versión.</strong> Sus ejemplos de conexión, ramas, tablas, pagos y cancelaciones no deben aplicarse directamente a La Única 2. Para esta copia prevalecen las indicaciones de arriba y sus manuales.</p>
+
 <p>La conexión se abre en <code>php/config/conexion.php</code>. <strong>No edites ese archivo</strong> para tu equipo: cada valor se toma, en este orden, de</p>
 <ol>
 <li>una <strong>variable de entorno</strong> (<code>DB_HOST</code>, <code>DB_PORT</code>, <code>DB_DATABASE</code>, <code>DB_USERNAME</code>, <code>DB_PASSWORD</code>);</li>
@@ -81,3 +88,5 @@ GRANT SELECT, INSERT, UPDATE, DELETE, EXECUTE ON la_unica.* TO 'la_unica_app'@'l
 <p>Si MySQL está apagado, el puerto es incorrecto o la base no existe, todas las páginas que usan datos muestran solo:</p>
 <pre class="highlight"><code class="language-text">Error de conexión a la base de datos.</code></pre>
 <p>con código HTTP 500. El detalle técnico <strong>no</strong> se muestra al usuario a propósito. La sección <strong>Sobre nosotros</strong> sí sigue funcionando sin base de datos, porque usa <code>inicializar.php</code> en vez de <code>conexion.php</code>. Ver <a href="index.php?pagina=guia/problemas#error-de-conexión-a-la-base-de-datos">Solución de problemas</a>.</p>
+
+</details>

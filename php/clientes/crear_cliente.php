@@ -1,73 +1,67 @@
 <?php
+/*
+ * ============================================================================
+ * MODULO  CLIENTES
+ * ============================================================================
+ * Administra la información de los compradores: registro, búsqueda, edición del
+ * nombre y eliminación cuando no hay facturas relacionadas. La fecha es automática y
+ * el documento identifica al cliente.
+ *
+ * RESPONSABILIDAD DE ESTE ARCHIVO
+ * Recibe documento y nombre; valida la solicitud antes de registrar al comprador.
+ * ============================================================================
+ */
+
 /**
  * Archivo: crear_cliente.php
  * Módulo: Clientes — alta.
- * Propósito: registrar un cliente con identificador manual, nombre y fecha opcional.
- * Funcionamiento: en POST valida tipos, token CSRF, ID positivo, nombre y fecha; inserta con
- * sentencia preparada y muestra errores junto al formulario. En éxito redirige con HTTP 303.
- * Puntos clave: ID único de la tienda; nombre obligatorio de hasta 100 caracteres; si la fecha
- * queda vacía, la base aplica su valor predeterminado; una fecha manual no puede ser futura. El formulario conserva los datos ante errores.
+ * Propósito: registrar un cliente con su documento (id_cliente) y nombre.
+ * Funcionamiento: en POST valida token CSRF, documento y nombre (una regla por campo); inserta con sentencia preparada
+ * y muestra errores junto al formulario. En éxito redirige con HTTP 303.
+ * Puntos clave: la fecha de registro siempre la asigna MySQL con la fecha del momento.
+ * El formulario conserva los datos ante errores.
  */
 
 require __DIR__ . '/../config/conexion.php';
 
 $titulo = 'Crear cliente';
 $seccionActiva = 'clientes';
-$mensajeExito = tomarMensajeFlash('cliente_creado');
+$mensajeExito = (($_GET['creado'] ?? '') === '1') ? 'Cliente creado correctamente.' : '';
 $mensajeError = '';
 $tokenCsrf = obtenerTokenCsrf();
 
 $idCliente = '';
 $nombreCliente = '';
-$fechaRegistro = '';
 
+/*
+ * ============================================================================
+ * PROCESAMIENTO DEL FORMULARIO
+ * Valida la solicitud y sus campos antes de ejecutar la operación; conserva los mensajes y valores que la página necesita presentar.
+ * ============================================================================
+ */
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $idRecibido = $_POST['id_cliente'] ?? null;
-    $nombreRecibido = $_POST['nombre'] ?? null;
-    $fechaRecibida = $_POST['fecha_registro'] ?? null;
-
-    $datosPostValidos = is_string($idRecibido)
-        && is_string($nombreRecibido)
-        && is_string($fechaRecibida);
-    $idEnviado = is_string($idRecibido) ? $idRecibido : '';
-    $nombreEnviado = is_string($nombreRecibido) ? $nombreRecibido : '';
-    $fechaEnviada = is_string($fechaRecibida) ? $fechaRecibida : '';
-
-    $idClienteValido = validarId($idEnviado);
-    $nombreLimpio = trim($nombreEnviado);
-    $fechaLimpia = trim($fechaEnviada);
-
-    // Mantener los valores originales para que el formulario no los pierda si falla la validación.
-    $idCliente = $idEnviado;
-    $nombreCliente = $nombreEnviado;
-    $fechaRegistro = $fechaEnviada;
+    // Se conservan los valores escritos para devolverlos al formulario si hay un error.
+    $idCliente = leerTexto($_POST, 'id_cliente');
+    $nombreCliente = leerTexto($_POST, 'nombre');
+    $idClienteValido = validarId($idCliente);
+    $nombreLimpio = $nombreCliente;
 
     if (!validarTokenCsrf($_POST['csrf_token'] ?? null)) {
         http_response_code(403);
         $mensajeError = 'No se pudo validar la solicitud. Actualiza la página e inténtalo de nuevo.';
-    } elseif (!$datosPostValidos) {
-        $mensajeError = 'Los datos enviados no tienen el formato esperado.';
     } elseif ($idClienteValido === null) {
-        $mensajeError = 'El ID debe ser un entero entre 1 y 2.147.483.647.';
+        $mensajeError = 'El documento debe ser un número entero entre 1 y 2.147.483.647.';
     } elseif ($nombreLimpio === '') {
         $mensajeError = 'El nombre es obligatorio y no puede contener solo espacios.';
-    } elseif (longitudTexto($nombreEnviado) > 100) {
+    } elseif (longitudTexto($nombreLimpio) > 100) {
         $mensajeError = 'El nombre admite hasta 100 caracteres.';
-    } elseif ($fechaLimpia !== '' && !validarFecha($fechaLimpia)) {
-        $mensajeError = 'La fecha no es válida.';
-    } elseif ($fechaLimpia !== '' && $fechaLimpia > date('Y-m-d')) {
-        $mensajeError = 'La fecha de registro no puede ser posterior a hoy.';
     } else {
         $sentencia = null;
         $creacionExitosa = false;
         try {
-            if ($fechaLimpia === '') {
-                $sentencia = $conexion->prepare('INSERT INTO clientes (id_cliente, nombre) VALUES (?, ?)');
-                $sentencia->bind_param('is', $idClienteValido, $nombreLimpio);
-            } else {
-                $sentencia = $conexion->prepare('INSERT INTO clientes (id_cliente, nombre, fecha_registro) VALUES (?, ?, ?)');
-                $sentencia->bind_param('iss', $idClienteValido, $nombreLimpio, $fechaLimpia);
-            }
+            // fecha_registro se omite para que MySQL asigne la fecha actual.
+            $sentencia = $conexion->prepare('INSERT INTO clientes (id_cliente, nombre) VALUES (?, ?)');
+            $sentencia->bind_param('is', $idClienteValido, $nombreLimpio);
 
             if ($sentencia && $sentencia->execute()) {
                 $creacionExitosa = true;
@@ -77,7 +71,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         } catch (mysqli_sql_exception $e) {
             registrarErrorServidor('crear_cliente', $e);
             $mensajeError = ((int)$e->getCode() === 1062)
-                ? 'Ya existe un cliente con ese ID.'
+                ? 'Ya existe un cliente con ese documento.'
                 : 'No se pudo crear el cliente por un problema de base de datos. Inténtalo de nuevo.';
         } catch (Throwable $e) {
             registrarErrorServidor('crear_cliente', $e);
@@ -89,13 +83,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
 
         if ($creacionExitosa) {
-            guardarMensajeFlash('cliente_creado', 'Cliente creado correctamente.');
-            header('Location: crear_cliente.php', true, 303);
+            registrarAccion($conexion, 'Clientes', 'Crear', 'Cliente ' . $idClienteValido . ' «' . $nombreLimpio . '» registrado.');
+            header('Location: crear_cliente.php?creado=1', true, 303);
             exit;
         }
     }
 }
 
+/*
+ * ============================================================================
+ * PRESENTACION DEL MODULO
+ * Con los datos y mensajes preparados, carga la navegación compartida y presenta el contenido de esta pantalla.
+ * ============================================================================
+ */
 require __DIR__ . '/../includes/menu.php';
 ?>
 <div class="encabezado-vista">
@@ -108,7 +108,7 @@ require __DIR__ . '/../includes/menu.php';
             <span>Nuevo cliente</span>
         </nav>
         <h1 class="encabezado-titulo">Crear cliente</h1>
-        <p class="encabezado-descripcion">Registra un nuevo comprador asignando su identificador numérico y fecha de alta comercial.</p>
+        <p class="encabezado-descripcion">Registra un nuevo comprador con su documento y nombre. La fecha de registro se asigna automáticamente.</p>
     </div>
 </div>
 
@@ -141,11 +141,11 @@ require __DIR__ . '/../includes/menu.php';
             <?php endif; ?>
             <div class="campo">
                 <label for="id_cliente">
-                    <span>ID del cliente</span>
+                    <span>Documento del cliente</span>
                     <span class="ayuda" style="margin:0;">Requerido</span>
                 </label>
-                <input id="id_cliente" name="id_cliente" type="number" min="1" max="2147483647" step="1" inputmode="numeric" autofocus aria-describedby="ayuda-id-cliente" value="<?= h($idCliente) ?>" placeholder="Ej. 101" required>
-                <span id="ayuda-id-cliente" class="ayuda texto-ayuda">Se ingresa manualmente, según el esquema de la base de datos (clave primaria única).</span>
+                <input id="id_cliente" name="id_cliente" type="number" min="1" max="2147483647" step="1" inputmode="numeric" autofocus aria-describedby="ayuda-id-cliente" value="<?= h($idCliente) ?>" placeholder="Ej. 1075123456" required>
+                <span id="ayuda-id-cliente" class="ayuda texto-ayuda">Número de documento sin puntos ni espacios. No puede repetirse.</span>
             </div>
             <div class="campo">
                 <label for="nombre">
@@ -153,15 +153,6 @@ require __DIR__ . '/../includes/menu.php';
                     <span class="ayuda" style="margin:0;">Hasta 100 caracteres</span>
                 </label>
                 <input id="nombre" name="nombre" type="text" maxlength="100" pattern=".*\S+.*" title="El nombre no puede estar vacío ni contener solo espacios" value="<?= h($nombreCliente) ?>" placeholder="Ej. Carlos Ramirez" required>
-            </div>
-
-            <div class="campo">
-                <label for="fecha_registro">
-                    <span>Fecha de registro</span>
-                    <span class="ayuda" style="margin:0;">Opcional</span>
-                </label>
-                <input id="fecha_registro" name="fecha_registro" type="date" max="<?= h(date('Y-m-d')) ?>" value="<?= h($fechaRegistro) ?>">
-                <span class="ayuda texto-ayuda">Déjala vacía para asignar automáticamente la fecha actual del sistema. Puede ser anterior (clientes antiguos), pero no posterior a hoy.</span>
             </div>
 
             <div class="fila-botones">

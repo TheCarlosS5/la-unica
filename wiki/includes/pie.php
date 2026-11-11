@@ -1,4 +1,17 @@
 <?php
+/*
+ * ============================================================================
+ * MODULO  WIKI Y GUIAS DEL PROYECTO
+ * ============================================================================
+ * Organiza guías y notas técnicas con navegación, búsqueda e imágenes. Funciona con
+ * archivos sin conectar a SQL y distingue las indicaciones vigentes de la
+ * documentación histórica de otra versión.
+ *
+ * RESPONSABILIDAD DE ESTE ARCHIVO
+ * Cierra la estructura compartida y controla apertura y cierre del menú adaptable.
+ * ============================================================================
+ */
+
 /**
  * Archivo: pie.php
  * Módulo: Wiki — plantilla de cierre.

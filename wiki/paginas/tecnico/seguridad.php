@@ -1,4 +1,11 @@
 <?php if (!defined('LA_UNICA_WIKI')) { exit; } ?>
+<p>Esta wiki corresponde a <strong>La Única 2</strong>. Consulta los <a href="../php/sobre_nosotros/index.php">manuales vigentes, el PAC y el video</a> o <a href="../main.php">vuelve al aplicativo</a>.</p>
+<h2 id="version-la-unica-2">Indicaciones vigentes de La Única 2</h2>
+<p>La aplicación no tiene autenticación ni roles y debe usarse solo localmente. Se emplean validaciones, escape HTML y CSRF. El log directo está protegido por Apache, pero el historial puede consultarse desde la aplicación. La pantalla de conexión aún muestra detalles técnicos: el PAC mantiene abierta esa diferencia con RNF-06.</p>
+<p>Los manuales 1.1 preceden las últimas ampliaciones de reportes y wiki; el README local registra esas incorporaciones. La reproducción, impresión y revisión visual en navegador siguen pendientes de verificación.</p>
+<details><summary>Referencia histórica del proyecto original y sus capturas</summary>
+<p><strong>Este material describe otra versión.</strong> Sus ejemplos de conexión, ramas, tablas, pagos y cancelaciones no deben aplicarse directamente a La Única 2. Para esta copia prevalecen las indicaciones de arriba y sus manuales.</p>
+
 <div class="aviso aviso-danger">
 <p class="aviso-titulo">Modelo de amenaza</p>
 <p>La Única está pensada para <strong>un equipo local de confianza</strong>. No tiene autenticación ni roles (fuera del alcance del SRS). Las protecciones de abajo evitan errores, datos corruptos y ataques web comunes, pero <strong>no</strong> sustituyen un inicio de sesión: no la publiques en red.</p>
@@ -103,3 +110,5 @@ $sentencia-&gt;execute();</code></pre>
 </tr>
 </tbody>
 </table></div>
+
+</details>

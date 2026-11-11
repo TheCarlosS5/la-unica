@@ -1,3 +1,16 @@
+/*
+ * ============================================================================
+ * MODULO  FORMULARIO DE VENTAS EN EL NAVEGADOR
+ * ============================================================================
+ * Coordina las filas de productos, sus cantidades y el total estimado. Usa centavos
+ * enteros para calcular importes; la validación definitiva y el guardado siguen a
+ * cargo del servidor.
+ *
+ * RESPONSABILIDAD DE ESTE ARCHIVO
+ * Los bloques de este archivo describen comportamientos o estilos del navegador; no
+ * guardan operaciones en la base de datos.
+ * ============================================================================
+ */
 (function () {
   'use strict';
 
@@ -11,16 +24,19 @@
 
   let siguienteId = 0;
 
+  /* FILAS — Obtiene las líneas actuales del formulario para recalcular su estado. */
   function filas() {
     return Array.from(lineas.querySelectorAll('[data-linea-factura]'));
   }
 
+  /* CENTAVOS — Convierte el precio decimal a centavos BigInt sin introducir redondeo binario. */
   function centavos(precio) {
     const coincidencia = String(precio || '').match(/^(\d+)(?:\.(\d{1,2}))?$/);
     if (!coincidencia) return 0n;
     return BigInt(coincidencia[1]) * 100n + BigInt((coincidencia[2] || '').padEnd(2, '0'));
   }
 
+  /* MONEDADESDECENTAVOS — Presenta los centavos calculados con formato de pesos colombianos. */
   function monedaDesdeCentavos(valor) {
     const pesos = valor / 100n;
     const fraccion = String(valor % 100n).padStart(2, '0');
@@ -28,6 +44,7 @@
     return '$' + pesosFormateados + ',' + fraccion + ' COP';
   }
 
+  /* ASIGNARIDS — Relaciona etiquetas y controles con identificadores únicos en cada fila. */
   function asignarIds(fila) {
     const select = fila.querySelector('[data-producto-select]');
     const cantidad = fila.querySelector('[data-cantidad]');
@@ -41,6 +58,7 @@
     etiquetaCantidad.htmlFor = cantidad.id;
   }
 
+  /* ACTUALIZARDETALLE — Muestra precio y stock del producto y actualiza el máximo permitido en la cantidad. */
   function actualizarDetalle(fila) {
     const select = fila.querySelector('[data-producto-select]');
     const cantidad = fila.querySelector('[data-cantidad]');
@@ -59,6 +77,7 @@
       + ' · Existencias disponibles: ' + stock;
   }
 
+  /* ACTUALIZAROPCIONES — Deshabilita artículos agotados o seleccionados en otra línea. */
   function actualizarOpciones() {
     const todasLasFilas = filas();
 
@@ -76,6 +95,7 @@
     });
   }
 
+  /* ACTUALIZARTOTAL — Suma las líneas válidas como importe estimado; no registra la venta. */
   function actualizarTotal() {
     let total = 0n;
     filas().forEach(function (fila) {
@@ -90,6 +110,7 @@
     salidaTotal.textContent = monedaDesdeCentavos(total);
   }
 
+  /* ACTUALIZARCONTROLES — Gestiona disponibilidad de agregar y quitar líneas para conservar un formulario válido. */
   function actualizarControles() {
     const seleccionados = new Set(filas().map(function (fila) {
       return fila.querySelector('[data-producto-select]').value;
@@ -103,6 +124,7 @@
     });
   }
 
+  /* REFRESCAR — Sincroniza opciones, total y botones después de un cambio del formulario. */
   function refrescar() {
     actualizarOpciones();
     actualizarTotal();

@@ -1,4 +1,11 @@
 <?php if (!defined('LA_UNICA_WIKI')) { exit; } ?>
+<p>Esta wiki corresponde a <strong>La Única 2</strong>. Consulta los <a href="../php/sobre_nosotros/index.php">manuales vigentes, el PAC y el video</a> o <a href="../main.php">vuelve al aplicativo</a>.</p>
+<h2 id="version-la-unica-2">Indicaciones vigentes de La Única 2</h2>
+<p>Esta copia organiza PHP por clientes, productos, facturas, reportes, historial, configuración y Sobre nosotros. La wiki funciona con archivos, sin conexión a la base de datos. Los archivos de herramientas del original no se distribuyen en esta copia.</p>
+<p>Los manuales 1.1 preceden las últimas ampliaciones de reportes y wiki; el README local registra esas incorporaciones. La reproducción, impresión y revisión visual en navegador siguen pendientes de verificación.</p>
+<details><summary>Referencia histórica del proyecto original y sus capturas</summary>
+<p><strong>Este material describe otra versión.</strong> Sus ejemplos de conexión, ramas, tablas, pagos y cancelaciones no deben aplicarse directamente a La Única 2. Para esta copia prevalecen las indicaciones de arriba y sus manuales.</p>
+
 <p>Rama <code>revision-samuel</code>. Unas <strong>6.300 líneas</strong> entre PHP, CSS y JS.</p>
 <div class="arbol">
 <ul>
@@ -177,3 +184,5 @@
 <li><strong>Funciones compartidas</strong> envueltas en <code>if (!function_exists(...))</code> para poder incluir <code>conexion.php</code> más de una vez sin errores.</li>
 <li><strong>Reglas de negocio fuera de la vista</strong>: lo que mueve dinero o inventario vive en funciones (<code>servicio_facturas.php</code>) que las páginas llaman y <code>tests/</code> prueba.</li>
 </ul>
+
+</details>

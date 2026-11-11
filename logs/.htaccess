@@ -1,0 +1,2 @@
+# Impide abrir los archivos de log desde el navegador.
+Require all denied

@@ -1,4 +1,13 @@
 <?php if (!defined('LA_UNICA_WIKI')) { exit; } ?>
+<p>Esta wiki corresponde a <strong>La Única 2</strong>. Consulta los <a href="../php/sobre_nosotros/index.php">manuales vigentes, el PAC y el video</a> o <a href="../main.php">vuelve al aplicativo</a>.</p>
+<h2 id="version-la-unica-2">Reportes vigentes de La Única 2</h2>
+<p>Se ofrecen cinco reportes: Ventas por factura o período, Unidades vendidas por fechas, Existencias, Clientes y cantidad de facturas y Detalle de facturas. Se conserva el resumen diario. Los totales y unidades excluyen canceladas, y el detalle conserva nombres y precios históricos.</p>
+<p>Los accesos duplicados a totales, unidades acumuladas y estados se retiraron del menú. Pendientes no aplica a esta versión. Sus rutas antiguas redirigen para conservar los enlaces existentes.</p>
+<h2 id="imprimir-pdf">Imprimir y guardar como PDF</h2>
+<p>Configura y aplica primero los filtros. Pulsa Imprimir reporte para imprimir, o Guardar como PDF y elige ese destino en el diálogo del navegador. Se incluyen la consulta actual, su período y la fecha de generación. Se omiten el menú y los controles. No es una descarga automática; el navegador pide dónde guardar el archivo.</p>
+<details><summary>Referencia histórica del proyecto original y sus capturas</summary>
+<p><strong>Este material describe otra versión.</strong> Sus ejemplos de conexión, ramas, tablas, pagos y cancelaciones no deben aplicarse directamente a La Única 2. Para esta copia prevalecen las indicaciones de arriba y sus manuales.</p>
+
 <p>El módulo de reportes está diseñado para que <strong>agregar un reporte sea añadir datos, no copiar HTML</strong>.</p>
 <h2 id="piezas">Piezas</h2>
 <div class="tabla-wiki"><table>
@@ -113,3 +122,5 @@ require __DIR__ . '/reporte_individual.php';</code></pre>
 <p class="aviso-titulo">Precaución</p>
 <p><code>ver_reportes.php</code> consulta <strong>todas</strong> las fuentes: si una falla, no se muestra un resumen parcial. Prueba tu SQL antes de registrarlo.</p>
 </div>
+
+</details>

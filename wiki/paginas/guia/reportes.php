@@ -1,4 +1,13 @@
 <?php if (!defined('LA_UNICA_WIKI')) { exit; } ?>
+<p>Esta wiki corresponde a <strong>La Única 2</strong>. Consulta los <a href="../php/sobre_nosotros/index.php">manuales vigentes, el PAC y el video</a> o <a href="../main.php">vuelve al aplicativo</a>.</p>
+<h2 id="version-la-unica-2">Reportes vigentes de La Única 2</h2>
+<p>Se ofrecen cinco reportes: Ventas por factura o período, Unidades vendidas por fechas, Existencias, Clientes y cantidad de facturas y Detalle de facturas. Se conserva el resumen diario. Los totales y unidades excluyen canceladas, y el detalle conserva nombres y precios históricos.</p>
+<p>Los accesos duplicados a totales, unidades acumuladas y estados se retiraron del menú. Pendientes no aplica a esta versión. Sus rutas antiguas redirigen para conservar los enlaces existentes.</p>
+<h2 id="imprimir-pdf">Imprimir y guardar como PDF</h2>
+<p>Configura y aplica primero los filtros. Pulsa Imprimir reporte para imprimir, o Guardar como PDF y elige ese destino en el diálogo del navegador. Se incluyen la consulta actual, su período y la fecha de generación. Se omiten el menú y los controles. No es una descarga automática; el navegador pide dónde guardar el archivo.</p>
+<details><summary>Referencia histórica del proyecto original y sus capturas</summary>
+<p><strong>Este material describe otra versión.</strong> Sus ejemplos de conexión, ramas, tablas, pagos y cancelaciones no deben aplicarse directamente a La Única 2. Para esta copia prevalecen las indicaciones de arriba y sus manuales.</p>
+
 <p>Los reportes son <strong>solo de consulta</strong>: no cambian datos. Leen las <strong>vistas</strong> y <strong>procedimientos almacenados</strong> de <code>db.sql</code>, así que muestran lo que hay en la base en ese momento.</p>
 <h2 id="abrir-los-reportes">Abrir los reportes</h2>
 <figure class="captura"><img src="img/reportes-menu.webp" alt="Reportes en el menú" loading="lazy"><figcaption>Reportes en el menú</figcaption></figure>
@@ -147,3 +156,5 @@
 </div>
 
 <p>¿Quieres saber cómo están hechos por dentro? Ver <a href="index.php?pagina=tecnico/reportes">Cómo funcionan los reportes</a>.</p>
+
+</details>

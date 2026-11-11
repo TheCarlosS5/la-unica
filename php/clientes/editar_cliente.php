@@ -1,4 +1,17 @@
 <?php
+/*
+ * ============================================================================
+ * MODULO  CLIENTES
+ * ============================================================================
+ * Administra la información de los compradores: registro, búsqueda, edición del
+ * nombre y eliminación cuando no hay facturas relacionadas. La fecha es automática y
+ * el documento identifica al cliente.
+ *
+ * RESPONSABILIDAD DE ESTE ARCHIVO
+ * Carga un cliente existente y permite corregir únicamente su nombre.
+ * ============================================================================
+ */
+
 /**
  * Archivo: editar_cliente.php
  * Módulo: Clientes — edición.
@@ -17,12 +30,11 @@ $mensajeExito = '';
 $mensajeError = '';
 $tokenCsrf = obtenerTokenCsrf();
 
-$idRecibido = $_GET['id'] ?? null;
-$idCliente = validarId($idRecibido);
+$idCliente = validarId($_GET['id'] ?? '');
 
-if ($idRecibido === null || $idCliente === null) {
+if ($idCliente === null) {
     http_response_code(400);
-    exit('ID de cliente no válido.');
+    exit('Documento de cliente no válido.');
 }
 
 try {
@@ -45,17 +57,19 @@ if (!$existe) {
 
 $nombreFormulario = $nombreCliente;
 
+/*
+ * ============================================================================
+ * PROCESAMIENTO DEL FORMULARIO
+ * Valida la solicitud y sus campos antes de ejecutar la operación; conserva los mensajes y valores que la página necesita presentar.
+ * ============================================================================
+ */
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $nombreRecibido = $_POST['nombre'] ?? null;
-    $datosPostValidos = is_string($nombreRecibido);
-    $nombreFormulario = is_string($nombreRecibido) ? $nombreRecibido : '';
-    $nombreLimpio = is_string($nombreRecibido) ? trim($nombreRecibido) : '';
+    $nombreLimpio = leerTexto($_POST, 'nombre');
+    $nombreFormulario = $nombreLimpio;
 
     if (!validarTokenCsrf($_POST['csrf_token'] ?? null)) {
         http_response_code(403);
         $mensajeError = 'No se pudo validar la solicitud. Actualiza la página e inténtalo de nuevo.';
-    } elseif (!$datosPostValidos) {
-        $mensajeError = 'Los datos enviados no tienen el formato esperado.';
     } elseif ($nombreLimpio === '' || longitudTexto($nombreLimpio) > 100) {
         $mensajeError = 'El nombre es obligatorio y admite hasta 100 caracteres.';
     } else {
@@ -63,6 +77,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $actualizar = $conexion->prepare('UPDATE clientes SET nombre = ? WHERE id_cliente = ?');
             $actualizar->bind_param('si', $nombreLimpio, $idCliente);
             if ($actualizar->execute()) {
+                registrarAccion($conexion, 'Clientes', 'Editar', 'Cliente ' . $idCliente . ': nombre «' . $nombreCliente . '» → «' . $nombreLimpio . '».');
                 $nombreCliente = $nombreLimpio;
                 $nombreFormulario = $nombreLimpio;
                 $mensajeExito = 'Cliente actualizado correctamente.';
@@ -77,6 +92,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 
+/*
+ * ============================================================================
+ * PRESENTACION DEL MODULO
+ * Con los datos y mensajes preparados, carga la navegación compartida y presenta el contenido de esta pantalla.
+ * ============================================================================
+ */
 require __DIR__ . '/../includes/menu.php';
 ?>
 <div class="encabezado-vista">
@@ -86,7 +107,7 @@ require __DIR__ . '/../includes/menu.php';
             <span class="miga-separador" aria-hidden="true">/</span>
             <a href="ver_clientes.php">Clientes</a>
             <span class="miga-separador" aria-hidden="true">/</span>
-            <span>Editar cliente #<?= h($idCliente) ?></span>
+            <span>Editar cliente <?= h($idCliente) ?></span>
         </nav>
         <h1 class="encabezado-titulo">Editar cliente</h1>
         <p class="encabezado-descripcion">Actualiza el nombre del cliente y consulta su fecha de registro.</p>
@@ -96,8 +117,8 @@ require __DIR__ . '/../includes/menu.php';
 <div class="panel-formulario-wrap">
     <div class="formulario tarjeta-formulario">
         <div class="tarjeta-id-fijo">
-            <span class="etiqueta">Identificador fijo</span>
-            <span class="valor">#<?= h($idCliente) ?></span>
+            <span class="etiqueta">Documento (no se puede cambiar)</span>
+            <span class="valor"><?= h($idCliente) ?></span>
         </div>
 
         <?php if ($mensajeExito !== ''): ?>

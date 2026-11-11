@@ -1,4 +1,11 @@
 <?php if (!defined('LA_UNICA_WIKI')) { exit; } ?>
+<p>Esta wiki corresponde a <strong>La Única 2</strong>. Consulta los <a href="../php/sobre_nosotros/index.php">manuales vigentes, el PAC y el video</a> o <a href="../main.php">vuelve al aplicativo</a>.</p>
+<h2 id="version-la-unica-2">Indicaciones vigentes de La Única 2</h2>
+<p>Sobre nosotros incluye manual del usuario 2.0, manual técnico 1.1, PAC 1.1, video explicativo y esta wiki. Los PDF se muestran dentro del aplicativo y sus enlaces incluyen una huella para evitar versiones antiguas en caché.</p>
+<p>Los manuales 1.1 preceden las últimas ampliaciones de reportes y wiki; el README local registra esas incorporaciones. La reproducción, impresión y revisión visual en navegador siguen pendientes de verificación.</p>
+<details><summary>Referencia histórica del proyecto original y sus capturas</summary>
+<p><strong>Este material describe otra versión.</strong> Sus ejemplos de conexión, ramas, tablas, pagos y cancelaciones no deben aplicarse directamente a La Única 2. Para esta copia prevalecen las indicaciones de arriba y sus manuales.</p>
+
 <p>La sección <strong>Sobre nosotros</strong> reúne la ayuda del aplicativo. Está en <em>Menú → Información → Sobre nosotros</em>.</p>
 <figure class="captura"><img src="img/sobre-nosotros.webp" alt="Tarjetas de Sobre nosotros" loading="lazy"><figcaption>Tarjetas de Sobre nosotros</figcaption></figure>
 <ul>
@@ -43,3 +50,5 @@
 </tr>
 </tbody>
 </table></div>
+
+</details>

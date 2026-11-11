@@ -1,4 +1,18 @@
 <?php
+/*
+ * ============================================================================
+ * MODULO  WIKI Y GUIAS DEL PROYECTO
+ * ============================================================================
+ * Organiza guías y notas técnicas con navegación, búsqueda e imágenes. Funciona con
+ * archivos sin conectar a SQL y distingue las indicaciones vigentes de la
+ * documentación histórica de otra versión.
+ *
+ * RESPONSABILIDAD DE ESTE ARCHIVO
+ * Este archivo participa en la presentación y navegación del módulo; el comentario
+ * existente detalla su responsabilidad específica.
+ * ============================================================================
+ */
+
 /**
  * Archivo: cabecera.php
  * Módulo: Wiki — plantilla de apertura.
@@ -19,7 +33,7 @@ $claveActual = $pagina['clave'] ?? '';
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="theme-color" content="#faf7f0">
-    <title><?= h($tituloPagina) ?> · Wiki de La Única</title>
+    <title><?= h($tituloPagina) ?> · Wiki de La Única 2</title>
     <link rel="icon" type="image/png" href="../assets/img/logo.png">
     <link rel="preload" href="../assets/fonts/patrick-hand-latin.woff2" as="font" type="font/woff2" crossorigin>
     <link rel="preload" href="../assets/fonts/architects-daughter-latin.woff2" as="font" type="font/woff2" crossorigin>

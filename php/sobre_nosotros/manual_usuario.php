@@ -1,4 +1,18 @@
 <?php
+/*
+ * ============================================================================
+ * MODULO  DOCUMENTACION Y AYUDA
+ * ============================================================================
+ * Reúne SRS, manuales, PAC, wiki y video. Los documentos se consultan dentro de la
+ * interfaz; los PDF utilizan una huella de contenido para actualizar su enlace
+ * cuando se reemplaza el archivo.
+ *
+ * RESPONSABILIDAD DE ESTE ARCHIVO
+ * Comprueba el PDF del manual de usuario y lo muestra en un visor integrado con
+ * alternativa de descarga.
+ * ============================================================================
+ */
+
 /**
  * Archivo: manual_usuario.php
  * Módulo: Sobre nosotros — Manual del Usuario.
@@ -7,14 +21,26 @@
  * el menú, la cabecera y la navegación del sistema.
  */
 
-require __DIR__ . '/inicializar.php';
+require __DIR__ . '/../config/conexion.php';
 
 $titulo = 'Manual del Usuario';
 $seccionActiva = 'sobre_nosotros';
 $manualUrl = $baseUrl . '/referencias/manual.pdf';
 $manualPath = dirname(__DIR__, 2) . '/referencias/manual.pdf';
-$manualDisponible = is_file($manualPath);
+$manualDisponible = is_file($manualPath) && is_readable($manualPath);
+if ($manualDisponible) {
+    $huellaPdf = hash_file('sha256', $manualPath);
+    if ($huellaPdf !== false) {
+        $manualUrl .= '?v=' . substr($huellaPdf, 0, 16);
+    }
+}
 
+/*
+ * ============================================================================
+ * PRESENTACION DEL MODULO
+ * Con los datos y mensajes preparados, carga la navegación compartida y presenta el contenido de esta pantalla.
+ * ============================================================================
+ */
 require __DIR__ . '/../includes/menu.php';
 ?>
 
@@ -58,6 +84,7 @@ require __DIR__ . '/../includes/menu.php';
                 <a href="<?= h($manualUrl) ?>">Consultar el archivo del manual</a>.
             </iframe>
         </div>
+        <p class="manual-panel-descripcion">Si el visor no aparece, <a href="<?= h($manualUrl) ?>" download>descarga el PDF para consultarlo</a>.</p>
     <?php else: ?>
         <div class="mensaje error alerta alerta-error" role="alert">
             No se encontró <code>referencias/manual.pdf</code>. Verifica que el documento esté dentro de la carpeta <code>referencias</code> del proyecto.

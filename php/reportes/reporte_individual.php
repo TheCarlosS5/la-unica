@@ -1,4 +1,18 @@
 <?php
+/*
+ * ============================================================================
+ * MODULO  REPORTES E IMPRESION
+ * ============================================================================
+ * Transforma los datos de ventas, clientes e inventario en consultas para revisar la
+ * tienda. Las consultas conservan las reglas de cada reporte; la presentación ofrece
+ * impresión y guardado PDF mediante el navegador.
+ *
+ * RESPONSABILIDAD DE ESTE ARCHIVO
+ * Recibe una clave de reporte, consulta sus filas y genera una tabla con formatos y
+ * escape HTML.
+ * ============================================================================
+ */
+
 /**
  * Archivo: reporte_individual.php
  * Módulo: Reportes — plantilla individual reutilizable.
@@ -32,7 +46,14 @@ try {
     $errorLectura = true;
 }
 
+/*
+ * ============================================================================
+ * PRESENTACION DEL MODULO
+ * Con los datos y mensajes preparados, carga la navegación compartida y presenta el contenido de esta pantalla.
+ * ============================================================================
+ */
 require __DIR__ . '/../includes/menu.php';
+require __DIR__ . '/acciones_impresion.php';
 ?>
 <div class="encabezado-vista">
     <div class="encabezado-info">
@@ -53,7 +74,7 @@ require __DIR__ . '/../includes/menu.php';
 </div>
 
 <?php if ($errorLectura): ?>
-    <div class="mensaje error alerta alerta-error" role="alert">No se pudo generar el reporte. Revisa la conexión y que estén disponibles las vistas y procedimientos definidos en <code>referencias/db.sql</code>.</div>
+    <div class="mensaje error alerta alerta-error" role="alert">No se pudo generar el reporte. Revisa la conexión o consulta al responsable técnico.</div>
 <?php elseif ($filasReporte === []): ?>
     <div class="sin-datos estado-vacio" role="status">
         <h2 class="estado-vacio-titulo"><?= h($reporteSeleccionado['vacio']) ?></h2>
@@ -78,7 +99,7 @@ require __DIR__ . '/../includes/menu.php';
                             <th scope="col"<?= in_array($columna['tipo'], ['entero', 'moneda'], true) ? ' class="texto-derecha"' : '' ?>><?= h($columna['titulo']) ?></th>
                         <?php endforeach; ?>
                         <?php if ($reporteSeleccionado['enlace_factura']): ?>
-                            <th scope="col" class="texto-derecha">Acciones</th>
+                            <th scope="col" class="texto-derecha no-imprimir-reporte">Acciones</th>
                         <?php endif; ?>
                     </tr>
                 </thead>
@@ -105,7 +126,7 @@ require __DIR__ . '/../includes/menu.php';
                                 </td>
                             <?php endforeach; ?>
                             <?php if ($reporteSeleccionado['enlace_factura']): ?>
-                                <td class="texto-derecha">
+                                <td class="texto-derecha no-imprimir-reporte">
                                     <a class="boton secundario boton-factura-detalle" href="<?= h($baseUrl) ?>/php/facturas/imprimir_factura.php?id=<?= (int)$fila['id_factura'] ?>">Ver factura</a>
                                 </td>
                             <?php endif; ?>

@@ -16,7 +16,11 @@ RedirectMatch 404 /\.(gitignore|htaccess|phpunit\.cache)
 # Configuración, scripts SQL, documentos de QA y herramientas internas. manual.pdf sigue accesible
 # porque lo usa el visor de «Sobre nosotros».
 RedirectMatch 404 /php/config(/|$)
-RedirectMatch 404 /referencias/.*\.(sql|md|docx)$
+RedirectMatch 404 /referencias/.*\.(sql|md)$
 RedirectMatch 404 /referencias/(QA|migraciones)(/|$)
 RedirectMatch 404 /wiki/herramientas(/|$)
 RedirectMatch 404 /[^/]+\.md$
+
+# Los documentos PDF/Word se distribuyen desde Sobre nosotros. Los logs son privados.
+RedirectMatch 404 /logs(/|$)
+RedirectMatch 404 /\.env[^/]*$

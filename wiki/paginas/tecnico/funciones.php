@@ -1,4 +1,11 @@
 <?php if (!defined('LA_UNICA_WIKI')) { exit; } ?>
+<p>Esta wiki corresponde a <strong>La Única 2</strong>. Consulta los <a href="../php/sobre_nosotros/index.php">manuales vigentes, el PAC y el video</a> o <a href="../main.php">vuelve al aplicativo</a>.</p>
+<h2 id="version-la-unica-2">Indicaciones vigentes de La Única 2</h2>
+<p>Las validaciones, conexión, CSRF, historial, errores y llamada a procedimientos están en php/config/conexion.php. Las ventas y cancelaciones se procesan en sus propias páginas; no debe asumirse que existen los servicios o archivos de la otra versión.</p>
+<p>Los manuales 1.1 preceden las últimas ampliaciones de reportes y wiki; el README local registra esas incorporaciones. La reproducción, impresión y revisión visual en navegador siguen pendientes de verificación.</p>
+<details><summary>Referencia histórica del proyecto original y sus capturas</summary>
+<p><strong>Este material describe otra versión.</strong> Sus ejemplos de conexión, ramas, tablas, pagos y cancelaciones no deben aplicarse directamente a La Única 2. Para esta copia prevalecen las indicaciones de arriba y sus manuales.</p>
+
 <p>Todas están en <code>php/config/conexion.php</code> salvo que se indique otra cosa. Se declaran dentro de <code>if (!function_exists(...))</code>.</p>
 <h2 id="variables-globales">Variables globales</h2>
 <div class="tabla-wiki"><table>
@@ -89,3 +96,5 @@ if (!validarTokenCsrf($_POST['csrf_token'] ?? null)) { /* rechazar */ }</code></
 <p>Suma <code>cantidad × precio_unitario</code> de las líneas, en SQL para no perder centavos.</p>
 <h2 id="sobre-nosotros-phpsobre_nosotrosinicializarphp">Sobre nosotros (<code>php/sobre_nosotros/inicializar.php</code>)</h2>
 <p>Carga <code>entorno.php</code> (<code>$baseUrl</code>, cabeceras y <code>h()</code>) <strong>sin</strong> abrir conexión a MySQL, para que el manual y el video se vean aunque la base esté caída.</p>
+
+</details>

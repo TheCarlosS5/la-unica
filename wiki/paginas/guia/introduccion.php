@@ -1,4 +1,11 @@
 <?php if (!defined('LA_UNICA_WIKI')) { exit; } ?>
+<p>Esta wiki corresponde a <strong>La Única 2</strong>. Consulta los <a href="../php/sobre_nosotros/index.php">manuales vigentes, el PAC y el video</a> o <a href="../main.php">vuelve al aplicativo</a>.</p>
+<h2 id="version-la-unica-2">Indicaciones vigentes de La Única 2</h2>
+<p>Consulte los manuales vigentes para la instalación, los módulos y el mantenimiento de esta copia. La documentación y las capturas del proyecto original se conservan abajo como referencia; pueden mostrar pantallas, archivos o funciones diferentes.</p>
+<p>Los manuales 1.1 preceden las últimas ampliaciones de reportes y wiki; el README local registra esas incorporaciones. La reproducción, impresión y revisión visual en navegador siguen pendientes de verificación.</p>
+<details><summary>Referencia histórica del proyecto original y sus capturas</summary>
+<p><strong>Este material describe otra versión.</strong> Sus ejemplos de conexión, ramas, tablas, pagos y cancelaciones no deben aplicarse directamente a La Única 2. Para esta copia prevalecen las indicaciones de arriba y sus manuales.</p>
+
 <p>La Única es una aplicación web <strong>local</strong> hecha en <strong>PHP + MySQL</strong> para el día a día de un negocio pequeño: registrar clientes y productos, vender con facturas que descuentan el inventario y consultar reportes. Es el proyecto del grupo de la ficha <strong>3407799</strong> del programa <em>Análisis y Desarrollo de Software</em> del SENA (Centro de la Industria, la Empresa y los Servicios, Regional Huila).</p>
 <figure class="captura"><img src="img/inicio.webp" alt="Pantalla de inicio de La Única" loading="lazy"><figcaption>Pantalla de inicio de La Única</figcaption></figure>
 <h2 id="qué-puedes-hacer">Qué puedes hacer</h2>
@@ -68,3 +75,5 @@
 <li>No está pensada para publicarse en Internet.</li>
 </ul>
 </div>
+
+</details>

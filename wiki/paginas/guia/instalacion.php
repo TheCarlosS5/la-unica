@@ -1,4 +1,11 @@
 <?php if (!defined('LA_UNICA_WIKI')) { exit; } ?>
+<p>Esta wiki corresponde a <strong>La Única 2</strong>. Consulta los <a href="../php/sobre_nosotros/index.php">manuales vigentes, el PAC y el video</a> o <a href="../main.php">vuelve al aplicativo</a>.</p>
+<h2 id="version-la-unica-2">Indicaciones vigentes de La Única 2</h2>
+<p>Use una carpeta y una base independientes. Revise CREATE DATABASE y USE en copias de los scripts antes de importarlos. Configure solo esta copia. Consulte el apartado de instalación aislada del manual técnico; no borre ni reinicie bases existentes para instalar una demostración.</p>
+<p>Los manuales 1.1 preceden las últimas ampliaciones de reportes y wiki; el README local registra esas incorporaciones. La reproducción, impresión y revisión visual en navegador siguen pendientes de verificación.</p>
+<details><summary>Referencia histórica del proyecto original y sus capturas</summary>
+<p><strong>Este material describe otra versión.</strong> Sus ejemplos de conexión, ramas, tablas, pagos y cancelaciones no deben aplicarse directamente a La Única 2. Para esta copia prevalecen las indicaciones de arriba y sus manuales.</p>
+
 <h2 id="requisitos">Requisitos</h2>
 <div class="tabla-wiki"><table>
 <thead>
@@ -138,3 +145,5 @@ git pull</code></pre>
 <li>Si creaste el usuario <code>la_unica_app</code>, bórralo con <code>DROP USER 'la_unica_app'@'localhost', 'la_unica_app'@'127.0.0.1';</code>.</li>
 </ol>
 </div>
+
+</details>

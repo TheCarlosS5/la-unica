@@ -1,4 +1,11 @@
 <?php if (!defined('LA_UNICA_WIKI')) { exit; } ?>
+<p>Esta wiki corresponde a <strong>La Única 2</strong>. Consulta los <a href="../php/sobre_nosotros/index.php">manuales vigentes, el PAC y el video</a> o <a href="../main.php">vuelve al aplicativo</a>.</p>
+<h2 id="version-la-unica-2">Indicaciones vigentes de La Única 2</h2>
+<p>Consulte los manuales vigentes para la instalación, los módulos y el mantenimiento de esta copia. La documentación y las capturas del proyecto original se conservan abajo como referencia; pueden mostrar pantallas, archivos o funciones diferentes.</p>
+<p>Los manuales 1.1 preceden las últimas ampliaciones de reportes y wiki; el README local registra esas incorporaciones. La reproducción, impresión y revisión visual en navegador siguen pendientes de verificación.</p>
+<details><summary>Referencia histórica del proyecto original y sus capturas</summary>
+<p><strong>Este material describe otra versión.</strong> Sus ejemplos de conexión, ramas, tablas, pagos y cancelaciones no deben aplicarse directamente a La Única 2. Para esta copia prevalecen las indicaciones de arriba y sus manuales.</p>
+
 <h2 id="equipo-de-desarrollo">Equipo de desarrollo</h2>
 <p>La Única es el proyecto formativo del grupo de la <strong>ficha 3407799</strong> del programa <em>Análisis y Desarrollo de Software</em> del <strong>SENA — Centro de la Industria, la Empresa y los Servicios, Regional Huila</strong>.</p>
 <div class="tabla-wiki"><table>
@@ -73,3 +80,5 @@
 <li>Escrita por Carlos Stiven Gutiérrez Ramírez para el equipo.</li>
 <li>Paleta y tipografías tomadas del propio aplicativo: papel cálido, marcador verde <code>#2d6a4f</code> y resaltador amarillo.</li>
 </ul>
+
+</details>

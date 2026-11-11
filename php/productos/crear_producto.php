@@ -1,4 +1,17 @@
 <?php
+/*
+ * ============================================================================
+ * MODULO  PRODUCTOS E INVENTARIO
+ * ============================================================================
+ * Mantiene el catálogo con nombre, unidad, existencias y precio. Las consultas
+ * permiten revisar disponibilidad; las operaciones validan los datos y protegen
+ * productos que ya forman parte de una venta.
+ *
+ * RESPONSABILIDAD DE ESTE ARCHIVO
+ * Valida nombre, unidad, stock y precio antes de añadir el artículo al catálogo.
+ * ============================================================================
+ */
+
 /**
  * Archivo: crear_producto.php
  * Módulo: Productos — alta.
@@ -13,7 +26,7 @@ require __DIR__ . '/../config/conexion.php';
 
 $titulo = 'Crear producto';
 $seccionActiva = 'productos';
-$mensajeExito = tomarMensajeFlash('producto_creado');
+$mensajeExito = (($_GET['creado'] ?? '') === '1') ? 'Producto creado correctamente.' : '';
 $mensajeError = '';
 $tokenCsrf = obtenerTokenCsrf();
 
@@ -22,39 +35,31 @@ $unidadMedida = '';
 $stockInicial = '';
 $precioUnitario = '';
 
+/*
+ * ============================================================================
+ * PROCESAMIENTO DEL FORMULARIO
+ * Valida la solicitud y sus campos antes de ejecutar la operación; conserva los mensajes y valores que la página necesita presentar.
+ * ============================================================================
+ */
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $nombreRecibido = $_POST['nombre'] ?? null;
-    $unidadRecibida = $_POST['unidad_medida'] ?? null;
-    $stockRecibido = $_POST['stock'] ?? null;
-    $precioRecibido = $_POST['precio_unitario'] ?? null;
-
-    $datosPostValidos = is_string($nombreRecibido)
-        && is_string($unidadRecibida)
-        && is_string($stockRecibido)
-        && is_string($precioRecibido);
-
-    $nombreProducto = is_string($nombreRecibido) ? trim($nombreRecibido) : '';
-    $unidadMedida = is_string($unidadRecibida) ? trim($unidadRecibida) : '';
-    $stockTexto = is_string($stockRecibido) ? trim($stockRecibido) : '';
-    $precioTexto = is_string($precioRecibido) ? trim($precioRecibido) : '';
-
-    $stockValido = filter_var($stockTexto, FILTER_VALIDATE_INT);
-
-    $stockInicial = $stockTexto;
-    $precioUnitario = $precioTexto;
+    // Se conservan los valores escritos para devolverlos al formulario si hay un error.
+    $nombreProducto = leerTexto($_POST, 'nombre');
+    $unidadMedida = leerTexto($_POST, 'unidad_medida');
+    $stockInicial = leerTexto($_POST, 'stock');
+    $precioUnitario = leerTexto($_POST, 'precio_unitario');
+    $stockValido = validarEntero($stockInicial, 0);
+    $precioTexto = $precioUnitario;
 
     if (!validarTokenCsrf($_POST['csrf_token'] ?? null)) {
         http_response_code(403);
         $mensajeError = 'No se pudo validar la solicitud. Actualiza la página e inténtalo de nuevo.';
-    } elseif (!$datosPostValidos) {
-        $mensajeError = 'Los datos enviados no tienen el formato esperado.';
-    } elseif ($nombreRecibido === null || $nombreProducto === '' || longitudTexto($nombreProducto) > 100) {
+    } elseif ($nombreProducto === '' || longitudTexto($nombreProducto) > 100) {
         $mensajeError = 'El nombre es obligatorio y admite hasta 100 caracteres.';
-    } elseif ($unidadRecibida === null || $unidadMedida === '' || longitudTexto($unidadMedida) > 20) {
+    } elseif ($unidadMedida === '' || longitudTexto($unidadMedida) > 20) {
         $mensajeError = 'La unidad es obligatoria y admite hasta 20 caracteres.';
-    } elseif ($stockRecibido === null || $stockTexto === '' || $stockValido === false || $stockValido < 0 || $stockValido > 2147483647) {
+    } elseif ($stockValido === null) {
         $mensajeError = 'El stock debe ser un entero no negativo.';
-    } elseif ($precioRecibido === null || $precioTexto === '' || !preg_match('/^\d{1,8}(?:\.\d{1,2})?$/', $precioTexto)) {
+    } elseif (!preg_match('/^\d{1,8}(?:\.\d{1,2})?$/', $precioTexto)) {
         $mensajeError = 'El precio debe ser no negativo y tener máximo dos decimales.';
     } else {
         try {
@@ -62,8 +67,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $sentencia->bind_param('ssis', $nombreProducto, $unidadMedida, $stockValido, $precioTexto);
 
             if ($sentencia->execute()) {
-                guardarMensajeFlash('producto_creado', 'Producto creado correctamente.');
-                header('Location: crear_producto.php', true, 303);
+                registrarAccion($conexion, 'Productos', 'Crear', 'Producto #' . $conexion->insert_id . ' «' . $nombreProducto . '» creado: '
+                    . $stockValido . ' ' . $unidadMedida . ' a ' . formatearMonedaCop($precioTexto) . '.');
+                header('Location: crear_producto.php?creado=1', true, 303);
                 exit;
             } else {
                 $mensajeError = 'No se pudo crear el producto.';
@@ -76,6 +82,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 
+/*
+ * ============================================================================
+ * PRESENTACION DEL MODULO
+ * Con los datos y mensajes preparados, carga la navegación compartida y presenta el contenido de esta pantalla.
+ * ============================================================================
+ */
 require __DIR__ . '/../includes/menu.php';
 ?>
 <div class="encabezado-vista">

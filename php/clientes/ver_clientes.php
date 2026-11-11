@@ -1,4 +1,17 @@
 <?php
+/*
+ * ============================================================================
+ * MODULO  CLIENTES
+ * ============================================================================
+ * Administra la información de los compradores: registro, búsqueda, edición del
+ * nombre y eliminación cuando no hay facturas relacionadas. La fecha es automática y
+ * el documento identifica al cliente.
+ *
+ * RESPONSABILIDAD DE ESTE ARCHIVO
+ * Lista compradores, permite buscar y muestra la cantidad de facturas relacionadas.
+ * ============================================================================
+ */
+
 /**
  * Archivo: ver_clientes.php
  * Módulo: Clientes — consulta.
@@ -15,32 +28,25 @@ $titulo = 'Clientes';
 $seccionActiva = 'clientes';
 $tokenCsrf = obtenerTokenCsrf();
 
-$terminoBusqueda = $_GET['buscar'] ?? '';
-$terminoBusqueda = is_string($terminoBusqueda) ? trim($terminoBusqueda) : '';
+$terminoBusqueda = leerTexto($_GET, 'buscar');
 $busquedaActiva = $terminoBusqueda !== '';
-$idBusquedaNormalizado = ctype_digit($terminoBusqueda) ? ltrim($terminoBusqueda, '0') : '';
-if ($idBusquedaNormalizado === '' && $busquedaActiva && ctype_digit($terminoBusqueda)) {
-    $idBusquedaNormalizado = '0';
-}
-$buscarPorId = $busquedaActiva
-    && ctype_digit($terminoBusqueda)
-    && strlen($idBusquedaNormalizado) <= 10
-    && (float)$idBusquedaNormalizado <= 2147483647;
+// Si lo escrito es un número válido, también se busca como documento.
+$documentoBuscado = validarId($terminoBusqueda);
 
 $sqlSeleccionClientes = 'SELECT c.id_cliente, c.nombre, c.fecha_registro, COUNT(f.id_factura) AS total_facturas FROM clientes c LEFT JOIN facturas f ON f.id_cliente = c.id_cliente';
 $sqlAgruparClientes = ' GROUP BY c.id_cliente, c.nombre, c.fecha_registro ORDER BY c.id_cliente';
 $clientes = [];
 $errorLectura = false;
 try {
-    if ($busquedaActiva && $buscarPorId) {
+    if ($documentoBuscado !== null) {
         $consultaClientes = $conexion->prepare($sqlSeleccionClientes . ' WHERE c.id_cliente = ? OR c.nombre LIKE ?' . $sqlAgruparClientes);
-        $patronNombre = patronLike($terminoBusqueda);
-        $consultaClientes->bind_param('ss', $idBusquedaNormalizado, $patronNombre);
+        $patronNombre = '%' . $terminoBusqueda . '%';
+        $consultaClientes->bind_param('is', $documentoBuscado, $patronNombre);
         $consultaClientes->execute();
         $resultadoClientes = $consultaClientes->get_result();
     } elseif ($busquedaActiva) {
         $consultaClientes = $conexion->prepare($sqlSeleccionClientes . ' WHERE c.nombre LIKE ?' . $sqlAgruparClientes);
-        $patronNombre = patronLike($terminoBusqueda);
+        $patronNombre = '%' . $terminoBusqueda . '%';
         $consultaClientes->bind_param('s', $patronNombre);
         $consultaClientes->execute();
         $resultadoClientes = $consultaClientes->get_result();
@@ -59,6 +65,14 @@ try {
     $errorLectura = true;
 }
 
+$mensajeTexto = leerTexto($_GET, 'mensaje');
+
+/*
+ * ============================================================================
+ * PRESENTACION DEL MODULO
+ * Con los datos y mensajes preparados, carga la navegación compartida y presenta el contenido de esta pantalla.
+ * ============================================================================
+ */
 require __DIR__ . '/../includes/menu.php';
 ?>
 <div class="encabezado-vista acciones-superiores">
@@ -82,10 +96,20 @@ require __DIR__ . '/../includes/menu.php';
     </div>
 </div>
 
+<?php if ($mensajeTexto !== ''): ?>
+    <div class="mensaje alerta" role="status">
+        <svg class="alerta-icono" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
+            <polyline points="22 4 12 14.01 9 11.01" />
+        </svg>
+        <div class="alerta-contenido"><?= h($mensajeTexto) ?></div>
+    </div>
+<?php endif; ?>
+
 <form class="filtro-busqueda" method="get" action="ver_clientes.php" role="search">
     <div class="campo">
-        <label for="buscar-clientes">Buscar por ID o nombre</label>
-        <input id="buscar-clientes" name="buscar" type="search" maxlength="100" value="<?= h($terminoBusqueda) ?>" placeholder="Escribe un ID o nombre" autocomplete="off">
+        <label for="buscar-clientes">Buscar por documento o nombre</label>
+        <input id="buscar-clientes" name="buscar" type="search" maxlength="100" value="<?= h($terminoBusqueda) ?>" placeholder="Escribe un documento o nombre" autocomplete="off">
     </div>
     <div class="filtro-acciones">
         <button class="boton" type="submit">Buscar</button>
@@ -100,7 +124,7 @@ require __DIR__ . '/../includes/menu.php';
 <?php elseif (count($clientes) === 0 && $busquedaActiva): ?>
     <div class="sin-datos estado-vacio">
         <h2 class="estado-vacio-titulo">No se encontraron clientes</h2>
-        <p class="estado-vacio-texto">No hay resultados para “<?= h($terminoBusqueda) ?>”. Prueba con otro ID o nombre.</p>
+        <p class="estado-vacio-texto">No hay resultados para “<?= h($terminoBusqueda) ?>”. Prueba con otro documento o nombre.</p>
         <a class="boton secundario" href="ver_clientes.php">Limpiar búsqueda</a>
     </div>
 <?php elseif (count($clientes) === 0): ?>
@@ -125,7 +149,7 @@ require __DIR__ . '/../includes/menu.php';
         <table class="tabla">
             <thead>
                 <tr>
-                    <th scope="col">ID</th>
+                    <th scope="col">Documento</th>
                     <th scope="col">Nombre</th>
                     <th scope="col">Fecha de registro</th>
                     <th scope="col">Facturas</th>
@@ -159,7 +183,7 @@ require __DIR__ . '/../includes/menu.php';
                                     <span>Editar</span>
                                 </a>
                                 <?php if ((int)$cliente['total_facturas'] === 0): ?>
-                                    <form method="post" action="eliminar_cliente.php" onsubmit="return confirm('¿Eliminar este cliente?')">
+                                    <form method="post" action="eliminar_cliente.php">
                                         <?php if ($tokenCsrf !== null): ?>
                                             <input type="hidden" name="csrf_token" value="<?= h($tokenCsrf) ?>">
                                         <?php endif; ?>

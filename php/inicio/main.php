@@ -1,8 +1,21 @@
 <?php
+/*
+ * ============================================================================
+ * MODULO  INICIO DEL APLICATIVO
+ * ============================================================================
+ * Presenta los accesos principales y orienta al operador hacia clientes, productos,
+ * facturas, reportes e información del proyecto.
+ *
+ * RESPONSABILIDAD DE ESTE ARCHIVO
+ * Renderiza la portada y los accesos a los módulos del aplicativo.
+ * ============================================================================
+ */
+
 /**
  * Archivo: php/inicio/main.php
  * Módulo: Inicio.
- * Propósito: mostrar el panel de entrada y los accesos a clientes, productos, facturas y reportes.
+ * Propósito: mostrar el panel de entrada y los accesos a clientes, productos, facturas, reportes, historial
+ * y sobre nosotros.
  * Funcionamiento: carga la conexión y utilidades compartidas, fija el título y sección activa,
  * incluye menu.php, presenta tarjetas con enlaces a cada módulo y termina con pie.php.
  * Punto clave: esta página es el destino de main.php y no ejecuta operaciones de escritura.
@@ -11,6 +24,12 @@
 require __DIR__ . '/../config/conexion.php';
 $titulo = 'Inicio';
 $seccionActiva = 'inicio';
+/*
+ * ============================================================================
+ * PRESENTACION DEL MODULO
+ * Con los datos y mensajes preparados, carga la navegación compartida y presenta el contenido de esta pantalla.
+ * ============================================================================
+ */
 require __DIR__ . '/../includes/menu.php';
 ?>
 <section class="hero" aria-labelledby="titulo-hero">
@@ -113,7 +132,7 @@ require __DIR__ . '/../includes/menu.php';
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                     <polyline points="20 6 9 17 4 12" />
                 </svg>
-                <span>Protección de unidad de medida para registros con historial</span>
+                <span>Productos agotados marcados y bloqueados para la venta</span>
             </span>
         </div>
     </article>
@@ -128,7 +147,7 @@ require __DIR__ . '/../includes/menu.php';
             </div>
             <div><h2 class="modulo-titulo">Facturas</h2></div>
         </div>
-        <p class="modulo-descripcion">Registra ventas de contado o por cobrar y consulta o imprime sus comprobantes.</p>
+        <p class="modulo-descripcion">Registra ventas y consulta o imprime comprobantes con los precios guardados en cada venta.</p>
         <div class="modulo-acciones">
             <a class="boton" href="<?= h($baseUrl) ?>/php/facturas/ver_facturas.php">
                 <span>Consultar facturas</span>
@@ -158,7 +177,7 @@ require __DIR__ . '/../includes/menu.php';
             </div>
             <div><h2 class="modulo-titulo">Reportes</h2></div>
         </div>
-        <p class="modulo-descripcion">Consulta ventas, clientes, existencias y facturas pendientes con los datos actuales de la base.</p>
+        <p class="modulo-descripcion">Consulta las ventas del día o de un período, los productos más vendidos y lo que hay que reponer.</p>
         <div class="modulo-acciones">
             <a class="boton" href="<?= h($baseUrl) ?>/php/reportes/ver_reportes.php">
                 <span>Abrir reportes</span>
@@ -168,11 +187,72 @@ require __DIR__ . '/../includes/menu.php';
         <div class="modulo-detalles">
             <span class="modulo-detalle-item">
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12" /></svg>
-                <span>Conteo de clientes, ventas y estados</span>
+                <span>Cierre de caja por fechas</span>
             </span>
             <span class="modulo-detalle-item">
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12" /></svg>
-                <span>Existencias, unidades y pendientes</span>
+                <span>Productos agotados y con stock bajo</span>
+            </span>
+        </div>
+    </article>
+
+    <article class="modulo-card">
+        <div class="modulo-cabecera">
+            <div class="modulo-icono" aria-hidden="true">
+                <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="9" />
+                    <polyline points="12 7 12 12 15 14" />
+                </svg>
+            </div>
+            <div><h2 class="modulo-titulo">Historial</h2></div>
+        </div>
+        <p class="modulo-descripcion">Revisa qué se ha hecho en el aplicativo y los errores técnicos que se han registrado.</p>
+        <div class="modulo-acciones">
+            <a class="boton" href="<?= h($baseUrl) ?>/php/historial/acciones.php">
+                <span>Ver acciones</span>
+                <svg class="boton-icono" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 18 15 12 9 6" /></svg>
+            </a>
+            <a class="boton secundario" href="<?= h($baseUrl) ?>/php/historial/errores.php">Ver errores</a>
+        </div>
+        <div class="modulo-detalles">
+            <span class="modulo-detalle-item">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12" /></svg>
+                <span>Registro de clientes, productos, ventas y cancelaciones</span>
+            </span>
+            <span class="modulo-detalle-item">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12" /></svg>
+                <span>Log de errores consultable aunque falle la base de datos</span>
+            </span>
+        </div>
+    </article>
+
+    <article class="modulo-card">
+        <div class="modulo-cabecera">
+            <div class="modulo-icono" aria-hidden="true">
+                <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="10" />
+                    <path d="M12 16v-4" />
+                    <path d="M12 8h.01" />
+                </svg>
+            </div>
+            <div><h2 class="modulo-titulo">Sobre nosotros</h2></div>
+        </div>
+        <p class="modulo-descripcion">Consulta el manual del usuario y el video explicativo para aprender a usar el aplicativo.</p>
+        <div class="modulo-acciones">
+            <a class="boton" href="<?= h($baseUrl) ?>/php/sobre_nosotros/manual_usuario.php">
+                <span>Manual del usuario</span>
+                <svg class="boton-icono" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 18 15 12 9 6" /></svg>
+            </a>
+            <a class="boton secundario" href="<?= h($baseUrl) ?>/php/sobre_nosotros/video_explicativo.php">Video explicativo</a>
+        </div>
+        <div class="modulo-detalles">
+            <span class="modulo-detalle-item">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12" /></svg>
+                <span>Manual en PDF dentro del aplicativo</span>
+            </span>
+            <span class="modulo-detalle-item">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12" /></svg>
+                <span>Video con las funciones principales</span>
             </span>
         </div>
     </article>

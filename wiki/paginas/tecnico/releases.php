@@ -1,4 +1,11 @@
 <?php if (!defined('LA_UNICA_WIKI')) { exit; } ?>
+<p>Esta wiki corresponde a <strong>La Única 2</strong>. Consulta los <a href="../php/sobre_nosotros/index.php">manuales vigentes, el PAC y el video</a> o <a href="../main.php">vuelve al aplicativo</a>.</p>
+<h2 id="version-la-unica-2">Indicaciones vigentes de La Única 2</h2>
+<p>La wiki se incorporó después de la revisión documental 1.1 y de la ampliación de reportes. Los cambios locales no equivalen a una publicación en GitHub ni a una versión aprobada del SRS.</p>
+<p>Los manuales 1.1 preceden las últimas ampliaciones de reportes y wiki; el README local registra esas incorporaciones. La reproducción, impresión y revisión visual en navegador siguen pendientes de verificación.</p>
+<details><summary>Referencia histórica del proyecto original y sus capturas</summary>
+<p><strong>Este material describe otra versión.</strong> Sus ejemplos de conexión, ramas, tablas, pagos y cancelaciones no deben aplicarse directamente a La Única 2. Para esta copia prevalecen las indicaciones de arriba y sus manuales.</p>
+
 <p>Resumen de <code>RELEASE.md</code>. Las notas de cada versión viven en <strong>GitHub Releases</strong>, no en un archivo del repositorio.</p>
 <h2 id="versionado">Versionado</h2>
 <p>Etiquetas <code>vMAYOR.MENOR.PARCHE</code>:</p>
@@ -65,3 +72,5 @@ git push origin v1.0.0</code></pre>
 <p class="aviso-titulo">Consejo</p>
 <p>Registra como verificación solo las pruebas manuales que de verdad hiciste: el proyecto no tiene pruebas automatizadas ni proceso de compilación.</p>
 </div>
+
+</details>

@@ -1,18 +1,34 @@
 <?php
+/*
+ * ============================================================================
+ * MODULO  VENTAS Y FACTURAS
+ * ============================================================================
+ * Relaciona un cliente con sus productos y cantidades. Las ventas guardan nombres y
+ * precios históricos; la cancelación del mismo día repone el inventario una sola
+ * vez. Las transacciones mantienen juntos los cambios y su historial.
+ *
+ * RESPONSABILIDAD DE ESTE ARCHIVO
+ * Valida las líneas de venta, bloquea y comprueba existencias y confirma factura,
+ * detalle, inventario e historial en una transacción.
+ * ============================================================================
+ */
+
 /**
  * Archivo: crear_factura.php
  * Módulo: Facturas — registro de ventas.
  * Propósito: crear una factura con cliente y líneas de productos, y actualizar el inventario.
- * Funcionamiento: valida CSRF, cliente, estado y líneas; agrupa cantidades repetidas por producto y
- * delega la venta en registrarVenta() (servicio_facturas.php), que guarda el precio de cada línea.
+ * Funcionamiento: valida CSRF, cliente, productos y cantidades; agrega cantidades repetidas por
+ * producto; abre una transacción, bloquea las filas implicadas, valida stock, inserta factura/detalles,
+ * guarda una copia del nombre del cliente y del nombre, unidad y precio de cada producto,
+ * descuenta existencias, calcula el total y confirma todo en conjunto.
  * Puntos clave:
- * - Se admiten de 1 a 100 líneas y cantidades enteras positivas.
- * - La venta puede ser de contado (Pagado) o por cobrar (Pendiente); ambas descuentan existencias.
+ * - Se exige al menos una línea, con producto válido y cantidad entera positiva.
+ * - Los productos se bloquean por ID ordenado para reducir conflictos de concurrencia.
  * - Cualquier error revierte factura, detalles e inventario; el éxito usa sesión flash y redirección 303.
+ * - La aplicación marca la factura como Pagado; no procesa una transacción bancaria.
  */
 
 require __DIR__ . '/../config/conexion.php';
-require __DIR__ . '/servicio_facturas.php';
 
 $titulo = 'Nueva factura';
 $seccionActiva = 'facturas';
@@ -20,7 +36,6 @@ $tokenCsrf = obtenerTokenCsrf();
 $mensajeError = '';
 $mensajeExito = '';
 $clienteSeleccionado = '';
-$estadoSeleccionado = 'Pagado';
 $lineasFormulario = [['id_producto' => '', 'cantidad' => '1']];
 $clientes = [];
 $productos = [];
@@ -28,94 +43,156 @@ $productos = [];
 if (sesionDisponible() && isset($_SESSION['factura_creada']) && is_array($_SESSION['factura_creada'])) {
     $facturaCreada = $_SESSION['factura_creada'];
     unset($_SESSION['factura_creada']);
-    $estadoCreado = in_array($facturaCreada['estado'] ?? '', ESTADOS_VENTA, true) ? $facturaCreada['estado'] : 'Pagado';
     $mensajeExito = 'Factura #' . (int)($facturaCreada['id'] ?? 0)
-        . ' registrada como ' . $estadoCreado . '. Total: '
+        . ' registrada como Pagado. Total: '
         . formatearMonedaCop($facturaCreada['total'] ?? '0.00') . '.';
 }
 
+/*
+ * ============================================================================
+ * PROCESAMIENTO DEL FORMULARIO
+ * Valida la solicitud y sus campos antes de ejecutar la operación; conserva los mensajes y valores que la página necesita presentar.
+ * ============================================================================
+ */
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $clienteEntrada = $_POST['id_cliente'] ?? null;
-    $productosEntrada = $_POST['id_producto'] ?? null;
-    $cantidadesEntrada = $_POST['cantidad'] ?? null;
-    $clienteSeleccionado = is_string($clienteEntrada) ? $clienteEntrada : '';
-    $estadoEntrada = $_POST['estado_factura'] ?? 'Pagado';
-    $estadoSeleccionado = is_string($estadoEntrada) ? $estadoEntrada : '';
-    $lineasEntradaValidas = is_array($productosEntrada)
-        && is_array($cantidadesEntrada)
-        && count($productosEntrada) === count($cantidadesEntrada)
-        && count($productosEntrada) >= 1
-        && count($productosEntrada) <= 100;
+    $clienteSeleccionado = leerTexto($_POST, 'id_cliente');
+    $idClienteValido = validarId($clienteSeleccionado);
 
+    // Las líneas llegan como dos listas paralelas: id_producto[] y cantidad[].
+    $productosEntrada = (array)($_POST['id_producto'] ?? []);
+    $cantidadesEntrada = (array)($_POST['cantidad'] ?? []);
     $lineasFormulario = [];
-    if ($lineasEntradaValidas) {
-        foreach ($productosEntrada as $indice => $productoEntrada) {
-            $cantidadEntrada = $cantidadesEntrada[$indice] ?? null;
-            $lineasFormulario[] = [
-                'id_producto' => is_string($productoEntrada) ? $productoEntrada : '',
-                'cantidad' => is_string($cantidadEntrada) ? $cantidadEntrada : '',
-            ];
-        }
-    } else {
+    foreach ($productosEntrada as $indice => $productoEntrada) {
+        $lineasFormulario[] = [
+            'id_producto' => trim((string)$productoEntrada),
+            'cantidad' => trim((string)($cantidadesEntrada[$indice] ?? '')),
+        ];
+    }
+    if ($lineasFormulario === []) {
         $lineasFormulario = [['id_producto' => '', 'cantidad' => '1']];
     }
 
-    $lineasVenta = [];
     $cantidadesPorProducto = [];
-    $idClienteValido = validarId($clienteSeleccionado);
-
     if (!validarTokenCsrf($_POST['csrf_token'] ?? null)) {
         http_response_code(403);
         $mensajeError = 'No se pudo validar la solicitud. Actualiza la página e inténtalo de nuevo.';
-    } elseif (!is_string($clienteEntrada) || $idClienteValido === null) {
+    } elseif ($idClienteValido === null) {
         $mensajeError = 'Selecciona un cliente válido.';
-    } elseif (!in_array($estadoSeleccionado, ESTADOS_VENTA, true)) {
-        $estadoSeleccionado = 'Pagado';
-        $mensajeError = 'Selecciona si la venta es de contado (Pagado) o por cobrar (Pendiente).';
-    } elseif (!$lineasEntradaValidas) {
-        $mensajeError = 'Agrega entre 1 y 100 productos con sus cantidades.';
+    } elseif ($productosEntrada === []) {
+        $mensajeError = 'Agrega al menos un producto.';
     } else {
-        foreach ($productosEntrada as $indice => $productoEntrada) {
-            $cantidadEntrada = $cantidadesEntrada[$indice] ?? null;
-            $idProducto = is_string($productoEntrada) ? validarId($productoEntrada) : null;
-            $cantidadTexto = is_string($cantidadEntrada) ? $cantidadEntrada : '';
-
-            if ($idProducto === null || !preg_match('/^[1-9][0-9]*$/D', $cantidadTexto)) {
+        foreach ($lineasFormulario as $linea) {
+            $idProducto = validarId($linea['id_producto']);
+            $cantidad = validarEntero($linea['cantidad'], 1);
+            if ($idProducto === null || $cantidad === null) {
                 $mensajeError = 'Cada línea debe tener un producto válido y una cantidad entera mayor que cero.';
                 break;
             }
-
-            $cantidad = filter_var($cantidadTexto, FILTER_VALIDATE_INT);
-            if ($cantidad === false || $cantidad > 2147483647) {
-                $mensajeError = 'La cantidad debe ser un entero entre 1 y 2.147.483.647.';
-                break;
-            }
-
-            $lineasVenta[] = ['id_producto' => $idProducto, 'cantidad' => $cantidad];
-            $cantidadAcumulada = ($cantidadesPorProducto[$idProducto] ?? 0) + $cantidad;
-            if ($cantidadAcumulada > 2147483647) {
-                $mensajeError = 'La cantidad acumulada de un producto supera el límite permitido.';
-                break;
-            }
-            $cantidadesPorProducto[$idProducto] = $cantidadAcumulada;
+            // Si el mismo producto aparece en dos líneas, se suman sus cantidades.
+            $cantidadesPorProducto[$idProducto] = ($cantidadesPorProducto[$idProducto] ?? 0) + $cantidad;
         }
     }
 
-    if ($mensajeError === '' && $tokenCsrf === null) {
-        http_response_code(503);
-        $mensajeError = 'No fue posible iniciar la sesión de seguridad. Recarga la página e inténtalo de nuevo.';
-    }
-
     if ($mensajeError === '') {
+        $transaccionIniciada = false;
         try {
-            $facturaCreada = registrarVenta($conexion, $idClienteValido, $cantidadesPorProducto, $estadoSeleccionado);
-            $_SESSION['factura_creada'] = $facturaCreada + ['estado' => $estadoSeleccionado];
+            // Factura, detalles y descuentos se confirman juntos o se revierten juntos.
+            $conexion->begin_transaction();
+            $transaccionIniciada = true;
+
+            $consultaCliente = $conexion->prepare('SELECT nombre FROM clientes WHERE id_cliente = ? FOR UPDATE');
+            $consultaCliente->bind_param('i', $idClienteValido);
+            $consultaCliente->execute();
+            $clienteEncontrado = $consultaCliente->get_result()->fetch_assoc();
+            $consultaCliente->close();
+            if ($clienteEncontrado === null) {
+                throw new DomainException('El cliente seleccionado ya no existe. Actualiza la página y vuelve a seleccionarlo.');
+            }
+
+            // Bloquear productos siempre en orden de ID reduce interbloqueos entre ventas concurrentes.
+            $idsOrdenados = array_keys($cantidadesPorProducto);
+            sort($idsOrdenados, SORT_NUMERIC);
+            // Se leen nombre, unidad y precio para guardarlos como copia histórica en el detalle.
+            $consultaProducto = $conexion->prepare('SELECT nombre, unidad_medida, stock, precio_unitario FROM productos WHERE id_producto = ? FOR UPDATE');
+            $datosProductos = [];
+            foreach ($idsOrdenados as $idProducto) {
+                $consultaProducto->bind_param('i', $idProducto);
+                $consultaProducto->execute();
+                $productoEncontrado = $consultaProducto->get_result()->fetch_assoc();
+                if ($productoEncontrado === null) {
+                    throw new DomainException('Uno de los productos seleccionados ya no existe. Actualiza la página.');
+                }
+                if ((int)$productoEncontrado['stock'] < $cantidadesPorProducto[$idProducto]) {
+                    throw new DomainException('Las existencias cambiaron y no alcanzan para completar la venta. Revisa las cantidades e inténtalo de nuevo.');
+                }
+                $datosProductos[$idProducto] = $productoEncontrado;
+            }
+            $consultaProducto->close();
+
+            $crearFactura = $conexion->prepare("INSERT INTO facturas (id_cliente, nombre_cliente, estado_factura) VALUES (?, ?, 'Pagado')");
+            $crearFactura->bind_param('is', $idClienteValido, $clienteEncontrado['nombre']);
+            $crearFactura->execute();
+            $idFactura = (int)$conexion->insert_id;
+            $crearFactura->close();
+
+            $insertarDetalle = $conexion->prepare('INSERT INTO detalle_facturas (id_factura, id_producto, nombre_producto, unidad_medida, precio_unitario, cantidad) VALUES (?, ?, ?, ?, ?, ?)');
+            $descontarStock = $conexion->prepare('UPDATE productos SET stock = stock - ? WHERE id_producto = ? AND stock >= ?');
+            foreach ($cantidadesPorProducto as $idProducto => $cantidad) {
+                $producto = $datosProductos[$idProducto];
+                $insertarDetalle->bind_param('iisssi', $idFactura, $idProducto, $producto['nombre'], $producto['unidad_medida'], $producto['precio_unitario'], $cantidad);
+                $insertarDetalle->execute();
+
+                $descontarStock->bind_param('iii', $cantidad, $idProducto, $cantidad);
+                $descontarStock->execute();
+                if ($descontarStock->affected_rows !== 1) {
+                    throw new DomainException('Las existencias cambiaron durante la venta. No se guardó la factura; inténtalo de nuevo.');
+                }
+            }
+            $insertarDetalle->close();
+            $descontarStock->close();
+
+            // Total = suma de cantidad × precio guardado en cada línea de la factura.
+            $consultaTotal = $conexion->prepare('SELECT SUM(cantidad * precio_unitario) AS total_factura FROM detalle_facturas WHERE id_factura = ?');
+            $consultaTotal->bind_param('i', $idFactura);
+            $consultaTotal->execute();
+            $filaTotal = $consultaTotal->get_result()->fetch_assoc();
+            $consultaTotal->close();
+            if ($filaTotal === null || $filaTotal['total_factura'] === null) {
+                throw new RuntimeException('La factura no produjo un total calculable.');
+            }
+
+            $totalFactura = (string)$filaTotal['total_factura'];
+            // El registro del historial va dentro de la transacción: venta y registro se confirman juntos.
+            registrarAccion($conexion, 'Facturas', 'Crear', 'Factura #' . $idFactura . ' para «' . $clienteEncontrado['nombre'] . '» por '
+                . formatearMonedaCop($totalFactura) . ' (' . count($cantidadesPorProducto) . ' productos).', true);
+            $conexion->commit();
+            $transaccionIniciada = false;
+
+            $_SESSION['factura_creada'] = [
+                'id' => $idFactura,
+                'total' => $totalFactura,
+                'productos' => count($cantidadesPorProducto),
+            ];
             header('Location: crear_factura.php', true, 303);
             exit;
         } catch (DomainException $e) {
+            if ($transaccionIniciada) {
+                try {
+                    $conexion->rollback();
+                } catch (Throwable $errorRollback) {
+                    registrarErrorServidor('crear_factura_rollback', $errorRollback);
+                }
+            }
             http_response_code(409);
             $mensajeError = $e->getMessage();
         } catch (Throwable $e) {
+            if ($transaccionIniciada) {
+                try {
+                    $conexion->rollback();
+                } catch (Throwable $errorRollback) {
+                    registrarErrorServidor('crear_factura_rollback', $errorRollback);
+                }
+            }
             registrarErrorServidor('crear_factura', $e);
             $mensajeError = 'No se pudo registrar la factura. No se aplicaron cambios; verifica la conexión e inténtalo de nuevo.';
         }
@@ -152,6 +229,12 @@ foreach ($productos as $producto) {
         . ($stockProducto < 1 ? ' disabled' : '') . '>' . h($etiqueta) . '</option>';
 }
 
+/*
+ * ============================================================================
+ * PRESENTACION DEL MODULO
+ * Con los datos y mensajes preparados, carga la navegación compartida y presenta el contenido de esta pantalla.
+ * ============================================================================
+ */
 require __DIR__ . '/../includes/menu.php';
 ?>
 <div class="encabezado-vista">
@@ -201,16 +284,10 @@ require __DIR__ . '/../includes/menu.php';
                     <select id="id_cliente" name="id_cliente" required>
                         <option value="">Selecciona un cliente</option>
                         <?php foreach ($clientes as $cliente): ?>
-                            <option value="<?= (int)$cliente['id_cliente'] ?>" <?= $clienteSeleccionado === (string)$cliente['id_cliente'] ? 'selected' : '' ?>><?= h($cliente['nombre']) ?> · ID <?= (int)$cliente['id_cliente'] ?></option>
+                            <option value="<?= (int)$cliente['id_cliente'] ?>" <?= $clienteSeleccionado === (string)$cliente['id_cliente'] ? 'selected' : '' ?>><?= h($cliente['nombre']) ?> · Doc. <?= (int)$cliente['id_cliente'] ?></option>
                         <?php endforeach; ?>
                     </select>
                 </div>
-
-                <fieldset class="campo campo-opciones">
-                    <legend>Forma de pago</legend>
-                    <label><input type="radio" name="estado_factura" value="Pagado" <?= $estadoSeleccionado !== 'Pendiente' ? 'checked' : '' ?>> De contado (Pagado)</label>
-                    <label><input type="radio" name="estado_factura" value="Pendiente" <?= $estadoSeleccionado === 'Pendiente' ? 'checked' : '' ?>> Por cobrar (Pendiente)</label>
-                </fieldset>
 
                 <div class="factura-lineas-cabecera">
                     <div><h3>Productos</h3><p class="ayuda">Cada producto puede agregarse una sola vez; ajusta su cantidad.</p></div>
@@ -257,7 +334,7 @@ require __DIR__ . '/../includes/menu.php';
                 <div class="factura-resumen" aria-live="polite">
                     <span>Total estimado</span>
                     <output id="total-factura" for="lineas-factura">$0,00 COP</output>
-                    <p>Se guarda el precio actual de cada producto; si el catálogo cambia después, la factura conserva su importe.</p>
+                    <p>El precio de cada producto queda guardado en la factura; si después cambia en el catálogo, esta factura no se modifica.</p>
                 </div>
 
                 <div class="fila-botones">

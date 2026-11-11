@@ -1,4 +1,11 @@
 <?php if (!defined('LA_UNICA_WIKI')) { exit; } ?>
+<p>Esta wiki corresponde a <strong>La Única 2</strong>. Consulta los <a href="../php/sobre_nosotros/index.php">manuales vigentes, el PAC y el video</a> o <a href="../main.php">vuelve al aplicativo</a>.</p>
+<h2 id="version-la-unica-2">Indicaciones vigentes de La Única 2</h2>
+<p>Esta copia tiene cinco tablas y cuatro procedimientos. La demostración usa la_unica_2_demo_20261110 en 127.0.0.1:3307. La configuración privada se guarda en php/config/conexion.local.php; las variables DB_HOST, DB_PORT, DB_DATABASE, DB_USERNAME y DB_PASSWORD tienen prioridad. El archivo .env no se carga automáticamente. No importe scripts sobre la base de otro proyecto.</p>
+<p>Los manuales 1.1 preceden las últimas ampliaciones de reportes y wiki; el README local registra esas incorporaciones. La reproducción, impresión y revisión visual en navegador siguen pendientes de verificación.</p>
+<details><summary>Referencia histórica del proyecto original y sus capturas</summary>
+<p><strong>Este material describe otra versión.</strong> Sus ejemplos de conexión, ramas, tablas, pagos y cancelaciones no deben aplicarse directamente a La Única 2. Para esta copia prevalecen las indicaciones de arriba y sus manuales.</p>
+
 <p>El esquema completo está en <code>referencias/db.sql</code>: <strong>4 tablas, 3 vistas y 5 procedimientos almacenados</strong>. No define motor, <em>charset</em>, índices únicos de negocio ni <em>triggers</em>, y <strong>no inserta datos</strong>.</p>
 <figure class="diagrama-er">
 <svg viewBox="0 0 660 390" role="img" aria-labelledby="er-titulo">
@@ -308,3 +315,5 @@ mysqldump -u root -h 127.0.0.1 -P 3306 --routines --databases la_unica &gt; resp
 
 # Restaurar en un equipo sin la base
 mysql -u root -h 127.0.0.1 -P 3306 --default-character-set=utf8mb4 &lt; respaldo.sql</code></pre>
+
+</details>

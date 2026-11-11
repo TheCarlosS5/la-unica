@@ -1,11 +1,24 @@
 <?php
+/*
+ * ============================================================================
+ * MODULO  VENTAS Y FACTURAS
+ * ============================================================================
+ * Relaciona un cliente con sus productos y cantidades. Las ventas guardan nombres y
+ * precios históricos; la cancelación del mismo día repone el inventario una sola
+ * vez. Las transacciones mantienen juntos los cambios y su historial.
+ *
+ * RESPONSABILIDAD DE ESTE ARCHIVO
+ * Busca y lista comprobantes por los filtros admitidos, conservando la consulta del historial.
+ * ============================================================================
+ */
+
 /**
  * Archivo: ver_facturas.php
  * Módulo: Facturas — consulta.
  * Propósito: buscar ventas y mostrar su estado, fecha, líneas y total.
  * Funcionamiento: combina filtros opcionales por ID de factura, ID/nombre de cliente y fecha; construye
  * condiciones parametrizadas, agrupa detalles/productos y ordena los resultados más recientes primero.
- * Puntos clave: el importe usa el precio guardado en cada línea de la venta; los parámetros usan sentencias
+ * Puntos clave: el importe y el nombre del cliente son los guardados en la venta; los parámetros usan sentencias
  * preparadas y los enlaces abren el comprobante de cada factura.
  */
 
@@ -13,10 +26,8 @@ require __DIR__ . '/../config/conexion.php';
 
 $titulo = 'Facturas';
 $seccionActiva = 'facturas';
-$terminoBusqueda = $_GET['buscar'] ?? '';
-$terminoBusqueda = is_string($terminoBusqueda) ? trim($terminoBusqueda) : '';
-$fechaBusqueda = $_GET['fecha'] ?? '';
-$fechaBusqueda = is_string($fechaBusqueda) ? trim($fechaBusqueda) : '';
+$terminoBusqueda = leerTexto($_GET, 'buscar');
+$fechaBusqueda = leerTexto($_GET, 'fecha');
 $errorFiltro = '';
 $errorLectura = false;
 $facturas = [];
@@ -30,26 +41,20 @@ if (longitudTexto($terminoBusqueda) > 100) {
 $condiciones = [];
 $tipos = '';
 $parametros = [];
-$idBusqueda = null;
-if ($terminoBusqueda !== '' && ctype_digit($terminoBusqueda)) {
-    $normalizado = ltrim($terminoBusqueda, '0');
-    $normalizado = $normalizado === '' ? '0' : $normalizado;
-    if (strlen($normalizado) <= 10) {
-        $idBusqueda = validarId($normalizado);
-    }
-}
+// Si lo escrito es un número válido, se busca también como número de factura o documento del cliente.
+$idBusqueda = validarId($terminoBusqueda);
 
 if ($terminoBusqueda !== '') {
     if ($idBusqueda !== null) {
-        $condiciones[] = '(f.id_factura = ? OR f.id_cliente = ? OR c.nombre LIKE ?)';
+        $condiciones[] = '(f.id_factura = ? OR f.id_cliente = ? OR f.nombre_cliente LIKE ?)';
         $tipos .= 'iis';
         $parametros[] = $idBusqueda;
         $parametros[] = $idBusqueda;
-        $parametros[] = patronLike($terminoBusqueda);
+        $parametros[] = '%' . $terminoBusqueda . '%';
     } else {
-        $condiciones[] = 'c.nombre LIKE ?';
+        $condiciones[] = 'f.nombre_cliente LIKE ?';
         $tipos .= 's';
-        $parametros[] = patronLike($terminoBusqueda);
+        $parametros[] = '%' . $terminoBusqueda . '%';
     }
 }
 
@@ -62,15 +67,15 @@ if ($fechaBusqueda !== '') {
 }
 
 if ($errorFiltro === '') {
-    $sqlFacturas = 'SELECT f.id_factura, f.id_cliente, c.nombre AS cliente, f.estado_factura, f.fecha_factura, '
+    $sqlFacturas = 'SELECT f.id_factura, f.id_cliente, f.nombre_cliente AS cliente, f.estado_factura, f.fecha_factura, '
         . 'COUNT(d.id_detalle_factura) AS cantidad_lineas, '
         . 'COALESCE(SUM(d.cantidad * d.precio_unitario), 0.00) AS total_factura '
-        . 'FROM facturas f INNER JOIN clientes c ON c.id_cliente = f.id_cliente '
+        . 'FROM facturas f '
         . 'LEFT JOIN detalle_facturas d ON d.id_factura = f.id_factura';
     if ($condiciones !== []) {
         $sqlFacturas .= ' WHERE ' . implode(' AND ', $condiciones);
     }
-    $sqlFacturas .= ' GROUP BY f.id_factura, f.id_cliente, c.nombre, f.estado_factura, f.fecha_factura '
+    $sqlFacturas .= ' GROUP BY f.id_factura, f.id_cliente, f.nombre_cliente, f.estado_factura, f.fecha_factura '
         . 'ORDER BY f.fecha_factura DESC, f.id_factura DESC';
 
     try {
@@ -102,6 +107,12 @@ if ($errorFiltro === '') {
     }
 }
 
+/*
+ * ============================================================================
+ * PRESENTACION DEL MODULO
+ * Con los datos y mensajes preparados, carga la navegación compartida y presenta el contenido de esta pantalla.
+ * ============================================================================
+ */
 require __DIR__ . '/../includes/menu.php';
 ?>
 <div class="encabezado-vista acciones-superiores">
@@ -121,7 +132,7 @@ require __DIR__ . '/../includes/menu.php';
 
 <form class="filtros-facturas" method="get" action="ver_facturas.php" role="search" aria-label="Buscar facturas">
     <div class="campo">
-        <label for="buscar-facturas">Factura, ID de cliente o nombre</label>
+        <label for="buscar-facturas">N.º de factura, documento o nombre del cliente</label>
         <input id="buscar-facturas" name="buscar" type="search" maxlength="100" value="<?= h($terminoBusqueda) ?>" placeholder="Ej. 120 o María Gómez" autocomplete="off">
     </div>
     <div class="campo">
@@ -143,7 +154,7 @@ require __DIR__ . '/../includes/menu.php';
 <?php elseif ($facturas === []): ?>
     <div class="sin-datos estado-vacio" role="status">
         <h2 class="estado-vacio-titulo"><?= $terminoBusqueda !== '' || $fechaBusqueda !== '' ? 'No se encontraron facturas' : 'Todavía no hay facturas' ?></h2>
-        <p class="estado-vacio-texto"><?= $terminoBusqueda !== '' || $fechaBusqueda !== '' ? 'No hay resultados con esos criterios. Prueba con otro ID, nombre o fecha.' : 'Las ventas registradas aparecerán aquí para su consulta e impresión.' ?></p>
+        <p class="estado-vacio-texto"><?= $terminoBusqueda !== '' || $fechaBusqueda !== '' ? 'No hay resultados con esos criterios. Prueba con otro número, documento, nombre o fecha.' : 'Las ventas registradas aparecerán aquí para su consulta e impresión.' ?></p>
         <?php if ($terminoBusqueda !== '' || $fechaBusqueda !== ''): ?>
             <a class="boton secundario" href="ver_facturas.php">Limpiar búsqueda</a>
         <?php else: ?>
@@ -167,7 +178,7 @@ require __DIR__ . '/../includes/menu.php';
             </thead>
             <tbody>
                 <?php foreach ($facturas as $factura): ?>
-                    <?php $fechaMostrar = is_string($factura['fecha_factura']) && $factura['fecha_factura'] !== '' ? (new DateTimeImmutable($factura['fecha_factura']))->format('d/m/Y H:i') : 'Sin fecha registrada'; ?>
+                    <?php $fechaMostrar = !empty($factura['fecha_factura']) ? (new DateTimeImmutable($factura['fecha_factura']))->format('d/m/Y H:i') : 'Sin fecha registrada'; ?>
                     <tr>
                         <td><span class="chip-id">#<?= (int)$factura['id_factura'] ?></span></td>
                         <td><span class="celda-fecha"><?= h($fechaMostrar) ?></span></td>

@@ -1,4 +1,18 @@
 <?php
+/*
+ * ============================================================================
+ * MODULO  REPORTES E IMPRESION
+ * ============================================================================
+ * Transforma los datos de ventas, clientes e inventario en consultas para revisar la
+ * tienda. Las consultas conservan las reglas de cada reporte; la presentación ofrece
+ * impresión y guardado PDF mediante el navegador.
+ *
+ * RESPONSABILIDAD DE ESTE ARCHIVO
+ * Selecciona la consulta de líneas de venta con cliente, estado, fecha, producto,
+ * cantidad, precio histórico y subtotal.
+ * ============================================================================
+ */
+
 /**
  * Archivo: detalle_facturas.php
  * Módulo: Reportes — detalle de facturas.

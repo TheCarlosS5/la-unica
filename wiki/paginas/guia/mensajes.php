@@ -1,4 +1,11 @@
 <?php if (!defined('LA_UNICA_WIKI')) { exit; } ?>
+<p>Esta wiki corresponde a <strong>La Única 2</strong>. Consulta los <a href="../php/sobre_nosotros/index.php">manuales vigentes, el PAC y el video</a> o <a href="../main.php">vuelve al aplicativo</a>.</p>
+<h2 id="version-la-unica-2">Indicaciones vigentes de La Única 2</h2>
+<p>Los mensajes vigentes son los del código de la-unica-2. No hay mensajes de Registrar pago ni un flujo Pendiente. La pantalla de conexión ofrece diagnóstico técnico y el PAC registra esa diferencia pendiente de corrección.</p>
+<p>Los manuales 1.1 preceden las últimas ampliaciones de reportes y wiki; el README local registra esas incorporaciones. La reproducción, impresión y revisión visual en navegador siguen pendientes de verificación.</p>
+<details><summary>Referencia histórica del proyecto original y sus capturas</summary>
+<p><strong>Este material describe otra versión.</strong> Sus ejemplos de conexión, ramas, tablas, pagos y cancelaciones no deben aplicarse directamente a La Única 2. Para esta copia prevalecen las indicaciones de arriba y sus manuales.</p>
+
 <p>Lista de los mensajes que puede mostrar la aplicación, extraídos directamente del código PHP. Usa <kbd>Ctrl</kbd>+<kbd>F</kbd> para encontrar el tuyo.</p>
 <h2 id="generales">Generales</h2>
 <div class="tabla-wiki"><table>
@@ -288,3 +295,5 @@
 </tbody>
 </table></div>
 <p><strong>Leyenda:</strong> ✅ éxito · ❌ dato inválido · 🔒 bloqueado por una regla de negocio · ⚠️ problema temporal o de servidor · ℹ️ informativo.</p>
+
+</details>

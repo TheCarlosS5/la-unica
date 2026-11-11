@@ -1,4 +1,11 @@
 <?php if (!defined('LA_UNICA_WIKI')) { exit; } ?>
+<p>Esta wiki corresponde a <strong>La Única 2</strong>. Consulta los <a href="../php/sobre_nosotros/index.php">manuales vigentes, el PAC y el video</a> o <a href="../main.php">vuelve al aplicativo</a>.</p>
+<h2 id="version-la-unica-2">Indicaciones vigentes de La Única 2</h2>
+<p>Consulte los manuales vigentes para la instalación, los módulos y el mantenimiento de esta copia. La documentación y las capturas del proyecto original se conservan abajo como referencia; pueden mostrar pantallas, archivos o funciones diferentes.</p>
+<p>Los manuales 1.1 preceden las últimas ampliaciones de reportes y wiki; el README local registra esas incorporaciones. La reproducción, impresión y revisión visual en navegador siguen pendientes de verificación.</p>
+<details><summary>Referencia histórica del proyecto original y sus capturas</summary>
+<p><strong>Este material describe otra versión.</strong> Sus ejemplos de conexión, ramas, tablas, pagos y cancelaciones no deben aplicarse directamente a La Única 2. Para esta copia prevalecen las indicaciones de arriba y sus manuales.</p>
+
 <h2 id="visión-general">Visión general</h2>
 <p>La Única es <strong>PHP plano</strong> (sin framework, sin Composer) sobre <strong>MySQL</strong>, con <strong>HTML renderizado en el servidor</strong>, una sola hoja de estilos y un único archivo JavaScript para el formulario de facturas.</p>
 <pre class="highlight"><code class="language-text">┌──────────── Navegador ────────────┐
@@ -158,3 +165,5 @@ require __DIR__ . '/../includes/menu.php';           // 6. Cabecera y menú
 <p class="aviso-titulo">Nota</p>
 <p>La rama <code>main</code> del equipo y la rama <code>revision-samuel</code> comparten esta arquitectura. Esta wiki documenta <code>revision-samuel</code> (commit <code>2eec07a</code>).</p>
 </div>
+
+</details>

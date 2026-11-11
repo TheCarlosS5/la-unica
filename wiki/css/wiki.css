@@ -1,4 +1,16 @@
 /*
+ * ============================================================================
+ * MODULO  PRESENTACION DE LA WIKI
+ * ============================================================================
+ * Define tipografía, navegación, artículos, capturas y adaptación a pantallas
+ * pequeñas. Solo determina la apariencia de la documentación.
+ *
+ * RESPONSABILIDAD DE ESTE ARCHIVO
+ * Los bloques de este archivo describen comportamientos o estilos del navegador; no
+ * guardan operaciones en la base de datos.
+ * ============================================================================
+ */
+/*
  * Archivo: wiki.css
  * Módulo: Wiki — estilos.
  * Propósito: dar a la wiki la misma identidad del aplicativo (papel cálido, marcador verde, resaltador).

@@ -1,4 +1,11 @@
 <?php if (!defined('LA_UNICA_WIKI')) { exit; } ?>
+<p>Esta wiki corresponde a <strong>La Única 2</strong>. Consulta los <a href="../php/sobre_nosotros/index.php">manuales vigentes, el PAC y el video</a> o <a href="../main.php">vuelve al aplicativo</a>.</p>
+<h2 id="version-la-unica-2">Indicaciones vigentes de La Única 2</h2>
+<p>Validar cliente, productos, cantidades y CSRF; iniciar transacción; bloquear y comprobar stock; guardar copias históricas; descontar existencias y registrar historial antes del commit. Un fallo revierte la venta. La cancelación solo admite Pagado del mismo día.</p>
+<p>Los manuales 1.1 preceden las últimas ampliaciones de reportes y wiki; el README local registra esas incorporaciones. La reproducción, impresión y revisión visual en navegador siguen pendientes de verificación.</p>
+<details><summary>Referencia histórica del proyecto original y sus capturas</summary>
+<p><strong>Este material describe otra versión.</strong> Sus ejemplos de conexión, ramas, tablas, pagos y cancelaciones no deben aplicarse directamente a La Única 2. Para esta copia prevalecen las indicaciones de arriba y sus manuales.</p>
+
 <p>Las operaciones sobre facturas —<strong>vender</strong>, <strong>registrar el pago</strong> y <strong>cancelar</strong>— viven en <code>php/facturas/servicio_facturas.php</code> (<code>registrarVenta()</code>, <code>registrarPagoFactura()</code>, <code>cancelarFactura()</code>). Las páginas solo validan el formulario y llaman a esas funciones; <code>tests/Integration/FacturasServicioTest.php</code> las prueba contra una base real. Cada una corre en una <strong>transacción MySQL</strong> mediante <code>ejecutarEnTransaccion()</code>: o se aplica todo, o no se aplica nada (SRS RNF-04).</p>
 <h2 id="crear-una-factura">Crear una factura</h2>
 <h3 id="1-validación-previa-sin-tocar-la-base">1. Validación previa (sin tocar la base)</h3>
@@ -96,3 +103,5 @@ $conexion-&gt;commit();
                                          │ factura.php      Cancelado   (final)
                                          │                    ▲
     venta por cobrar ───────────────►  Pendiente ────────────┘</code></pre>
+
+</details>
