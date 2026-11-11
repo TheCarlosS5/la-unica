@@ -117,4 +117,4 @@ Proyecto de la ficha **3407799**, programa **Análisis y Desarrollo de Software*
 | Samuel Santiago Ramírez Fierro | Base de datos |
 | Santiago Ortiz Claros | Calidad, pruebas y seguridad |
 
-El historial conserva los aportes de cada integrante. Codex asistió en la revisión de coherencia documental del 11/11/2026; esta asistencia no implica aprobación individual de los demás integrantes ni del instructor.
+El historial conserva los aportes de cada integrante.
