@@ -39,11 +39,11 @@ function catalogoWiki()
             ],
             'guia/reportes' => [
                 'titulo' => 'Reportes',
-                'descripcion' => 'Resumen diario y cinco reportes: consulta, impresión y PDF.',
+                'descripcion' => 'El resumen general y los siete reportes: cómo abrirlos y cómo leerlos.',
             ],
             'guia/sobre-nosotros' => [
                 'titulo' => 'Sobre nosotros y ayuda',
-                'descripcion' => 'SRS, manuales, PAC, video y wiki de la versión actual.',
+                'descripcion' => 'Manual de usuario integrado, video explicativo y esta wiki.',
             ],
             'guia/movil' => [
                 'titulo' => 'En celular y tableta',
@@ -75,7 +75,7 @@ function catalogoWiki()
             ],
             'guia/mensajes' => [
                 'titulo' => 'Catálogo de mensajes',
-                'descripcion' => 'Los principales mensajes de La Única, qué significan y qué hacer.',
+                'descripcion' => 'Todos los mensajes que muestra La Única, qué significan y qué hacer.',
             ],
         ],
         'Notas técnicas' => [
@@ -89,7 +89,7 @@ function catalogoWiki()
             ],
             'tecnico/base-de-datos' => [
                 'titulo' => 'Base de datos',
-                'descripcion' => 'Tablas, relaciones, restricciones y procedimientos de referencias/db.sql.',
+                'descripcion' => 'Tablas, relaciones, restricciones, vistas y procedimientos de referencias/db.sql.',
             ],
             'tecnico/flujo-de-ventas' => [
                 'titulo' => 'Flujo de ventas y cancelaciones',
@@ -105,7 +105,7 @@ function catalogoWiki()
             ],
             'tecnico/funciones' => [
                 'titulo' => 'Referencia de funciones',
-                'descripcion' => 'Funciones compartidas de php/config y del módulo de reportes.',
+                'descripcion' => 'API de las funciones compartidas de php/config/conexion.php y del módulo de reportes.',
             ],
             'tecnico/interfaz' => [
                 'titulo' => 'Interfaz (CSS y JS)',
@@ -125,7 +125,7 @@ function catalogoWiki()
             ],
             'tecnico/wiki' => [
                 'titulo' => 'Mantener esta wiki',
-                'descripcion' => 'Cómo está hecha la wiki en PHP, cómo agregar o editar páginas y cómo verificar sus enlaces y mantener instrucciones actuales.',
+                'descripcion' => 'Cómo está hecha la wiki en PHP, cómo agregar o editar páginas y cómo regenerar las capturas numeradas.',
             ],
         ],
         'General' => [
@@ -135,7 +135,7 @@ function catalogoWiki()
             ],
             'general/novedades' => [
                 'titulo' => 'Historial del proyecto',
-                'descripcion' => 'Integración actual y mejoras de la revisión técnica.',
+                'descripcion' => 'Cronología de La Única reconstruida a partir del historial de Git.',
             ],
         ],
     ];

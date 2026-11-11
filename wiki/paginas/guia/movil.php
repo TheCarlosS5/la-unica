@@ -1,12 +1,30 @@
 <?php if (!defined('LA_UNICA_WIKI')) { exit; } ?>
-<p class="aviso"><strong>Guía visual actualizada.</strong> Las capturas se tomaron de la interfaz actual con datos ficticios y una base independiente. Haz clic en una imagen o enfócala y pulsa Enter para ampliarla; Escape cierra el visor.</p>
-<h2 id="consultar">Consultar en una pantalla estrecha</h2>
-<p>El diseño adapta la navegación y los formularios. Algunas tablas requieren desplazamiento horizontal para ver todas sus columnas.</p>
-<figure class="captura"><img src="img/actuales/movil-clientes.jpg" alt="Pantalla estrecha — Consulta de cliente con los mismos datos y reglas." width="390" height="844" loading="lazy" decoding="async"><figcaption>Pantalla estrecha — Consulta de cliente con los mismos datos y reglas.</figcaption></figure>
-<h2 id="menu">Abrir y cerrar el menú</h2>
-<p>Pulsa el botón de menú de la barra superior para mostrar los módulos. Usa el cierre del panel o el fondo para volver al contenido.</p>
-<figure class="captura"><img src="img/actuales/movil-menu.jpg" alt="Menú móvil — Acceso a los módulos del aplicativo." width="390" height="844" loading="lazy" decoding="async"><figcaption>Menú móvil — Acceso a los módulos del aplicativo.</figcaption></figure>
-<h2 id="venta">Completar una venta</h2>
-<p>Selecciona el cliente y los productos igual que en escritorio. Revisa las cantidades y el total antes de guardar.</p>
-<figure class="captura"><img src="img/actuales/movil-factura.jpg" alt="Venta en pantalla estrecha — Formulario adaptable sin guardar una venta adicional." width="390" height="1261" loading="lazy" decoding="async"><figcaption>Venta en pantalla estrecha — Formulario adaptable sin guardar una venta adicional.</figcaption></figure>
-<h2 id="acceso">Acceso local previsto</h2><p>En un teléfono, localhost corresponde al teléfono y no al computador. Estas capturas simulan el tamaño de pantalla en Brave sobre la base de pruebas local. No habilitan ni requieren exponer la aplicación a Internet: la versión carece de autenticación y roles.</p>
+<p>La interfaz es <strong>adaptable</strong>: en pantallas angostas el menú lateral se esconde para dejar espacio al contenido.</p>
+<h2 id="abrir-y-cerrar-el-menú">Abrir y cerrar el menú</h2>
+<div class="pasos">
+<ol>
+<li>
+<p>Toca el botón <span class="marca-num">1</span> <strong>☰</strong> en la esquina superior izquierda.</p>
+<figure class="captura"><img src="img/movil-boton-menu.webp" alt="Botón para abrir el menú" loading="lazy"><figcaption>Botón para abrir el menú</figcaption></figure>
+</li>
+<li>
+<p>El menú se desliza desde la izquierda sobre un fondo oscuro. Toca la opción que necesites.</p>
+</li>
+<li>
+<p>Para cerrarlo sin elegir nada: toca <span class="marca-num">1</span> <strong>✕</strong>, toca el fondo oscuro o pulsa <kbd>Esc</kbd> si tienes teclado.</p>
+<figure class="captura"><img src="img/movil-menu.webp" alt="Menú abierto en el celular" loading="lazy"><figcaption>Menú abierto en el celular</figcaption></figure>
+</li>
+</ol>
+</div>
+<h2 id="así-se-ven-las-pantallas">Así se ven las pantallas</h2>
+<div class="galeria galeria-vertical" style="--columnas: 3">
+<figure class="captura"><img src="img/movil-clientes.webp" alt="Listado de clientes" loading="lazy"><figcaption>Listado de clientes</figcaption></figure>
+<figure class="captura"><img src="img/movil-factura.webp" alt="Nueva factura" loading="lazy"><figcaption>Nueva factura</figcaption></figure>
+<figure class="captura"><img src="img/movil-menu.webp" alt="Menú abierto" loading="lazy"><figcaption>Menú abierto</figcaption></figure>
+</div>
+
+<p>Las tablas anchas se pueden desplazar hacia los lados dentro de su recuadro, sin mover el resto de la página.</p>
+<div class="aviso aviso-danger">
+<p class="aviso-titulo">No la abras a la red</p>
+<p>Para usarla desde otro dispositivo tendrías que exponer Apache a la red local, y <strong>la app no tiene usuarios ni contraseñas</strong>. El SRS (RNF-03) lo prohíbe. Estas capturas se tomaron simulando un celular en el mismo equipo.</p>
+</div>

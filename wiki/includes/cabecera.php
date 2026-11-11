@@ -19,7 +19,7 @@ $claveActual = $pagina['clave'] ?? '';
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="theme-color" content="#faf7f0">
-    <title><?= h($tituloPagina) ?> · Wiki de La Única 2</title>
+    <title><?= h($tituloPagina) ?> · Wiki de La Única</title>
     <link rel="icon" type="image/png" href="../assets/img/logo.png">
     <link rel="preload" href="../assets/fonts/patrick-hand-latin.woff2" as="font" type="font/woff2" crossorigin>
     <link rel="preload" href="../assets/fonts/architects-daughter-latin.woff2" as="font" type="font/woff2" crossorigin>
