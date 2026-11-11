@@ -6,7 +6,7 @@ La versión actual procede de la-unica-2: cinco tablas, cuatro procedimientos, v
 
 1. Identifica carpeta, rama y base; conserva un respaldo y mantén independientes las otras copias.
 2. Revisa git status y la diferencia completa. Excluye conexion.local.php, credenciales, logs y datos reales.
-3. Comprueba la sintaxis de los archivos PHP y JavaScript modificados. Verifica los flujos afectados en una instalación aislada con una base nueva.
+3. Comprueba la sintaxis de los archivos PHP y JavaScript modificados. Verifica los flujos afectados con los [casos de prueba manuales](referencias/QA/casos-de-prueba.md) en una instalación aislada con una base nueva.
 4. Revisa los cinco reportes y sus PDF, comprobante, confirmaciones y formulario dinámico. Comprueba el video, audio y controles en el equipo de presentación.
 5. Mantén sincronizados manual técnico y PAC 1.3 en Word y PDF. Conserva SRS 1.5 y manual de usuario 2.0 salvo revisión explícita.
 6. Comprueba .htaccess y el acceso exclusivamente local previsto para Apache y SQL.

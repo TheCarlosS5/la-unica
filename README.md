@@ -22,8 +22,9 @@ PHP 8.2 o posterior con `mysqli`, `mysqlnd` y `mbstring`; Apache con AllowOverri
 1. Copiar o clonar la carpeta y servirla desde Laragon, por ejemplo en `C:\laragon\www\la-unica-2`.
 2. Iniciar Apache y la base de datos. Comprobar el puerto real; el ejemplo usa 3306 y la demostración local utiliza 3307.
 3. Importar `referencias/db.sql` **solo donde no exista la base la_unica**. Para mantener otra copia aislada, cambiar CREATE DATABASE y USE en una copia del script por un nombre exclusivo. No reutilizar la base de otro proyecto.
-4. Copiar `php/config/conexion.local.example.php` como `php/config/conexion.local.php` y ajustar host, puerto, base, usuario y contraseña. Este último archivo está ignorado por Git. Las variables `DB_HOST`, `DB_PORT`, `DB_DATABASE`, `DB_USERNAME` y `DB_PASSWORD` tienen prioridad si se definen. No publicar credenciales.
-5. Abrir la URL de la carpeta, por ejemplo `http://localhost/la-unica-2/`. Verificar una venta de demostración y sus reportes en una instalación aislada.
+4. Opcionalmente, en una instalación de demostración aislada, importar `referencias/clientes_prueba.sql` y `referencias/productos_prueba.sql`, ajustando sus instrucciones `USE` al nombre de esa base.
+5. Copiar `php/config/conexion.local.example.php` como `php/config/conexion.local.php` y ajustar host, puerto, base, usuario y contraseña. Este último archivo está ignorado por Git. Las variables `DB_HOST`, `DB_PORT`, `DB_DATABASE`, `DB_USERNAME` y `DB_PASSWORD` tienen prioridad si se definen. No publicar credenciales.
+6. Abrir la URL de la carpeta, por ejemplo `http://localhost/la-unica-2/`. Verificar una venta de demostración y sus reportes en una instalación aislada.
 
 ### Si ya usabas la versión anterior
 
@@ -39,7 +40,7 @@ No reimportar el esquema sobre una base existente. Esta publicación cambia el m
 
 Los PDF de SRS, manuales y PAC se muestran dentro de Sobre nosotros; SRS también ofrece descarga Word. El manual técnico y el PAC 1.3 documentan la configuración modular, el diagnóstico seguro y las pruebas de concurrencia y rendimiento. La wiki contiene 29 artículos actuales. El SRS y el manual de usuario mantienen sus versiones originales; no se declara aceptación total de requisitos por haber publicado el código.
 
-Los archivos de validación citados en el manual técnico y el PAC se pueden consultar en el [historial de Git](https://github.com/TheCarlosS5/la-unica/tree/98d6261cbb40116cce128c2b6c06d1a0860800f6).
+Los [casos de prueba manuales](referencias/QA/casos-de-prueba.md) incluyen los pasos de la interfaz. Los resultados de la revisión anterior se conservan en la [revisión técnica](referencias/REVISION_TECNICA.md) y sus evidencias en [QA](referencias/QA/).
 
 ## Imprimir y guardar reportes
 
@@ -60,6 +61,7 @@ AUTORES.md                            Equipo, roles, aportes y asistencia de IA
 index.php                             Entrada que redirige a main.php
 main.php                              Carga el módulo de Inicio
 .htaccess                             Protección de archivos internos en Apache
+.github/workflows/php-lint.yml         Comprobación de sintaxis PHP y JavaScript
 assets/                               Recursos visuales del aplicativo
   css/estilos.css                     Estilos de la interfaz y diseño adaptable
   fonts/                              Fuentes locales y sus licencias
@@ -88,14 +90,17 @@ wiki/                                 Documentación navegable sin conexión SQL
   paginas/                            Guías, configuración y notas técnicas
   includes/                           Catálogo, buscador y plantillas de la wiki
   img/actuales/                       41 capturas reales actuales con datos ficticios
+  herramientas/                       Generación de capturas de la wiki
   css/ y js/                          Diseño e interacciones de la documentación
 referencias/                          Esquema y documentos del proyecto
   db.sql                              Cinco tablas y cuatro procedimientos; instalación nueva
+  clientes_prueba.sql                 Diez clientes ficticios para demostración
+  productos_prueba.sql                Treinta productos ficticios para demostración
   SRS.docx / SRS.pdf                  Especificación de requisitos, versión 1.5
   manual.docx / manual.pdf            Manual del usuario, versión 2.0
   manual_tecnico.docx / .pdf          Manual técnico, versión 1.3
   PAC.docx / PAC.pdf                  Plan de Acción de Mejora Continua, versión 1.3
-  QA/                                 Documentación histórica de calidad
+  QA/                                 Plan, casos manuales, reportes y evidencias
 logs/                                 Diagnóstico local; los archivos .log no se publican
 RELEASE.md                            Notas de publicación y diferencias con versiones previas
 ```

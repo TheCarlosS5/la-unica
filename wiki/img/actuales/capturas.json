@@ -1,0 +1,293 @@
+{
+  "origen": "Interfaz real de la-unica-2; datos ficticios en base exclusiva",
+  "navegador": "Brave",
+  "capturas": [
+    {
+      "archivo": "inicio.jpg",
+      "descripcion": "Inicio y módulos disponibles",
+      "ruta": "main.php",
+      "ancho": 1280,
+      "alto": 960
+    },
+    {
+      "archivo": "clientes-crear.jpg",
+      "descripcion": "Documento único y nombre del cliente",
+      "ruta": "php/clientes/crear_cliente.php",
+      "ancho": 1280,
+      "alto": 960
+    },
+    {
+      "archivo": "clientes-creado.jpg",
+      "descripcion": "Confirmación real después de registrar al cliente",
+      "ruta": "php/clientes/crear_cliente.php?creado=1",
+      "ancho": 1280,
+      "alto": 960
+    },
+    {
+      "archivo": "clientes-duplicado.jpg",
+      "descripcion": "Validación de documento duplicado",
+      "ruta": "php/clientes/crear_cliente.php",
+      "ancho": 1280,
+      "alto": 960
+    },
+    {
+      "archivo": "clientes-lista.jpg",
+      "descripcion": "Listado, búsqueda y acciones de clientes",
+      "ruta": "php/clientes/ver_clientes.php",
+      "ancho": 1280,
+      "alto": 960
+    },
+    {
+      "archivo": "clientes-buscar.jpg",
+      "descripcion": "Resultado de búsqueda por documento",
+      "ruta": "php/clientes/ver_clientes.php?buscar=1900000001",
+      "ancho": 1280,
+      "alto": 960
+    },
+    {
+      "archivo": "clientes-editar.jpg",
+      "descripcion": "Edición del nombre sin modificar el documento",
+      "ruta": "php/clientes/editar_cliente.php?id=1900000001",
+      "ancho": 1280,
+      "alto": 960
+    },
+    {
+      "archivo": "clientes-eliminar.jpg",
+      "descripcion": "Confirmación previa; todavía no se elimina el cliente",
+      "ruta": "php/clientes/eliminar_cliente.php",
+      "ancho": 1280,
+      "alto": 960
+    },
+    {
+      "archivo": "productos-crear.jpg",
+      "descripcion": "Nombre, unidad, stock y precio",
+      "ruta": "php/productos/crear_producto.php",
+      "ancho": 1280,
+      "alto": 960
+    },
+    {
+      "archivo": "productos-creado.jpg",
+      "descripcion": "Confirmación de producto registrado",
+      "ruta": "php/productos/crear_producto.php?creado=1",
+      "ancho": 1280,
+      "alto": 960
+    },
+    {
+      "archivo": "productos-lista.jpg",
+      "descripcion": "Catálogo y buscador de productos",
+      "ruta": "php/productos/ver_productos.php",
+      "ancho": 1280,
+      "alto": 960
+    },
+    {
+      "archivo": "productos-stock.jpg",
+      "descripcion": "Producto de ejemplo con stock bajo",
+      "ruta": "php/productos/ver_productos.php?buscar=30",
+      "ancho": 1280,
+      "alto": 960
+    },
+    {
+      "archivo": "productos-editar.jpg",
+      "descripcion": "Edición del producto y sus existencias",
+      "ruta": "php/productos/editar_producto.php?id=31",
+      "ancho": 1280,
+      "alto": 960
+    },
+    {
+      "archivo": "productos-validacion.jpg",
+      "descripcion": "El servidor rechaza existencias negativas",
+      "ruta": "php/productos/editar_producto.php?id=31",
+      "ancho": 1280,
+      "alto": 960
+    },
+    {
+      "archivo": "productos-eliminar.jpg",
+      "descripcion": "Confirmación previa a la baja de un producto sin ventas",
+      "ruta": "php/productos/eliminar_producto.php",
+      "ancho": 1280,
+      "alto": 960
+    },
+    {
+      "archivo": "facturas-cliente.jpg",
+      "descripcion": "Primer paso: selección del cliente",
+      "ruta": "php/facturas/crear_factura.php",
+      "ancho": 1280,
+      "alto": 960
+    },
+    {
+      "archivo": "facturas-lineas.jpg",
+      "descripcion": "Dos productos, cantidades y total estimado",
+      "ruta": "php/facturas/crear_factura.php",
+      "ancho": 1280,
+      "alto": 960,
+      "paginaCompleta": true
+    },
+    {
+      "archivo": "facturas-total.jpg",
+      "descripcion": "Total estimado actualizado por JavaScript",
+      "ruta": "php/facturas/crear_factura.php"
+    },
+    {
+      "archivo": "facturas-creada.jpg",
+      "descripcion": "Venta guardada como Pagado",
+      "ruta": "php/facturas/crear_factura.php",
+      "ancho": 1280,
+      "alto": 960
+    },
+    {
+      "archivo": "facturas-lista.jpg",
+      "descripcion": "Listado de facturas y filtros",
+      "ruta": "php/facturas/ver_facturas.php",
+      "ancho": 1280,
+      "alto": 960
+    },
+    {
+      "archivo": "facturas-comprobante.jpg",
+      "descripcion": "Comprobante con nombres y precios históricos",
+      "ruta": "php/facturas/imprimir_factura.php?id=1",
+      "ancho": 1280,
+      "alto": 960
+    },
+    {
+      "archivo": "facturas-impresion.jpg",
+      "descripcion": "Comprobante con sus estilos de impresión",
+      "ruta": "php/facturas/imprimir_factura.php?id=1",
+      "ancho": 1280,
+      "alto": 960
+    },
+    {
+      "archivo": "facturas-confirmar-cancelacion.jpg",
+      "descripcion": "Confirmación de cancelación del mismo día",
+      "ruta": "php/facturas/cancelar_factura.php",
+      "ancho": 1280,
+      "alto": 960
+    },
+    {
+      "archivo": "facturas-cancelada.jpg",
+      "descripcion": "Estado Cancelado después de reponer el inventario",
+      "ruta": "php/facturas/imprimir_factura.php?id=1",
+      "ancho": 1280,
+      "alto": 960
+    },
+    {
+      "archivo": "reportes-resumen.jpg",
+      "descripcion": "Resumen diario y cinco reportes vigentes",
+      "ruta": "php/reportes/ver_reportes.php",
+      "ancho": 1280,
+      "alto": 960
+    },
+    {
+      "archivo": "reportes-ventas.jpg",
+      "descripcion": "Reporte vigente: ventas",
+      "ruta": "php/reportes/ventas.php",
+      "ancho": 1280,
+      "alto": 960
+    },
+    {
+      "archivo": "reportes-impresion.jpg",
+      "descripcion": "Vista con estilos de impresión del reporte de ventas",
+      "ruta": "php/reportes/ventas.php",
+      "ancho": 1280,
+      "alto": 960
+    },
+    {
+      "archivo": "reportes-unidades.jpg",
+      "descripcion": "Reporte vigente: unidades_vendidas_por_producto",
+      "ruta": "php/reportes/unidades_vendidas_por_producto.php",
+      "ancho": 1280,
+      "alto": 960
+    },
+    {
+      "archivo": "reportes-existencias.jpg",
+      "descripcion": "Reporte vigente: existencias_productos",
+      "ruta": "php/reportes/existencias_productos.php",
+      "ancho": 1280,
+      "alto": 960
+    },
+    {
+      "archivo": "reportes-clientes.jpg",
+      "descripcion": "Reporte vigente: clientes_y_facturas",
+      "ruta": "php/reportes/clientes_y_facturas.php",
+      "ancho": 1280,
+      "alto": 960
+    },
+    {
+      "archivo": "reportes-detalle.jpg",
+      "descripcion": "Reporte vigente: detalle_facturas",
+      "ruta": "php/reportes/detalle_facturas.php",
+      "ancho": 1600,
+      "alto": 1050
+    },
+    {
+      "archivo": "historial-acciones.jpg",
+      "descripcion": "Operaciones realmente realizadas con datos ficticios",
+      "ruta": "php/historial/acciones.php",
+      "ancho": 1280,
+      "alto": 960
+    },
+    {
+      "archivo": "sobre-nosotros.jpg",
+      "descripcion": "SRS, manuales, PAC, video y wiki integrados",
+      "ruta": "php/sobre_nosotros/index.php",
+      "ancho": 1280,
+      "alto": 960
+    },
+    {
+      "archivo": "manual-usuario.jpg",
+      "descripcion": "Recurso integrado: manual_usuario",
+      "ruta": "php/sobre_nosotros/manual_usuario.php",
+      "ancho": 1280,
+      "alto": 960
+    },
+    {
+      "archivo": "manual-tecnico.jpg",
+      "descripcion": "Recurso integrado: manual_tecnico",
+      "ruta": "php/sobre_nosotros/manual_tecnico.php",
+      "ancho": 1280,
+      "alto": 960
+    },
+    {
+      "archivo": "pac.jpg",
+      "descripcion": "Recurso integrado: pac",
+      "ruta": "php/sobre_nosotros/pac.php",
+      "ancho": 1280,
+      "alto": 960
+    },
+    {
+      "archivo": "srs.jpg",
+      "descripcion": "Recurso integrado: srs",
+      "ruta": "php/sobre_nosotros/srs.php",
+      "ancho": 1280,
+      "alto": 960
+    },
+    {
+      "archivo": "video.jpg",
+      "descripcion": "Recurso integrado: video_explicativo",
+      "ruta": "php/sobre_nosotros/video_explicativo.php",
+      "ancho": 1280,
+      "alto": 960
+    },
+    {
+      "archivo": "movil-clientes.jpg",
+      "descripcion": "Consulta de cliente en pantalla estrecha",
+      "ruta": "php/clientes/ver_clientes.php?buscar=1900000001",
+      "ancho": 390,
+      "alto": 844
+    },
+    {
+      "archivo": "movil-menu.jpg",
+      "descripcion": "Menú del aplicativo abierto en celular",
+      "ruta": "php/clientes/ver_clientes.php?buscar=1900000001",
+      "ancho": 390,
+      "alto": 844
+    },
+    {
+      "archivo": "movil-factura.jpg",
+      "descripcion": "Formulario de venta adaptable; no se guarda esta captura",
+      "ruta": "php/facturas/crear_factura.php",
+      "ancho": 390,
+      "alto": 844,
+      "paginaCompleta": true
+    }
+  ]
+}

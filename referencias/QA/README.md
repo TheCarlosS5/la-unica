@@ -1,7 +1,3 @@
-# Material histórico de QA
-
-Estos documentos corresponden a la versión anterior a la publicación de la-unica-2 y se conservan como evidencia histórica del equipo.
-
 # QA — La Única
 
 Documentación de aseguramiento de calidad, pruebas y seguridad del proyecto **La Única**.
@@ -11,11 +7,8 @@ Documentación de aseguramiento de calidad, pruebas y seguridad del proyecto **L
 
 ## Estructura de la carpeta
 
-- `plan-de-pruebas.md` — Estrategia y alcance de pruebas.
-- `casos-de-prueba/` — Casos de prueba por módulo (pendiente).
-- `revisiones/` — Informes de revisión de código por rama (pendiente).
-- `reportes-bugs/` — Bugs encontrados y su estado (pendiente).
-- `seguridad/` — Checklist y hallazgos de seguridad (pendiente).
-
-## Estado actual
-En construcción. Documento inicial entregado: **plan de pruebas**.
+- [Plan de pruebas](plan-de-pruebas.md) — Estrategia y alcance original.
+- [Casos de prueba](casos-de-prueba.md) — Pasos manuales y resultados registrados.
+- [Checklist de seguridad](checklist-seguridad.md) — Revisión del código y la configuración.
+- [Reportes de bugs](reportes-bugs/) — Hallazgos, seguimientos y plantilla.
+- [Revisión técnica](../REVISION_TECNICA.md) — Resultados históricos del 10 de noviembre de 2026. La carpeta [revision_mejoras](revision_mejoras/) conserva sus evidencias y los hashes de los documentos de esa fecha.
