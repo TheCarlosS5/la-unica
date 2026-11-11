@@ -1,6 +1,6 @@
 # La Única
 
-Versión integrada desde la copia `la-unica-2`, preparada el 10 de noviembre de 2026. Aplicación PHP local para administrar clientes, productos, ventas e inventario. El repositorio conserva el historial de la versión anterior; esta publicación usa cinco tablas, cuatro procedimientos y los estados **Pagado** y **Cancelado**.
+Versión integrada desde la copia `la-unica-`, preparada el 10 de noviembre de 2026. Aplicación PHP local para administrar clientes, productos, ventas e inventario. El repositorio conserva el historial de la versión anterior; esta publicación usa cinco tablas, cuatro procedimientos y los estados **Pagado** y **Cancelado**.
 
 ## Funciones
 
