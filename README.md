@@ -125,4 +125,4 @@ La configuración personal se guarda en `php/config/conexion.local.php`, creado 
 
 Proyecto de la ficha **3407799**, programa **Análisis y Desarrollo de Software (ADSO)** del SENA Regional Huila, Centro de la Industria, la Empresa y los Servicios.
 
-Consulta los integrantes, sus roles, los aportes y la asistencia de inteligencia artificial en [AUTORES.md](AUTORES.md).
+Consulta los integrantes, sus roles y los aportes en [AUTORES.md](AUTORES.md).
