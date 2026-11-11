@@ -56,8 +56,62 @@ GitHub Actions comprueba sintaxis PHP/JavaScript, esquema, restricciones, report
 
 `.htaccess` impide servir configuración, Git, pruebas, logs y scripts SQL; permite los PDF y Word públicos del proyecto. Estas reglas requieren Apache/AllowOverride. La aplicación no tiene control de acceso: mantener Apache y SQL restringidos al equipo local. El PAC registra como pendiente la exposición de detalles técnicos en los errores de conexión, y las verificaciones exhaustivas de carga y concurrencia.
 
-## Organización
+## Estructura del proyecto
 
-`php/` contiene los módulos y plantillas; `assets/` los estilos, fuentes, JavaScript y video; `referencias/` el esquema, datos de ejemplo y documentos; `wiki/` la documentación navegable; `logs/` el diagnóstico local, ignorado por Git. Los comentarios de módulos explican responsabilidades y bloques principales sin cambiar su lógica.
+El código está organizado por módulos. Esta estructura corresponde a la versión actual publicada en `main`:
 
-Integrantes y aportes: [AUTORES.md](AUTORES.md). La publicación actual se realiza directamente en main por autorización expresa del responsable de esta tarea; no cambia dev ni QA.
+```text
+AUTORES.md                            Equipo, roles, aportes y asistencia de IA
+index.php                             Entrada que redirige a main.php
+main.php                              Carga el módulo de Inicio
+.github/workflows/                    Validaciones automáticas en GitHub Actions
+.htaccess                             Protección de archivos internos en Apache
+composer.json                         Requisitos PHP y comandos de pruebas
+assets/                               Recursos visuales del aplicativo
+  css/estilos.css                     Estilos de la interfaz y diseño adaptable
+  fonts/                              Fuentes locales y sus licencias
+  img/                                Logotipo del proyecto
+  js/facturas.js                      Filas, cantidades y total estimado de la venta
+  video/1.mp4                         Video explicativo integrado
+php/                                  Módulos y plantillas PHP
+  config/conexion.php                 Conexión SQL, validaciones, CSRF e historial
+  config/conexion.local.example.php   Ejemplo de configuración privada del equipo
+  includes/                           Menú, cabecera y pie compartidos
+  inicio/                             Portada y accesos a los módulos
+  clientes/                           Registro, búsqueda, edición y eliminación protegida
+  productos/                          Catálogo, precios y existencias
+  facturas/                           Ventas, comprobantes y cancelación del mismo día
+  reportes/                           Cinco reportes, resumen diario e impresión/PDF
+  historial/                          Consulta de acciones y errores técnicos
+  sobre_nosotros/                     Visores de documentos y acceso a video y wiki
+wiki/                                 Documentación navegable sin conexión SQL
+  index.php                           Entrada, búsqueda y selección de artículos
+  paginas/                            Guías, configuración y notas técnicas
+  includes/                           Catálogo, buscador y plantillas de la wiki
+  img/                                Capturas de referencia del proyecto original
+  css/ y js/                          Diseño e interacciones de la documentación
+tests/                                Pruebas sobre una base de datos exclusiva
+  bootstrap.php                       Conexión protegida para las pruebas
+  Integration/                        Pruebas PHPUnit de esquema, reglas y reportes
+  functional.py                       Flujos reales por HTTP con servidor PHP aislado
+  README.md                           Preparación y ejecución de las pruebas
+referencias/                          Esquema, ejemplos y documentos del proyecto
+  db.sql                              Cinco tablas y cuatro procedimientos; instalación nueva
+  clientes_prueba.sql                 Diez clientes ficticios para demostración
+  productos_prueba.sql                Treinta productos ficticios para demostración
+  SRS.docx / SRS.pdf                  Especificación de requisitos, versión 1.5
+  manual.docx / manual.pdf            Manual del usuario, versión 2.0
+  manual_tecnico.docx / .pdf          Manual técnico, versión 1.2
+  PAC.docx / PAC.pdf                  Plan de Acción de Mejora Continua, versión 1.2
+  QA/                                 Evidencias históricas de la versión anterior
+logs/                                 Diagnóstico local; los archivos .log no se publican
+RELEASE.md                            Notas de publicación y diferencias con versiones previas
+```
+
+La configuración personal se guarda en `php/config/conexion.local.php`, creado a partir del ejemplo. Git ignora ese archivo y los logs para conservar privados los datos del equipo.
+
+## Autores
+
+Proyecto de la ficha **3407799**, programa **Análisis y Desarrollo de Software (ADSO)** del SENA Regional Huila, Centro de la Industria, la Empresa y los Servicios.
+
+Consulta los integrantes, sus roles, los aportes y la asistencia de inteligencia artificial en [AUTORES.md](AUTORES.md).
