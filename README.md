@@ -9,6 +9,7 @@ Aplicación PHP local para administrar clientes, productos, ventas e inventario.
 - Facturas: ventas **Pagado**, descuento transaccional de stock y comprobante imprimible. Cancelación únicamente el mismo día en America/Bogota, con reposición una sola vez. Las facturas no se editan ni se eliminan.
 - Cinco reportes: **Ventas**, **Unidades vendidas por producto**, **Existencias**, **Clientes y cantidad de facturas** y **Detalle de facturas**; resumen diario e impresión/PDF.
 - Historial de acciones en SQL y errores técnicos en archivo. La wiki y el historial de errores funcionan sin SQL.
+- Acceso inicial: portal de cinco pasos con aceptación o rechazo; la aceptación se recuerda en sesión o cookie del navegador durante 30 días. No sustituye autenticación ni protege todas las rutas.
 - Sobre nosotros: SRS completo, manual del usuario, manual técnico, PAC, video y wiki ilustrada.
 
 No implementa crédito, pagos pendientes, autenticación, roles, impuestos ni factura electrónica. El uso previsto es un equipo local controlado; publicar el código en GitHub no despliega la aplicación ni añade autorización de acceso.
@@ -24,7 +25,7 @@ PHP **8.2 o posterior** con `mysqli`, `mysqlnd`, `mbstring` y sesiones operativa
 3. Importa `referencias/db.sql` solo en una instalación nueva. Crea `la_unica`; para otra copia cambia `CREATE DATABASE` y `USE` en una copia del script por un nombre exclusivo. No reimportes el esquema sobre datos de trabajo.
 4. Opcionalmente carga `referencias/clientes_prueba.sql` y `referencias/productos_prueba.sql`, ajustando sus `USE`: diez clientes y treinta productos ficticios. El conjunto alternativo de `wiki/herramientas/datos_ejemplo.sql` es para las capturas; no se acumula sobre una base ya poblada.
 5. Copia `php/config/conexion.local.example.php` a `conexion.local.php` y configura host, puerto, base, usuario y contraseña del equipo. Git ignora este archivo. `DB_HOST`, `DB_PORT`, `DB_DATABASE`, `DB_USERNAME` y `DB_PASSWORD` tienen prioridad; no se carga `.env` automáticamente. Usa una cuenta limitada a esa base, con SELECT, INSERT, UPDATE, DELETE y EXECUTE.
-6. Abre la URL de esa carpeta, por ejemplo `http://localhost/la-unica-2/`. Comprueba una venta y sus reportes en la instalación ficticia antes de usar datos reales.
+6. Abre la URL de esa carpeta, por ejemplo `http://localhost/la-unica-2/`. Revisa el portal con Siguiente (o Saltar al final) y pulsa Aceptar y entrar; Rechazar vuelve al aviso. Comprueba una venta y sus reportes en la instalación ficticia antes de usar datos reales.
 
 No se incluye migración automática desde el modelo anterior con Pendiente. Un traslado requiere respaldo, revisión del esquema y ensayo en otra base. No borres una base para resolver un error de conexión o importación.
 
@@ -51,14 +52,16 @@ La revisión visual de reportes del 10/11/2026 se realizó en Brave, incluidos e
 
 ## Protección y límites
 
-`.htaccess` bloquea Git, configuración, herramientas, logs, SQL y Markdown internos; permite los PDF y Word públicos. Requiere Apache/AllowOverride: PHP `-S` no aplica esas reglas. Los errores generales no exponen trazas, credenciales, SQL ni rutas; el detalle se conserva en el historial técnico local. La aplicación no tiene control de acceso por usuarios: la restricción al equipo local debe comprobarse en Apache, SQL y firewall.
+`.htaccess` bloquea Git, configuración, herramientas, logs, SQL y Markdown internos; permite los PDF y Word públicos. Requiere Apache/AllowOverride: PHP `-S` no aplica esas reglas. Los errores generales no exponen trazas, credenciales, SQL ni rutas; el detalle se conserva en el historial técnico local. La cookie de aceptación usa HttpOnly y SameSite=Lax, con ruta `/`, compartida por las carpetas del mismo host. No autentica, no separa instalaciones y no protege las rutas directas de los módulos. Los POST de aceptación/rechazo no incluyen CSRF; los formularios de negocio sí lo comprueban. La aplicación no tiene control de acceso por usuarios: la restricción al equipo local debe comprobarse en Apache, SQL y firewall.
 
 Las evidencias de concurrencia y rendimiento corresponden a los escenarios medidos y a su fecha. El PAC conserva tareas de respaldo, mantenimiento y aceptación humana; una documentación coherente no equivale a aceptación formal de todos los requisitos.
 
 ## Estructura del proyecto
 
 ```text
-index.php / main.php                 Entrada e inicio
+index.php / main.php                 Entrada e inicio con comprobación de aceptación
+terminos.php                         Aviso operativo en cinco pasos
+procesar_terminos.php                Aceptación/rechazo en sesión y cookie de 30 días
 README.md                            Instalación y referencia vigente
 .htaccess                            Protección de archivos internos en Apache
 assets/

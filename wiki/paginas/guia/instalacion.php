@@ -62,7 +62,7 @@ mysql -u USUARIO_INSTALACION -h 127.0.0.1 -P 3306 --default-character-set=utf8mb
 <p><strong>Limita Apache a este equipo.</strong> La app no tiene usuarios ni contraseñas, así que nadie más en la red debe poder abrirla. En <em>Laragon → Menú → Apache → httpd.conf</em> cambia <code>Listen 80</code> por <code>Listen 127.0.0.1:80</code> y reinicia Apache. El archivo <code>.htaccess</code> del proyecto, además, oculta <code>.git</code>, los scripts SQL y la configuración.</p>
 </li>
 <li>
-<p><strong>Abre la aplicación</strong> en el navegador. Con Laragon suele ser <code>http://la-unica.test/</code> o <code>http://localhost/la-unica/</code>. La raíz (<code>index.php</code>) te lleva al panel de inicio.</p>
+<p><strong>Abre la aplicación</strong> en el navegador. Con Laragon suele ser <code>http://la-unica.test/</code> o <code>http://localhost/la-unica/</code>. La raíz (<code>index.php</code>) muestra el portal de términos si no hay aceptación guardada. Avanza y pulsa Aceptar y entrar para abrir el inicio. La sesión o una cookie de 30 días recuerdan la aceptación; no hay cuentas de usuario.</p>
 </li>
 </ol>
 </div>
@@ -81,7 +81,7 @@ php -S 127.0.0.1:8080 -t .</code></pre>
 <div class="arbol">
 <ul>
 <li>la-unica/<ul>
-<li>index.php redirige a main.php</li>
+<li>index.php comprueba aceptación y redirige a terminos.php o main.php</li><li>terminos.php y procesar_terminos.php aviso y aceptación</li>
 <li>main.php</li>
 <li>assets/<ul>
 <li>css/estilos.css</li>

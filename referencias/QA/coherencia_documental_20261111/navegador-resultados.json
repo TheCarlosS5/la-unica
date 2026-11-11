@@ -27,7 +27,7 @@
       "ancho": 1440,
       "anchoDocumento": 1440,
       "imagenes": [],
-      "secciones": 5
+      "secciones": 6
     },
     {
       "pagina": "guia/clientes",
@@ -144,7 +144,7 @@
       "ancho": 1440,
       "anchoDocumento": 1440,
       "imagenes": [],
-      "secciones": 6
+      "secciones": 7
     },
     {
       "pagina": "tecnico/estructura",
@@ -153,7 +153,7 @@
       "ancho": 1440,
       "anchoDocumento": 1440,
       "imagenes": [],
-      "secciones": 2
+      "secciones": 3
     },
     {
       "pagina": "tecnico/base-de-datos",
@@ -189,7 +189,7 @@
       "ancho": 1440,
       "anchoDocumento": 1440,
       "imagenes": [],
-      "secciones": 9
+      "secciones": 10
     },
     {
       "pagina": "tecnico/funciones",

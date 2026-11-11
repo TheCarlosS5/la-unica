@@ -1,5 +1,8 @@
 <?php if (!defined('LA_UNICA_WIKI')) { exit; } ?>
 <p>Este recorrido asume que ya <a href="index.php?pagina=guia/instalacion">instalaste</a> La Única. Al terminar el recorrido tendrás un cliente, un producto y una factura impresa.</p>
+<h2 id="acceso-inicial">Acceso inicial y aceptación</h2>
+<p>La raíz y main.php muestran primero el aviso operativo si este navegador no conserva una aceptación. Avanza con Siguiente o Saltar al final y pulsa Aceptar y entrar. Rechazar vuelve al aviso; si ya aceptaste, terminos.php permite Revocar y salir. La aceptación se recuerda en sesión o cookie durante 30 días y no es un inicio de sesión.</p>
+<figure class="captura"><img src="img/acceso-terminos.webp" alt="Portal inicial de cinco pasos" loading="lazy"><figcaption>Aviso operativo antes de entrar al inicio</figcaption></figure>
 <h2 id="conoce-la-pantalla">Conoce la pantalla</h2>
 <h3 id="el-menú-lateral">El menú lateral</h3>
 <p>Siempre está a la izquierda (en celular, detrás del botón ☰). Tiene tres grupos:</p>
@@ -13,7 +16,7 @@
 <figure class="captura"><img src="img/inicio-barra-superior.webp" alt="Barra superior" loading="lazy"><figcaption>Barra superior</figcaption></figure>
 <ul>
 <li><span class="marca-num">1</span> <strong>Migas de pan</strong>: te dicen en qué pantalla estás. Haz clic en <em>La Única</em> para volver al inicio.</li>
-<li><span class="marca-num">2</span> <strong>Administración local</strong>: recuerda que la aplicación funciona solo en este equipo.</li>
+<li><span class="marca-num">2</span> <strong>Administración local</strong>: indica el uso previsto. La etiqueta no comprueba la restricción de acceso de la red.</li>
 </ul>
 <h3 id="las-tarjetas-del-inicio">Las tarjetas del inicio</h3>
 <p>Cada módulo tiene una tarjeta con su descripción y dos botones: <span class="marca-num">1</span> abrir el listado y <span class="marca-num">2</span> crear un registro nuevo sin pasar por la lista.</p>

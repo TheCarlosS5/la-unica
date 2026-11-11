@@ -1,43 +1,43 @@
 {
   "fecha": "2026-11-11",
-  "base_codigo": "200ce3472ff9c299458bc0c331ebd9e9eedbfec5",
+  "base_codigo": "a87bb480a72c0b2190b4237d94cf8e6dbc86ad43",
   "archivos_originales_conservados": 1941,
   "archivos_funcionales_sin_cambios": 49,
-  "php_sintaxis_valida": 81,
+  "php_sintaxis_valida": 83,
   "imagenes_originales_conservadas": 51,
-  "imagenes_wiki_actuales": 60,
+  "imagenes_wiki_actuales": 61,
   "documentos": {
     "SRS": {
       "version": "1.6",
       "paginas": 21,
       "imagenes": 0,
-      "parrafos_comprobados": 250,
-      "docx_sha256": "2df3e9c8b6e749b4ed0c440c602c38c2682b28699c04e1d68311c6b220aa69e2",
-      "pdf_sha256": "18c56a5fd846b3d55b3f7cd1cf3d029381cabfb9d811045dd27bb71e8b809393"
+      "parrafos_comprobados": 251,
+      "docx_sha256": "35c50714ef1079d8756ca008a782db3aecfc6805e4b5248d2a03d02abe7753b2",
+      "pdf_sha256": "7b7c7c98749ae22942075419379d73a30f82db0d5dcb94c6d66a6d619057a86f"
     },
     "manual": {
       "version": "2.1",
-      "paginas": 41,
-      "imagenes": 26,
-      "parrafos_comprobados": 155,
-      "docx_sha256": "c3ff5a1225e4c05e0a2a96aa22cd4595bd694bb67111cfeca092e74038a7a18a",
-      "pdf_sha256": "62a582628a200b741cef460060607d8b9e8bbcdea6a977ef0ac3cb0d3059b121"
+      "paginas": 43,
+      "imagenes": 27,
+      "parrafos_comprobados": 161,
+      "docx_sha256": "9fa86e224417fd520bd59e3a3a32dc2e924d17945236c65106044bc82255f684",
+      "pdf_sha256": "52e1c1af37a4260b36b244b530a38199e8dfc7e95c60894747a6da91a7c65398"
     },
     "manual_tecnico": {
       "version": "1.4",
-      "paginas": 8,
+      "paginas": 9,
       "imagenes": 0,
-      "parrafos_comprobados": 108,
-      "docx_sha256": "dea099bd9dc85826afa210963a7d3776b5a425409c2f517bc163c04309850475",
-      "pdf_sha256": "7d9ccfe74959a46888d1b22fe50990fd2981ae3045545883d96fbcf136d1aa3a"
+      "parrafos_comprobados": 113,
+      "docx_sha256": "b7153f718dce0e66c3a99e253482c10b60f62271d8dcb63927b22558ec86589c",
+      "pdf_sha256": "45a1c05f88257a1967b0431716d258166921b22c29ac684fc336c2ef0bf27e0d"
     },
     "PAC": {
       "version": "1.4",
-      "paginas": 7,
+      "paginas": 8,
       "imagenes": 0,
-      "parrafos_comprobados": 104,
-      "docx_sha256": "b56fd1c02eb2606044f537294daeb1e5cdcf7e12bb60da33d6099530428cac84",
-      "pdf_sha256": "aa002f9899730289ce29c45412a2ece25484866524b904f73813a2f530a1f40b"
+      "parrafos_comprobados": 109,
+      "docx_sha256": "9f09f4188ad777ca8714c9e0771bc50658291e0c1f46bae52258b4b6b0688068",
+      "pdf_sha256": "003c0019ac9b2140ffef44a339a902976035b5fc6e73d6cf48570c94f35a3ae3"
     }
   }
 }

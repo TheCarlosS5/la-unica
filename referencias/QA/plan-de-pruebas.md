@@ -34,3 +34,7 @@ Para aceptación completa: ejecutar el 100 % de los casos críticos planificados
 ## Evidencia y regresión
 
 Los resultados del 10/11/2026 se conservan como históricos. La revisión del 11/11/2026 repite los flujos HTTP en una base nueva y verifica documentación e imágenes. main no contiene tests, Composer ni workflows activos; no se exige ejecutar comandos que no se distribuyen. Repetir los criterios afectados al cambiar consultas, transacciones, entorno o documentos.
+
+## Portal incorporado desde main
+
+Revisión del aporte a87bb48: comprobar entrada nueva, cinco pasos, aceptación, rechazo, revocación y cookie persistente. La aceptación no es autenticación: las rutas directas siguen disponibles. Verificar la cookie HttpOnly/SameSite=Lax, su duración de 30 días y su ruta / compartida por el mismo host. El POST del portal no contiene CSRF; registrar esa diferencia al evaluar seguridad y aislamiento. No confundir aceptar el aviso con aprobar el PAC o el SRS.

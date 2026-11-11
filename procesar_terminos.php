@@ -2,7 +2,7 @@
 /**
  * Archivo: procesar_terminos.php
  * Módulo: Procesamiento de aceptación de términos y condiciones.
- * Propósito: Gestionar la acción del usuario (Aceptar o Rechazar) mediante POST seguro,
+ * Propósito: Gestionar la acción del usuario (Aceptar o Rechazar) mediante POST,
  *            establecer la sesión y cookie de permanencia, y redirigir con fluidez.
  */
 

@@ -1,0 +1,68 @@
+{
+  "fecha": "2026-11-11",
+  "codigo_remoto": "a87bb480a72c0b2190b4237d94cf8e6dbc86ad43",
+  "navegador": "157.0.8103.50",
+  "alcance": "Contextos temporales, lecturas de módulos y aceptación/rechazo sin cambios SQL.",
+  "resultados": [
+    {
+      "prueba": "Raíz nueva muestra términos",
+      "resultado": "APROBADA"
+    },
+    {
+      "prueba": "main sin aceptación vuelve al aviso",
+      "resultado": "APROBADA"
+    },
+    {
+      "prueba": "Ruta directa no está protegida por el portal",
+      "resultado": "APROBADA"
+    },
+    {
+      "prueba": "Siguiente muestra paso 2",
+      "resultado": "APROBADA"
+    },
+    {
+      "prueba": "Anterior vuelve al paso 1",
+      "resultado": "APROBADA"
+    },
+    {
+      "prueba": "Saltar permite revisar y aceptar al final",
+      "resultado": "APROBADA"
+    },
+    {
+      "prueba": "Rechazar vuelve al aviso con estado",
+      "resultado": "APROBADA"
+    },
+    {
+      "prueba": "Portal no presenta un token CSRF",
+      "resultado": "APROBADA"
+    },
+    {
+      "prueba": "Portal móvil no desborda",
+      "resultado": "APROBADA"
+    },
+    {
+      "prueba": "Aceptar abre el inicio",
+      "resultado": "APROBADA"
+    },
+    {
+      "prueba": "Cookie de aceptación: 30 días, HttpOnly, Lax y ruta raíz",
+      "resultado": "APROBADA"
+    },
+    {
+      "prueba": "Cookie sin sesión previa permite entrar",
+      "resultado": "APROBADA"
+    },
+    {
+      "prueba": "Revocar quita aceptación y cookie",
+      "resultado": "APROBADA"
+    },
+    {
+      "prueba": "GET del procesador vuelve al aviso",
+      "resultado": "APROBADA"
+    },
+    {
+      "prueba": "Textos muestran PAC vigente y sin archivo retirado",
+      "resultado": "APROBADA"
+    }
+  ]
+}

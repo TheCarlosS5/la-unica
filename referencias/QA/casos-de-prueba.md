@@ -35,3 +35,7 @@ Los siete casos del registro anterior y sus estados se conservan en el historial
 ## Registrar una ejecución
 
 Guardar ID, fecha, commit, equipo/navegador, base ficticia, datos utilizados, esperado/obtenido, Aprobado o Fallido, evidencia y responsable real. Los casos aún no ejecutados en el equipo de entrega quedan Por verificar. Nunca se asigna al instructor ni a otro integrante una aprobación que no haya emitido.
+
+## Portal incorporado desde main
+
+Revisión del aporte a87bb48: comprobar entrada nueva, cinco pasos, aceptación, rechazo, revocación y cookie persistente. La aceptación no es autenticación: las rutas directas siguen disponibles. Verificar la cookie HttpOnly/SameSite=Lax, su duración de 30 días y su ruta / compartida por el mismo host. El POST del portal no contiene CSRF; registrar esa diferencia al evaluar seguridad y aislamiento. No confundir aceptar el aviso con aprobar el PAC o el SRS.

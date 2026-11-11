@@ -14,3 +14,6 @@ HTML/CSS/JS ← plantillas y módulos ← cinco tablas y cuatro procedimientos</
 <p>El operador recibe un mensaje general. El detalle se registra en archivo y puede consultarse en Historial de errores. El historial es técnico y no está separado por roles: el control de acceso es el del equipo local.</p>
 <h2 id="módulos">Módulos funcionales</h2>
 <div class="tabla-wiki"><table><thead><tr><th>Módulo</th><th>Entradas principales</th></tr></thead><tbody><tr><td>Inicio</td><td>main.php → php/inicio/main.php</td></tr><tr><td>Clientes y productos</td><td>Crear, listar/buscar, editar y eliminar sin referencias.</td></tr><tr><td>Facturas</td><td>Crear, consultar, imprimir y cancelar durante el mismo día.</td></tr><tr><td>Reportes</td><td>Cinco consultas y resumen diario.</td></tr><tr><td>Historial</td><td>Acciones en SQL y errores en archivo.</td></tr><tr><td>Sobre nosotros</td><td>SRS, manuales, PAC, video y enlace a wiki.</td></tr></tbody></table></div>
+
+<h2 id="portal-inicial">Portal inicial</h2>
+<p>index.php y main.php comprueban la aceptación. terminos.php muestra cinco pasos; procesar_terminos.php guarda o revoca sesión/cookie. Esta capa no autentica y los módulos mantienen rutas directas. La cookie dura 30 días, tiene ruta / y puede compartirse entre carpetas del mismo host.</p>

@@ -4,7 +4,7 @@
  * Sistema Web de Gestión Comercial e Inventario «La Única»
  * Archivo: terminos.php
  * Módulo: Portal de Acceso y Términos de Operación
- * Vinculación: Plan de Acción de Mejora Continua (PAC v1.3 - Ficha 3407799)
+ * Vinculación: Plan de Acción de Mejora Continua (PAC v1.4 - Ficha 3407799)
  * Propósito: Presentar un recuadro interactivo paso a paso («Siguiente / Siguiente»)
  *            que permita visualizar y aceptar las políticas operativas del sistema
  *            de manera ágil, sin forzar lecturas ni tiempos de espera.
@@ -28,7 +28,7 @@ $terminosAceptados = !empty($_SESSION['terminos_aceptados']) || (!empty($_COOKIE
 $fueRechazado = isset($_GET['rechazado']) && $_GET['rechazado'] === '1';
 
 $fechaActualizacion = '11 de noviembre de 2026';
-$versionSoftware = 'Versión 2.0 (PAC v1.3 - Ficha 3407799)';
+$versionSoftware = 'Portal de acceso (SRS 1.6 - PAC v1.4 - Ficha 3407799)';
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -555,7 +555,7 @@ $versionSoftware = 'Versión 2.0 (PAC v1.3 - Ficha 3407799)';
                 </svg>
             </div>
             <h2>Términos Aceptados</h2>
-            <p>El acuerdo operativo del Plan de Acción de Mejora Continua (PAC v1.3) ya está confirmado en este equipo.</p>
+            <p>La aceptación del aviso operativo está guardada en este navegador. No constituye aprobación de las acciones del PAC v1.4 ni identificación de una persona.</p>
             <div style="display: flex; justify-content: center; gap: 0.75rem; flex-wrap: wrap;">
                 <a href="main.php" class="btn-nav btn-nav-siguiente" style="font-size: 0.95rem; padding: 0.65rem 1.4rem;">
                     <span>Entrar a La Única (main.php)</span>
@@ -576,7 +576,7 @@ $versionSoftware = 'Versión 2.0 (PAC v1.3 - Ficha 3407799)';
         <main class="recuadro-terminos" id="recuadroWizard" role="main">
             <!-- Barra superior con indicador de pasos -->
             <div class="recuadro-topbar">
-                <span class="insignia-pac">PAC v1.3 · Ficha 3407799</span>
+                <span class="insignia-pac">PAC v1.4 · Ficha 3407799</span>
                 <div class="indicador-pasos">
                     <span id="textoPaso">Paso 1 de 5</span>
                     <div class="puntos-progreso" aria-hidden="true">
@@ -603,10 +603,10 @@ $versionSoftware = 'Versión 2.0 (PAC v1.3 - Ficha 3407799)';
                         </div>
                         <h2 class="paso-titulo">1. Bienvenida y Alcance Operativo</h2>
                         <p class="paso-texto">
-                            <strong>«La Única»</strong> es una aplicación local para el control de inventario, clientes, ventas y reportes, alineada con los estándares de calidad del <em>Plan de Acción de Mejora Continua (PAC v1.3 - SENA Regional Huila)</em>.
+                            <strong>«La Única»</strong> es una aplicación local para el control de inventario, clientes, ventas y reportes, descrita en el SRS 1.6. El <em>Plan de Acción de Mejora Continua (PAC v1.4 - SENA Regional Huila)</em> registra evidencias y acciones pendientes.
                         </p>
                         <div class="paso-destaque">
-                            <strong>Entorno Seguro y Local (AM 03):</strong> Opera exclusivamente en este servidor local bajo Laragon. Tus datos no se transmiten a la nube ni a plataformas externas.
+                            <strong>Uso local previsto (AM 03):</strong> La instalación se utiliza en un equipo controlado con Laragon. El responsable debe comprobar la restricción de acceso; esta pantalla no autentica usuarios ni configura la red.
                         </div>
                     </div>
 
@@ -637,7 +637,7 @@ $versionSoftware = 'Versión 2.0 (PAC v1.3 - Ficha 3407799)';
                         </div>
                         <h2 class="paso-titulo">3. Control de Stock y Cancelaciones</h2>
                         <p class="paso-texto">
-                            Al registrar una venta, el inventario se descuenta atómicamente y los precios históricos quedan protegidos para siempre. Para garantizar la cuadratura de caja:
+                            Al registrar una venta, factura, detalle, descuento de inventario e historial se guardan en una transacción. El comprobante conserva los nombres, unidades y precios guardados al vender aunque cambie el catálogo.
                         </p>
                         <div class="paso-destaque">
                             <strong>Regla Intradía de Calidad:</strong> Solo se admiten cancelaciones de facturas el mismo día de la venta antes de medianoche, reponiendo las existencias en una sola exhibición.
@@ -653,10 +653,10 @@ $versionSoftware = 'Versión 2.0 (PAC v1.3 - Ficha 3407799)';
                         </div>
                         <h2 class="paso-titulo">4. Protección, Auditoría y Respaldo</h2>
                         <p class="paso-texto">
-                            Cumplimiento de la <strong>Ley 1581 de 2012</strong> en el tratamiento de cédulas y nombres de clientes. Toda acción operativa se registra en la tabla <code>log_acciones</code>.
+                            El tratamiento de cédulas y nombres de clientes es responsabilidad del establecimiento. Esta pantalla no certifica cumplimiento de la <strong>Ley 1581 de 2012</strong>. Las altas, ediciones y bajas de clientes/productos, ventas y cancelaciones se registran en <code>log_acciones</code>.
                         </p>
                         <div class="paso-destaque">
-                            <strong>Acciones PAC AM 01 y AM 09:</strong> Los fallos responden con HTTP 500 sin exponer rutas internas (diagnóstico seguro). El operador debe resguardar copias de seguridad periódicas de MySQL.
+                            <strong>Acciones PAC AM 01 y AM 09:</strong> Los fallos de conexión y no controlados ofrecen mensajes generales sin detalles internos. El diagnóstico queda en el historial técnico local. El respaldo periódico y su restauración requieren seguimiento.
                         </div>
                     </div>
 
@@ -672,7 +672,7 @@ $versionSoftware = 'Versión 2.0 (PAC v1.3 - Ficha 3407799)';
                             Has visualizado los pilares de operación y aseguramiento de calidad del sistema <strong>«La Única»</strong>. Pulsa el botón verde para ingresar al panel de control y comenzar a operar.
                         </p>
                         <div class="paso-destaque" style="background: #eaf5ed; border-left-color: var(--color-exito);">
-                            <strong>Listo para ingresar:</strong> Al aceptar, podrás gestionar clientes, productos, facturar y liquidar reportes sin restricciones.
+                            <strong>Aceptar y entrar:</strong> Se recuerda la aceptación en la sesión y en una cookie de este navegador durante 30 días. No crea una cuenta ni concede roles. Las operaciones conservan los límites y reglas del SRS 1.6.
                         </div>
                     </div>
                 </div>
@@ -722,17 +722,17 @@ $versionSoftware = 'Versión 2.0 (PAC v1.3 - Ficha 3407799)';
         </button>
 
         <div class="caja-detalle-completo" id="cajaDetalleCompleto">
-            <h4 style="margin: 0 0 0.5rem; color: var(--color-primario);">Términos Integrales vinculados al PAC v1.3:</h4>
-            <p><strong>Art. 1 (Objeto):</strong> Administración local de inventario, catálogo, clientes y ventas de contado bajo el PAC v1.3.</p>
+            <h4 style="margin: 0 0 0.5rem; color: var(--color-primario);">Términos Integrales vinculados al PAC v1.4:</h4>
+            <p><strong>Art. 1 (Objeto):</strong> Administración local de inventario, catálogo, clientes y ventas de contado bajo el PAC v1.4.</p>
             <p><strong>Art. 2 (Despliegue Local):</strong> Instalación en equipo local (Laragon). Datos desacoplados de la nube pública.</p>
             <p><strong>Art. 3 (Comprobantes de Caja):</strong> Recibos internos para soporte de venta. No reemplaza facturación electrónica DIAN.</p>
             <p><strong>Art. 4 (Ventas de Contado):</strong> Registro como Pagado con débito inmediato de inventario y snapshot histórico de precios.</p>
             <p><strong>Art. 5 (Cancelación Intradía):</strong> Restricción de anulación al mismo día de la venta con reposición única de existencias.</p>
-            <p><strong>Art. 6 (Datos Personales):</strong> Protección de cédulas y nombres de clientes conforme a la Ley 1581 de 2012.</p>
-            <p><strong>Art. 7 (Auditoría):</strong> Registro inmutable en log_acciones de toda operación de alta, edición y baja.</p>
+            <p><strong>Art. 6 (Datos Personales):</strong> El establecimiento debe revisar el tratamiento de datos personales y sus obligaciones. La aceptación de este aviso no certifica cumplimiento legal.</p>
+            <p><strong>Art. 7 (Historial):</strong> log_acciones registra altas, ediciones y bajas de clientes/productos, ventas y cancelaciones. El aplicativo permite consultarlo sin editarlo; una cuenta administrativa SQL sí puede modificar la base.</p>
             <p><strong>Art. 8 (Respaldos AM 01):</strong> Deber del comercio de efectuar volcados periódicos de la base de datos MySQL.</p>
-            <p><strong>Art. 9 (Diagnóstico Seguro AM 09):</strong> Errores técnicos tratados en logs/errores.log sin divulgar rutas al navegador.</p>
-            <p><strong>Art. 10 (Aceptación y Garantía):</strong> Software suministrado tal cual para operaciones autorizadas según AUTORES.md.</p>
+            <p><strong>Art. 9 (Diagnóstico AM 09):</strong> Los mensajes generales no exponen detalles internos. El diagnóstico en logs/errores.log se consulta desde Historial de errores del equipo local, sin roles separados.</p>
+            <p><strong>Art. 10 (Aceptación y alcance):</strong> Este aviso acompaña el SRS 1.6 y el PAC v1.4. Aceptarlo permite continuar al inicio; no acredita aceptación formal de los requisitos ni protege por sí solo las rutas de los módulos.</p>
         </div>
     </div>
 

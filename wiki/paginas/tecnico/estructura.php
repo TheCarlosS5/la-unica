@@ -18,3 +18,6 @@ logs/ diagnóstico local no publicado</code></pre>
 
 <h2 id="privados">Archivos privados</h2>
 <p>conexion.local.php, credenciales y archivos .log no se publican. Las carpetas ignoradas que existan en un equipo no forman parte de la distribución. Las rutas de instalación son ejemplos y no obligan a usar la misma base de otro proyecto.</p>
+
+<h2 id="portal-inicial">Portal inicial</h2>
+<p>index.php y main.php comprueban la aceptación. terminos.php muestra cinco pasos; procesar_terminos.php guarda o revoca sesión/cookie. Esta capa no autentica y los módulos mantienen rutas directas. La cookie dura 30 días, tiene ruta / y puede compartirse entre carpetas del mismo host.</p>

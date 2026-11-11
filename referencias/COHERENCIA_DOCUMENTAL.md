@@ -6,16 +6,20 @@ Esta revisión corrige documentación y herramientas de capturas. No cambia la l
 
 Durante la revisión se incorporó el aporte remoto `1b8de60` de Samuel, que añade [mer.png](mer.png). Sus cinco tablas, campos y relaciones coinciden con `db.sql`; se conserva la imagen recibida sin editarla.
 
+También se integra sin sobrescritura el aporte remoto `a87bb48`, que añade el portal de términos. Los cuatro documentos, las guías de acceso y las capturas incorporan este flujo. Se ajusta el texto del portal a SRS 1.6/PAC 1.4 y se conserva su procesamiento: no se añade autenticación ni se cambia la aceptación implementada. El código funcional final se contrasta con ese corte remoto; el esquema y los módulos comerciales permanecen iguales.
+
+El portal comprueba la aceptación en index.php/main.php y la recuerda en sesión o en una cookie de 30 días, con HttpOnly, SameSite=Lax y ruta /. La cookie puede compartirse entre carpetas del mismo host; no separa instalaciones. Las rutas directas de los módulos siguen disponibles y el POST de aceptación/rechazo no valida CSRF. Estas limitaciones se registran en manual técnico, PAC y QA; aceptar no significa aprobación del instructor ni certificación normativa.
+
 ## Documentos coordinados
 
 | Documento | Versión vigente | Páginas PDF | Archivos |
 | --- | --- | --- | --- |
 | SRS | 1.6 | 21 | [Word](SRS.docx) · [PDF](SRS.pdf) |
-| Manual del usuario | 2.1 | 41 | [Word](manual.docx) · [PDF](manual.pdf) |
-| Manual técnico | 1.4 | 8 | [Word](manual_tecnico.docx) · [PDF](manual_tecnico.pdf) |
-| PAC | 1.4 | 7 | [Word](PAC.docx) · [PDF](PAC.pdf) |
+| Manual del usuario | 2.1 | 43 | [Word](manual.docx) · [PDF](manual.pdf) |
+| Manual técnico | 1.4 | 9 | [Word](manual_tecnico.docx) · [PDF](manual_tecnico.pdf) |
+| PAC | 1.4 | 8 | [Word](PAC.docx) · [PDF](PAC.pdf) |
 
-Cada PDF se exportó desde el Word de su misma versión. SRS y manual del usuario tienen índices actualizables de Word, con páginas recalculadas. Se revisaron visualmente las 77 páginas renderizadas. El manual contiene 26 figuras de la interfaz actual, incluidos los dos reportes que faltaban y una vista de impresión.
+Cada PDF se exportó desde el Word de su misma versión. SRS y manual del usuario tienen índices actualizables de Word, con páginas recalculadas. Se revisaron visualmente las 81 páginas renderizadas. El manual contiene 27 figuras de la interfaz actual, incluidos los dos reportes que faltaban y una vista de impresión.
 
 Las versiones son documentales: no se crea una etiqueta ni una versión funcional de software. Se conservan los 16 requisitos funcionales, los ocho no funcionales y las metas de rendimiento e integridad del SRS; no se reducen para presentar una aprobación completa.
 
@@ -36,7 +40,7 @@ Las versiones son documentales: no se crea una etiqueta ni una versión funciona
 
 ## Wiki e imágenes
 
-Se conserva la wiki ilustrada elegida y sus pasos con recuadros naranjas numerados. Permanecen las 51 imágenes originales de la carpeta; las capturas utilizadas se regeneraron contra la interfaz actual y se añadieron nueve recursos, para un total de 60 WebP. Las imágenes heredadas sin referencias en las guías activas se conservan y no representan funciones adicionales.
+Se conserva la wiki ilustrada elegida y sus pasos con recuadros naranjas numerados. Permanecen las 51 imágenes originales de la carpeta; las capturas utilizadas se regeneraron contra la interfaz actual y se añadieron diez recursos, para un total de 61 WebP. Las imágenes heredadas sin referencias en las guías activas se conservan y no representan funciones adicionales.
 
 El generador usa Playwright y Sharp y abre un PHP independiente en 127.0.0.1. Exige una base de pruebas con prefijo `la_unica_test_`, cargada con el esquema actual y ocho facturas ficticias. El recorrido registra un cliente, guarda una venta y la cancela: se usa una base nueva en cada ejecución. El conjunto de la wiki es alternativo a los diez clientes y treinta productos de `referencias/`; no se acumulan sobre datos de trabajo.
 
@@ -44,10 +48,11 @@ El generador usa Playwright y Sharp y abre un PHP independiente en 127.0.0.1. Ex
 
 Los resultados detallados se conservan en [QA de esta revisión](QA/coherencia_documental_20261111/). Los scripts de verificación permanecen fuera de la distribución de producción.
 
-- **40 comprobaciones HTTP aprobadas**, en una base nueva e independiente: disponibilidad, formularios, CSRF, validación, venta, copia histórica, falta de stock, cancelación única/día anterior, eliminación protegida, reportes e historial. Incluye comprobación de sintaxis de los 81 PHP.
-- **81 archivos PHP válidos** en la comprobación final; sintaxis del generador de capturas válida.
-- **29 artículos de wiki y seis páginas de ayuda** comprobados por HTTP: 1.653 referencias locales y 36 enlaces Markdown sin destinos ni anclas inexistentes. Brave recorrió los 29 artículos y tres vistas móviles sin errores JavaScript, imágenes rotas ni desbordamiento de la página. Las tablas anchas conservan su desplazamiento horizontal. Los parámetros `#view=FitH` pertenecen al visor PDF y no son anclas HTML.
-- Word/PDF contrastados por texto, versiones y huellas SHA-256; todas las páginas renderizadas revisadas visualmente. El visor de usuario muestra el PDF vigente de 41 páginas.
+- **40 comprobaciones HTTP aprobadas**, en una base nueva e independiente: disponibilidad, formularios, CSRF, validación, venta, copia histórica, falta de stock, cancelación única/día anterior, eliminación protegida, reportes e historial. Se repitieron después de integrar y aceptar el portal en un cliente aislado. Incluye comprobación de sintaxis de los 83 PHP.
+- **15 comprobaciones del portal aprobadas**: entrada nueva, pasos, rechazo, aceptación, cookie, acceso sin sesión previa, revocación y límites de las rutas directas. Se ejecutaron en contextos temporales sin modificar datos SQL.
+- **83 archivos PHP válidos** en la comprobación final; sintaxis del generador de capturas válida.
+- **29 artículos de wiki y seis páginas de ayuda** comprobados por HTTP: referencias locales y enlaces Markdown sin destinos ni anclas inexistentes. Brave recorrió los 29 artículos y tres vistas móviles sin errores JavaScript, imágenes rotas ni desbordamiento de la página. Las tablas anchas conservan su desplazamiento horizontal. Los parámetros `#view=FitH` pertenecen al visor PDF y no son anclas HTML.
+- Word/PDF contrastados por texto, versiones y huellas SHA-256; todas las páginas renderizadas revisadas visualmente. El visor de usuario muestra el PDF vigente de 43 páginas.
 - **49 archivos funcionales y recursos base sin cambios**, comparados por SHA-256 con el inicio de esta revisión. No cambian el esquema, CSS, JavaScript ni la lógica de los módulos.
 - **1.941 archivos de la copia original conservados**, comparados con su respaldo; no se cambia su rama ni su base de datos.
 

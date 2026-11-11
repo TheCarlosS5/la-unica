@@ -7,7 +7,7 @@
 <p>El mínimo documentado es PHP 8.2. Comprueba la versión con php -v y las extensiones con php -m.</p><div class="tabla-wiki"><table><thead><tr><th>Extensión</th><th>Uso</th><th>Requisito</th></tr></thead><tbody><tr><td>mysqli y mysqlnd</td><td>Conexión y get_result de consultas preparadas.</td><td>Obligatorios</td></tr><tr><td>mbstring</td><td>Longitud UTF-8 y buscador de la wiki.</td><td>Obligatoria; no existe respaldo automático</td></tr><tr><td>session</td><td>CSRF y mensajes de factura/cancelación.</td><td>Sesiones operativas</td></tr></tbody></table></div>
 
 <h2 id="sesiones">Sesiones</h2>
-<p>seguridad.php inicia sesiones PHP para CSRF y mensajes temporales; no autentica usuarios. Revisa session.save_path y las cookies si no puede validarse un formulario. El código no fija por sí mismo HttpOnly, SameSite ni use_strict_mode: sus valores dependen de la configuración PHP del equipo.</p>
+<p>seguridad.php inicia sesiones PHP para CSRF y mensajes temporales; no autentica usuarios. Revisa session.save_path y las cookies si no puede validarse un formulario. Para la cookie de sesión PHP no se fijan expresamente HttpOnly, SameSite ni use_strict_mode: dependen de PHP. La cookie distinta la_unica_terminos sí usa HttpOnly y SameSite=Lax, dura 30 días y tiene ruta /; alcanza las carpetas del mismo host. No identifica una persona ni separa instalaciones.</p>
 <h2 id="zona-horaria-y-moneda">Zona horaria y moneda</h2>
 <p>PHP usa America/Bogota y cada conexión SQL UTC−05:00. Los importes son COP con dos decimales. El formulario usa centavos BigInt para estimar y SQL calcula el total persistido desde los detalles.</p>
 <h2 id="registro-de-errores">Registro de errores</h2>

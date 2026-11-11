@@ -1,10 +1,10 @@
 {
   "fecha": "2026-11-11",
-  "codigo_funcional_base": "200ce3472ff9c299458bc0c331ebd9e9eedbfec5",
+  "codigo_funcional_base": "a87bb480a72c0b2190b4237d94cf8e6dbc86ad43",
   "aporte_remoto_conservado": "1b8de6013599c05c0d4c23321bb34186b23ec853",
   "php": "8.3.33",
   "motor": "MariaDB 13.0.2",
-  "base_pruebas": "la_unica_test_coherencia_http_20261111",
+  "base_pruebas": "la_unica_test_coherencia_http_20261111_v2",
   "servidor_http": "PHP independiente sobre 127.0.0.1, con configuración DB_TEST_*",
   "ejecucion": "Script externo de verificación; no se distribuye una suite en main.",
   "resultados": [
@@ -204,7 +204,7 @@
       "resultado": "APROBADA"
     },
     {
-      "prueba": "Sintaxis de 81 archivos PHP",
+      "prueba": "Sintaxis de 83 archivos PHP",
       "requisitos": "RNF-08",
       "resultado": "APROBADA"
     }

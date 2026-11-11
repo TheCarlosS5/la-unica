@@ -216,6 +216,10 @@ async function foto(nombre, opciones = {}) {
 const menu = (archivo) => `#barra-lateral a[href$="${archivo}"]`;
 
 // ───────────────────────── Inicio y navegación ─────────────────────────
+await ir('/terminos.php');
+await foto('acceso-terminos');
+await pagina.click('#btnSaltar');
+await Promise.all([pagina.waitForNavigation({waitUntil:'networkidle'}),pagina.click('#btnAceptar')]);
 await ir('/main.php');
 await foto('inicio');
 await foto('inicio-menu', {
