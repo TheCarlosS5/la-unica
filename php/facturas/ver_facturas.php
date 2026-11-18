@@ -18,6 +18,7 @@ $fechaBusqueda = leerTexto($_GET, 'fecha');
 $errorFiltro = '';
 $errorLectura = false;
 $facturas = [];
+$paginacion = null;
 
 if (longitudTexto($terminoBusqueda) > 100) {
     $errorFiltro = 'La búsqueda admite hasta 100 caracteres.';
@@ -66,25 +67,8 @@ if ($errorFiltro === '') {
         . 'ORDER BY f.fecha_factura DESC, f.id_factura DESC';
 
     try {
-        if ($parametros === []) {
-            $resultadoFacturas = $conexion->query($sqlFacturas);
-        } else {
-            $consultaFacturas = $conexion->prepare($sqlFacturas);
-            $argumentos = [$tipos];
-            foreach ($parametros as $indice => &$parametro) {
-                $argumentos[] = &$parametro;
-            }
-            unset($parametro);
-            call_user_func_array([$consultaFacturas, 'bind_param'], $argumentos);
-            $consultaFacturas->execute();
-            $resultadoFacturas = $consultaFacturas->get_result();
-        }
-
-        $facturas = $resultadoFacturas->fetch_all(MYSQLI_ASSOC);
-        $resultadoFacturas->free();
-        if (isset($consultaFacturas)) {
-            $consultaFacturas->close();
-        }
+        $paginacion = consultarPagina($conexion, $sqlFacturas, $tipos, $parametros);
+        $facturas = $paginacion['filas'];
     } catch (Throwable $e) {
         registrarErrorServidor('leer_facturas', $e);
         $errorLectura = true;
@@ -107,7 +91,7 @@ require __DIR__ . '/../includes/menu.php';
         <p class="encabezado-descripcion">Busca ventas por número, cliente o fecha y consulta su comprobante interno.</p>
     </div>
     <div class="encabezado-acciones">
-        <a class="boton" href="crear_factura.php">Nueva factura</a>
+        <?php if (puedeAcceder('/php/facturas/crear_factura.php', usuarioActual())): ?><a class="boton" href="crear_factura.php">Crear factura</a><?php endif; ?>
     </div>
 </div>
 
@@ -139,7 +123,7 @@ require __DIR__ . '/../includes/menu.php';
         <?php if ($terminoBusqueda !== '' || $fechaBusqueda !== ''): ?>
             <a class="boton secundario" href="ver_facturas.php">Limpiar búsqueda</a>
         <?php else: ?>
-            <a class="boton" href="crear_factura.php">Registrar una venta</a>
+            <?php if (puedeAcceder('/php/facturas/crear_factura.php', usuarioActual())): ?><a class="boton" href="crear_factura.php">Registrar una venta</a><?php endif; ?>
         <?php endif; ?>
     </div>
 <?php else: ?>
@@ -164,7 +148,7 @@ require __DIR__ . '/../includes/menu.php';
                         <td><span class="chip-id">#<?= (int)$factura['id_factura'] ?></span></td>
                         <td><span class="celda-fecha"><?= h($fechaMostrar) ?></span></td>
                         <td><span class="celda-destacada"><?= h($factura['cliente']) ?></span></td>
-                        <td><span class="estado-factura <?= strtolower(h($factura['estado_factura'])) ?>"><?= h($factura['estado_factura']) ?></span></td>
+                        <td><span class="estado-factura <?= strtolower(h($factura['estado_factura'])) ?>"><span aria-hidden="true"><?= $factura['estado_factura'] === 'Pagado' ? '✓' : '×' ?></span> <?= h($factura['estado_factura']) ?></span></td>
                         <td class="texto-centro"><?= (int)$factura['cantidad_lineas'] ?></td>
                         <td class="texto-derecha celda-destacada"><?= h(formatearMonedaCop($factura['total_factura'])) ?></td>
                         <td class="texto-derecha"><a class="boton boton-secundario boton-factura-detalle" href="imprimir_factura.php?id=<?= (int)$factura['id_factura'] ?>">Ver / imprimir</a></td>
@@ -174,4 +158,5 @@ require __DIR__ . '/../includes/menu.php';
         </table>
     </div>
 <?php endif; ?>
+<?php mostrarPaginacion($paginacion); ?>
 <?php require __DIR__ . '/../includes/pie.php'; ?>

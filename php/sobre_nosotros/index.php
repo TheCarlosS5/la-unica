@@ -25,6 +25,7 @@ require __DIR__ . '/../includes/menu.php';
     </div>
 </div>
 
+<p class="nota nota-informativa"><a href="<?= h($baseUrl) ?>/referencias/REVISION_EQUIPOS_2026-11-18.pdf">Revisión de equipos y actualización operativa del 18/11/2026</a></p>
 <section class="tarjetas reportes-resumen-grid" aria-label="Recursos de ayuda">
     <article class="reportes-resumen-card">
         <div class="modulo-cabecera">

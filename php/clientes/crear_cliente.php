@@ -15,6 +15,7 @@ $titulo = 'Crear cliente';
 $seccionActiva = 'clientes';
 $mensajeExito = (($_GET['creado'] ?? '') === '1') ? 'Cliente creado correctamente.' : '';
 $mensajeError = '';
+$campoError = '';
 $tokenCsrf = obtenerTokenCsrf();
 
 $idCliente = '';
@@ -32,10 +33,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $mensajeError = 'No se pudo validar la solicitud. Actualiza la página e inténtalo de nuevo.';
     } elseif ($idClienteValido === null) {
         $mensajeError = 'El documento debe ser un número entero entre 1 y 2.147.483.647.';
+        $campoError = 'id_cliente';
     } elseif ($nombreLimpio === '') {
         $mensajeError = 'El nombre es obligatorio y no puede contener solo espacios.';
+        $campoError = 'nombre';
     } elseif (longitudTexto($nombreLimpio) > 100) {
         $mensajeError = 'El nombre admite hasta 100 caracteres.';
+        $campoError = 'nombre';
     } else {
         $sentencia = null;
         $creacionExitosa = false;
@@ -51,6 +55,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             }
         } catch (mysqli_sql_exception $e) {
             registrarErrorServidor('crear_cliente', $e);
+            $campoError = (int)$e->getCode() === 1062 ? 'id_cliente' : '';
             $mensajeError = ((int)$e->getCode() === 1062)
                 ? 'Ya existe un cliente con ese documento.'
                 : 'No se pudo crear el cliente por un problema de base de datos. Inténtalo de nuevo.';
@@ -80,7 +85,7 @@ require __DIR__ . '/../includes/menu.php';
             <span class="miga-separador" aria-hidden="true">/</span>
             <a href="ver_clientes.php">Clientes</a>
             <span class="miga-separador" aria-hidden="true">/</span>
-            <span>Nuevo cliente</span>
+            <span>Crear cliente</span>
         </nav>
         <h1 class="encabezado-titulo">Crear cliente</h1>
         <p class="encabezado-descripcion">Registra un nuevo comprador con su documento y nombre. La fecha de registro se asigna automáticamente.</p>
@@ -119,7 +124,8 @@ require __DIR__ . '/../includes/menu.php';
                     <span>Documento del cliente</span>
                     <span class="ayuda" style="margin:0;">Requerido</span>
                 </label>
-                <input id="id_cliente" name="id_cliente" type="number" min="1" max="2147483647" step="1" inputmode="numeric" autofocus aria-describedby="ayuda-id-cliente" value="<?= h($idCliente) ?>" placeholder="Ej. 1075123456" required>
+                <input id="id_cliente" name="id_cliente" type="number" min="1" max="2147483647" step="1" inputmode="numeric" autofocus value="<?= h($idCliente) ?>" placeholder="Ej. 1075123456" required <?= $campoError === 'id_cliente' ? 'aria-invalid="true"' : '' ?> aria-describedby="ayuda-id-cliente <?= $campoError === 'id_cliente' ? 'error-id_cliente' : '' ?>">
+                <?php if ($campoError === 'id_cliente'): ?><span id="error-id_cliente" class="error-campo"><?= h($mensajeError) ?></span><?php endif; ?>
                 <span id="ayuda-id-cliente" class="ayuda texto-ayuda">Número de documento sin puntos ni espacios. No puede repetirse.</span>
             </div>
             <div class="campo">
@@ -127,7 +133,8 @@ require __DIR__ . '/../includes/menu.php';
                     <span>Nombre completo</span>
                     <span class="ayuda" style="margin:0;">Hasta 100 caracteres</span>
                 </label>
-                <input id="nombre" name="nombre" type="text" maxlength="100" pattern=".*\S+.*" title="El nombre no puede estar vacío ni contener solo espacios" value="<?= h($nombreCliente) ?>" placeholder="Ej. Carlos Ramirez" required>
+                <input id="nombre" name="nombre" type="text" maxlength="100" pattern=".*\S+.*" title="El nombre no puede estar vacío ni contener solo espacios" value="<?= h($nombreCliente) ?>" placeholder="Ej. Carlos Ramirez" required <?= $campoError === 'nombre' ? 'aria-invalid="true"' : '' ?> aria-describedby=" <?= $campoError === 'nombre' ? 'error-nombre' : '' ?>">
+                <?php if ($campoError === 'nombre'): ?><span id="error-nombre" class="error-campo"><?= h($mensajeError) ?></span><?php endif; ?>
             </div>
 
             <div class="fila-botones">

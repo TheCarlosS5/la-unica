@@ -53,5 +53,6 @@
     });
 })();
 </script>
+<script src="<?= h($baseUrl) ?>/assets/js/formularios.js" defer></script>
 </body>
 </html>

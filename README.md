@@ -5,14 +5,15 @@ Aplicación PHP local para administrar clientes, productos, ventas e inventario.
 ## Funciones
 
 - Clientes: documento único, nombre y fecha automática; búsqueda y edición del nombre. Eliminación solo sin facturas.
+- Listados: clientes, productos y facturas en páginas de 25 filas; filtros conservados y total de registros.
 - Productos: nombre, unidad, stock entero y precio. Editar el catálogo no altera los nombres, unidades ni precios guardados en ventas anteriores.
-- Facturas: ventas **Pagado**, descuento transaccional de stock y comprobante imprimible. Cancelación únicamente el mismo día en America/Bogota, con reposición una sola vez. Las facturas no se editan ni se eliminan.
+- Facturas: ventas **Pagado**, descuento transaccional de stock y comprobante imprimible. Cancelación únicamente el mismo día en America/Bogota, con motivo obligatorio y reposición una sola vez. Las facturas no se editan ni se eliminan.
 - Cinco reportes: **Ventas**, **Unidades vendidas por producto**, **Existencias**, **Clientes y cantidad de facturas** y **Detalle de facturas**; resumen diario e impresión/PDF.
 - Historial de acciones en SQL y errores técnicos en archivo. La wiki y el historial de errores funcionan sin SQL.
-- Acceso inicial: portal de cinco pasos con aceptación o rechazo; la aceptación se recuerda en sesión o cookie del navegador durante 30 días. No sustituye autenticación ni protege todas las rutas.
+- Acceso: cuentas locales con roles Administrador, Operador y Consulta; sesión con 30 minutos de inactividad máxima, cierre por POST y CSRF. El aviso inicial conserva su aceptación de 30 días y exige CSRF.
 - Sobre nosotros: SRS completo, manual del usuario, manual técnico, PAC, video y wiki ilustrada.
 
-No implementa crédito, pagos pendientes, autenticación, roles, impuestos ni factura electrónica. El uso previsto es un equipo local controlado; publicar el código en GitHub no despliega la aplicación ni añade autorización de acceso.
+No implementa crédito, pagos pendientes, impuestos ni factura electrónica. El uso previsto es un equipo local controlado; publicar el código en GitHub no despliega la aplicación ni añade autorización de acceso.
 
 ## Requisitos
 
@@ -25,7 +26,7 @@ PHP **8.2 o posterior** con `mysqli`, `mysqlnd`, `mbstring` y sesiones operativa
 3. Importa `referencias/db.sql` solo en una instalación nueva. Crea `la_unica`; para otra copia cambia `CREATE DATABASE` y `USE` en una copia del script por un nombre exclusivo. No reimportes el esquema sobre datos de trabajo.
 4. Opcionalmente carga `referencias/clientes_prueba.sql` y `referencias/productos_prueba.sql`, ajustando sus `USE`: diez clientes y treinta productos ficticios. El conjunto alternativo de `wiki/herramientas/datos_ejemplo.sql` es para las capturas; no se acumula sobre una base ya poblada.
 5. Copia `php/config/conexion.local.example.php` a `conexion.local.php` y configura host, puerto, base, usuario y contraseña del equipo. Git ignora este archivo. `DB_HOST`, `DB_PORT`, `DB_DATABASE`, `DB_USERNAME` y `DB_PASSWORD` tienen prioridad; no se carga `.env` automáticamente. Usa una cuenta limitada a esa base, con SELECT, INSERT, UPDATE, DELETE y EXECUTE.
-6. Abre la URL de esa carpeta, por ejemplo `http://localhost/la-unica-2/`. Revisa el portal con Siguiente (o Saltar al final) y pulsa Aceptar y entrar; Rechazar vuelve al aviso. Comprueba una venta y sus reportes en la instalación ficticia antes de usar datos reales.
+6. Abre la URL de esa carpeta, por ejemplo `http://localhost/la-unica-2/`. Revisa el portal con Siguiente (o Saltar al final) y pulsa Aceptar y entrar; Rechazar vuelve al aviso. Inicia sesión con la cuenta creada. Comprueba una venta y sus reportes en la instalación ficticia antes de usar datos reales.
 
 No se incluye migración automática desde el modelo anterior con Pendiente. Un traslado requiere respaldo, revisión del esquema y ensayo en otra base. No borres una base para resolver un error de conexión o importación.
 
@@ -40,7 +41,7 @@ No se incluye migración automática desde el modelo anterior con Pendiente. Un 
 
 La [wiki](wiki/) conserva la estructura, pasos y capturas numeradas elegidos para la entrega y describe las reglas actuales. Sus páginas PHP se consultan a través del servidor. Sobre nosotros integra los cuatro PDF. Los visores de esa sección cargan SQL; la wiki y el historial de errores lo omiten. Los PDF públicos también pueden abrirse directamente si el servidor web funciona.
 
-La [revisión de coherencia](referencias/COHERENCIA_DOCUMENTAL.md) registra las correcciones y comprobaciones del 11/11/2026. QA conserva el [plan vigente](referencias/QA/plan-de-pruebas.md), [casos manuales](referencias/QA/casos-de-prueba.md), [checklist](referencias/QA/checklist-seguridad.md) y evidencias históricas identificadas por fecha. No hay suite `tests/`, Composer ni workflows activos en esta distribución; no se anuncian como comandos o CI vigentes.
+La [revisión de coherencia](referencias/COHERENCIA_DOCUMENTAL.md) registra las correcciones y comprobaciones del 11/11/2026. QA conserva el [plan vigente](referencias/QA/plan-de-pruebas.md), [casos manuales](referencias/QA/casos-de-prueba.md), [checklist](referencias/QA/checklist-seguridad.md) y evidencias históricas identificadas por fecha. Se añade la prueba ejecutable `php tests/seguridad.php`; las verificaciones HTTP y de navegador del 18/11 están en `referencias/QA/revision_2026-11-18/`. No hay Composer ni workflows activos.
 
 El [modelo de entidades y relaciones](referencias/mer.png) representa las cinco tablas del esquema actual.
 
@@ -52,7 +53,9 @@ La revisión visual de reportes del 10/11/2026 se realizó en Brave, incluidos e
 
 ## Protección y límites
 
-`.htaccess` bloquea Git, configuración, herramientas, logs, SQL y Markdown internos; permite los PDF y Word públicos. Requiere Apache/AllowOverride: PHP `-S` no aplica esas reglas. Los errores generales no exponen trazas, credenciales, SQL ni rutas; el detalle se conserva en el historial técnico local. La cookie de aceptación usa HttpOnly y SameSite=Lax, con ruta `/`, compartida por las carpetas del mismo host. No autentica, no separa instalaciones y no protege las rutas directas de los módulos. Los POST de aceptación/rechazo no incluyen CSRF; los formularios de negocio sí lo comprueban. La aplicación no tiene control de acceso por usuarios: la restricción al equipo local debe comprobarse en Apache, SQL y firewall.
+`.htaccess` bloquea configuración, herramientas, pruebas, Git, logs, SQL y Markdown internos; los PDF y Word de ayuda siguen públicos. Usa Apache con AllowOverride; PHP `-S` no aplica esas reglas. La autenticación se verifica antes de abrir SQL o ejecutar cambios, también al acceder por URL directa. El historial técnico y la cancelación requieren Administrador. Operador consulta el catálogo, crea/edita clientes y registra facturas; Consulta solo lee. Las cuentas se administran localmente con `tools/usuario.php`; repetir el comando cambia contraseña/rol y revoca las sesiones previas, y `php tools/usuario.php nombre eliminar` retira una cuenta.
+
+La sesión usa nombre propio por instalación, HttpOnly, SameSite=Lax y modo estricto; Secure se activa bajo HTTPS. Las cookies de aceptación se limitan a la ruta de instalación. Hay un máximo de cinco intentos fallidos por usuario e IP en cinco minutos. Se envían CSP (con inline permitido por compatibilidad), X-Frame-Options, X-Content-Type-Options y Referrer-Policy; se elimina X-Powered-By. Mantén la instalación local: estos cambios no certifican un despliegue público. Respalda el archivo privado de usuarios con permisos restringidos, además de SQL.
 
 Las evidencias de concurrencia y rendimiento corresponden a los escenarios medidos y a su fecha. El PAC conserva tareas de respaldo, mantenimiento y aceptación humana; una documentación coherente no equivale a aceptación formal de todos los requisitos.
 

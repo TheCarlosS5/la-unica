@@ -23,6 +23,7 @@ if ($manualDisponible) {
 
 require __DIR__ . '/../includes/menu.php';
 ?>
+<p class="nota nota-informativa">Documento de la entrega del 11/11/2026. Consulta el <a href="<?= h($baseUrl) ?>/referencias/REVISION_EQUIPOS_2026-11-18.pdf">anexo vigente del 18/11/2026</a> para cuentas, permisos, paginación, cancelación y validación de formularios.</p>
 
 <div class="encabezado-vista">
     <div class="encabezado-info">

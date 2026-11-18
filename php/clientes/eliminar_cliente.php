@@ -140,7 +140,7 @@ require __DIR__ . '/../includes/menu.php';
             </div>
         </div>
 
-        <form method="post" action="eliminar_cliente.php">
+        <?php if (puedeAcceder('/php/clientes/eliminar_cliente.php', usuarioActual())): ?><form method="post" action="eliminar_cliente.php">
             <?php if ($tokenCsrf !== null): ?>
                 <input type="hidden" name="csrf_token" value="<?= h($tokenCsrf) ?>">
             <?php endif; ?>
@@ -156,7 +156,7 @@ require __DIR__ . '/../includes/menu.php';
                     <span>Confirmar eliminación</span>
                 </button>
             </div>
-        </form>
+        </form><?php endif; ?>
     </section>
 <?php else: ?>
     <div class="panel-formulario-wrap">

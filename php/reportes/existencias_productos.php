@@ -56,7 +56,7 @@ require __DIR__ . '/acciones_impresion.php';
 <?php elseif ($productos === []): ?>
     <div class="sin-datos estado-vacio" role="status">
         <h2 class="estado-vacio-titulo">Todavía no hay productos registrados</h2>
-        <a class="boton" href="<?= h($baseUrl) ?>/php/productos/crear_producto.php">Crear producto</a>
+        <?php if (puedeAcceder('/php/productos/crear_producto.php', usuarioActual())): ?><a class="boton" href="<?= h($baseUrl) ?>/php/productos/crear_producto.php">Crear producto</a><?php endif; ?>
     </div>
 <?php else: ?>
     <section class="tarjetas reportes-resumen-grid" aria-label="Resumen de existencias">

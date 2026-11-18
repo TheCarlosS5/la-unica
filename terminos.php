@@ -13,9 +13,9 @@
 
 declare(strict_types=1);
 
-if (session_status() === PHP_SESSION_NONE && !headers_sent()) {
-    session_start();
-}
+require_once __DIR__ . '/php/config/entorno.php';
+require_once __DIR__ . '/php/config/seguridad.php';
+sesionDisponible();
 
 date_default_timezone_set('America/Bogota');
 
@@ -508,7 +508,7 @@ $versionSoftware = 'Portal de acceso (SRS 1.6 - PAC v1.4 - Ficha 3407799)';
 <svg class="mosaico-fondo" aria-hidden="true" xmlns="http://www.w3.org/2000/svg">
     <defs>
         <pattern id="mosaico-logo-unica" width="130" height="130" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
-            <image href="assets/img/logo.png" x="25" y="25" width="80" height="80" preserveAspectRatio="xMidYMid meet" />
+            <image href="assets/img/logo.webp" x="25" y="25" width="80" height="80" preserveAspectRatio="xMidYMid meet" />
         </pattern>
     </defs>
     <rect width="100%" height="100%" fill="url(#mosaico-logo-unica)" />
@@ -519,7 +519,7 @@ $versionSoftware = 'Portal de acceso (SRS 1.6 - PAC v1.4 - Ficha 3407799)';
     <header class="cabecera-exterior">
         <div class="marca-exterior">
             <div class="icono-marca" aria-hidden="true">
-                <img src="assets/img/logo.png" alt="Logo La Única">
+                <img src="assets/img/logo.webp" alt="Logo La Única" width="128" height="128">
             </div>
             <div>
                 <h1>La Única</h1>
@@ -565,6 +565,7 @@ $versionSoftware = 'Portal de acceso (SRS 1.6 - PAC v1.4 - Ficha 3407799)';
                     </svg>
                 </a>
                 <form action="procesar_terminos.php" method="post" style="display:inline;">
+                <input type="hidden" name="csrf_token" value="<?= h(obtenerTokenCsrf()) ?>">
                     <button type="submit" name="rechazar" class="btn-nav btn-nav-rechazar">
                         <span>Revocar y salir</span>
                     </button>
@@ -591,6 +592,7 @@ $versionSoftware = 'Portal de acceso (SRS 1.6 - PAC v1.4 - Ficha 3407799)';
 
             <!-- Cuerpo del Recuadro: Pasos Ágiles -->
             <form action="procesar_terminos.php" method="post" id="formTerminos">
+                <input type="hidden" name="csrf_token" value="<?= h(obtenerTokenCsrf()) ?>">
                 <div class="recuadro-cuerpo">
                     <!-- Paso 1: Bienvenida y Alcance PAC -->
                     <div class="paso-seccion activo" data-paso="1">
@@ -672,7 +674,7 @@ $versionSoftware = 'Portal de acceso (SRS 1.6 - PAC v1.4 - Ficha 3407799)';
                             Has visualizado los pilares de operación y aseguramiento de calidad del sistema <strong>«La Única»</strong>. Pulsa el botón verde para ingresar al panel de control y comenzar a operar.
                         </p>
                         <div class="paso-destaque" style="background: #eaf5ed; border-left-color: var(--color-exito);">
-                            <strong>Aceptar y entrar:</strong> Se recuerda la aceptación en la sesión y en una cookie de este navegador durante 30 días. No crea una cuenta ni concede roles. Las operaciones conservan los límites y reglas del SRS 1.6.
+                            <strong>Aceptar y entrar:</strong> Se recuerda la aceptación en la sesión y en una cookie de este navegador durante 30 días. No crea una cuenta ni concede roles. El acceso a los módulos exige iniciar sesión; cada rol limita las operaciones disponibles.
                         </div>
                     </div>
                 </div>
@@ -722,7 +724,7 @@ $versionSoftware = 'Portal de acceso (SRS 1.6 - PAC v1.4 - Ficha 3407799)';
         </button>
 
         <div class="caja-detalle-completo" id="cajaDetalleCompleto">
-            <h4 style="margin: 0 0 0.5rem; color: var(--color-primario);">Términos Integrales vinculados al PAC v1.4:</h4>
+            <h3 style="margin: 0 0 0.5rem; color: var(--color-primario);">Términos Integrales vinculados al PAC v1.4:</h3>
             <p><strong>Art. 1 (Objeto):</strong> Administración local de inventario, catálogo, clientes y ventas de contado bajo el PAC v1.4.</p>
             <p><strong>Art. 2 (Despliegue Local):</strong> Instalación en equipo local (Laragon). Datos desacoplados de la nube pública.</p>
             <p><strong>Art. 3 (Comprobantes de Caja):</strong> Recibos internos para soporte de venta. No reemplaza facturación electrónica DIAN.</p>
@@ -731,8 +733,8 @@ $versionSoftware = 'Portal de acceso (SRS 1.6 - PAC v1.4 - Ficha 3407799)';
             <p><strong>Art. 6 (Datos Personales):</strong> El establecimiento debe revisar el tratamiento de datos personales y sus obligaciones. La aceptación de este aviso no certifica cumplimiento legal.</p>
             <p><strong>Art. 7 (Historial):</strong> log_acciones registra altas, ediciones y bajas de clientes/productos, ventas y cancelaciones. El aplicativo permite consultarlo sin editarlo; una cuenta administrativa SQL sí puede modificar la base.</p>
             <p><strong>Art. 8 (Respaldos AM 01):</strong> Deber del comercio de efectuar volcados periódicos de la base de datos MySQL.</p>
-            <p><strong>Art. 9 (Diagnóstico AM 09):</strong> Los mensajes generales no exponen detalles internos. El diagnóstico en logs/errores.log se consulta desde Historial de errores del equipo local, sin roles separados.</p>
-            <p><strong>Art. 10 (Aceptación y alcance):</strong> Este aviso acompaña el SRS 1.6 y el PAC v1.4. Aceptarlo permite continuar al inicio; no acredita aceptación formal de los requisitos ni protege por sí solo las rutas de los módulos.</p>
+            <p><strong>Art. 9 (Diagnóstico AM 09):</strong> Los mensajes generales no exponen detalles internos. El diagnóstico en logs/errores.log se consulta desde Historial de errores del equipo local, reservado al Administrador.</p>
+            <p><strong>Art. 10 (Aceptación y alcance):</strong> Este aviso acompaña el SRS 1.6, el PAC v1.4 y el anexo de revisión del 18/11/2026. Aceptarlo permite continuar al inicio; no acredita aceptación formal de los requisitos ni protege por sí solo las rutas de los módulos.</p>
         </div>
     </div>
 
