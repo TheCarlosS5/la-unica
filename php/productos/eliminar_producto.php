@@ -2,7 +2,7 @@
 /**
  * Archivo: eliminar_producto.php
  * Módulo: Productos — eliminación protegida.
- * Propósito: confirmar la baja de un artículo que no tenga historial de facturación.
+ * Propósito: confirmar la baja de un producto que no tenga historial de facturación.
  * Funcionamiento: exige POST, valida ID y CSRF, muestra una confirmación y, al confirmarse, consulta
  * detalle_facturas antes de ejecutar DELETE con una sentencia preparada.
  * Puntos clave: los productos referenciados por facturas no se eliminan; se informa el resultado
@@ -140,7 +140,7 @@ require __DIR__ . '/../includes/menu.php';
             </div>
         </div>
 
-        <form method="post" action="eliminar_producto.php">
+        <?php if (puedeAcceder('/php/productos/eliminar_producto.php', usuarioActual())): ?><form method="post" action="eliminar_producto.php">
             <?php if ($tokenCsrf !== null): ?>
                 <input type="hidden" name="csrf_token" value="<?= h($tokenCsrf) ?>">
             <?php endif; ?>
@@ -156,7 +156,7 @@ require __DIR__ . '/../includes/menu.php';
                     <span>Confirmar eliminación</span>
                 </button>
             </div>
-        </form>
+        </form><?php endif; ?>
     </section>
 <?php else: ?>
     <div class="panel-formulario-wrap">

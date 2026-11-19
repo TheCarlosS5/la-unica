@@ -3,7 +3,7 @@
  * Archivo: editar_producto.php
  * Módulo: Productos — edición.
  * Propósito: cargar y actualizar los datos vigentes de un producto.
- * Funcionamiento: valida el ID de GET, carga el artículo y procesa el POST con CSRF y validación
+ * Funcionamiento: valida el ID de GET, carga el producto y procesa el POST con CSRF y validación
  * de nombre, unidad, existencias y precio antes de ejecutar UPDATE.
  * Puntos clave: stock representa la nueva cantidad total. Todos los campos se pueden cambiar aunque el
  * producto tenga facturas: cada factura guarda su propia copia del nombre, la unidad y el precio.
@@ -15,6 +15,7 @@ $titulo = 'Editar producto';
 $seccionActiva = 'productos';
 $mensajeExito = '';
 $mensajeError = '';
+$campoError = '';
 $tokenCsrf = obtenerTokenCsrf();
 
 $idProducto = validarId($_GET['id'] ?? '');
@@ -65,12 +66,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $mensajeError = 'No se pudo validar la solicitud. Actualiza la página e inténtalo de nuevo.';
     } elseif ($nombreNuevo === '' || longitudTexto($nombreNuevo) > 100) {
         $mensajeError = 'El nombre es obligatorio y admite hasta 100 caracteres.';
+        $campoError = 'nombre';
     } elseif ($unidadNueva === '' || longitudTexto($unidadNueva) > 20) {
         $mensajeError = 'La unidad es obligatoria y admite hasta 20 caracteres.';
+        $campoError = 'unidad_medida';
     } elseif ($stockNuevo === null) {
-        $mensajeError = 'El stock debe ser un entero no negativo.';
+        $mensajeError = 'Las existencias deben ser un entero no negativo.';
+        $campoError = 'stock';
     } elseif (!preg_match('/^\d{1,8}(?:\.\d{1,2})?$/', $precioNuevo)) {
         $mensajeError = 'El precio debe ser no negativo y tener máximo dos decimales.';
+        $campoError = 'precio_unitario';
     } else {
         try {
             $actualizar = $conexion->prepare('UPDATE productos SET nombre = ?, unidad_medida = ?, stock = ?, precio_unitario = ? WHERE id_producto = ?');
@@ -124,7 +129,7 @@ require __DIR__ . '/../includes/menu.php';
             <span>Editar producto #<?= h($idProducto) ?></span>
         </nav>
         <h1 class="encabezado-titulo">Editar producto</h1>
-        <p class="encabezado-descripcion">Modifica el catálogo de artículos, existencias disponibles y precio unitario.</p>
+        <p class="encabezado-descripcion">Modifica el catálogo de productos, existencias disponibles y precio unitario.</p>
     </div>
 </div>
 
@@ -166,7 +171,8 @@ require __DIR__ . '/../includes/menu.php';
                         <span>Nombre del producto</span>
                         <span class="ayuda" style="margin:0;">Hasta 100 caracteres</span>
                     </label>
-                    <input id="nombre" name="nombre" type="text" maxlength="100" value="<?= h($nombreFormulario) ?>" required>
+                    <input id="nombre" name="nombre" type="text" maxlength="100" value="<?= h($nombreFormulario) ?>" required <?= $campoError === 'nombre' ? 'aria-invalid="true"' : '' ?> aria-describedby=" <?= $campoError === 'nombre' ? 'error-nombre' : '' ?>">
+                <?php if ($campoError === 'nombre'): ?><span id="error-nombre" class="error-campo"><?= h($mensajeError) ?></span><?php endif; ?>
                 </div>
 
                 <div class="campo">
@@ -174,7 +180,8 @@ require __DIR__ . '/../includes/menu.php';
                         <span>Unidad de medida</span>
                         <span class="ayuda" style="margin:0;">Hasta 20 car.</span>
                     </label>
-                    <input id="unidad_medida" name="unidad_medida" type="text" maxlength="20" value="<?= h($unidadFormulario) ?>" required>
+                    <input id="unidad_medida" name="unidad_medida" type="text" maxlength="20" value="<?= h($unidadFormulario) ?>" required <?= $campoError === 'unidad_medida' ? 'aria-invalid="true"' : '' ?> aria-describedby=" <?= $campoError === 'unidad_medida' ? 'error-unidad_medida' : '' ?>">
+                <?php if ($campoError === 'unidad_medida'): ?><span id="error-unidad_medida" class="error-campo"><?= h($mensajeError) ?></span><?php endif; ?>
                     <span class="ayuda texto-ayuda">Las facturas anteriores conservan la unidad con la que se vendieron.</span>
                 </div>
 
@@ -183,7 +190,8 @@ require __DIR__ . '/../includes/menu.php';
                         <span>Stock disponible</span>
                         <span class="ayuda" style="margin:0;">Entero ≥ 0</span>
                     </label>
-                    <input id="stock" name="stock" type="number" min="0" max="2147483647" step="1" value="<?= h($stockFormulario) ?>" required>
+                    <input id="stock" name="stock" type="number" min="0" max="2147483647" step="1" value="<?= h($stockFormulario) ?>" required <?= $campoError === 'stock' ? 'aria-invalid="true"' : '' ?> aria-describedby=" <?= $campoError === 'stock' ? 'error-stock' : '' ?>">
+                <?php if ($campoError === 'stock'): ?><span id="error-stock" class="error-campo"><?= h($mensajeError) ?></span><?php endif; ?>
                     <span class="ayuda texto-ayuda">Unidades en inventario.</span>
                 </div>
 
@@ -192,7 +200,8 @@ require __DIR__ . '/../includes/menu.php';
                         <span>Precio unitario ($)</span>
                         <span class="ayuda" style="margin:0;">Hasta 2 decimales</span>
                     </label>
-                    <input id="precio_unitario" name="precio_unitario" type="number" min="0" max="99999999.99" step="0.01" value="<?= h($precioFormulario) ?>" required>
+                    <input id="precio_unitario" name="precio_unitario" type="number" min="0" max="99999999.99" step="0.01" value="<?= h($precioFormulario) ?>" required <?= $campoError === 'precio_unitario' ? 'aria-invalid="true"' : '' ?> aria-describedby=" <?= $campoError === 'precio_unitario' ? 'error-precio_unitario' : '' ?>">
+                <?php if ($campoError === 'precio_unitario'): ?><span id="error-precio_unitario" class="error-campo"><?= h($mensajeError) ?></span><?php endif; ?>
                     <span class="ayuda texto-ayuda">Valor unitario de venta.</span>
                 </div>
             </div>

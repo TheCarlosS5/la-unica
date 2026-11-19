@@ -58,9 +58,11 @@ require __DIR__ . '/../includes/menu.php';
                 class="video-reproductor"
                 controls
                 playsinline
-                preload="metadata"
+                preload="none"
+                poster="<?= h($baseUrl) ?>/assets/video/poster.webp"
                 aria-label="Video explicativo del aplicativo La Única">
                 <source src="<?= h($videoUrl) ?>" type="video/mp4">
+                <source src="<?= h($baseUrl) ?>/assets/video/1.webm" type="video/webm">
                 Tu navegador no puede reproducir este video. Comprueba que uses una versión actualizada de Chrome, Firefox, Edge o Safari.
             </video>
         </div>

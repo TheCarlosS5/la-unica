@@ -24,29 +24,22 @@ $sqlSeleccionProductos = 'SELECT p.id_producto, p.nombre, p.unidad_medida, p.sto
 $sqlAgruparProductos = ' GROUP BY p.id_producto, p.nombre, p.unidad_medida, p.stock, p.precio_unitario ORDER BY p.id_producto';
 $productos = [];
 $errorLectura = false;
+$paginacion = null;
 try {
+    $condicion = '';
+    $tipos = '';
+    $parametros = [];
     if ($idBuscado !== null) {
-        $consultaProductos = $conexion->prepare($sqlSeleccionProductos . ' WHERE p.id_producto = ? OR p.nombre LIKE ?' . $sqlAgruparProductos);
-        $patronNombre = '%' . $terminoBusqueda . '%';
-        $consultaProductos->bind_param('is', $idBuscado, $patronNombre);
-        $consultaProductos->execute();
-        $resultadoProductos = $consultaProductos->get_result();
+        $condicion = ' WHERE p.id_producto = ? OR p.nombre LIKE ?';
+        $tipos = 'is';
+        $parametros = [$idBuscado, '%' . $terminoBusqueda . '%'];
     } elseif ($busquedaActiva) {
-        $consultaProductos = $conexion->prepare($sqlSeleccionProductos . ' WHERE p.nombre LIKE ?' . $sqlAgruparProductos);
-        $patronNombre = '%' . $terminoBusqueda . '%';
-        $consultaProductos->bind_param('s', $patronNombre);
-        $consultaProductos->execute();
-        $resultadoProductos = $consultaProductos->get_result();
-    } else {
-        $resultadoProductos = $conexion->query($sqlSeleccionProductos . $sqlAgruparProductos);
+        $condicion = ' WHERE p.nombre LIKE ?';
+        $tipos = 's';
+        $parametros = ['%' . $terminoBusqueda . '%'];
     }
-    while ($producto = $resultadoProductos->fetch_assoc()) {
-        $productos[] = $producto;
-    }
-    $resultadoProductos->free();
-    if (isset($consultaProductos)) {
-        $consultaProductos->close();
-    }
+    $paginacion = consultarPagina($conexion, $sqlSeleccionProductos . $condicion . $sqlAgruparProductos, $tipos, $parametros);
+    $productos = $paginacion['filas'];
 } catch (Throwable $e) {
     registrarErrorServidor('leer_productos', $e);
     $errorLectura = true;
@@ -67,13 +60,13 @@ require __DIR__ . '/../includes/menu.php';
         <p class="encabezado-descripcion">Supervisión de inventario comercial, unidades de venta, existencias actuales y tarifas unitarias.</p>
     </div>
     <div class="encabezado-acciones">
-        <a class="boton" href="crear_producto.php">
+        <?php if (puedeAcceder('/php/productos/crear_producto.php', usuarioActual())): ?><a class="boton" href="crear_producto.php">
             <svg class="boton-icono" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                 <line x1="12" y1="5" x2="12" y2="19" />
                 <line x1="5" y1="12" x2="19" y2="12" />
             </svg>
             <span>Crear producto</span>
-        </a>
+        </a><?php endif; ?>
     </div>
 </div>
 
@@ -115,14 +108,14 @@ require __DIR__ . '/../includes/menu.php';
             <line x1="12" y1="22" x2="12" y2="12" />
         </svg>
         <h2 class="estado-vacio-titulo">Todavía no hay productos registrados</h2>
-        <p class="estado-vacio-texto">Registra los primeros artículos del inventario con sus existencias y precios unitarios para iniciar las ventas.</p>
-        <a class="boton" href="crear_producto.php">
+        <p class="estado-vacio-texto">Registra los primeros productos del inventario con sus existencias y precios unitarios para iniciar las ventas.</p>
+        <?php if (puedeAcceder('/php/productos/crear_producto.php', usuarioActual())): ?><a class="boton" href="crear_producto.php">
             <svg class="boton-icono" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                 <line x1="12" y1="5" x2="12" y2="19" />
                 <line x1="5" y1="12" x2="19" y2="12" />
             </svg>
             <span>Crear primer producto</span>
-        </a>
+        </a><?php endif; ?>
     </div>
 <?php else: ?>
     <div class="tabla-wrap tabla-contenedor">
@@ -132,7 +125,7 @@ require __DIR__ . '/../includes/menu.php';
                     <th scope="col">ID</th>
                     <th scope="col">Nombre</th>
                     <th scope="col">Unidad</th>
-                    <th scope="col">Stock</th>
+                    <th scope="col">Existencias</th>
                     <th scope="col" class="texto-derecha">Precio unitario</th>
                     <th scope="col">Detalles</th>
                     <th scope="col" class="texto-derecha">Acciones</th>
@@ -167,15 +160,15 @@ require __DIR__ . '/../includes/menu.php';
                         </td>
                         <td>
                             <div class="acciones" style="justify-content: flex-end;">
-                                <a class="editar" href="editar_producto.php?id=<?= h($producto['id_producto']) ?>" title="Editar producto #<?= h($producto['id_producto']) ?>">
+                                <?php if (puedeAcceder('/php/productos/editar_producto.php', usuarioActual())): ?><?php if (puedeAcceder('/php/productos/editar_producto.php', usuarioActual())): ?><a class="editar" href="editar_producto.php?id=<?= h($producto['id_producto']) ?>" title="Editar producto #<?= h($producto['id_producto']) ?>">
                                     <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                                         <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
                                         <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
                                     </svg>
                                     <span>Editar</span>
-                                </a>
+                                </a><?php endif; ?><?php endif; ?>
                                 <?php if ((int)$producto['total_detalles'] === 0): ?>
-                                    <form method="post" action="eliminar_producto.php">
+                                    <?php if (puedeAcceder('/php/productos/eliminar_producto.php', usuarioActual())): ?><form method="post" action="eliminar_producto.php">
                                         <?php if ($tokenCsrf !== null): ?>
                                             <input type="hidden" name="csrf_token" value="<?= h($tokenCsrf) ?>">
                                         <?php endif; ?>
@@ -187,7 +180,7 @@ require __DIR__ . '/../includes/menu.php';
                                             </svg>
                                             <span>Eliminar</span>
                                         </button>
-                                    </form>
+                                    </form><?php endif; ?>
                                 <?php else: ?>
                                     <span class="bloqueado etiqueta-bloqueado" title="No se permite eliminar productos que estén incluidos en detalles de factura">
                                         <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
@@ -213,4 +206,5 @@ require __DIR__ . '/../includes/menu.php';
         <span>No se permite eliminar productos que estén incluidos en detalles de factura.</span>
     </div>
 <?php endif; ?>
+<?php mostrarPaginacion($paginacion); ?>
 <?php require __DIR__ . '/../includes/pie.php'; ?>

@@ -40,7 +40,7 @@
   --color-primario-activo: #1b4332;
   --color-primario-suave: #e2f0e3;
   --color-primario-borde: #9cc5a4;
-  --color-secundario: #3c7d5c;
+  --color-secundario: #306448;
 
   /* Resaltador amarillo: para lo activo, lo importante y los totales */
   --color-resaltador: #fff1b8;
@@ -62,7 +62,7 @@
 
   /* Bordes suaves: contorno de tarjetas, contorno de controles y separadores */
   --color-contorno: #ddd6c0;
-  --color-contorno-fuerte: #a29b83;
+  --color-contorno-fuerte: #827b65;
   --color-borde: #d6cfb8;
   --color-borde-suave: #e9e3d0;
   --color-borde-fuerte: #2b2b36;
@@ -2162,3 +2162,24 @@ button[disabled] {
     height: auto;
     margin-inline: auto;
 }
+
+/* Ajustes derivados de las evaluaciones de noviembre de 2026. */
+:root { --espacio-1: 4px; --espacio-2: 8px; --espacio-3: 16px; --espacio-4: 24px; }
+input, select, textarea { border-color: var(--color-contorno-fuerte); }
+textarea { width: 100%; font: inherit; min-height: 88px; border-radius: 10px; padding: 12px; }
+button:disabled, input:disabled, select:disabled { cursor: not-allowed; opacity: .65; }
+.boton.secundario:hover, .boton-secundario:hover { background: #e2eadf; border-color: var(--color-primario); }
+.nav-subenlace, .miga-pan a, .btn-abrir-drawer, .btn-cerrar-drawer,
+.acciones-tabla a, .acciones-tabla button, .boton-peligro, .boton-editar,
+.tabla-acciones a, .tabla-acciones button { min-width: 44px; min-height: 44px; }
+.miga-pan a { display: inline-flex; align-items: center; }
+.btn-abrir-drawer, .btn-cerrar-drawer { width: 44px; height: 44px; }
+table, .comprobante, .reporte-impresion { font-family: 'Segoe UI', Arial, sans-serif; font-variant-numeric: tabular-nums; }
+.error-campo { display: block; color: #9c2929; font-weight: 600; margin-top: var(--espacio-2); }
+[aria-invalid="true"] { border: 2px solid #9c2929; }
+.paginacion { display: flex; align-items: center; flex-wrap: wrap; gap: var(--espacio-3); margin: var(--espacio-4) 0; }
+.acceso-panel { max-width: 480px; margin: 8vh auto; width: calc(100% - 32px); }
+.motivo-cancelacion { padding: var(--espacio-4); }
+@media print { .paginacion { display: none; } table, body { font-family: Arial, sans-serif; } }
+
+.acciones .editar, .acciones button { min-height: 44px; min-width: 44px; }

@@ -50,13 +50,13 @@ require __DIR__ . '/../includes/menu.php';
                     <polyline points="9 18 15 12 9 6" />
                 </svg>
             </a>
-            <a class="boton secundario" href="<?= h($baseUrl) ?>/php/clientes/crear_cliente.php">
+            <?php if (puedeAcceder('/php/clientes/crear_cliente.php', usuarioActual())): ?><a class="boton secundario" href="<?= h($baseUrl) ?>/php/clientes/crear_cliente.php">
                 <svg class="boton-icono" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                     <line x1="12" y1="5" x2="12" y2="19" />
                     <line x1="5" y1="12" x2="19" y2="12" />
                 </svg>
                 <span>Crear cliente</span>
-            </a>
+            </a><?php endif; ?>
         </div>
         <div class="modulo-detalles">
             <span class="modulo-detalle-item">
@@ -87,7 +87,7 @@ require __DIR__ . '/../includes/menu.php';
                 <h2 class="modulo-titulo">Productos</h2>
             </div>
         </div>
-        <p class="modulo-descripcion">Crear, consultar, editar y eliminar artículos del inventario comercial con supervisión de existencias y precios.</p>
+        <p class="modulo-descripcion">Crear, consultar, editar y eliminar productos del inventario comercial con supervisión de existencias y precios.</p>
         <div class="modulo-acciones">
             <a class="boton" href="<?= h($baseUrl) ?>/php/productos/ver_productos.php">
                 <span>Abrir productos</span>
@@ -95,13 +95,13 @@ require __DIR__ . '/../includes/menu.php';
                     <polyline points="9 18 15 12 9 6" />
                 </svg>
             </a>
-            <a class="boton secundario" href="<?= h($baseUrl) ?>/php/productos/crear_producto.php">
+            <?php if (puedeAcceder('/php/productos/crear_producto.php', usuarioActual())): ?><a class="boton secundario" href="<?= h($baseUrl) ?>/php/productos/crear_producto.php">
                 <svg class="boton-icono" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                     <line x1="12" y1="5" x2="12" y2="19" />
                     <line x1="5" y1="12" x2="19" y2="12" />
                 </svg>
                 <span>Crear producto</span>
-            </a>
+            </a><?php endif; ?>
         </div>
         <div class="modulo-detalles">
             <span class="modulo-detalle-item">
@@ -135,7 +135,7 @@ require __DIR__ . '/../includes/menu.php';
                 <span>Consultar facturas</span>
                 <svg class="boton-icono" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7" /><path d="m20 20-4-4" /></svg>
             </a>
-            <a class="boton secundario" href="<?= h($baseUrl) ?>/php/facturas/crear_factura.php">Nueva factura</a>
+            <?php if (puedeAcceder('/php/facturas/crear_factura.php', usuarioActual())): ?><a class="boton secundario" href="<?= h($baseUrl) ?>/php/facturas/crear_factura.php">Crear factura</a><?php endif; ?>
         </div>
         <div class="modulo-detalles">
             <span class="modulo-detalle-item">
@@ -190,11 +190,11 @@ require __DIR__ . '/../includes/menu.php';
         </div>
         <p class="modulo-descripcion">Revisa qué se ha hecho en el aplicativo y los errores técnicos que se han registrado.</p>
         <div class="modulo-acciones">
-            <a class="boton" href="<?= h($baseUrl) ?>/php/historial/acciones.php">
+            <?php if (puedeAcceder('/php/historial/acciones.php', usuarioActual())): ?><a class="boton" href="<?= h($baseUrl) ?>/php/historial/acciones.php">
                 <span>Ver acciones</span>
                 <svg class="boton-icono" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 18 15 12 9 6" /></svg>
-            </a>
-            <a class="boton secundario" href="<?= h($baseUrl) ?>/php/historial/errores.php">Ver errores</a>
+            </a><?php endif; ?>
+            <?php if (puedeAcceder('/php/historial/acciones.php', usuarioActual())): ?><a class="boton secundario" href="<?= h($baseUrl) ?>/php/historial/errores.php">Ver errores</a><?php endif; ?>
         </div>
         <div class="modulo-detalles">
             <span class="modulo-detalle-item">

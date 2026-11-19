@@ -29,7 +29,7 @@ require __DIR__ . '/../includes/menu.php';
 
 <section class="panel-reporte manual-panel" aria-label="Diagrama del modelo entidad-relación">
     <figure class="mer-figura">
-        <img class="mer-imagen" src="<?= h($merUrl) ?>" width="1112" height="752" alt="Modelo entidad-relación de La Única: clientes se relaciona con facturas de uno a muchos; facturas y productos se relacionan con detalle_facturas de uno a muchos. Incluye la tabla independiente log_acciones." aria-describedby="mer-descripcion">
+        <img loading="lazy" decoding="async" class="mer-imagen" src="<?= h($merUrl) ?>" width="1112" height="752" alt="Modelo entidad-relación de La Única: clientes se relaciona con facturas de uno a muchos; facturas y productos se relacionan con detalle_facturas de uno a muchos. Incluye la tabla independiente log_acciones." aria-describedby="mer-descripcion">
         <figcaption id="mer-descripcion" class="manual-panel-descripcion">Modelo entidad-relación de La Única: clientes, facturas, detalle_facturas, productos y log_acciones.</figcaption>
     </figure>
 </section>

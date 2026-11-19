@@ -1,0 +1,233 @@
+{
+  "results": [
+    {
+      "width": 320,
+      "route": "/main.php",
+      "status": 200,
+      "overflow": false,
+      "small": []
+    },
+    {
+      "width": 320,
+      "route": "/php/clientes/ver_clientes.php",
+      "status": 200,
+      "overflow": false,
+      "small": []
+    },
+    {
+      "width": 320,
+      "route": "/php/productos/ver_productos.php",
+      "status": 200,
+      "overflow": false,
+      "small": []
+    },
+    {
+      "width": 320,
+      "route": "/php/facturas/ver_facturas.php",
+      "status": 200,
+      "overflow": false,
+      "small": []
+    },
+    {
+      "width": 320,
+      "route": "/php/clientes/crear_cliente.php",
+      "status": 200,
+      "overflow": false,
+      "small": []
+    },
+    {
+      "width": 320,
+      "route": "/php/productos/crear_producto.php",
+      "status": 200,
+      "overflow": false,
+      "small": []
+    },
+    {
+      "width": 320,
+      "route": "/php/facturas/crear_factura.php",
+      "status": 200,
+      "overflow": false,
+      "small": []
+    },
+    {
+      "width": 320,
+      "route": "/php/sobre_nosotros/video_explicativo.php",
+      "status": 200,
+      "overflow": false,
+      "small": []
+    },
+    {
+      "width": 375,
+      "route": "/main.php",
+      "status": 200,
+      "overflow": false,
+      "small": []
+    },
+    {
+      "width": 375,
+      "route": "/php/clientes/ver_clientes.php",
+      "status": 200,
+      "overflow": false,
+      "small": []
+    },
+    {
+      "width": 375,
+      "route": "/php/productos/ver_productos.php",
+      "status": 200,
+      "overflow": false,
+      "small": []
+    },
+    {
+      "width": 375,
+      "route": "/php/facturas/ver_facturas.php",
+      "status": 200,
+      "overflow": false,
+      "small": []
+    },
+    {
+      "width": 375,
+      "route": "/php/clientes/crear_cliente.php",
+      "status": 200,
+      "overflow": false,
+      "small": []
+    },
+    {
+      "width": 375,
+      "route": "/php/productos/crear_producto.php",
+      "status": 200,
+      "overflow": false,
+      "small": []
+    },
+    {
+      "width": 375,
+      "route": "/php/facturas/crear_factura.php",
+      "status": 200,
+      "overflow": false,
+      "small": []
+    },
+    {
+      "width": 375,
+      "route": "/php/sobre_nosotros/video_explicativo.php",
+      "status": 200,
+      "overflow": false,
+      "small": []
+    },
+    {
+      "width": 768,
+      "route": "/main.php",
+      "status": 200,
+      "overflow": false,
+      "small": []
+    },
+    {
+      "width": 768,
+      "route": "/php/clientes/ver_clientes.php",
+      "status": 200,
+      "overflow": false,
+      "small": []
+    },
+    {
+      "width": 768,
+      "route": "/php/productos/ver_productos.php",
+      "status": 200,
+      "overflow": false,
+      "small": []
+    },
+    {
+      "width": 768,
+      "route": "/php/facturas/ver_facturas.php",
+      "status": 200,
+      "overflow": false,
+      "small": []
+    },
+    {
+      "width": 768,
+      "route": "/php/clientes/crear_cliente.php",
+      "status": 200,
+      "overflow": false,
+      "small": []
+    },
+    {
+      "width": 768,
+      "route": "/php/productos/crear_producto.php",
+      "status": 200,
+      "overflow": false,
+      "small": []
+    },
+    {
+      "width": 768,
+      "route": "/php/facturas/crear_factura.php",
+      "status": 200,
+      "overflow": false,
+      "small": []
+    },
+    {
+      "width": 768,
+      "route": "/php/sobre_nosotros/video_explicativo.php",
+      "status": 200,
+      "overflow": false,
+      "small": []
+    },
+    {
+      "width": 1280,
+      "route": "/main.php",
+      "status": 200,
+      "overflow": false,
+      "small": []
+    },
+    {
+      "width": 1280,
+      "route": "/php/clientes/ver_clientes.php",
+      "status": 200,
+      "overflow": false,
+      "small": []
+    },
+    {
+      "width": 1280,
+      "route": "/php/productos/ver_productos.php",
+      "status": 200,
+      "overflow": false,
+      "small": []
+    },
+    {
+      "width": 1280,
+      "route": "/php/facturas/ver_facturas.php",
+      "status": 200,
+      "overflow": false,
+      "small": []
+    },
+    {
+      "width": 1280,
+      "route": "/php/clientes/crear_cliente.php",
+      "status": 200,
+      "overflow": false,
+      "small": []
+    },
+    {
+      "width": 1280,
+      "route": "/php/productos/crear_producto.php",
+      "status": 200,
+      "overflow": false,
+      "small": []
+    },
+    {
+      "width": 1280,
+      "route": "/php/facturas/crear_factura.php",
+      "status": 200,
+      "overflow": false,
+      "small": []
+    },
+    {
+      "width": 1280,
+      "route": "/php/sobre_nosotros/video_explicativo.php",
+      "status": 200,
+      "overflow": false,
+      "small": []
+    }
+  ],
+  "errors": [],
+  "drawer": {
+    "opened": "true",
+    "closed": "false"
+  }
+}

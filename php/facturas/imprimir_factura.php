@@ -103,11 +103,11 @@ require __DIR__ . '/../includes/menu.php';
             <?php if ($factura['estado_factura'] === 'Pagado' && !esFacturaDeHoy($factura['fecha_factura'])): ?>
                 <button class="boton secundario" type="button" disabled title="Las facturas solo se pueden cancelar el mismo día de la venta.">Solo se cancela el día de la venta</button>
             <?php elseif ($factura['estado_factura'] === 'Pagado' && $tokenCsrf !== null): ?>
-                <form class="form-cancelar-factura" method="post" action="cancelar_factura.php">
+                <?php if (puedeAcceder('/php/facturas/cancelar_factura.php', usuarioActual())): ?><form class="form-cancelar-factura" method="post" action="cancelar_factura.php">
                     <input type="hidden" name="csrf_token" value="<?= h($tokenCsrf) ?>">
                     <input type="hidden" name="id_factura" value="<?= (int)$factura['id_factura'] ?>">
                     <button class="boton-peligro" type="submit">Cancelar factura</button>
-                </form>
+                </form><?php endif; ?>
             <?php elseif ($factura['estado_factura'] === 'Cancelado'): ?>
                 <button class="boton-peligro" type="button" disabled>Factura cancelada</button>
             <?php elseif ($factura['estado_factura'] === 'Pagado'): ?>
@@ -150,7 +150,7 @@ require __DIR__ . '/../includes/menu.php';
             <div><dt>Cliente</dt><dd><?= h($factura['cliente']) ?></dd></div>
             <div><dt>Documento del cliente</dt><dd><?= (int)$factura['id_cliente'] ?></dd></div>
             <div><dt>Fecha</dt><dd><?= h($fechaFactura) ?><?= $hayFechaFactura ? ' (Bogotá)' : '' ?></dd></div>
-            <div><dt>Estado</dt><dd><span class="estado-factura <?= strtolower(h($factura['estado_factura'])) ?>"><?= h($factura['estado_factura']) ?></span></dd></div>
+            <div><dt>Estado</dt><dd><span class="estado-factura <?= strtolower(h($factura['estado_factura'])) ?>"><span aria-hidden="true"><?= $factura['estado_factura'] === 'Pagado' ? '✓' : '×' ?></span> <?= h($factura['estado_factura']) ?></span></dd></div>
         </dl>
 
         <?php if ($detalles === []): ?>

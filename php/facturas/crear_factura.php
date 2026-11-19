@@ -16,7 +16,7 @@
 
 require __DIR__ . '/../config/conexion.php';
 
-$titulo = 'Nueva factura';
+$titulo = 'Crear factura';
 $seccionActiva = 'facturas';
 $tokenCsrf = obtenerTokenCsrf();
 $mensajeError = '';
@@ -44,8 +44,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $lineasFormulario = [];
     foreach ($productosEntrada as $indice => $productoEntrada) {
         $lineasFormulario[] = [
-            'id_producto' => trim((string)$productoEntrada),
-            'cantidad' => trim((string)($cantidadesEntrada[$indice] ?? '')),
+            'id_producto' => is_scalar($productoEntrada) ? trim((string)$productoEntrada) : '',
+            'cantidad' => isset($cantidadesEntrada[$indice]) && is_scalar($cantidadesEntrada[$indice]) ? trim((string)$cantidadesEntrada[$indice]) : '',
         ];
     }
     if ($lineasFormulario === []) {
@@ -209,6 +209,8 @@ foreach ($productos as $producto) {
         . ($stockProducto < 1 ? ' disabled' : '') . '>' . h($etiqueta) . '</option>';
 }
 
+$errorCliente = $mensajeError !== '' && str_contains($mensajeError, 'cliente');
+$errorLineas = $mensajeError !== '' && !$errorCliente && http_response_code() !== 403;
 require __DIR__ . '/../includes/menu.php';
 ?>
 <div class="encabezado-vista">
@@ -216,7 +218,7 @@ require __DIR__ . '/../includes/menu.php';
         <nav class="miga-pan" aria-label="Ruta de navegación">
             <a href="<?= h($baseUrl) ?>/main.php">Inicio</a>
             <span class="miga-separador" aria-hidden="true">/</span>
-            <span>Nueva factura</span>
+            <span>Crear factura</span>
         </nav>
         <h1 class="encabezado-titulo">Registrar una venta</h1>
         <p class="encabezado-descripcion">Selecciona el cliente y agrega los productos. El inventario se valida y actualiza al guardar la factura.</p>
@@ -244,9 +246,9 @@ require __DIR__ . '/../includes/menu.php';
         <?php if ($tokenCsrf === null): ?>
             <div class="mensaje aviso alerta alerta-aviso" role="status"><div class="alerta-contenido">La sesión de seguridad no está disponible. Recarga la página antes de registrar una venta.</div></div>
         <?php elseif (count($clientes) === 0): ?>
-            <div class="estado-vacio" role="status"><h2>No hay clientes registrados</h2><p>Registra un cliente antes de crear una factura.</p><a class="boton" href="<?= h($baseUrl) ?>/php/clientes/crear_cliente.php">Crear cliente</a></div>
+            <div class="estado-vacio" role="status"><h2>No hay clientes registrados</h2><p>Registra un cliente antes de crear una factura.</p><?php if (puedeAcceder('/php/clientes/crear_cliente.php', usuarioActual())): ?><a class="boton" href="<?= h($baseUrl) ?>/php/clientes/crear_cliente.php">Crear cliente</a><?php endif; ?></div>
         <?php elseif (count($productos) === 0): ?>
-            <div class="estado-vacio" role="status"><h2>No hay productos registrados</h2><p>Registra productos antes de crear una factura.</p><a class="boton" href="<?= h($baseUrl) ?>/php/productos/crear_producto.php">Crear producto</a></div>
+            <div class="estado-vacio" role="status"><h2>No hay productos registrados</h2><p>Registra productos antes de crear una factura.</p><?php if (puedeAcceder('/php/productos/crear_producto.php', usuarioActual())): ?><a class="boton" href="<?= h($baseUrl) ?>/php/productos/crear_producto.php">Crear producto</a><?php endif; ?></div>
         <?php elseif ($productosDisponibles === 0): ?>
             <div class="mensaje aviso alerta alerta-aviso" role="status"><div class="alerta-contenido">No hay productos con existencias disponibles para vender.</div></div>
         <?php else: ?>
@@ -255,7 +257,7 @@ require __DIR__ . '/../includes/menu.php';
 
                 <div class="campo">
                     <label for="id_cliente"><span>Cliente</span><span class="ayuda" style="margin:0">Requerido</span></label>
-                    <select id="id_cliente" name="id_cliente" required>
+                    <select id="id_cliente" name="id_cliente" required <?= $errorCliente ? 'aria-invalid="true" aria-describedby="error-cliente"' : '' ?>>
                         <option value="">Selecciona un cliente</option>
                         <?php foreach ($clientes as $cliente): ?>
                             <option value="<?= (int)$cliente['id_cliente'] ?>" <?= $clienteSeleccionado === (string)$cliente['id_cliente'] ? 'selected' : '' ?>><?= h($cliente['nombre']) ?> · Doc. <?= (int)$cliente['id_cliente'] ?></option>
@@ -263,17 +265,19 @@ require __DIR__ . '/../includes/menu.php';
                     </select>
                 </div>
 
+                <?php if ($errorCliente): ?><p class="error-campo" id="error-cliente"><?= h($mensajeError) ?></p><?php endif; ?>
                 <div class="factura-lineas-cabecera">
                     <div><h3>Productos</h3><p class="ayuda">Cada producto puede agregarse una sola vez; ajusta su cantidad.</p></div>
                     <button class="boton secundario" type="button" id="agregar-linea-factura">Agregar producto</button>
                 </div>
 
-                <div id="lineas-factura" class="factura-lineas" aria-live="polite">
+                <div id="lineas-factura" class="factura-lineas" aria-live="polite" role="group" aria-label="Líneas de la factura" <?= $errorLineas ? 'aria-describedby="error-lineas"' : '' ?>>
+                    <?php if ($errorLineas): ?><p class="error-campo" id="error-lineas"><?= h($mensajeError) ?></p><?php endif; ?>
                     <?php foreach ($lineasFormulario as $indice => $linea): ?>
                         <div class="factura-linea" data-linea-factura>
                             <div class="campo factura-producto-campo">
                                 <label for="id_producto_<?= $indice ?>">Producto</label>
-                                <select id="id_producto_<?= $indice ?>" name="id_producto[]" data-producto-select required>
+                                <select id="id_producto_<?= $indice ?>" name="id_producto[]" data-producto-select required <?= $errorLineas ? 'aria-invalid="true" aria-describedby="error-lineas"' : '' ?>>
                                     <?php
                                     $opcionesLinea = str_replace('<option value="' . h((string)$linea['id_producto']) . '"', '<option value="' . h((string)$linea['id_producto']) . '" selected', $opcionesProductos);
                                     echo $opcionesLinea;
@@ -283,7 +287,7 @@ require __DIR__ . '/../includes/menu.php';
                             </div>
                             <div class="campo factura-cantidad-campo">
                                 <label for="cantidad_<?= $indice ?>">Cantidad</label>
-                                <input id="cantidad_<?= $indice ?>" name="cantidad[]" type="number" min="1" max="2147483647" step="1" inputmode="numeric" value="<?= h($linea['cantidad']) ?>" data-cantidad required>
+                                <input id="cantidad_<?= $indice ?>" name="cantidad[]" type="number" min="1" max="2147483647" step="1" inputmode="numeric" value="<?= h($linea['cantidad']) ?>" data-cantidad required <?= $errorLineas ? 'aria-invalid="true" aria-describedby="error-lineas"' : '' ?>>
                             </div>
                             <button class="boton-peligro factura-quitar-linea" type="button" data-quitar-linea aria-label="Quitar este producto">Quitar</button>
                         </div>
@@ -294,12 +298,12 @@ require __DIR__ . '/../includes/menu.php';
                     <div class="factura-linea" data-linea-factura>
                         <div class="campo factura-producto-campo">
                             <label>Producto</label>
-                            <select name="id_producto[]" data-producto-select required><?= $opcionesProductos ?></select>
+                            <select name="id_producto[]" data-producto-select required <?= $errorLineas ? 'aria-invalid="true" aria-describedby="error-lineas"' : '' ?>><?= $opcionesProductos ?></select>
                             <span class="ayuda" data-detalle-producto>Selecciona un producto para consultar precio y existencias.</span>
                         </div>
                         <div class="campo factura-cantidad-campo">
                             <label>Cantidad</label>
-                            <input name="cantidad[]" type="number" min="1" max="2147483647" step="1" inputmode="numeric" value="1" data-cantidad required>
+                            <input name="cantidad[]" type="number" min="1" max="2147483647" step="1" inputmode="numeric" value="1" data-cantidad required <?= $errorLineas ? 'aria-invalid="true" aria-describedby="error-lineas"' : '' ?>>
                         </div>
                         <button class="boton-peligro factura-quitar-linea" type="button" data-quitar-linea aria-label="Quitar este producto">Quitar</button>
                     </div>

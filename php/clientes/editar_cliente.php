@@ -15,6 +15,7 @@ $titulo = 'Editar cliente';
 $seccionActiva = 'clientes';
 $mensajeExito = '';
 $mensajeError = '';
+$campoError = '';
 $tokenCsrf = obtenerTokenCsrf();
 
 $idCliente = validarId($_GET['id'] ?? '');
@@ -53,6 +54,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $mensajeError = 'No se pudo validar la solicitud. Actualiza la página e inténtalo de nuevo.';
     } elseif ($nombreLimpio === '' || longitudTexto($nombreLimpio) > 100) {
         $mensajeError = 'El nombre es obligatorio y admite hasta 100 caracteres.';
+        $campoError = 'nombre';
     } else {
         try {
             $actualizar = $conexion->prepare('UPDATE clientes SET nombre = ? WHERE id_cliente = ?');
@@ -126,7 +128,8 @@ require __DIR__ . '/../includes/menu.php';
                     <span>Nombre del cliente</span>
                     <span class="ayuda" style="margin:0;">Obligatorio</span>
                 </label>
-                <input id="nombre" name="nombre" type="text" maxlength="100" value="<?= h($nombreFormulario) ?>" required>
+                <input id="nombre" name="nombre" type="text" maxlength="100" value="<?= h($nombreFormulario) ?>" required <?= $campoError === 'nombre' ? 'aria-invalid="true"' : '' ?> aria-describedby=" <?= $campoError === 'nombre' ? 'error-nombre' : '' ?>">
+                <?php if ($campoError === 'nombre'): ?><span id="error-nombre" class="error-campo"><?= h($mensajeError) ?></span><?php endif; ?>
             </div>
 
             <div class="campo">

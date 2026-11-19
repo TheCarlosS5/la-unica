@@ -30,8 +30,11 @@ if (!validarTokenCsrf($_POST['csrf_token'] ?? null)) {
     exit('No se pudo validar la solicitud. Actualiza la página e inténtalo de nuevo.');
 }
 
+$motivo = leerTexto($_POST, 'motivo');
+$errorMotivo = ($_POST['confirmar'] ?? '') === 'si' && ($motivo === '' || longitudTexto($motivo) > 160);
+
 // Primer paso: sin confirmar=si se muestra la pantalla de confirmación con los datos de la factura.
-if (($_POST['confirmar'] ?? '') !== 'si') {
+if (($_POST['confirmar'] ?? '') !== 'si' || $errorMotivo) {
     try {
         $consulta = $conexion->prepare(
             'SELECT f.nombre_cliente, f.fecha_factura, f.estado_factura, COUNT(d.id_detalle_factura) AS lineas, '
@@ -126,12 +129,18 @@ if (($_POST['confirmar'] ?? '') !== 'si') {
         </div>
     </div>
 
-    <form method="post" action="cancelar_factura.php">
+    <?php if (puedeAcceder('/php/facturas/cancelar_factura.php', usuarioActual())): ?><form method="post" action="cancelar_factura.php">
         <?php if ($tokenCsrf !== null): ?>
             <input type="hidden" name="csrf_token" value="<?= h($tokenCsrf) ?>">
         <?php endif; ?>
         <input type="hidden" name="id_factura" value="<?= (int)$idFactura ?>">
         <input type="hidden" name="confirmar" value="si">
+        <div class="campo motivo-cancelacion">
+            <label for="motivo">Motivo de la cancelación</label>
+            <textarea id="motivo" name="motivo" maxlength="160" required aria-describedby="ayuda-motivo<?= $errorMotivo ? ' error-motivo' : '' ?>" <?= $errorMotivo ? 'aria-invalid="true"' : '' ?>><?= h($motivo) ?></textarea>
+            <span class="ayuda" id="ayuda-motivo">Escribe el motivo, hasta 160 caracteres. Quedará en el historial.</span>
+            <?php if ($errorMotivo): ?><span class="error-campo" id="error-motivo" role="alert">El motivo es obligatorio y admite hasta 160 caracteres.</span><?php endif; ?>
+        </div>
         <div class="panel-confirmacion-pie">
             <a class="boton secundario" href="imprimir_factura.php?id=<?= (int)$idFactura ?>">Volver</a>
             <button type="submit" class="boton-peligro-solido">
@@ -143,7 +152,7 @@ if (($_POST['confirmar'] ?? '') !== 'si') {
                 <span>Confirmar cancelación</span>
             </button>
         </div>
-    </form>
+    </form><?php endif; ?>
 </section>
 <?php
     require __DIR__ . '/../includes/pie.php';
@@ -216,7 +225,7 @@ try {
     }
 
     // El registro del historial va dentro de la transacción: cancelación y registro se confirman juntos.
-    registrarAccion($conexion, 'Facturas', 'Cancelar', 'Factura #' . $idFactura . ' cancelada; se repuso el inventario.', true);
+    registrarAccion($conexion, 'Facturas', 'Cancelar', 'Motivo: ' . $motivo . '. ' . 'Factura #' . $idFactura . ' cancelada; se repuso el inventario.', true);
     $conexion->commit();
     $transaccionIniciada = false;
     $cancelacionExitosa = true;
