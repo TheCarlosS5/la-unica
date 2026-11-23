@@ -1,6 +1,6 @@
 # La Única
 
-Aplicación PHP local para administrar clientes, productos, ventas e inventario. Esta documentación se revisó el **11 de noviembre de 2026** contra la operación de `main`. El nombre de una carpeta o una versión documental no identifica por sí solo una versión de software.
+Aplicación PHP local para administrar clientes, productos, ventas e inventario. Documentación alineada el **23 de noviembre de 2026** con el commit [`e527b75`](https://github.com/TheCarlosS5/la-unica/commit/e527b752204e0faf23fb4bb05876ccc4096082ad), publicado el 22 de noviembre en hora de Colombia. El nombre de una carpeta o una versión documental no identifica por sí solo una versión de software.
 
 ## Funciones
 
@@ -10,7 +10,7 @@ Aplicación PHP local para administrar clientes, productos, ventas e inventario.
 - Facturas: ventas **Pagado**, descuento transaccional de stock y comprobante imprimible. Cancelación únicamente el mismo día en America/Bogota, con motivo obligatorio y reposición una sola vez. Las facturas no se editan ni se eliminan.
 - Cinco reportes: **Ventas**, **Unidades vendidas por producto**, **Existencias**, **Clientes y cantidad de facturas** y **Detalle de facturas**; resumen diario, impresión/PDF y descarga CSV de cada consulta.
 - Historial de acciones en SQL y errores técnicos en archivo. La wiki y el historial de errores funcionan sin SQL.
-- Acceso: un operador en el mismo equipo. Términos y Condiciones obligatorios con aceptación recordada durante 30 días. El portal usa un token CSRF.
+- Acceso: un operador en el mismo equipo. Términos y Condiciones obligatorios con aceptación recordada durante 30 días. Los módulos operativos exigen la aceptación antes de abrir SQL. El operador entra sin cuenta y el portal usa un token CSRF.
 - Sobre nosotros: SRS completo, manual del usuario, manual técnico, PAC, video y wiki ilustrada.
 
 No implementa crédito, pagos pendientes, impuestos ni factura electrónica. El sistema está diseñado para un único operador local.
@@ -41,7 +41,7 @@ No se incluye migración automática desde el modelo anterior con Pendiente. Un 
 
 La [wiki](wiki/) conserva la estructura, pasos y capturas numeradas elegidos para la entrega y describe las reglas actuales. Sus páginas PHP se consultan a través del servidor. Sobre nosotros integra los cuatro PDF. Los visores de esa sección cargan SQL; la wiki y el historial de errores lo omiten. Los PDF pueden abrirse directamente desde el mismo equipo.
 
-La [revisión de coherencia](referencias/COHERENCIA_DOCUMENTAL.md) registra las correcciones y comprobaciones del 11/11/2026. QA conserva el [plan vigente](referencias/QA/plan-de-pruebas.md), [casos manuales](referencias/QA/casos-de-prueba.md), [checklist](referencias/QA/checklist-seguridad.md) y evidencias históricas identificadas por fecha. Se añade la prueba ejecutable `php tests/seguridad.php`; las verificaciones HTTP y de navegador del 18/11 están en `referencias/QA/revision_2026-11-18/`. No hay Composer ni workflows activos.
+El [anexo del 18/11](referencias/REVISION_EQUIPOS_2026-11-18.md) y sus evidencias corresponden a un corte anterior con cuentas y roles. Las regresiones de acceso local y CSV del 22/11 están en [resultados del grupo 5](referencias/QA/resultados_grupo_5.json). La [revisión de coherencia](referencias/COHERENCIA_DOCUMENTAL.md) registra las correcciones y comprobaciones del 11/11/2026. QA conserva el [plan vigente](referencias/QA/plan-de-pruebas.md), [casos manuales](referencias/QA/casos-de-prueba.md), [checklist](referencias/QA/checklist-seguridad.md) y evidencias históricas identificadas por fecha. Se añade la prueba ejecutable `php tests/seguridad.php`; las verificaciones HTTP y de navegador del 18/11 están en `referencias/QA/revision_2026-11-18/`. No hay Composer ni workflows activos.
 
 El [modelo de entidades y relaciones](referencias/mer.png) representa las cinco tablas del esquema actual.
 
@@ -72,6 +72,7 @@ assets/
   fonts/ y LICENCIAS.txt              Fuentes locales y licencias
   img/logo.png                       Marca del aplicativo
   js/facturas.js                     Líneas y total estimado de la venta
+  js/formularios.js                  Bloqueo temporal de envíos repetidos
   video/1.mp4                        Video explicativo
 php/
   config/conexion.php                Arranque y conexión SQL
@@ -85,7 +86,7 @@ php/
   includes/                         Menú y pie compartidos
   inicio/ clientes/ productos/       Catálogos y portada
   facturas/                         Venta, comprobante y cancelación del día
-  reportes/                         Cinco consultas, resumen e impresión
+  reportes/                         Cinco consultas, resumen, impresión y CSV
   historial/                        Acciones SQL y diagnóstico en archivo
   sobre_nosotros/                    SRS, manuales, PAC, video y acceso a wiki
 wiki/
@@ -102,7 +103,7 @@ referencias/
   SRS.docx / SRS.pdf                SRS 1.6
   manual.docx / manual.pdf          Manual del usuario 2.1
   manual_tecnico.docx / .pdf        Manual técnico 1.4
-  PAC.docx / PAC.pdf                PAC 1.4
+  PAC.docx / PAC.pdf                PAC 2.0
   QA/                               Plan, casos, hallazgos y evidencia fechada
   COHERENCIA_DOCUMENTAL.md           Revisión de documentos y referencias
 logs/                               Diagnóstico privado; no se publican archivos .log

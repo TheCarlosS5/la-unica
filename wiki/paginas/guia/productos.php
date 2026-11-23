@@ -43,6 +43,7 @@
 <li><span class="marca-num">2</span> <strong>Nuevo producto</strong> va directo al formulario.</li>
 </ul>
 <h2 id="leer-el-catálogo">Leer el catálogo</h2>
+<p>El listado muestra hasta 25 registros por página. Usa <strong>Anterior</strong> y <strong>Siguiente</strong> para navegar con los filtros actuales.</p>
 <figure class="captura"><img src="img/productos-lista-marcas.webp" alt="Marcas importantes del catálogo" loading="lazy"><figcaption>Marcas importantes del catálogo</figcaption></figure>
 <ul>
 <li><span class="marca-num">1</span> <strong>0 (Agotado)</strong>: el stock llegó a cero. El producto <strong>no se puede vender</strong> hasta que repongas existencias.</li>

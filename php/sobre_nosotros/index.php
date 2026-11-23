@@ -118,7 +118,7 @@ require __DIR__ . '/../includes/menu.php';
             </div>
             <h2 class="modulo-titulo">Plan de Aseguramiento de la Calidad</h2>
         </div>
-        <p class="reportes-resumen-descripcion">Consulta el PAC con los casos de prueba, sus resultados, las evidencias y los criterios de aceptación.</p>
+        <p class="reportes-resumen-descripcion">Consulta el PAC 2.0 con los casos de prueba, sus resultados, las evidencias y los criterios de aceptación.</p>
         <p class="reportes-resumen-detalle">El documento PDF se muestra integrado en la página, sin abrir una pestaña externa.</p>
         <div class="modulo-acciones">
             <a class="boton" href="<?= h($baseUrl) ?>/php/sobre_nosotros/pac.php">

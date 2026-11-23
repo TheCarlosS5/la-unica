@@ -1,5 +1,7 @@
 # Revisión de coherencia documental de La Única
 
+> **Revisión histórica del 11/11.** Las reglas del portal y la versión del PAC de este informe corresponden a esa fecha. Consulta el [README vigente](../README.md) para el corte del 22/11.
+
 Revisión del **11/11/2026** sobre la operación de `main`, tomando como base el commit `200ce3472ff9c299458bc0c331ebd9e9eedbfec5`. Se contrastaron README, las 29 páginas de la wiki elegida, SRS, los dos manuales, PAC, documentación de QA, esquema SQL y páginas de Sobre nosotros. Los registros de revisiones anteriores conservan su fecha y alcance.
 
 Esta revisión corrige documentación y herramientas de capturas. No cambia la lógica de clientes, productos, ventas, cancelaciones, reportes ni configuración del aplicativo. La carpeta original `la-unica` y su rama independiente se conservan.

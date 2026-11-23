@@ -61,6 +61,7 @@
 </blockquote>
 <p>y <strong>no se guarda nada</strong>: ni la factura ni los descuentos.</p>
 <h2 id="buscar-facturas">Buscar facturas</h2>
+<p>El listado muestra hasta 25 registros por página. Usa <strong>Anterior</strong> y <strong>Siguiente</strong> para navegar con los filtros actuales.</p>
 <div class="pasos">
 <ol>
 <li>Menú → <em>Ventas → <strong>Facturas</strong></em>.</li>
@@ -109,9 +110,9 @@
 <div class="pasos">
 <ol>
 <li>Abre el comprobante de una factura <strong>Pagado del mismo día</strong> y pulsa <strong>Cancelar factura</strong> (<span class="marca-num">2</span> en la imagen de los botones).</li>
-<li>Revisa la pantalla de confirmación y pulsa <strong>Confirmar cancelación</strong>. Hasta confirmar no se cambia el estado ni el stock.</li>
+<li>Revisa los datos, escribe el <strong>motivo de la cancelación</strong> (hasta 160 caracteres) y pulsa <strong>Confirmar cancelación</strong>. El motivo queda en Historial de acciones.</li>
 <li>
-<p>Primero revisa los datos y confirma:</p><figure class="captura"><img src="img/facturas-cancelar-confirmacion.webp" alt="Pantalla de confirmación de la cancelación" loading="lazy"><figcaption>Pantalla de confirmación de la cancelación</figcaption></figure>
+<p>La captura anterior al cambio ilustra los datos que debes revisar.</p><figure class="captura"><img src="img/facturas-cancelar-confirmacion.webp" alt="Pantalla de confirmación de la cancelación" loading="lazy"><figcaption>Pantalla de confirmación de la cancelación</figcaption></figure>
 <p>Después de confirmar:</p>
 <figure class="captura"><img src="img/facturas-cancelada.webp" alt="Factura cancelada" loading="lazy"><figcaption>Factura cancelada</figcaption></figure>
 <ul>

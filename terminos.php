@@ -27,8 +27,8 @@ function h(mixed $valor): string {
 $terminosAceptados = !empty($_SESSION['terminos_aceptados']) || (!empty($_COOKIE['la_unica_terminos']) && $_COOKIE['la_unica_terminos'] === 'aceptados');
 $fueRechazado = isset($_GET['rechazado']) && $_GET['rechazado'] === '1';
 
-$fechaActualizacion = '11 de noviembre de 2026';
-$versionSoftware = 'Portal de acceso (SRS 1.6 - PAC v1.4 - Ficha 3407799)';
+$fechaActualizacion = '22 de noviembre de 2026';
+$versionSoftware = 'Portal de acceso (SRS 1.6 - PAC 2.0 - Ficha 3407799)';
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -555,7 +555,7 @@ $versionSoftware = 'Portal de acceso (SRS 1.6 - PAC v1.4 - Ficha 3407799)';
                 </svg>
             </div>
             <h2>Términos Aceptados</h2>
-            <p>La aceptación del aviso operativo está guardada en este navegador. No constituye aprobación de las acciones del PAC v1.4 ni identificación de una persona.</p>
+            <p>La aceptación del aviso operativo está guardada en este navegador. No constituye aprobación de las acciones del PAC 2.0 ni identificación de una persona.</p>
             <div style="display: flex; justify-content: center; gap: 0.75rem; flex-wrap: wrap;">
                 <a href="main.php" class="btn-nav btn-nav-siguiente" style="font-size: 0.95rem; padding: 0.65rem 1.4rem;">
                     <span>Entrar a La Única (main.php)</span>
@@ -577,7 +577,7 @@ $versionSoftware = 'Portal de acceso (SRS 1.6 - PAC v1.4 - Ficha 3407799)';
         <main class="recuadro-terminos" id="recuadroWizard" role="main">
             <!-- Barra superior con indicador de pasos -->
             <div class="recuadro-topbar">
-                <span class="insignia-pac">PAC v1.4 · Ficha 3407799</span>
+                <span class="insignia-pac">PAC 2.0 · Ficha 3407799</span>
                 <div class="indicador-pasos">
                     <span id="textoPaso">Paso 1 de 5</span>
                     <div class="puntos-progreso" aria-hidden="true">
@@ -608,7 +608,7 @@ $versionSoftware = 'Portal de acceso (SRS 1.6 - PAC v1.4 - Ficha 3407799)';
                             <strong>«La Única»</strong> es una aplicación local para el control de inventario, clientes, ventas y reportes, descrita en el SRS 1.6. El <em>Plan de Aseguramiento de la Calidad (PAC - SENA Regional Huila)</em> registra evidencias y acciones pendientes.
                         </p>
                         <div class="paso-destaque">
-                            <strong>Uso local previsto (AM 03):</strong> La instalación se utiliza en un equipo controlado con Laragon. El responsable debe comprobar la restricción de acceso; esta pantalla no autentica usuarios ni configura la red.
+                            <strong>Uso local previsto:</strong> La instalación se utiliza en un equipo controlado con Laragon. El responsable debe comprobar la restricción de acceso; esta pantalla no autentica usuarios ni configura la red.
                         </div>
                     </div>
 
@@ -642,7 +642,7 @@ $versionSoftware = 'Portal de acceso (SRS 1.6 - PAC v1.4 - Ficha 3407799)';
                             Al registrar una venta, factura, detalle, descuento de inventario e historial se guardan en una transacción. El comprobante conserva los nombres, unidades y precios guardados al vender aunque cambie el catálogo.
                         </p>
                         <div class="paso-destaque">
-                            <strong>Regla Intradía de Calidad:</strong> Solo se admiten cancelaciones de facturas el mismo día de la venta antes de medianoche, reponiendo las existencias en una sola exhibición.
+                            <strong>Regla Intradía de Calidad:</strong> Solo se admiten cancelaciones de facturas el mismo día de la venta antes de medianoche en hora de Colombia. El motivo es obligatorio y queda en el historial. Las existencias se reponen una sola vez.
                         </div>
                     </div>
 
@@ -658,7 +658,7 @@ $versionSoftware = 'Portal de acceso (SRS 1.6 - PAC v1.4 - Ficha 3407799)';
                             El tratamiento de cédulas y nombres de clientes es responsabilidad del establecimiento. Esta pantalla no certifica cumplimiento de la <strong>Ley 1581 de 2012</strong>. Las altas, ediciones y bajas de clientes/productos, ventas y cancelaciones se registran en <code>log_acciones</code>.
                         </p>
                         <div class="paso-destaque">
-                            <strong>Acciones PAC AM 01 y AM 09:</strong> Los fallos de conexión y no controlados ofrecen mensajes generales sin detalles internos. El diagnóstico queda en el historial técnico local. El respaldo periódico y su restauración requieren seguimiento.
+                            <strong>Diagnóstico y respaldo:</strong> Los fallos de conexión y no controlados ofrecen mensajes generales sin detalles internos. El diagnóstico queda en el historial técnico local. El respaldo periódico y su restauración requieren seguimiento.
                         </div>
                     </div>
 
@@ -724,17 +724,17 @@ $versionSoftware = 'Portal de acceso (SRS 1.6 - PAC v1.4 - Ficha 3407799)';
         </button>
 
         <div class="caja-detalle-completo" id="cajaDetalleCompleto">
-            <h3 style="margin: 0 0 0.5rem; color: var(--color-primario);">Términos Integrales vinculados al PAC v1.4:</h3>
-            <p><strong>Art. 1 (Objeto):</strong> Administración local de inventario, catálogo, clientes y ventas de contado bajo el PAC v1.4.</p>
+            <h3 style="margin: 0 0 0.5rem; color: var(--color-primario);">Términos Integrales vinculados al PAC 2.0:</h3>
+            <p><strong>Art. 1 (Objeto):</strong> Administración local de inventario, catálogo, clientes y ventas de contado bajo el PAC 2.0.</p>
             <p><strong>Art. 2 (Despliegue Local):</strong> Instalación en equipo local (Laragon). Datos desacoplados de la nube pública.</p>
             <p><strong>Art. 3 (Comprobantes de Caja):</strong> Recibos internos para soporte de venta. No reemplaza facturación electrónica DIAN.</p>
             <p><strong>Art. 4 (Ventas de Contado):</strong> Registro como Pagado con débito inmediato de inventario y snapshot histórico de precios.</p>
             <p><strong>Art. 5 (Cancelación Intradía):</strong> Restricción de anulación al mismo día de la venta con reposición única de existencias.</p>
             <p><strong>Art. 6 (Datos Personales):</strong> El establecimiento debe revisar el tratamiento de datos personales y sus obligaciones. La aceptación de este aviso no certifica cumplimiento legal.</p>
             <p><strong>Art. 7 (Historial):</strong> log_acciones registra altas, ediciones y bajas de clientes/productos, ventas y cancelaciones. El aplicativo permite consultarlo sin editarlo; una cuenta administrativa SQL sí puede modificar la base.</p>
-            <p><strong>Art. 8 (Respaldos AM 01):</strong> Deber del comercio de efectuar volcados periódicos de la base de datos MySQL.</p>
-            <p><strong>Art. 9 (Diagnóstico AM 09):</strong> Los mensajes generales no exponen detalles internos. El diagnóstico en logs/errores.log se consulta desde Historial de errores del equipo local, reservado al Administrador.</p>
-            <p><strong>Art. 10 (Aceptación y alcance):</strong> Este aviso acompaña el SRS 1.6, el PAC v1.4 y el anexo de revisión del 18/11/2026. Aceptarlo permite continuar al inicio; no acredita aceptación formal de los requisitos ni protege por sí solo las rutas de los módulos.</p>
+            <p><strong>Art. 8 (Respaldos):</strong> Deber del comercio de efectuar volcados periódicos de la base de datos MySQL.</p>
+            <p><strong>Art. 9 (Diagnóstico):</strong> Los mensajes generales no exponen detalles internos. El diagnóstico en logs/errores.log se consulta desde Historial de errores del equipo local después de aceptar el aviso.</p>
+            <p><strong>Art. 10 (Aceptación y alcance):</strong> Este aviso acompaña el SRS 1.6, el PAC 2.0 de la revisión del 22/11/2026. Los módulos operativos comprueban la aceptación antes de abrir. La aceptación del aviso es independiente de la aprobación formal de los requisitos.</p>
         </div>
     </div>
 

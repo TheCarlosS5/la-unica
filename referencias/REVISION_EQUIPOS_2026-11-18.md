@@ -1,5 +1,7 @@
 # Revisión de equipos y actualización operativa de La Única
 
+> **Antecedente del 18/11.** Este anexo y su PDF describen el corte anterior con cuentas y roles. Para la instalación actual consulta el [README](../README.md) y el [PAC 2.0](PAC.pdf).
+
 18 de noviembre de 2026 · Línea base de código: f5243afc9964b2302a7eb678ce760588390dcd0a
 
 Se revisaron los cinco archivos disponibles en la carpeta LA_UNICA y se contrastaron sus observaciones con el código de main. Se corrigieron acceso, seguridad del portal, listados, validación, interacción y peso de recursos. Este anexo actualiza los puntos afectados del SRS 1.6, Manual del usuario 2.1, Manual técnico 1.4 y PAC 1.4, cuya entrega del 11/11/2026 se conserva como línea base. No se atribuyen versiones nuevas ni aprobación humana a esos documentos.

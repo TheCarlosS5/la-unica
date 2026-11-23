@@ -1,10 +1,10 @@
 # Plan de pruebas de La Única
 
-Versión documental **1.1**, revisión **11/11/2026**. Referencia: **SRS 1.6**. Este plan actualiza el borrador 1.0 asociado al SRS 1.4, conservado en el historial Git. Responsable de QA según el SRS: Santiago Ortiz Claros.
+Versión documental **1.1**, alineado el **23/11/2026** al corte `e527b75`. Referencia: **SRS 1.6**. Este plan actualiza el borrador 1.0 asociado al SRS 1.4, conservado en el historial Git. Responsable de QA según el SRS: Santiago Ortiz Claros.
 
 ## Objetivo y alcance
 
-Verificar las reglas de clientes, productos, ventas, comprobantes, cancelaciones, cinco reportes, historial y ayuda. Incluye integridad, entradas, CSRF, salida HTML, diagnóstico, rendimiento RNF-02, concurrencia RNF-04, impresión/PDF y revisión de pantallas estrechas. El estado Pendiente, registro de pagos, autenticación, roles y factura electrónica están fuera de alcance.
+Verificar las reglas de clientes, productos, ventas, comprobantes, cancelaciones, cinco reportes, historial y ayuda. Incluye integridad, entradas, CSRF, salida HTML, diagnóstico, rendimiento RNF-02, concurrencia RNF-04, impresión/PDF, CSV y revisión de pantallas estrechas. El estado Pendiente, registro de pagos, autenticación, roles y factura electrónica están fuera de alcance.
 
 Las pruebas no constituyen una auditoría de penetración ni autorización para desplegar el sistema públicamente. La configuración de acceso local y las restauraciones deben comprobarse en el entorno correspondiente.
 
@@ -21,6 +21,7 @@ Registrar PHP, motor SQL, puerto real, navegador, fecha y commit. La revisión d
 | Funcional | Ejecutar los pasos de casos-de-prueba.md y comparar resultados con el SRS. |
 | Integridad | Comprobar stock, precios históricos, rollback y reposición única, también con solicitudes simultáneas. |
 | Seguridad | CSRF, validación en servidor, escape HTML, mensajes generales y bloqueo de archivos internos. |
+| CSV | Comparar filas, filtros y estados con las cinco consultas. Comprobar UTF-8, punto y coma, decimales y nombres que una hoja de cálculo podría interpretar como fórmulas. |
 | Documentación | Rutas reales, versiones iguales en Word/PDF/visores, imágenes y numeración de las guías. |
 | Rendimiento | Con 1000 clientes, productos y facturas, al menos el 95 % de las búsquedas por ID en 2 s o menos. Registrar muestra y entorno. |
 | Navegador | Formulario dinámico, confirmaciones, documentos integrados, impresión/PDF, video y pantallas estrechas. |
@@ -33,8 +34,8 @@ Para aceptación completa: ejecutar el 100 % de los casos críticos planificados
 
 ## Evidencia y regresión
 
-Los resultados del 10/11/2026 se conservan como históricos. La revisión del 11/11/2026 repite los flujos HTTP en una base nueva y verifica documentación e imágenes. main no contiene tests, Composer ni workflows activos; no se exige ejecutar comandos que no se distribuyen. Repetir los criterios afectados al cambiar consultas, transacciones, entorno o documentos.
+Los resultados del 10/11/2026 se conservan como históricos. La revisión del 11/11/2026 repite los flujos HTTP en una base nueva y verifica documentación e imágenes. Ejecutar `php tests/seguridad.php` para las comprobaciones sin SQL. El [registro del grupo 5](resultados_grupo_5.json) conserva los resultados del 22/11, incluidos los CSV verificados con datos simulados. Repetir los criterios afectados al cambiar consultas, transacciones, entorno o documentos.
 
 ## Portal incorporado desde main
 
-Revisión del aporte a87bb48: comprobar entrada nueva, cinco pasos, aceptación, rechazo, revocación y cookie persistente. La aceptación no es autenticación: las rutas directas siguen disponibles. Verificar la cookie HttpOnly/SameSite=Lax, su duración de 30 días y su ruta / compartida por el mismo host. El POST del portal no contiene CSRF; registrar esa diferencia al evaluar seguridad y aislamiento. No confundir aceptar el aviso con aprobar el PAC o el SRS.
+Comprobar entrada nueva, cinco pasos, aceptación, rechazo y revocación. Verificar que una ruta directa operativa redirija al aviso antes de aceptar y se abra después. El portal requiere POST con CSRF. Verificar que el navegador conserve la cookie 30 días, con el atributo Path correspondiente a la URL de instalación, HttpOnly y SameSite=Lax. Verificar que la wiki abra sin SQL. La aprobación formal del PAC y del SRS se registra por separado.

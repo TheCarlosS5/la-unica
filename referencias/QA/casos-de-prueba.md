@@ -1,6 +1,6 @@
 # Casos de prueba de La Única
 
-Revisión **11/11/2026**, SRS **1.6**. Ejecutar únicamente con datos ficticios en una instalación independiente. La columna de resultados no se prellena como aprobada sin una ejecución identificada.
+Alineación **23/11/2026** al corte `e527b75`, SRS **1.6**. Ejecutar únicamente con datos ficticios en una instalación independiente. La columna de resultados no se prellena como aprobada sin una ejecución identificada.
 
 Los siete casos del registro anterior y sus estados se conservan en el historial. La revisión HTTP del 11/11/2026 aporta evidencia funcional parcial en [coherencia documental](../COHERENCIA_DOCUMENTAL.md); no sustituye aceptación humana de todos los casos de esta matriz. Las guías ilustradas están en [Clientes](../../wiki/paginas/guia/clientes.php), [Productos](../../wiki/paginas/guia/productos.php) y [Facturas](../../wiki/paginas/guia/facturas.php) del repositorio; para verlas renderizadas usa el servidor PHP y el menú de la wiki.
 
@@ -15,7 +15,7 @@ Los siete casos del registro anterior y sus estados se conservan en el historial
 | CP-07 | RF-08, RNF-04 | Venta sin stock | Solicitar una cantidad superior a la disponible. | No se guarda factura ni se modifica stock o historial de venta. |
 | CP-08 | RF-06, RF-07 | Copia histórica | Vender y luego editar nombre de cliente y nombre, unidad y precio del producto. | El comprobante conserva los datos de la venta. |
 | CP-09 | RF-09 | Consulta e impresión | Buscar por número, cliente y fecha; abrir Ver / imprimir. | Comprobante con líneas, total y diálogo de impresión. |
-| CP-10 | RF-10 | Cancelar el mismo día | Abrir comprobante Pagado de hoy, solicitar, escribir un motivo y confirmar. | Primero confirma; después Cancelado y stock repuesto una vez. |
+| CP-10 | RF-10 | Cancelar el mismo día | Abrir comprobante Pagado de hoy, solicitar, escribir un motivo y confirmar. | El motivo es obligatorio y queda en el historial. La factura pasa a Cancelado y el stock se repone una vez. |
 | CP-11 | RF-10, RNF-04 | Repetir cancelación | Reenviar confirmación de una factura ya cancelada. | No se duplica la reposición. |
 | CP-12 | RF-10 | Factura anterior | Intentar cancelar una factura de otro día. | Botón restringido y rechazo del servidor sin cambios. |
 | CP-13 | RF-12 | Eliminar sin referencias | Eliminar cliente y producto sin ventas, confirmando. | Baja permitida; abrir confirmación por sí sola no borra. |
@@ -38,4 +38,4 @@ Guardar ID, fecha, commit, equipo/navegador, base ficticia, datos utilizados, es
 
 ## Portal de Términos y Condiciones
 
-Comprueba la entrada, la aceptación y el rechazo, el POST con CSRF, la cookie de 30 días y los accesos directos antes y después de aceptar. En Apache verifica que la instalación use Require local. Consulta los resultados del ciclo vigente en PAC.docx o PAC.pdf.
+Comprueba la entrada, la aceptación y el rechazo, el POST con CSRF, la cookie de 30 días y los accesos directos antes y después de aceptar. En Apache verifica que la instalación use Require local. Consulta los casos CSV-01 a CSV-07 en el [PAC 2.0](../PAC.pdf) y los resultados de acceso y exportación en [el registro del grupo 5](resultados_grupo_5.json).

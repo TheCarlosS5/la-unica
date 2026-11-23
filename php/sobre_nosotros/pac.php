@@ -2,7 +2,7 @@
 /**
  * Archivo: pac.php
  * Módulo: Sobre nosotros — Plan de Aseguramiento de la Calidad.
- * Propósito: mostrar el manual PDF dentro de la interfaz administrativa.
+ * Propósito: mostrar el PAC en PDF dentro de la interfaz administrativa.
  * Funcionamiento: incrusta referencias/PAC.pdf en un visor integrado del navegador, conservando
  * el menú, la cabecera y la navegación del sistema.
  */
@@ -33,7 +33,7 @@ require __DIR__ . '/../includes/menu.php';
             <span aria-current="page">Plan de Aseguramiento de la Calidad</span>
         </nav>
         <h1 class="encabezado-titulo">Plan de Aseguramiento de la Calidad</h1>
-        <p class="encabezado-descripcion">Consulta el PAC con los casos de prueba, sus resultados, las evidencias y los criterios de aceptación. Usa los controles del visor para cambiar de página, buscar texto y ajustar el zoom.</p>
+        <p class="encabezado-descripcion">Consulta el PAC 2.0 con los casos de prueba, sus resultados, las evidencias y los criterios de aceptación. Usa los controles del visor para cambiar de página, buscar texto y ajustar el zoom.</p>
     </div>
     <div class="encabezado-acciones">
         <a class="boton secundario" href="<?= h($baseUrl) ?>/php/sobre_nosotros/index.php">
@@ -43,7 +43,7 @@ require __DIR__ . '/../includes/menu.php';
     </div>
 </div>
 
-<section class="panel-reporte manual-panel" aria-label="Visor del plan de acción de mejora continua">
+<section class="panel-reporte manual-panel" aria-label="Visor del Plan de Aseguramiento de la Calidad">
     <div class="manual-panel-cabecera">
         <div>
             <h2 class="modulo-titulo">Plan de Aseguramiento de la Calidad de La Única</h2>
@@ -60,7 +60,7 @@ require __DIR__ . '/../includes/menu.php';
                 title="Plan de Aseguramiento de la Calidad de La Única en formato PDF"
                 loading="eager">
                 Tu navegador no permite mostrar PDF dentro de la página.
-                <a href="<?= h($manualUrl) ?>">Consultar el archivo del manual</a>.
+                <a href="<?= h($manualUrl) ?>">Consultar el archivo del PAC</a>.
             </iframe>
         </div>
         <p class="manual-panel-descripcion">Si el visor no aparece, <a href="<?= h($manualUrl) ?>" download>descarga el PDF para consultarlo</a>.</p>

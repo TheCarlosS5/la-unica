@@ -34,6 +34,7 @@
 <li><span class="marca-num">2</span> <strong>Nuevo cliente</strong> va directo al formulario de creación.</li>
 </ul>
 <h2 id="leer-el-listado">Leer el listado</h2>
+<p>El listado muestra hasta 25 registros por página. Usa <strong>Anterior</strong> y <strong>Siguiente</strong> para navegar con los filtros actuales.</p>
 <figure class="captura"><img src="img/clientes-lista-columnas.webp" alt="Columnas importantes del listado" loading="lazy"><figcaption>Columnas importantes del listado</figcaption></figure>
 <ul>
 <li><span class="marca-num">1</span> <strong>Facturas</strong>: cuántas facturas tiene el cliente (de cualquier estado).</li>
