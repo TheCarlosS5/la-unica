@@ -466,6 +466,7 @@ await Promise.all([
   pagina.waitForNavigation({ waitUntil: 'networkidle' }),
   pagina.$eval('.form-cancelar-factura', (f) => f.submit()),
 ]);
+await escribir('#motivo', 'Cancelación de la venta de ejemplo');
 await foto('facturas-cancelar-confirmacion', {recorte:'.panel-confirmacion',margen:20});
 await enviar('.panel-confirmacion form');
 await foto('facturas-cancelada', {
