@@ -15,7 +15,7 @@ Los siete casos del registro anterior y sus estados se conservan en el historial
 | CP-07 | RF-08, RNF-04 | Venta sin stock | Solicitar una cantidad superior a la disponible. | No se guarda factura ni se modifica stock o historial de venta. |
 | CP-08 | RF-06, RF-07 | Copia histórica | Vender y luego editar nombre de cliente y nombre, unidad y precio del producto. | El comprobante conserva los datos de la venta. |
 | CP-09 | RF-09 | Consulta e impresión | Buscar por número, cliente y fecha; abrir Ver / imprimir. | Comprobante con líneas, total y diálogo de impresión. |
-| CP-10 | RF-10 | Cancelar el mismo día | Abrir comprobante Pagado de hoy, solicitar y confirmar. | Primero confirma; después Cancelado y stock repuesto una vez. |
+| CP-10 | RF-10 | Cancelar el mismo día | Abrir comprobante Pagado de hoy, solicitar, escribir un motivo y confirmar. | Primero confirma; después Cancelado y stock repuesto una vez. |
 | CP-11 | RF-10, RNF-04 | Repetir cancelación | Reenviar confirmación de una factura ya cancelada. | No se duplica la reposición. |
 | CP-12 | RF-10 | Factura anterior | Intentar cancelar una factura de otro día. | Botón restringido y rechazo del servidor sin cambios. |
 | CP-13 | RF-12 | Eliminar sin referencias | Eliminar cliente y producto sin ventas, confirmando. | Baja permitida; abrir confirmación por sí sola no borra. |
@@ -36,6 +36,6 @@ Los siete casos del registro anterior y sus estados se conservan en el historial
 
 Guardar ID, fecha, commit, equipo/navegador, base ficticia, datos utilizados, esperado/obtenido, Aprobado o Fallido, evidencia y responsable real. Los casos aún no ejecutados en el equipo de entrega quedan Por verificar. Nunca se asigna al instructor ni a otro integrante una aprobación que no haya emitido.
 
-## Portal incorporado desde main
+## Portal de Términos y Condiciones
 
-Revisión del aporte a87bb48: comprobar entrada nueva, cinco pasos, aceptación, rechazo, revocación y cookie persistente. La aceptación no es autenticación: las rutas directas siguen disponibles. Verificar la cookie HttpOnly/SameSite=Lax, su duración de 30 días y su ruta / compartida por el mismo host. El POST del portal no contiene CSRF; registrar esa diferencia al evaluar seguridad y aislamiento. No confundir aceptar el aviso con aprobar el PAC o el SRS.
+Comprueba la entrada, la aceptación y el rechazo, el POST con CSRF, la cookie de 30 días y los accesos directos antes y después de aceptar. En Apache verifica que la instalación use Require local. Consulta los resultados del ciclo vigente en PAC.docx o PAC.pdf.

@@ -32,6 +32,10 @@ try {
     $errorLectura = true;
 }
 
+require_once __DIR__ . '/exportar_csv.php';
+$columnasCsv = $reporteSeleccionado['columnas'];
+exportarReporteCsv(pathinfo($reporteSeleccionado['archivo'], PATHINFO_FILENAME), $columnasCsv, $filasReporte, empty($errorFiltro) && !$errorLectura);
+
 require __DIR__ . '/../includes/menu.php';
 require __DIR__ . '/acciones_impresion.php';
 ?>

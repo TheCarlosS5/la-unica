@@ -103,11 +103,11 @@ require __DIR__ . '/../includes/menu.php';
             <?php if ($factura['estado_factura'] === 'Pagado' && !esFacturaDeHoy($factura['fecha_factura'])): ?>
                 <button class="boton secundario" type="button" disabled title="Las facturas solo se pueden cancelar el mismo día de la venta.">Solo se cancela el día de la venta</button>
             <?php elseif ($factura['estado_factura'] === 'Pagado' && $tokenCsrf !== null): ?>
-                <?php if (puedeAcceder('/php/facturas/cancelar_factura.php', usuarioActual())): ?><form class="form-cancelar-factura" method="post" action="cancelar_factura.php">
+                <form class="form-cancelar-factura" method="post" action="cancelar_factura.php">
                     <input type="hidden" name="csrf_token" value="<?= h($tokenCsrf) ?>">
                     <input type="hidden" name="id_factura" value="<?= (int)$factura['id_factura'] ?>">
                     <button class="boton-peligro" type="submit">Cancelar factura</button>
-                </form><?php endif; ?>
+                </form>
             <?php elseif ($factura['estado_factura'] === 'Cancelado'): ?>
                 <button class="boton-peligro" type="button" disabled>Factura cancelada</button>
             <?php elseif ($factura['estado_factura'] === 'Pagado'): ?>

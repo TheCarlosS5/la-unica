@@ -15,9 +15,9 @@ $titulo = 'Ventas';
 $seccionActiva = 'reportes';
 $vistas = ['factura' => 'Factura', 'dia' => 'Día', 'semana' => 'Semana', 'mes' => 'Mes', 'anio' => 'Año'];
 $hoy = date('Y-m-d');
-$desde = trim((string)($_GET['desde'] ?? $hoy));
-$hasta = trim((string)($_GET['hasta'] ?? $hoy));
-$ver = (string)($_GET['ver'] ?? 'factura');
+$desde = leerTexto($_GET + ['desde' => $hoy], 'desde');
+$hasta = leerTexto($_GET + ['hasta' => $hoy], 'hasta');
+$ver = leerTexto($_GET + ['ver' => 'factura'], 'ver');
 $errorFiltro = '';
 $errorLectura = false;
 $filas = [];
@@ -85,6 +85,22 @@ function etiquetaPeriodo($inicio, $ver) {
     }
     return $dias[(int)date('w', $fecha)] . ' ' . date('d/m/Y', $fecha);
 }
+
+require_once __DIR__ . '/exportar_csv.php';
+$columnasCsv = $ver === 'factura' ? [
+    ['campo' => 'id_factura', 'titulo' => 'Factura'],
+    ['campo' => 'fecha_factura', 'titulo' => 'Fecha'],
+    ['campo' => 'cliente', 'titulo' => 'Cliente'],
+    ['campo' => 'estado_factura', 'titulo' => 'Estado'],
+    ['campo' => 'total_factura', 'titulo' => 'Total (COP)', 'tipo' => 'moneda'],
+] : [
+    ['campo' => 'inicio_periodo', 'titulo' => 'Inicio del período'],
+    ['campo' => 'ventas', 'titulo' => 'Ventas pagadas'],
+    ['campo' => 'total_vendido', 'titulo' => 'Total vendido (COP)', 'tipo' => 'moneda'],
+    ['campo' => 'canceladas', 'titulo' => 'Facturas canceladas'],
+    ['campo' => 'total_cancelado', 'titulo' => 'Total cancelado (COP)', 'tipo' => 'moneda'],
+];
+exportarReporteCsv('ventas', $columnasCsv, $filas, empty($errorFiltro) && !$errorLectura);
 
 require __DIR__ . '/../includes/menu.php';
 require __DIR__ . '/acciones_impresion.php';

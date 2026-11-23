@@ -1,7 +1,7 @@
 <?php
 /**
  * Archivo: pac.php
- * Módulo: Sobre nosotros — Plan de Acción de Mejora Continua.
+ * Módulo: Sobre nosotros — Plan de Aseguramiento de la Calidad.
  * Propósito: mostrar el manual PDF dentro de la interfaz administrativa.
  * Funcionamiento: incrusta referencias/PAC.pdf en un visor integrado del navegador, conservando
  * el menú, la cabecera y la navegación del sistema.
@@ -9,7 +9,7 @@
 
 require __DIR__ . '/../config/conexion.php';
 
-$titulo = 'Plan de Acción de Mejora Continua';
+$titulo = 'Plan de Aseguramiento de la Calidad';
 $seccionActiva = 'sobre_nosotros';
 $manualUrl = $baseUrl . '/referencias/PAC.pdf';
 $manualPath = dirname(__DIR__, 2) . '/referencias/PAC.pdf';
@@ -23,8 +23,6 @@ if ($manualDisponible) {
 
 require __DIR__ . '/../includes/menu.php';
 ?>
-<p class="nota nota-informativa">Documento de la entrega del 11/11/2026. Consulta el <a href="<?= h($baseUrl) ?>/referencias/REVISION_EQUIPOS_2026-11-18.pdf">anexo vigente del 18/11/2026</a> para cuentas, permisos, paginación, cancelación y validación de formularios.</p>
-
 <div class="encabezado-vista">
     <div class="encabezado-info">
         <nav class="miga-pan" aria-label="Ruta de navegación">
@@ -32,10 +30,10 @@ require __DIR__ . '/../includes/menu.php';
             <span class="miga-separador" aria-hidden="true">/</span>
             <a href="<?= h($baseUrl) ?>/php/sobre_nosotros/index.php">Sobre nosotros</a>
             <span class="miga-separador" aria-hidden="true">/</span>
-            <span aria-current="page">Plan de Acción de Mejora Continua</span>
+            <span aria-current="page">Plan de Aseguramiento de la Calidad</span>
         </nav>
-        <h1 class="encabezado-titulo">Plan de Acción de Mejora Continua</h1>
-        <p class="encabezado-descripcion">Consulta el PAC con las acciones de mejora, las prioridades, los criterios de cierre y el seguimiento del proyecto. Usa los controles del visor para cambiar de página, buscar texto y ajustar el zoom.</p>
+        <h1 class="encabezado-titulo">Plan de Aseguramiento de la Calidad</h1>
+        <p class="encabezado-descripcion">Consulta el PAC con los casos de prueba, sus resultados, las evidencias y los criterios de aceptación. Usa los controles del visor para cambiar de página, buscar texto y ajustar el zoom.</p>
     </div>
     <div class="encabezado-acciones">
         <a class="boton secundario" href="<?= h($baseUrl) ?>/php/sobre_nosotros/index.php">
@@ -48,7 +46,7 @@ require __DIR__ . '/../includes/menu.php';
 <section class="panel-reporte manual-panel" aria-label="Visor del plan de acción de mejora continua">
     <div class="manual-panel-cabecera">
         <div>
-            <h2 class="modulo-titulo">Plan de Acción de Mejora Continua de La Única</h2>
+            <h2 class="modulo-titulo">Plan de Aseguramiento de la Calidad de La Única</h2>
             <p class="manual-panel-descripcion">Documento PDF integrado en el aplicativo; no se abre una pestaña adicional.</p>
         </div>
         <span class="manual-formato">PDF</span>
@@ -59,7 +57,7 @@ require __DIR__ . '/../includes/menu.php';
             <iframe
                 class="manual-pdf-visor"
                 src="<?= h($manualUrl) ?>#view=FitH"
-                title="Plan de Acción de Mejora Continua de La Única en formato PDF"
+                title="Plan de Aseguramiento de la Calidad de La Única en formato PDF"
                 loading="eager">
                 Tu navegador no permite mostrar PDF dentro de la página.
                 <a href="<?= h($manualUrl) ?>">Consultar el archivo del manual</a>.

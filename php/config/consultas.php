@@ -15,8 +15,7 @@
  */
 function registrarAccion(mysqli $conexion, $modulo, $accion, $descripcion, $enTransaccion = false) {
     try {
-        $actor = usuarioActual()['nombre'] ?? 'sistema';
-        $descripcion = mb_substr('[' . $actor . '] ' . (string)$descripcion, 0, 255, 'UTF-8');
+        $descripcion = mb_substr((string)$descripcion, 0, 255, 'UTF-8');
         $sentencia = $conexion->prepare('INSERT INTO log_acciones (modulo, accion, descripcion) VALUES (?, ?, ?)');
         $sentencia->bind_param('sss', $modulo, $accion, $descripcion);
         $sentencia->execute();

@@ -129,7 +129,7 @@ if (($_POST['confirmar'] ?? '') !== 'si' || $errorMotivo) {
         </div>
     </div>
 
-    <?php if (puedeAcceder('/php/facturas/cancelar_factura.php', usuarioActual())): ?><form method="post" action="cancelar_factura.php">
+    <form method="post" action="cancelar_factura.php">
         <?php if ($tokenCsrf !== null): ?>
             <input type="hidden" name="csrf_token" value="<?= h($tokenCsrf) ?>">
         <?php endif; ?>
@@ -152,7 +152,7 @@ if (($_POST['confirmar'] ?? '') !== 'si' || $errorMotivo) {
                 <span>Confirmar cancelación</span>
             </button>
         </div>
-    </form><?php endif; ?>
+    </form>
 </section>
 <?php
     require __DIR__ . '/../includes/pie.php';

@@ -4,7 +4,7 @@
  * Sistema Web de Gestión Comercial e Inventario «La Única»
  * Archivo: terminos.php
  * Módulo: Portal de Acceso y Términos de Operación
- * Vinculación: Plan de Acción de Mejora Continua (PAC v1.4 - Ficha 3407799)
+ * Vinculación: Plan de Aseguramiento de la Calidad (PAC - Ficha 3407799)
  * Propósito: Presentar un recuadro interactivo paso a paso («Siguiente / Siguiente»)
  *            que permita visualizar y aceptar las políticas operativas del sistema
  *            de manera ágil, sin forzar lecturas ni tiempos de espera.
@@ -605,7 +605,7 @@ $versionSoftware = 'Portal de acceso (SRS 1.6 - PAC v1.4 - Ficha 3407799)';
                         </div>
                         <h2 class="paso-titulo">1. Bienvenida y Alcance Operativo</h2>
                         <p class="paso-texto">
-                            <strong>«La Única»</strong> es una aplicación local para el control de inventario, clientes, ventas y reportes, descrita en el SRS 1.6. El <em>Plan de Acción de Mejora Continua (PAC v1.4 - SENA Regional Huila)</em> registra evidencias y acciones pendientes.
+                            <strong>«La Única»</strong> es una aplicación local para el control de inventario, clientes, ventas y reportes, descrita en el SRS 1.6. El <em>Plan de Aseguramiento de la Calidad (PAC - SENA Regional Huila)</em> registra evidencias y acciones pendientes.
                         </p>
                         <div class="paso-destaque">
                             <strong>Uso local previsto (AM 03):</strong> La instalación se utiliza en un equipo controlado con Laragon. El responsable debe comprobar la restricción de acceso; esta pantalla no autentica usuarios ni configura la red.
@@ -674,7 +674,7 @@ $versionSoftware = 'Portal de acceso (SRS 1.6 - PAC v1.4 - Ficha 3407799)';
                             Has visualizado los pilares de operación y aseguramiento de calidad del sistema <strong>«La Única»</strong>. Pulsa el botón verde para ingresar al panel de control y comenzar a operar.
                         </p>
                         <div class="paso-destaque" style="background: #eaf5ed; border-left-color: var(--color-exito);">
-                            <strong>Aceptar y entrar:</strong> Se recuerda la aceptación en la sesión y en una cookie de este navegador durante 30 días. No crea una cuenta ni concede roles. El acceso a los módulos exige iniciar sesión; cada rol limita las operaciones disponibles.
+                            <strong>Aceptar y entrar:</strong> Se recuerda la aceptación en la sesión y en una cookie de este navegador durante 30 días. Después se abre el panel de control para el único operador del equipo.
                         </div>
                     </div>
                 </div>

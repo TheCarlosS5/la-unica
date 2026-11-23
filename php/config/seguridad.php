@@ -20,6 +20,26 @@ function sesionDisponible() {
     return session_status() === PHP_SESSION_ACTIVE;
 }
 /**
+ * Comprueba la aceptación guardada en la sesión o el navegador de esta instalación.
+ */
+function terminosAceptados(): bool {
+    sesionDisponible();
+    return !empty($_SESSION['terminos_aceptados'])
+        || ($_COOKIE['la_unica_terminos'] ?? null) === 'aceptados';
+}
+
+/**
+ * Protege los puntos de entrada operativos antes de consultar SQL o modificar datos.
+ */
+function exigirAceptacionTerminos(): void {
+    if (!terminosAceptados()) {
+        header('Location: ' . $GLOBALS['baseUrl'] . '/terminos.php', true, 303);
+        exit;
+    }
+    $_SESSION['terminos_aceptados'] = true;
+}
+
+/**
  * Recupera o crea el token CSRF de la sesión para los formularios con cambios.
  * @return string|null Token hexadecimal o null si la sesión no está disponible.
  */

@@ -12,8 +12,8 @@ require __DIR__ . '/../config/conexion.php';
 $titulo = 'Unidades vendidas por producto';
 $seccionActiva = 'reportes';
 $hoy = date('Y-m-d');
-$desde = trim((string)($_GET['desde'] ?? $hoy));
-$hasta = trim((string)($_GET['hasta'] ?? $hoy));
+$desde = leerTexto($_GET + ['desde' => $hoy], 'desde');
+$hasta = leerTexto($_GET + ['hasta' => $hoy], 'hasta');
 $errorFiltro = '';
 $errorLectura = false;
 $productos = [];
@@ -33,6 +33,15 @@ if (!validarFecha($desde) || !validarFecha($hasta)) {
 
 $totalUnidades = array_sum(array_column($productos, 'unidades_vendidas'));
 $totalVendido = array_sum(array_map('floatval', array_column($productos, 'total_vendido')));
+
+require_once __DIR__ . '/exportar_csv.php';
+$columnasCsv = [
+    ['campo' => 'id_producto', 'titulo' => 'ID producto'],
+    ['campo' => 'producto', 'titulo' => 'Producto'],
+    ['campo' => 'unidades_vendidas', 'titulo' => 'Unidades vendidas'],
+    ['campo' => 'total_vendido', 'titulo' => 'Total vendido (COP)', 'tipo' => 'moneda'],
+];
+exportarReporteCsv('unidades-vendidas', $columnasCsv, $productos, empty($errorFiltro) && !$errorLectura);
 
 require __DIR__ . '/../includes/menu.php';
 require __DIR__ . '/acciones_impresion.php';

@@ -1,8 +1,10 @@
 # Archivo: .htaccess
 # Propósito: que Apache no sirva archivos internos aunque la carpeta completa del proyecto sea pública.
-# Requiere AllowOverride FileInfo (Laragon trae AllowOverride All). Responde 404 en lugar de 403 para
+# Requiere AllowOverride All (incluye autorización, opciones y redirecciones). Responde 404 en lugar de 403 para
 # no confirmar que el archivo existe.
 
+# Aplicación para un único operador en el mismo equipo.
+Require local
 Options -Indexes
 
 # Historial de Git, dependencias y pruebas.

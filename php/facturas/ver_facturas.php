@@ -91,7 +91,7 @@ require __DIR__ . '/../includes/menu.php';
         <p class="encabezado-descripcion">Busca ventas por número, cliente o fecha y consulta su comprobante interno.</p>
     </div>
     <div class="encabezado-acciones">
-        <?php if (puedeAcceder('/php/facturas/crear_factura.php', usuarioActual())): ?><a class="boton" href="crear_factura.php">Crear factura</a><?php endif; ?>
+        <a class="boton" href="crear_factura.php">Crear factura</a>
     </div>
 </div>
 
@@ -123,7 +123,7 @@ require __DIR__ . '/../includes/menu.php';
         <?php if ($terminoBusqueda !== '' || $fechaBusqueda !== ''): ?>
             <a class="boton secundario" href="ver_facturas.php">Limpiar búsqueda</a>
         <?php else: ?>
-            <?php if (puedeAcceder('/php/facturas/crear_factura.php', usuarioActual())): ?><a class="boton" href="crear_factura.php">Registrar una venta</a><?php endif; ?>
+            <a class="boton" href="crear_factura.php">Registrar una venta</a>
         <?php endif; ?>
     </div>
 <?php else: ?>

@@ -62,7 +62,7 @@ mysql -u USUARIO_INSTALACION -h 127.0.0.1 -P 3306 --default-character-set=utf8mb
 <p><strong>Limita Apache a este equipo.</strong> La app no tiene usuarios ni contraseñas, así que nadie más en la red debe poder abrirla. En <em>Laragon → Menú → Apache → httpd.conf</em> cambia <code>Listen 80</code> por <code>Listen 127.0.0.1:80</code> y reinicia Apache. El archivo <code>.htaccess</code> del proyecto, además, oculta <code>.git</code>, los scripts SQL y la configuración.</p>
 </li>
 <li>
-<p><strong>Abre la aplicación</strong> en el navegador. Con Laragon suele ser <code>http://la-unica.test/</code> o <code>http://localhost/la-unica/</code>. La raíz (<code>index.php</code>) muestra el portal de términos si no hay aceptación guardada. Avanza y pulsa Aceptar y entrar para abrir el inicio. La sesión o una cookie de 30 días recuerdan la aceptación; inicia sesión con una cuenta creada previamente mediante <code>php tools/usuario.php nombre administrador</code> en la consola del proyecto. La contraseña se introduce por entrada estándar (visible en consola). No hay credenciales predeterminadas.</p>
+<p><strong>Abre la aplicación</strong> en el navegador. Con Laragon suele ser <code>http://la-unica.test/</code> o <code>http://localhost/la-unica/</code>. La raíz (<code>index.php</code>) muestra el portal de términos si no hay aceptación guardada. Avanza y pulsa Aceptar y entrar para abrir el inicio. La sesión o una cookie de 30 días recuerdan la aceptación. Apache limita el acceso al mismo equipo con <code>Require local</code>.</p>
 </li>
 </ol>
 </div>

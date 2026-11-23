@@ -1,0 +1,46 @@
+{
+  "AC-01": {
+    "resultado": "Aprobado",
+    "obtenido": "Redirección de cinco rutas al aviso antes de consultar datos."
+  },
+  "AC-02": {
+    "resultado": "Aprobado",
+    "obtenido": "POST sin token 403; rechazo del aviso 302."
+  },
+  "AC-03": {
+    "resultado": "Aprobado",
+    "obtenido": "Aceptación 302; historial sin cuenta 200."
+  },
+  "AC-04": {
+    "resultado": "Aprobado",
+    "obtenido": "El navegador con aceptación guardada obtuvo 200."
+  },
+  "CSV-01": {
+    "resultado": "Aprobado",
+    "obtenido": "CGI con datos simulados. HTTP 200; filas de datos: 1. Valor esperado: '=2+2."
+  },
+  "CSV-02": {
+    "resultado": "Aprobado",
+    "obtenido": "CGI con datos simulados. HTTP 200; filas de datos: 1. Valor esperado: 5000,50."
+  },
+  "CSV-03": {
+    "resultado": "Aprobado",
+    "obtenido": "CGI con datos simulados. HTTP 200; filas de datos: 1. Valor esperado: Arroz; integral."
+  },
+  "CSV-04": {
+    "resultado": "Aprobado",
+    "obtenido": "CGI con datos simulados. HTTP 200; filas de datos: 1. Valor esperado: 2500,25."
+  },
+  "CSV-05": {
+    "resultado": "Aprobado",
+    "obtenido": "CGI con datos simulados. HTTP 200; filas de datos: 1. Valor esperado: López."
+  },
+  "CSV-06": {
+    "resultado": "Aprobado",
+    "obtenido": "CGI con datos simulados. HTTP 200; filas de datos: 1. Valor esperado: Cancelado."
+  },
+  "CSV-07": {
+    "resultado": "Aprobado",
+    "obtenido": "CGI con datos simulados. Filtro inválido rechazado con HTTP 422."
+  }
+}

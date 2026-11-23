@@ -21,11 +21,10 @@ require __DIR__ . '/../includes/menu.php';
             <span aria-current="page">Sobre nosotros</span>
         </nav>
         <h1 class="encabezado-titulo">Sobre nosotros</h1>
-        <p class="encabezado-descripcion">Consulta el SRS, el manual del usuario, el manual técnico, el Plan de Acción de Mejora Continua, el modelo entidad-relación (MER) y la wiki, o reproduce el video explicativo. Todos los recursos se muestran dentro del aplicativo.</p>
+        <p class="encabezado-descripcion">Consulta el SRS, el manual del usuario, el manual técnico, el Plan de Aseguramiento de la Calidad, el modelo entidad-relación (MER) y la wiki, o reproduce el video explicativo. Todos los recursos se muestran dentro del aplicativo.</p>
     </div>
 </div>
 
-<p class="nota nota-informativa"><a href="<?= h($baseUrl) ?>/referencias/REVISION_EQUIPOS_2026-11-18.pdf">Revisión de equipos y actualización operativa del 18/11/2026</a></p>
 <section class="tarjetas reportes-resumen-grid" aria-label="Recursos de ayuda">
     <article class="reportes-resumen-card">
         <div class="modulo-cabecera">
@@ -117,9 +116,9 @@ require __DIR__ . '/../includes/menu.php';
                     <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" />
                 </svg>
             </div>
-            <h2 class="modulo-titulo">Plan de Acción de Mejora Continua</h2>
+            <h2 class="modulo-titulo">Plan de Aseguramiento de la Calidad</h2>
         </div>
-        <p class="reportes-resumen-descripcion">Consulta el PAC con las acciones de mejora, sus prioridades, las evidencias y el seguimiento del proyecto.</p>
+        <p class="reportes-resumen-descripcion">Consulta el PAC con los casos de prueba, sus resultados, las evidencias y los criterios de aceptación.</p>
         <p class="reportes-resumen-detalle">El documento PDF se muestra integrado en la página, sin abrir una pestaña externa.</p>
         <div class="modulo-acciones">
             <a class="boton" href="<?= h($baseUrl) ?>/php/sobre_nosotros/pac.php">

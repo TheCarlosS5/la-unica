@@ -246,9 +246,9 @@ require __DIR__ . '/../includes/menu.php';
         <?php if ($tokenCsrf === null): ?>
             <div class="mensaje aviso alerta alerta-aviso" role="status"><div class="alerta-contenido">La sesión de seguridad no está disponible. Recarga la página antes de registrar una venta.</div></div>
         <?php elseif (count($clientes) === 0): ?>
-            <div class="estado-vacio" role="status"><h2>No hay clientes registrados</h2><p>Registra un cliente antes de crear una factura.</p><?php if (puedeAcceder('/php/clientes/crear_cliente.php', usuarioActual())): ?><a class="boton" href="<?= h($baseUrl) ?>/php/clientes/crear_cliente.php">Crear cliente</a><?php endif; ?></div>
+            <div class="estado-vacio" role="status"><h2>No hay clientes registrados</h2><p>Registra un cliente antes de crear una factura.</p><a class="boton" href="<?= h($baseUrl) ?>/php/clientes/crear_cliente.php">Crear cliente</a></div>
         <?php elseif (count($productos) === 0): ?>
-            <div class="estado-vacio" role="status"><h2>No hay productos registrados</h2><p>Registra productos antes de crear una factura.</p><?php if (puedeAcceder('/php/productos/crear_producto.php', usuarioActual())): ?><a class="boton" href="<?= h($baseUrl) ?>/php/productos/crear_producto.php">Crear producto</a><?php endif; ?></div>
+            <div class="estado-vacio" role="status"><h2>No hay productos registrados</h2><p>Registra productos antes de crear una factura.</p><a class="boton" href="<?= h($baseUrl) ?>/php/productos/crear_producto.php">Crear producto</a></div>
         <?php elseif ($productosDisponibles === 0): ?>
             <div class="mensaje aviso alerta alerta-aviso" role="status"><div class="alerta-contenido">No hay productos con existencias disponibles para vender.</div></div>
         <?php else: ?>

@@ -7,9 +7,12 @@ if (!isset($seccionActiva) || $seccionActiva !== 'reportes') {
 $impresionDisponible = empty($errorFiltro) && empty($errorLectura);
 $papelHorizontal = basename($_SERVER['SCRIPT_NAME'] ?? '') === 'detalle_facturas.php';
 ?>
-<div class="acciones-impresion-reporte solo-pantalla" aria-label="Imprimir o guardar el reporte">
+<div class="acciones-impresion-reporte solo-pantalla" aria-label="Imprimir o exportar el reporte">
     <button class="boton" type="button" data-imprimir-reporte <?= $impresionDisponible ? '' : 'disabled' ?>>Imprimir reporte</button>
     <button class="boton secundario" type="button" data-imprimir-reporte <?= $impresionDisponible ? '' : 'disabled' ?>>Guardar como PDF</button>
+    <?php if (isset($columnasCsv) && $impresionDisponible): ?>
+        <a class="boton secundario" href="?<?= h(http_build_query(array_merge($_GET, ['formato' => 'csv']))) ?>">Descargar CSV</a>
+    <?php endif; ?>
     <p>Para obtener el PDF, pulsa «Guardar como PDF» y elige ese destino en el cuadro de impresión del navegador. Se incluyen los datos de la consulta actual. Usa papel A4, escala 100 % y desactiva los encabezados y pies del navegador para evitar que aparezcan la URL y la fecha duplicadas.</p>
 </div>
 <header class="datos-impresion-reporte">

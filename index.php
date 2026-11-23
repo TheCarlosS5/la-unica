@@ -12,16 +12,5 @@ declare(strict_types=1);
 
 require_once __DIR__ . '/php/config/entorno.php';
 require_once __DIR__ . '/php/config/seguridad.php';
-sesionDisponible();
-
-// Comprobación de aceptación (en sesión activa o cookie persistente del equipo)
-$terminosAceptados = !empty($_SESSION['terminos_aceptados']) || (!empty($_COOKIE['la_unica_terminos']) && $_COOKIE['la_unica_terminos'] === 'aceptados');
-
-if ($terminosAceptados) {
-    $_SESSION['terminos_aceptados'] = true;
-    header('Location: main.php');
-    exit;
-}
-
-header('Location: terminos.php');
+header('Location: ' . (terminosAceptados() ? 'main.php' : 'terminos.php'), true, 303);
 exit;

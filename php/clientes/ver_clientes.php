@@ -60,13 +60,13 @@ require __DIR__ . '/../includes/menu.php';
         <p class="encabezado-descripcion">Consulta los clientes registrados y su relación con facturas existentes.</p>
     </div>
     <div class="encabezado-acciones">
-        <?php if (puedeAcceder('/php/clientes/crear_cliente.php', usuarioActual())): ?><a class="boton" href="crear_cliente.php">
+        <a class="boton" href="crear_cliente.php">
             <svg class="boton-icono" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                 <line x1="12" y1="5" x2="12" y2="19" />
                 <line x1="5" y1="12" x2="19" y2="12" />
             </svg>
             <span>Crear cliente</span>
-        </a><?php endif; ?>
+        </a>
     </div>
 </div>
 
@@ -110,13 +110,13 @@ require __DIR__ . '/../includes/menu.php';
         </svg>
         <h2 class="estado-vacio-titulo">Todavía no hay clientes registrados</h2>
         <p class="estado-vacio-texto">Registra el primer cliente para comenzar a organizar la información comercial.</p>
-        <?php if (puedeAcceder('/php/clientes/crear_cliente.php', usuarioActual())): ?><a class="boton" href="crear_cliente.php">
+        <a class="boton" href="crear_cliente.php">
             <svg class="boton-icono" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                 <line x1="12" y1="5" x2="12" y2="19" />
                 <line x1="5" y1="12" x2="19" y2="12" />
             </svg>
             <span>Crear primer cliente</span>
-        </a><?php endif; ?>
+        </a>
     </div>
 <?php else: ?>
     <div class="tabla-wrap tabla-contenedor">
@@ -149,15 +149,15 @@ require __DIR__ . '/../includes/menu.php';
                         </td>
                         <td>
                             <div class="acciones" style="justify-content: flex-end;">
-                                <?php if (puedeAcceder('/php/clientes/editar_cliente.php', usuarioActual())): ?><?php if (puedeAcceder('/php/clientes/editar_cliente.php', usuarioActual())): ?><a class="editar" href="editar_cliente.php?id=<?= h($cliente['id_cliente']) ?>" title="Editar cliente #<?= h($cliente['id_cliente']) ?>">
+                                <a class="editar" href="editar_cliente.php?id=<?= h($cliente['id_cliente']) ?>" title="Editar cliente #<?= h($cliente['id_cliente']) ?>">
                                     <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                                         <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
                                         <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
                                     </svg>
                                     <span>Editar</span>
-                                </a><?php endif; ?><?php endif; ?>
+                                </a>
                                 <?php if ((int)$cliente['total_facturas'] === 0): ?>
-                                    <?php if (puedeAcceder('/php/clientes/eliminar_cliente.php', usuarioActual())): ?><form method="post" action="eliminar_cliente.php">
+                                    <form method="post" action="eliminar_cliente.php">
                                         <?php if ($tokenCsrf !== null): ?>
                                             <input type="hidden" name="csrf_token" value="<?= h($tokenCsrf) ?>">
                                         <?php endif; ?>
@@ -169,7 +169,7 @@ require __DIR__ . '/../includes/menu.php';
                                             </svg>
                                             <span>Eliminar</span>
                                         </button>
-                                    </form><?php endif; ?>
+                                    </form>
                                 <?php else: ?>
                                     <span class="bloqueado etiqueta-bloqueado" title="No se puede eliminar: el cliente tiene facturas asociadas">
                                         <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">

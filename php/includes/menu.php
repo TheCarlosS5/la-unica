@@ -20,16 +20,6 @@ $reportesMenu = [
 ];
 $baseUrl = $baseUrl ?? '';
 
-// Los enlaces directos a las vistas también deben pasar por los términos.
-sesionDisponible();
-$terminosAceptados = !empty($_SESSION['terminos_aceptados'])
-    || (($_COOKIE['la_unica_terminos'] ?? '') === 'aceptados');
-if (!$terminosAceptados) {
-    header('Location: ' . $baseUrl . '/terminos.php');
-    exit;
-}
-$_SESSION['terminos_aceptados'] = true;
-
 $titulo = $titulo ?? 'La Única';
 $seccionActual = $seccionActiva ?? '';
 $paginaActual = basename(str_replace('\\', '/', (string)($_SERVER['SCRIPT_NAME'] ?? '')));
@@ -94,13 +84,6 @@ if ($seccionActual === '') {
 
             <div class="sidebar-cuerpo">
                 <div class="sidebar-grupo">
-                    <p><?= h(usuarioActual()['nombre']) ?> · <?= h(usuarioActual()['rol']) ?></p>
-                    <form method="post" action="<?= h($baseUrl) ?>/logout.php">
-                        <input type="hidden" name="csrf_token" value="<?= h(obtenerTokenCsrf()) ?>">
-                        <button class="boton secundario" type="submit">Cerrar sesión</button>
-                    </form>
-                </div>
-                <div class="sidebar-grupo">
                     <nav class="sidebar-nav" aria-label="Navegación del sistema">
                         <a class="nav-enlace<?= $seccionActual === 'inicio' ? ' activo' : '' ?>" href="<?= h($baseUrl) ?>/main.php" <?= $paginaActual === 'main.php' ? ' aria-current="page"' : '' ?>>
                             <svg class="nav-icono" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
@@ -123,13 +106,13 @@ if ($seccionActual === '') {
                                 </svg>
                                 <span>Facturas</span>
                             </a>
-                            <?php if (puedeAcceder('/php/facturas/crear_factura.php', usuarioActual())): ?><a class="nav-subenlace<?= $paginaActual === 'crear_factura.php' ? ' activo' : '' ?>" href="<?= h($baseUrl) ?>/php/facturas/crear_factura.php" title="Registrar una nueva factura" <?= $paginaActual === 'crear_factura.php' ? ' aria-current="page"' : '' ?>>
+                            <a class="nav-subenlace<?= $paginaActual === 'crear_factura.php' ? ' activo' : '' ?>" href="<?= h($baseUrl) ?>/php/facturas/crear_factura.php" title="Registrar una nueva factura" <?= $paginaActual === 'crear_factura.php' ? ' aria-current="page"' : '' ?>>
                                 <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                                     <line x1="12" y1="5" x2="12" y2="19" />
                                     <line x1="5" y1="12" x2="19" y2="12" />
                                 </svg>
                                 <span>Crear factura</span>
-                            </a><?php endif; ?>
+                            </a>
                         </div>
                     </nav>
                 </div>
@@ -147,13 +130,13 @@ if ($seccionActual === '') {
                                 </svg>
                                 <span>Clientes</span>
                             </a>
-                            <?php if (puedeAcceder('/php/clientes/crear_cliente.php', usuarioActual())): ?><a class="nav-subenlace<?= $paginaActual === 'crear_cliente.php' ? ' activo' : '' ?>" href="<?= h($baseUrl) ?>/php/clientes/crear_cliente.php" title="Crear nuevo cliente" <?= $paginaActual === 'crear_cliente.php' ? ' aria-current="page"' : '' ?>>
+                            <a class="nav-subenlace<?= $paginaActual === 'crear_cliente.php' ? ' activo' : '' ?>" href="<?= h($baseUrl) ?>/php/clientes/crear_cliente.php" title="Crear nuevo cliente" <?= $paginaActual === 'crear_cliente.php' ? ' aria-current="page"' : '' ?>>
                                 <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                                     <line x1="12" y1="5" x2="12" y2="19" />
                                     <line x1="5" y1="12" x2="19" y2="12" />
                                 </svg>
                                 <span>Crear cliente</span>
-                            </a><?php endif; ?>
+                            </a>
                         </div>
 
                         <div class="nav-item-complejo">
@@ -165,13 +148,13 @@ if ($seccionActual === '') {
                                 </svg>
                                 <span>Productos</span>
                             </a>
-                            <?php if (puedeAcceder('/php/productos/crear_producto.php', usuarioActual())): ?><a class="nav-subenlace<?= $paginaActual === 'crear_producto.php' ? ' activo' : '' ?>" href="<?= h($baseUrl) ?>/php/productos/crear_producto.php" title="Crear nuevo producto" <?= $paginaActual === 'crear_producto.php' ? ' aria-current="page"' : '' ?>>
+                            <a class="nav-subenlace<?= $paginaActual === 'crear_producto.php' ? ' activo' : '' ?>" href="<?= h($baseUrl) ?>/php/productos/crear_producto.php" title="Crear nuevo producto" <?= $paginaActual === 'crear_producto.php' ? ' aria-current="page"' : '' ?>>
                                 <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                                     <line x1="12" y1="5" x2="12" y2="19" />
                                     <line x1="5" y1="12" x2="19" y2="12" />
                                 </svg>
                                 <span>Crear producto</span>
-                            </a><?php endif; ?>
+                            </a>
                         </div>
                     </nav>
                 </div>
@@ -199,27 +182,27 @@ if ($seccionActual === '') {
                         </div>
 
                         <div class="nav-item-complejo">
-                            <?php if (puedeAcceder('/php/historial/acciones.php', usuarioActual())): ?><a class="nav-enlace<?= $seccionActual === 'historial' ? ' activo' : '' ?>" href="<?= h($baseUrl) ?>/php/historial/acciones.php">
+                            <a class="nav-enlace<?= $seccionActual === 'historial' ? ' activo' : '' ?>" href="<?= h($baseUrl) ?>/php/historial/acciones.php">
                                 <svg class="nav-icono" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                                     <circle cx="12" cy="12" r="9" />
                                     <polyline points="12 7 12 12 15 14" />
                                 </svg>
                                 <span>Historial</span>
-                            </a><?php endif; ?>
-                            <?php if (puedeAcceder('/php/historial/acciones.php', usuarioActual())): ?><a class="nav-subenlace<?= $seccionActual === 'historial' && $paginaActual === 'acciones.php' ? ' activo' : '' ?>" href="<?= h($baseUrl) ?>/php/historial/acciones.php" title="Ver el historial de acciones" <?= $seccionActual === 'historial' && $paginaActual === 'acciones.php' ? ' aria-current="page"' : '' ?>>
+                            </a>
+                            <a class="nav-subenlace<?= $seccionActual === 'historial' && $paginaActual === 'acciones.php' ? ' activo' : '' ?>" href="<?= h($baseUrl) ?>/php/historial/acciones.php" title="Ver el historial de acciones" <?= $seccionActual === 'historial' && $paginaActual === 'acciones.php' ? ' aria-current="page"' : '' ?>>
                                 <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                                     <line x1="8" y1="6" x2="21" y2="6" /><line x1="8" y1="12" x2="21" y2="12" /><line x1="8" y1="18" x2="21" y2="18" />
                                     <line x1="3" y1="6" x2="3.01" y2="6" /><line x1="3" y1="12" x2="3.01" y2="12" /><line x1="3" y1="18" x2="3.01" y2="18" />
                                 </svg>
                                 <span>Acciones</span>
-                            </a><?php endif; ?>
-                            <?php if (puedeAcceder('/php/historial/acciones.php', usuarioActual())): ?><a class="nav-subenlace<?= $seccionActual === 'historial' && $paginaActual === 'errores.php' ? ' activo' : '' ?>" href="<?= h($baseUrl) ?>/php/historial/errores.php" title="Ver el log de errores" <?= $seccionActual === 'historial' && $paginaActual === 'errores.php' ? ' aria-current="page"' : '' ?>>
+                            </a>
+                            <a class="nav-subenlace<?= $seccionActual === 'historial' && $paginaActual === 'errores.php' ? ' activo' : '' ?>" href="<?= h($baseUrl) ?>/php/historial/errores.php" title="Ver el log de errores" <?= $seccionActual === 'historial' && $paginaActual === 'errores.php' ? ' aria-current="page"' : '' ?>>
                                 <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                                     <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" />
                                     <line x1="12" y1="9" x2="12" y2="13" /><line x1="12" y1="17" x2="12.01" y2="17" />
                                 </svg>
                                 <span>Errores</span>
-                            </a><?php endif; ?>
+                            </a>
                         </div>
 
                         <div class="nav-item-complejo">

@@ -34,6 +34,16 @@ foreach ($productos as $producto) {
     }
 }
 
+require_once __DIR__ . '/exportar_csv.php';
+$columnasCsv = [
+    ['campo' => 'id_producto', 'titulo' => 'ID producto'],
+    ['campo' => 'nombre', 'titulo' => 'Producto'],
+    ['campo' => 'unidad_medida', 'titulo' => 'Unidad de medida'],
+    ['campo' => 'stock', 'titulo' => 'Existencias'],
+    ['campo' => 'precio_unitario', 'titulo' => 'Precio vigente (COP)', 'tipo' => 'moneda'],
+];
+exportarReporteCsv('existencias', $columnasCsv, $productos, empty($errorFiltro) && !$errorLectura);
+
 require __DIR__ . '/../includes/menu.php';
 require __DIR__ . '/acciones_impresion.php';
 ?>

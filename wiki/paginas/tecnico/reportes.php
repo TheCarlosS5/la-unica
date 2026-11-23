@@ -11,3 +11,6 @@
 <p>Ventas y Unidades usan el precio histórico del detalle. Los totales vendidos excluyen Cancelado. Clientes cuenta ambos estados y conserva cero facturas; Detalle muestra ambos estados y el subtotal de cada línea. llamarProcedimiento limpia resultados extra después de CALL para reutilizar mysqli.</p>
 <h2 id="impresión">Impresión y PDF</h2>
 <p>Los estilos ocultan navegación y controles, incorporan título, filtros y fecha, y organizan las tablas. Los botones abren window.print(): el usuario elige imprimir o Guardar como PDF. Detalle se imprime horizontal. La vista previa depende del papel y la escala seleccionados.</p>
+
+<h2>Descarga CSV</h2>
+<p>Las cinco consultas ofrecen una descarga CSV con las mismas filas y filtros de pantalla. El archivo usa UTF-8 y punto y coma. Los reportes de ventas y unidades toman los rangos de fechas que el operador aplicó. Existencias usa el inventario actual. Clientes y detalle usan el historial completo.</p>

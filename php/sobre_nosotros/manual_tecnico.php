@@ -23,7 +23,7 @@ if ($manualDisponible) {
 
 require __DIR__ . '/../includes/menu.php';
 ?>
-<p class="nota nota-informativa">Documento de la entrega del 11/11/2026. Consulta el <a href="<?= h($baseUrl) ?>/referencias/REVISION_EQUIPOS_2026-11-18.pdf">anexo vigente del 18/11/2026</a> para cuentas, permisos, paginación, cancelación y validación de formularios.</p>
+<p class="nota nota-informativa">Actualización operativa. Usa el puerto SQL de tu equipo. Apache restringe el acceso a conexiones locales con Require local. El portal exige POST y un token CSRF. Los módulos verifican la aceptación antes de abrir SQL.</p>
 
 <div class="encabezado-vista">
     <div class="encabezado-info">

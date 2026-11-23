@@ -7,9 +7,8 @@ require_once __DIR__ . '/seguridad.php';
 require_once __DIR__ . '/consultas.php';
 require_once __DIR__ . '/configuracion.php';
 
-require_once __DIR__ . '/autenticacion.php';
 require_once __DIR__ . '/paginacion.php';
-exigirAcceso();
+exigirAceptacionTerminos();
 
 $conexion = null;
 if (!defined('SIN_BASE_DE_DATOS')) {

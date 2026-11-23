@@ -2178,7 +2178,6 @@ table, .comprobante, .reporte-impresion { font-family: 'Segoe UI', Arial, sans-s
 .error-campo { display: block; color: #9c2929; font-weight: 600; margin-top: var(--espacio-2); }
 [aria-invalid="true"] { border: 2px solid #9c2929; }
 .paginacion { display: flex; align-items: center; flex-wrap: wrap; gap: var(--espacio-3); margin: var(--espacio-4) 0; }
-.acceso-panel { max-width: 480px; margin: 8vh auto; width: calc(100% - 32px); }
 .motivo-cancelacion { padding: var(--espacio-4); }
 @media print { .paginacion { display: none; } table, body { font-family: Arial, sans-serif; } }
 
