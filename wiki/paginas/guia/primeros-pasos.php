@@ -1,19 +1,22 @@
 <?php if (!defined('LA_UNICA_WIKI')) { exit; } ?>
-<p>Este recorrido asume que ya <a href="index.php?pagina=guia/instalacion">instalaste</a> La Única. En unos cinco minutos tendrás un cliente, un producto y una factura impresa.</p>
+<p>Este recorrido asume que ya <a href="index.php?pagina=guia/instalacion">instalaste</a> La Única. Al terminar el recorrido tendrás un cliente, un producto y una factura impresa.</p>
+<h2 id="acceso-inicial">Acceso inicial y aceptación</h2>
+<p>La raíz y main.php muestran primero el aviso operativo si este navegador no conserva una aceptación. Avanza con Siguiente o Saltar al final y pulsa Aceptar y entrar. Rechazar vuelve al aviso; si ya aceptaste, terminos.php permite Revocar y salir. La aceptación se recuerda en sesión o cookie durante 30 días y no es un inicio de sesión.</p>
+<figure class="captura"><img src="img/acceso-terminos.webp" alt="Portal inicial de cinco pasos" loading="lazy"><figcaption>Aviso operativo antes de entrar al inicio</figcaption></figure>
 <h2 id="conoce-la-pantalla">Conoce la pantalla</h2>
 <h3 id="el-menú-lateral">El menú lateral</h3>
 <p>Siempre está a la izquierda (en celular, detrás del botón ☰). Tiene tres grupos:</p>
 <figure class="captura"><img src="img/inicio-menu.webp" alt="Grupos del menú lateral" loading="lazy"><figcaption>Grupos del menú lateral</figcaption></figure>
 <ul>
-<li><span class="marca-num">1</span> <strong>Ventas</strong>: la lista de <em>Facturas</em> y el acceso directo <em>Nueva factura</em>.</li>
+<li><span class="marca-num">1</span> <strong>Ventas</strong>: la lista de <em>Facturas</em> y el acceso directo <em>Crear factura</em>.</li>
 <li><span class="marca-num">2</span> <strong>Catálogo</strong>: <em>Clientes</em> y <em>Productos</em>, cada uno con su acceso <em>Nuevo…</em>.</li>
-<li><span class="marca-num">3</span> <strong>Información</strong>: <em>Reportes</em> (resumen y los 7 reportes), <em>Sobre nosotros</em> (manual y video) y esta <em>Wiki</em>.</li>
+<li><span class="marca-num">3</span> <strong>Información</strong>: <em>Reportes</em> (resumen y cinco reportes), <em>Historial</em> y <em>Sobre nosotros</em> (SRS, manuales, PAC, video y wiki).</li>
 </ul>
 <h3 id="la-barra-superior">La barra superior</h3>
 <figure class="captura"><img src="img/inicio-barra-superior.webp" alt="Barra superior" loading="lazy"><figcaption>Barra superior</figcaption></figure>
 <ul>
 <li><span class="marca-num">1</span> <strong>Migas de pan</strong>: te dicen en qué pantalla estás. Haz clic en <em>La Única</em> para volver al inicio.</li>
-<li><span class="marca-num">2</span> <strong>Administración local</strong>: recuerda que la aplicación funciona solo en este equipo.</li>
+<li><span class="marca-num">2</span> <strong>Administración local</strong>: indica el uso previsto. La etiqueta no comprueba la restricción de acceso de la red.</li>
 </ul>
 <h3 id="las-tarjetas-del-inicio">Las tarjetas del inicio</h3>
 <p>Cada módulo tiene una tarjeta con su descripción y dos botones: <span class="marca-num">1</span> abrir el listado y <span class="marca-num">2</span> crear un registro nuevo sin pasar por la lista.</p>
@@ -22,13 +25,13 @@
 <div class="pasos">
 <ol>
 <li>
-<p><strong>Crea el cliente.</strong> Menú → <em>Clientes → Nuevo cliente</em>. Escribe un ID y el nombre y pulsa <strong>Crear cliente</strong>. Detalle en <a href="index.php?pagina=guia/clientes#crear-un-cliente">Clientes → Crear un cliente</a>.</p>
+<p><strong>Crea el cliente.</strong> Menú → <em>Clientes → Crear cliente</em>. Escribe un ID y el nombre y pulsa <strong>Crear cliente</strong>. Detalle en <a href="index.php?pagina=guia/clientes#crear-un-cliente">Clientes → Crear un cliente</a>.</p>
 </li>
 <li>
-<p><strong>Crea el producto.</strong> Menú → <em>Productos → Nuevo producto</em>. Escribe nombre, unidad, stock y precio. Detalle en <a href="index.php?pagina=guia/productos#crear-un-producto">Productos → Crear un producto</a>.</p>
+<p><strong>Crea el producto.</strong> Menú → <em>Productos → Crear producto</em>. Escribe el nombre, la unidad, las existencias iniciales y el precio. Detalle en <a href="index.php?pagina=guia/productos#crear-un-producto">Productos → Crear un producto</a>.</p>
 </li>
 <li>
-<p><strong>Registra la venta.</strong> Menú → <em>Nueva factura</em>. Elige el cliente, el producto y la cantidad, y pulsa <strong>Guardar venta</strong>. Verás este aviso:</p>
+<p><strong>Registra la venta.</strong> Menú → <em>Ventas → Crear factura</em>. Elige el cliente, el producto y la cantidad, y pulsa <strong>Guardar venta</strong>. Verás este aviso:</p>
 <figure class="captura"><img src="img/facturas-paso-exito.webp" alt="Aviso de factura registrada" loading="lazy"><figcaption>Aviso de factura registrada</figcaption></figure>
 <p>Detalle en <a href="index.php?pagina=guia/facturas#registrar-una-venta">Facturas → Registrar una venta</a>.</p>
 </li>

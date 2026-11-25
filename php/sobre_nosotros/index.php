@@ -3,10 +3,10 @@
  * Archivo: index.php
  * Módulo: Sobre nosotros.
  * Propósito: presentar los recursos de ayuda y documentación de La Única.
- * Funcionamiento: muestra tarjetas de acceso al manual integrado, al video explicativo y a la wiki.
+ * Funcionamiento: muestra tarjetas de acceso al SRS, los dos manuales, el PAC, el MER, el video y la wiki.
  */
 
-require __DIR__ . '/inicializar.php';
+require __DIR__ . '/../config/conexion.php';
 
 $titulo = 'Sobre nosotros';
 $seccionActiva = 'sobre_nosotros';
@@ -21,11 +21,53 @@ require __DIR__ . '/../includes/menu.php';
             <span aria-current="page">Sobre nosotros</span>
         </nav>
         <h1 class="encabezado-titulo">Sobre nosotros</h1>
-        <p class="encabezado-descripcion">Encuentra recursos para conocer y utilizar La Única. Consulta el manual directamente aquí o accede al espacio del video explicativo.</p>
+        <p class="encabezado-descripcion">Consulta el SRS, el manual del usuario, el manual técnico, el Plan de Aseguramiento de la Calidad, el modelo entidad-relación (MER) y la wiki, o reproduce el video explicativo. Todos los recursos se muestran dentro del aplicativo.</p>
     </div>
 </div>
 
 <section class="tarjetas reportes-resumen-grid" aria-label="Recursos de ayuda">
+    <article class="reportes-resumen-card">
+        <div class="modulo-cabecera">
+            <div class="modulo-icono" aria-hidden="true">
+                <svg width="25" height="25" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="8" y="2" width="8" height="6" rx="1" />
+                    <rect x="2" y="16" width="8" height="6" rx="1" />
+                    <rect x="14" y="16" width="8" height="6" rx="1" />
+                    <path d="M12 8v4M6 16v-4h12v4" />
+                </svg>
+            </div>
+            <h2 class="modulo-titulo">Modelo entidad-relación (MER)</h2>
+        </div>
+        <p class="reportes-resumen-descripcion">Consulta las entidades, los campos y las relaciones de la base de datos de La Única.</p>
+        <p class="reportes-resumen-detalle">El diagrama se muestra dentro del aplicativo y se puede abrir a tamaño completo.</p>
+        <div class="modulo-acciones">
+            <a class="boton" href="<?= h($baseUrl) ?>/php/sobre_nosotros/mer.php">
+                <span>Ver MER</span>
+                <svg class="boton-icono" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 18 15 12 9 6" /></svg>
+            </a>
+        </div>
+    </article>
+
+    <article class="reportes-resumen-card">
+        <div class="modulo-cabecera">
+            <div class="modulo-icono" aria-hidden="true">
+                <svg width="25" height="25" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />
+                    <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" />
+                </svg>
+            </div>
+            <h2 class="modulo-titulo">Especificación de requisitos (SRS)</h2>
+        </div>
+        <p class="reportes-resumen-descripcion">Consulta el SRS completo, versión 1.6, con el alcance, los requisitos, las reglas del negocio y los criterios de aceptación.</p>
+        <p class="reportes-resumen-detalle">El documento PDF se muestra integrado en la página, sin abrir una pestaña externa.</p>
+        <div class="modulo-acciones">
+            <a class="boton" href="<?= h($baseUrl) ?>/php/sobre_nosotros/srs.php">
+                <span>Consultar SRS completo</span>
+                <svg class="boton-icono" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 18 15 12 9 6" /></svg>
+            </a>
+        </div>
+    </article>
+
     <article class="reportes-resumen-card">
         <div class="modulo-cabecera">
             <div class="modulo-icono" aria-hidden="true">
@@ -50,6 +92,46 @@ require __DIR__ . '/../includes/menu.php';
         <div class="modulo-cabecera">
             <div class="modulo-icono" aria-hidden="true">
                 <svg width="25" height="25" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />
+                    <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" />
+                </svg>
+            </div>
+            <h2 class="modulo-titulo">Manual técnico</h2>
+        </div>
+        <p class="reportes-resumen-descripcion">Consulta la instalación, la configuración, la base de datos y el mantenimiento del aplicativo.</p>
+        <p class="reportes-resumen-detalle">El documento PDF se muestra integrado en la página, sin abrir una pestaña externa.</p>
+        <div class="modulo-acciones">
+            <a class="boton" href="<?= h($baseUrl) ?>/php/sobre_nosotros/manual_tecnico.php">
+                <span>Consultar manual técnico</span>
+                <svg class="boton-icono" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 18 15 12 9 6" /></svg>
+            </a>
+        </div>
+    </article>
+
+    <article class="reportes-resumen-card">
+        <div class="modulo-cabecera">
+            <div class="modulo-icono" aria-hidden="true">
+                <svg width="25" height="25" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />
+                    <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" />
+                </svg>
+            </div>
+            <h2 class="modulo-titulo">Plan de Aseguramiento de la Calidad</h2>
+        </div>
+        <p class="reportes-resumen-descripcion">Consulta el PAC 2.0 con los casos de prueba, sus resultados, las evidencias y los criterios de aceptación.</p>
+        <p class="reportes-resumen-detalle">El documento PDF se muestra integrado en la página, sin abrir una pestaña externa.</p>
+        <div class="modulo-acciones">
+            <a class="boton" href="<?= h($baseUrl) ?>/php/sobre_nosotros/pac.php">
+                <span>Consultar PAC</span>
+                <svg class="boton-icono" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 18 15 12 9 6" /></svg>
+            </a>
+        </div>
+    </article>
+
+    <article class="reportes-resumen-card">
+        <div class="modulo-cabecera">
+            <div class="modulo-icono" aria-hidden="true">
+                <svg width="25" height="25" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <rect x="3" y="5" width="18" height="14" rx="2" />
                     <path d="m10 9 5 3-5 3z" />
                 </svg>
@@ -65,25 +147,10 @@ require __DIR__ . '/../includes/menu.php';
             </a>
         </div>
     </article>
-
     <article class="reportes-resumen-card">
-        <div class="modulo-cabecera">
-            <div class="modulo-icono" aria-hidden="true">
-                <svg width="25" height="25" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M2 4h6a4 4 0 0 1 4 4v12a3 3 0 0 0-3-3H2z" />
-                    <path d="M22 4h-6a4 4 0 0 0-4 4v12a3 3 0 0 1 3-3h7z" />
-                </svg>
-            </div>
-            <h2 class="modulo-titulo">Wiki</h2>
-        </div>
-        <p class="reportes-resumen-descripcion">Guías paso a paso con capturas señaladas, solución de problemas y notas técnicas del proyecto.</p>
-        <p class="reportes-resumen-detalle">Funciona aunque la base de datos esté apagada.</p>
-        <div class="modulo-acciones">
-            <a class="boton secundario" href="<?= h($baseUrl) ?>/wiki/index.php">
-                <span>Abrir wiki</span>
-                <svg class="boton-icono" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 18 15 12 9 6" /></svg>
-            </a>
-        </div>
+        <div class="modulo-cabecera"><h2 class="modulo-titulo">Wiki del proyecto</h2></div>
+        <p class="reportes-resumen-descripcion">Consulta las guías, la configuración y las notas técnicas. Las indicaciones de esta copia se distinguen del material histórico del proyecto original.</p>
+        <div class="modulo-acciones"><a class="boton" href="<?= h($baseUrl) ?>/wiki/">Consultar wiki</a></div>
     </article>
 </section>
 

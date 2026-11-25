@@ -32,7 +32,12 @@ try {
     $errorLectura = true;
 }
 
+require_once __DIR__ . '/exportar_csv.php';
+$columnasCsv = $reporteSeleccionado['columnas'];
+exportarReporteCsv(pathinfo($reporteSeleccionado['archivo'], PATHINFO_FILENAME), $columnasCsv, $filasReporte, empty($errorFiltro) && !$errorLectura);
+
 require __DIR__ . '/../includes/menu.php';
+require __DIR__ . '/acciones_impresion.php';
 ?>
 <div class="encabezado-vista">
     <div class="encabezado-info">
@@ -53,7 +58,7 @@ require __DIR__ . '/../includes/menu.php';
 </div>
 
 <?php if ($errorLectura): ?>
-    <div class="mensaje error alerta alerta-error" role="alert">No se pudo generar el reporte. Revisa la conexión y que estén disponibles las vistas y procedimientos definidos en <code>referencias/db.sql</code>.</div>
+    <div class="mensaje error alerta alerta-error" role="alert">No se pudo generar el reporte. Revisa la conexión o consulta al responsable técnico.</div>
 <?php elseif ($filasReporte === []): ?>
     <div class="sin-datos estado-vacio" role="status">
         <h2 class="estado-vacio-titulo"><?= h($reporteSeleccionado['vacio']) ?></h2>
@@ -78,7 +83,7 @@ require __DIR__ . '/../includes/menu.php';
                             <th scope="col"<?= in_array($columna['tipo'], ['entero', 'moneda'], true) ? ' class="texto-derecha"' : '' ?>><?= h($columna['titulo']) ?></th>
                         <?php endforeach; ?>
                         <?php if ($reporteSeleccionado['enlace_factura']): ?>
-                            <th scope="col" class="texto-derecha">Acciones</th>
+                            <th scope="col" class="texto-derecha no-imprimir-reporte">Acciones</th>
                         <?php endif; ?>
                     </tr>
                 </thead>
@@ -98,14 +103,14 @@ require __DIR__ . '/../includes/menu.php';
                                         <?php try { $fechaReporte = (new DateTimeImmutable((string)$valor))->format('d/m/Y H:i'); } catch (Throwable $e) { $fechaReporte = 'Sin fecha disponible'; } ?>
                                         <span class="celda-fecha"><?= h($fechaReporte) ?></span>
                                     <?php elseif ($columna['tipo'] === 'estado'): ?>
-                                        <span class="estado-factura <?= strtolower(h($valor)) ?>"><?= h($valor) ?></span>
+                                        <span class="estado-factura <?= strtolower(h($valor)) ?>"><span aria-hidden="true"><?= ['Pagado' => '✓', 'Cancelado' => '×'][$valor] ?? '' ?></span> <?= h($valor) ?></span>
                                     <?php else: ?>
                                         <?= h($valor) ?>
                                     <?php endif; ?>
                                 </td>
                             <?php endforeach; ?>
                             <?php if ($reporteSeleccionado['enlace_factura']): ?>
-                                <td class="texto-derecha">
+                                <td class="texto-derecha no-imprimir-reporte">
                                     <a class="boton secundario boton-factura-detalle" href="<?= h($baseUrl) ?>/php/facturas/imprimir_factura.php?id=<?= (int)$fila['id_factura'] ?>">Ver factura</a>
                                 </td>
                             <?php endif; ?>

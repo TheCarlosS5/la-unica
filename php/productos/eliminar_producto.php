@@ -2,7 +2,7 @@
 /**
  * Archivo: eliminar_producto.php
  * Módulo: Productos — eliminación protegida.
- * Propósito: confirmar la baja de un artículo que no tenga historial de facturación.
+ * Propósito: confirmar la baja de un producto que no tenga historial de facturación.
  * Funcionamiento: exige POST, valida ID y CSRF, muestra una confirmación y, al confirmarse, consulta
  * detalle_facturas antes de ejecutar DELETE con una sentencia preparada.
  * Puntos clave: los productos referenciados por facturas no se eliminan; se informa el resultado
@@ -20,11 +20,7 @@ $mostrarConfirmacion = false;
 $nombreProducto = '';
 $tokenCsrf = obtenerTokenCsrf();
 
-$idRecibido = $_POST['id_producto'] ?? null;
-$confirmarRecibido = $_POST['confirmar'] ?? null;
-$datosPostValidos = is_string($idRecibido)
-    && ($confirmarRecibido === null || is_string($confirmarRecibido));
-$idProducto = validarId($idRecibido);
+$idProducto = validarId($_POST['id_producto'] ?? '');
 
 if (($_SERVER['REQUEST_METHOD'] ?? 'GET') !== 'POST') {
     http_response_code(400);
@@ -34,7 +30,7 @@ if (($_SERVER['REQUEST_METHOD'] ?? 'GET') !== 'POST') {
     http_response_code(403);
     $mensajeResultado = 'No se pudo validar la solicitud. Actualiza la página e inténtalo de nuevo.';
     $esError = true;
-} elseif (!$datosPostValidos || $idProducto === null) {
+} elseif ($idProducto === null) {
     http_response_code(400);
     $mensajeResultado = 'Solicitud no válida.';
     $esError = true;
@@ -52,7 +48,7 @@ if (($_SERVER['REQUEST_METHOD'] ?? 'GET') !== 'POST') {
             $mensajeResultado = 'No se encontró el producto.';
             $esError = true;
         } else {
-            $esConfirmado = ($confirmarRecibido === 'si');
+            $esConfirmado = (($_POST['confirmar'] ?? '') === 'si');
 
             if (!$esConfirmado) {
                 $mostrarConfirmacion = true;
@@ -73,6 +69,7 @@ if (($_SERVER['REQUEST_METHOD'] ?? 'GET') !== 'POST') {
                     $ejecutado = $eliminar->execute();
 
                     if ($ejecutado && $eliminar->affected_rows === 1) {
+                        registrarAccion($conexion, 'Productos', 'Eliminar', 'Producto #' . $idProducto . ' «' . $nombreProducto . '» eliminado.');
                         $mensajeResultado = 'Producto eliminado correctamente.';
                         $esError = false;
                     } else {

@@ -15,49 +15,37 @@ $titulo = 'Clientes';
 $seccionActiva = 'clientes';
 $tokenCsrf = obtenerTokenCsrf();
 
-$terminoBusqueda = $_GET['buscar'] ?? '';
-$terminoBusqueda = is_string($terminoBusqueda) ? trim($terminoBusqueda) : '';
+$terminoBusqueda = leerTexto($_GET, 'buscar');
 $busquedaActiva = $terminoBusqueda !== '';
-$idBusquedaNormalizado = ctype_digit($terminoBusqueda) ? ltrim($terminoBusqueda, '0') : '';
-if ($idBusquedaNormalizado === '' && $busquedaActiva && ctype_digit($terminoBusqueda)) {
-    $idBusquedaNormalizado = '0';
-}
-$buscarPorId = $busquedaActiva
-    && ctype_digit($terminoBusqueda)
-    && strlen($idBusquedaNormalizado) <= 10
-    && (float)$idBusquedaNormalizado <= 2147483647;
+// Si lo escrito es un número válido, también se busca como documento.
+$documentoBuscado = validarId($terminoBusqueda);
 
 $sqlSeleccionClientes = 'SELECT c.id_cliente, c.nombre, c.fecha_registro, COUNT(f.id_factura) AS total_facturas FROM clientes c LEFT JOIN facturas f ON f.id_cliente = c.id_cliente';
 $sqlAgruparClientes = ' GROUP BY c.id_cliente, c.nombre, c.fecha_registro ORDER BY c.id_cliente';
 $clientes = [];
 $errorLectura = false;
+$paginacion = null;
 try {
-    if ($busquedaActiva && $buscarPorId) {
-        $consultaClientes = $conexion->prepare($sqlSeleccionClientes . ' WHERE c.id_cliente = ? OR c.nombre LIKE ?' . $sqlAgruparClientes);
-        $patronNombre = patronLike($terminoBusqueda);
-        $consultaClientes->bind_param('ss', $idBusquedaNormalizado, $patronNombre);
-        $consultaClientes->execute();
-        $resultadoClientes = $consultaClientes->get_result();
+    $condicion = '';
+    $tipos = '';
+    $parametros = [];
+    if ($documentoBuscado !== null) {
+        $condicion = ' WHERE c.id_cliente = ? OR c.nombre LIKE ?';
+        $tipos = 'is';
+        $parametros = [$documentoBuscado, '%' . $terminoBusqueda . '%'];
     } elseif ($busquedaActiva) {
-        $consultaClientes = $conexion->prepare($sqlSeleccionClientes . ' WHERE c.nombre LIKE ?' . $sqlAgruparClientes);
-        $patronNombre = patronLike($terminoBusqueda);
-        $consultaClientes->bind_param('s', $patronNombre);
-        $consultaClientes->execute();
-        $resultadoClientes = $consultaClientes->get_result();
-    } else {
-        $resultadoClientes = $conexion->query($sqlSeleccionClientes . $sqlAgruparClientes);
+        $condicion = ' WHERE c.nombre LIKE ?';
+        $tipos = 's';
+        $parametros = ['%' . $terminoBusqueda . '%'];
     }
-    while ($cliente = $resultadoClientes->fetch_assoc()) {
-        $clientes[] = $cliente;
-    }
-    $resultadoClientes->free();
-    if (isset($consultaClientes)) {
-        $consultaClientes->close();
-    }
+    $paginacion = consultarPagina($conexion, $sqlSeleccionClientes . $condicion . $sqlAgruparClientes, $tipos, $parametros);
+    $clientes = $paginacion['filas'];
 } catch (Throwable $e) {
     registrarErrorServidor('leer_clientes', $e);
     $errorLectura = true;
 }
+
+$mensajeTexto = leerTexto($_GET, 'mensaje');
 
 require __DIR__ . '/../includes/menu.php';
 ?>
@@ -82,10 +70,20 @@ require __DIR__ . '/../includes/menu.php';
     </div>
 </div>
 
+<?php if ($mensajeTexto !== ''): ?>
+    <div class="mensaje alerta" role="status">
+        <svg class="alerta-icono" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
+            <polyline points="22 4 12 14.01 9 11.01" />
+        </svg>
+        <div class="alerta-contenido"><?= h($mensajeTexto) ?></div>
+    </div>
+<?php endif; ?>
+
 <form class="filtro-busqueda" method="get" action="ver_clientes.php" role="search">
     <div class="campo">
-        <label for="buscar-clientes">Buscar por ID o nombre</label>
-        <input id="buscar-clientes" name="buscar" type="search" maxlength="100" value="<?= h($terminoBusqueda) ?>" placeholder="Escribe un ID o nombre" autocomplete="off">
+        <label for="buscar-clientes">Buscar por documento o nombre</label>
+        <input id="buscar-clientes" name="buscar" type="search" maxlength="100" value="<?= h($terminoBusqueda) ?>" placeholder="Escribe un documento o nombre" autocomplete="off">
     </div>
     <div class="filtro-acciones">
         <button class="boton" type="submit">Buscar</button>
@@ -100,7 +98,7 @@ require __DIR__ . '/../includes/menu.php';
 <?php elseif (count($clientes) === 0 && $busquedaActiva): ?>
     <div class="sin-datos estado-vacio">
         <h2 class="estado-vacio-titulo">No se encontraron clientes</h2>
-        <p class="estado-vacio-texto">No hay resultados para “<?= h($terminoBusqueda) ?>”. Prueba con otro ID o nombre.</p>
+        <p class="estado-vacio-texto">No hay resultados para “<?= h($terminoBusqueda) ?>”. Prueba con otro documento o nombre.</p>
         <a class="boton secundario" href="ver_clientes.php">Limpiar búsqueda</a>
     </div>
 <?php elseif (count($clientes) === 0): ?>
@@ -122,35 +120,40 @@ require __DIR__ . '/../includes/menu.php';
     </div>
 <?php else: ?>
     <div class="tabla-wrap tabla-contenedor">
-        <table class="tabla">
-            <thead>
-                <tr>
-                    <th scope="col">ID</th>
-                    <th scope="col">Nombre</th>
-                    <th scope="col">Fecha de registro</th>
-                    <th scope="col">Facturas</th>
-                    <th scope="col" class="texto-derecha">Acciones</th>
+        <table class="tabla listado-adaptable" role="table">
+            <thead role="rowgroup">
+                <tr role="row">
+                    <th role="columnheader" scope="col">Documento</th>
+                    <th role="columnheader" scope="col">Nombre</th>
+                    <th role="columnheader" scope="col">Fecha de registro</th>
+                    <th role="columnheader" scope="col">Facturas</th>
+                    <th role="columnheader" scope="col" class="texto-derecha">Acciones</th>
                 </tr>
             </thead>
-            <tbody>
+            <tbody role="rowgroup">
                 <?php foreach ($clientes as $cliente): ?>
-                    <tr>
-                        <td>
+                    <tr role="row">
+                        <td role="cell">
+                            <span class="listado-etiqueta" aria-hidden="true">Documento</span>
                             <span class="chip-id">#<?= h($cliente['id_cliente']) ?></span>
                         </td>
-                        <td>
+                        <td role="cell">
+                            <span class="listado-etiqueta" aria-hidden="true">Nombre</span>
                             <span class="celda-destacada"><?= h($cliente['nombre']) ?></span>
                         </td>
-                        <td>
+                        <td role="cell">
+                            <span class="listado-etiqueta" aria-hidden="true">Fecha de registro</span>
                             <span class="celda-fecha"><?= h($cliente['fecha_registro']) ?></span>
                         </td>
-                        <td>
+                        <td role="cell">
+                            <span class="listado-etiqueta" aria-hidden="true">Facturas</span>
                             <span class="insignia-facturas <?= (int)$cliente['total_facturas'] > 0 ? 'con-facturas' : 'sin-facturas' ?>">
                                 <?= h($cliente['total_facturas']) ?> <?= (int)$cliente['total_facturas'] === 1 ? 'factura' : 'facturas' ?>
                             </span>
                         </td>
-                        <td>
-                            <div class="acciones" style="justify-content: flex-end;">
+                        <td role="cell" class="listado-acciones">
+                            <span class="listado-etiqueta" aria-hidden="true">Acciones</span>
+                            <div class="acciones acciones-listado">
                                 <a class="editar" href="editar_cliente.php?id=<?= h($cliente['id_cliente']) ?>" title="Editar cliente #<?= h($cliente['id_cliente']) ?>">
                                     <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                                         <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
@@ -159,7 +162,7 @@ require __DIR__ . '/../includes/menu.php';
                                     <span>Editar</span>
                                 </a>
                                 <?php if ((int)$cliente['total_facturas'] === 0): ?>
-                                    <form method="post" action="eliminar_cliente.php" onsubmit="return confirm('¿Eliminar este cliente?')">
+                                    <form method="post" action="eliminar_cliente.php">
                                         <?php if ($tokenCsrf !== null): ?>
                                             <input type="hidden" name="csrf_token" value="<?= h($tokenCsrf) ?>">
                                         <?php endif; ?>
@@ -197,4 +200,5 @@ require __DIR__ . '/../includes/menu.php';
         <span>Control de integridad: No se permite eliminar clientes que tengan facturas asociadas en el sistema.</span>
     </div>
 <?php endif; ?>
+<?php mostrarPaginacion($paginacion); ?>
 <?php require __DIR__ . '/../includes/pie.php'; ?>

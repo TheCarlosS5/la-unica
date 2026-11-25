@@ -11,16 +11,19 @@
 
   let siguienteId = 0;
 
+  /* FILAS — Obtiene las líneas actuales del formulario para recalcular su estado. */
   function filas() {
     return Array.from(lineas.querySelectorAll('[data-linea-factura]'));
   }
 
+  /* CENTAVOS — Convierte el precio decimal a centavos BigInt sin introducir redondeo binario. */
   function centavos(precio) {
     const coincidencia = String(precio || '').match(/^(\d+)(?:\.(\d{1,2}))?$/);
     if (!coincidencia) return 0n;
     return BigInt(coincidencia[1]) * 100n + BigInt((coincidencia[2] || '').padEnd(2, '0'));
   }
 
+  /* MONEDADESDECENTAVOS — Presenta los centavos calculados con formato de pesos colombianos. */
   function monedaDesdeCentavos(valor) {
     const pesos = valor / 100n;
     const fraccion = String(valor % 100n).padStart(2, '0');
@@ -28,6 +31,7 @@
     return '$' + pesosFormateados + ',' + fraccion + ' COP';
   }
 
+  /* ASIGNARIDS — Relaciona etiquetas y controles con identificadores únicos en cada fila. */
   function asignarIds(fila) {
     const select = fila.querySelector('[data-producto-select]');
     const cantidad = fila.querySelector('[data-cantidad]');
@@ -39,8 +43,11 @@
     cantidad.id = 'cantidad_' + sufijo;
     etiquetaProducto.htmlFor = select.id;
     etiquetaCantidad.htmlFor = cantidad.id;
+    fila.querySelector('[data-error-producto]').id = 'error-producto-' + sufijo;
+    fila.querySelector('[data-error-cantidad]').id = 'error-cantidad-' + sufijo;
   }
 
+  /* ACTUALIZARDETALLE — Muestra precio y stock del producto y actualiza el máximo permitido en la cantidad. */
   function actualizarDetalle(fila) {
     const select = fila.querySelector('[data-producto-select]');
     const cantidad = fila.querySelector('[data-cantidad]');
@@ -59,6 +66,7 @@
       + ' · Existencias disponibles: ' + stock;
   }
 
+  /* ACTUALIZAROPCIONES — Deshabilita artículos agotados o seleccionados en otra línea. */
   function actualizarOpciones() {
     const todasLasFilas = filas();
 
@@ -76,6 +84,7 @@
     });
   }
 
+  /* ACTUALIZARTOTAL — Suma las líneas válidas como importe estimado; no registra la venta. */
   function actualizarTotal() {
     let total = 0n;
     filas().forEach(function (fila) {
@@ -90,6 +99,7 @@
     salidaTotal.textContent = monedaDesdeCentavos(total);
   }
 
+  /* ACTUALIZARCONTROLES — Gestiona disponibilidad de agregar y quitar líneas para conservar un formulario válido. */
   function actualizarControles() {
     const seleccionados = new Set(filas().map(function (fila) {
       return fila.querySelector('[data-producto-select]').value;
@@ -103,6 +113,7 @@
     });
   }
 
+  /* REFRESCAR — Sincroniza opciones, total y botones después de un cambio del formulario. */
   function refrescar() {
     actualizarOpciones();
     actualizarTotal();
@@ -120,12 +131,49 @@
     nuevaFila.querySelector('[data-producto-select]').focus();
   });
 
+  function actualizarError(campo) {
+    const esProducto = campo.matches('[data-producto-select]');
+    const fila = campo.closest('[data-linea-factura]');
+    const error = fila.querySelector(esProducto ? '[data-error-producto]' : '[data-error-cantidad]');
+    let mensaje = '';
+    if (campo.validity.rangeOverflow) {
+      mensaje = 'Las existencias disponibles son ' + campo.max + '. Reduce la cantidad.';
+    } else if (!campo.validity.valid) {
+      mensaje = esProducto ? 'Selecciona un producto.' : 'Escribe una cantidad entera mayor que cero.';
+    }
+    error.textContent = mensaje;
+    error.hidden = !mensaje;
+    if (mensaje) {
+      campo.setAttribute('aria-invalid', 'true');
+      campo.setAttribute('aria-describedby', error.id);
+    } else {
+      campo.removeAttribute('aria-invalid');
+      campo.removeAttribute('aria-describedby');
+    }
+  }
+
+  lineas.addEventListener('invalid', function (evento) {
+    if (evento.target.matches('[data-producto-select], [data-cantidad]')) actualizarError(evento.target);
+  }, true);
+
+  if (document.getElementById('error-lineas')) {
+    filas().forEach(function (fila) {
+      fila.querySelectorAll('[data-producto-select], [data-cantidad]').forEach(actualizarError);
+    });
+  }
+
   lineas.addEventListener('change', function (evento) {
-    if (evento.target.matches('[data-producto-select]')) refrescar();
+    if (!evento.target.matches('[data-producto-select]')) return;
+    refrescar();
+    if (evento.target.hasAttribute('aria-invalid')) actualizarError(evento.target);
+    const cantidad = evento.target.closest('[data-linea-factura]').querySelector('[data-cantidad]');
+    if (cantidad.hasAttribute('aria-invalid')) actualizarError(cantidad);
   });
 
   lineas.addEventListener('input', function (evento) {
-    if (evento.target.matches('[data-cantidad]')) actualizarTotal();
+    if (!evento.target.matches('[data-cantidad]')) return;
+    actualizarTotal();
+    if (evento.target.hasAttribute('aria-invalid')) actualizarError(evento.target);
   });
 
   lineas.addEventListener('click', function (evento) {

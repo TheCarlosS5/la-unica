@@ -1,0 +1,43 @@
+{
+  "fecha": "2026-11-11",
+  "base_codigo": "a87bb480a72c0b2190b4237d94cf8e6dbc86ad43",
+  "archivos_originales_conservados": 1941,
+  "archivos_funcionales_sin_cambios": 49,
+  "php_sintaxis_valida": 83,
+  "imagenes_originales_conservadas": 51,
+  "imagenes_wiki_actuales": 61,
+  "documentos": {
+    "SRS": {
+      "version": "1.6",
+      "paginas": 21,
+      "imagenes": 0,
+      "parrafos_comprobados": 251,
+      "docx_sha256": "35c50714ef1079d8756ca008a782db3aecfc6805e4b5248d2a03d02abe7753b2",
+      "pdf_sha256": "7b7c7c98749ae22942075419379d73a30f82db0d5dcb94c6d66a6d619057a86f"
+    },
+    "manual": {
+      "version": "2.1",
+      "paginas": 43,
+      "imagenes": 27,
+      "parrafos_comprobados": 161,
+      "docx_sha256": "9fa86e224417fd520bd59e3a3a32dc2e924d17945236c65106044bc82255f684",
+      "pdf_sha256": "52e1c1af37a4260b36b244b530a38199e8dfc7e95c60894747a6da91a7c65398"
+    },
+    "manual_tecnico": {
+      "version": "1.4",
+      "paginas": 9,
+      "imagenes": 0,
+      "parrafos_comprobados": 113,
+      "docx_sha256": "b7153f718dce0e66c3a99e253482c10b60f62271d8dcb63927b22558ec86589c",
+      "pdf_sha256": "45a1c05f88257a1967b0431716d258166921b22c29ac684fc336c2ef0bf27e0d"
+    },
+    "PAC": {
+      "version": "1.4",
+      "paginas": 8,
+      "imagenes": 0,
+      "parrafos_comprobados": 109,
+      "docx_sha256": "9f09f4188ad777ca8714c9e0771bc50658291e0c1f46bae52258b4b6b0688068",
+      "pdf_sha256": "003c0019ac9b2140ffef44a339a902976035b5fc6e73d6cf48570c94f35a3ae3"
+    }
+  }
+}

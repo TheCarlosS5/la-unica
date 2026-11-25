@@ -1,62 +1,29 @@
 <?php if (!defined('LA_UNICA_WIKI')) { exit; } ?>
 <p>Una <strong>factura</strong> es una venta: un cliente, una fecha, un estado y una o más líneas (producto + cantidad).</p>
-<h2 id="estados-de-una-factura">Estados de una factura</h2>
-<div class="tabla-wiki"><table>
-<thead>
-<tr>
-<th>Estado</th>
-<th>Cómo se llega</th>
-<th>¿Descontó stock?</th>
-<th>¿Se puede cancelar?</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><span class="insignia insignia-success">Pagado</span></td>
-<td>Venta <em>de contado</em>, o al registrar el pago de una <em>Pendiente</em></td>
-<td>Sí</td>
-<td><strong>Sí</strong>, una sola vez</td>
-</tr>
-<tr>
-<td><span class="insignia insignia-danger">Cancelado</span></td>
-<td>Al cancelar una factura <em>Pagado</em> o <em>Pendiente</em></td>
-<td>No (se repuso)</td>
-<td>No</td>
-</tr>
-<tr>
-<td><span class="insignia insignia-caution">Pendiente</span></td>
-<td>Venta <em>por cobrar</em> (fiado): el cliente se lleva la mercancía y paga después</td>
-<td>Sí</td>
-<td><strong>Sí</strong>, una sola vez</td>
-</tr>
-</tbody>
-</table></div>
-<div class="aviso aviso-note">
-<p class="aviso-titulo">Nota</p>
-<p>Al guardar una venta eliges la <strong>forma de pago</strong>: <em>De contado</em> la guarda como <em>Pagado</em>; <em>Por cobrar</em> la guarda como <em>Pendiente</em>. Cuando el cliente pague, abre el comprobante y pulsa <strong>Registrar pago</strong>: pasa a <em>Pagado</em> sin mover el inventario.</p>
-</div>
+<h2 id="estados-de-una-factura">Estados de una factura</h2><div class="tabla-wiki"><table><thead><tr><th>Estado</th><th>Cómo se llega</th><th>Inventario</th><th>Cancelación</th></tr></thead><tbody><tr><td><span class="insignia insignia-success">Pagado</span></td><td>Al guardar una venta válida. No procesa un cobro bancario.</td><td>Se descuenta al guardar.</td><td>Una vez y solo el mismo día de la venta.</td></tr><tr><td><span class="insignia insignia-danger">Cancelado</span></td><td>Al confirmar la cancelación permitida.</td><td>Se repone una sola vez.</td><td>No puede cancelarse otra vez ni reactivarse.</td></tr></tbody></table></div>
+<p>Esta versión no implementa ventas a crédito, estado Pendiente ni registro posterior de pagos.</p>
 <h2 id="abrir-el-módulo">Abrir el módulo</h2>
 <figure class="captura"><img src="img/facturas-menu.webp" alt="Facturas en el menú" loading="lazy"><figcaption>Facturas en el menú</figcaption></figure>
 <ul>
 <li><span class="marca-num">1</span> <strong>Facturas</strong> abre la búsqueda de ventas.</li>
-<li><span class="marca-num">2</span> <strong>Nueva factura</strong> abre el formulario para vender.</li>
+<li><span class="marca-num">2</span> <strong>Crear factura</strong> abre el formulario para vender.</li>
 </ul>
 <h2 id="registrar-una-venta">Registrar una venta</h2>
 <div class="pasos">
 <ol>
 <li>
-<p>Menú → <em>Ventas → <strong>Nueva factura</strong></em>.</p>
+<p>Menú → <em>Ventas → <strong>Crear factura</strong></em>.</p>
 </li>
 <li>
-<p><span class="marca-num">1</span> <strong>Elige el cliente.</strong> La lista muestra el nombre y el ID. <span class="marca-num">2</span> <strong>Elige la forma de pago:</strong> <em>De contado</em> guarda la venta como <em>Pagado</em>; <em>Por cobrar</em>, como <em>Pendiente</em> (luego registras el pago desde el comprobante).</p>
-<figure class="captura"><img src="img/facturas-paso-cliente.webp" alt="Selección del cliente y de la forma de pago" loading="lazy"><figcaption>Selección del cliente y de la forma de pago</figcaption></figure>
+<p><span class="marca-num">1</span> <strong>Elige el cliente.</strong> La lista muestra el nombre y el ID. La venta se guardará como <strong>Pagado</strong>; no hay selector de forma de pago.</p>
+<figure class="captura"><img src="img/facturas-paso-cliente.webp" alt="Selección del cliente de la venta" loading="lazy"><figcaption>Selección del cliente de la venta</figcaption></figure>
 </li>
 <li>
 <p><strong>Llena la primera línea.</strong></p>
 <figure class="captura"><img src="img/facturas-paso-linea.webp" alt="Primera línea de la factura" loading="lazy"><figcaption>Primera línea de la factura</figcaption></figure>
 <ul>
-<li><span class="marca-num">1</span> <strong>Producto</strong>: cada opción muestra unidad, precio y stock.</li>
-<li><span class="marca-num">2</span> <strong>Cantidad</strong>: número entero mayor que 0. No deja pasar del stock disponible.</li>
+<li><span class="marca-num">1</span> <strong>Producto</strong>: cada opción muestra la unidad, el precio y las existencias.</li>
+<li><span class="marca-num">2</span> <strong>Cantidad</strong>: número entero mayor que 0. No puede superar las existencias disponibles.</li>
 <li><span class="marca-num">3</span> Debajo verás el <strong>precio unitario</strong> y las <strong>existencias disponibles</strong> del producto elegido.</li>
 </ul>
 </li>
@@ -64,7 +31,7 @@
 <p><strong>Agrega más productos si los necesitas.</strong></p>
 <figure class="captura"><img src="img/facturas-paso-agregar.webp" alt="Varias líneas en la factura" loading="lazy"><figcaption>Varias líneas en la factura</figcaption></figure>
 <ul>
-<li><span class="marca-num">1</span> <strong>Agregar producto</strong> añade otra línea (máximo 100).</li>
+<li><span class="marca-num">1</span> <strong>Agregar producto</strong> añade otra línea mientras queden productos disponibles.</li>
 <li><span class="marca-num">2</span> <strong>Quitar</strong> elimina una línea. Siempre queda al menos una.</li>
 </ul>
 </li>
@@ -73,11 +40,11 @@
 <figure class="captura"><img src="img/facturas-paso-total.webp" alt="Total estimado y botón Guardar venta" loading="lazy"><figcaption>Total estimado y botón Guardar venta</figcaption></figure>
 <ul>
 <li><span class="marca-num">1</span> El <strong>Total estimado</strong> se recalcula al instante con los precios actuales. Al guardar, cada línea conserva ese precio aunque después cambie el catálogo.</li>
-<li><span class="marca-num">2</span> Pulsa <strong>Guardar venta</strong>. El botón cambia a <em>Guardando…</em> para evitar que se guarde dos veces.</li>
+<li><span class="marca-num">2</span> Pulsa <strong>Guardar venta</strong>. El botón cambia a <em>Procesando…</em> para evitar que se guarde dos veces.</li>
 </ul>
 </li>
 <li>
-<p><strong>Listo.</strong> Verás el número de la factura y su total. El stock de cada producto ya se descontó.</p>
+<p><strong>Listo.</strong> Verás el número de la factura y su total. Ya se descontaron de las existencias las unidades vendidas.</p>
 <figure class="captura"><img src="img/facturas-paso-exito.webp" alt="Factura registrada" loading="lazy"><figcaption>Factura registrada</figcaption></figure>
 </li>
 </ol>
@@ -85,15 +52,16 @@
 <h3 id="reglas-del-formulario">Reglas del formulario</h3>
 <ul>
 <li><strong>Cada producto una sola vez</strong>: si un producto ya está en una línea, aparece deshabilitado en las demás. Para vender más, sube la cantidad.</li>
-<li>Los productos <strong>agotados</strong> (stock 0) aparecen deshabilitados.</li>
-<li>Cuando ya elegiste todos los productos con stock, <strong>Agregar producto</strong> se desactiva.</li>
+<li>Los productos <strong>agotados</strong> (sin existencias) aparecen deshabilitados.</li>
+<li>Cuando ya elegiste todos los productos con existencias, <strong>Agregar producto</strong> se desactiva.</li>
 </ul>
-<p>Al guardar, el servidor vuelve a comprobar <strong>todo</strong> dentro de una transacción. Si entre que abriste el formulario y guardaste alguien vendió y ya no alcanza el stock, verás:</p>
+<p>Al guardar, el servidor vuelve a comprobar <strong>todo</strong> dentro de una transacción. Si entre que abriste el formulario y guardaste alguien vendió y ya no hay existencias suficientes, verás:</p>
 <blockquote>
 <p>Las existencias cambiaron y no alcanzan para completar la venta. Revisa las cantidades e inténtalo de nuevo.</p>
 </blockquote>
 <p>y <strong>no se guarda nada</strong>: ni la factura ni los descuentos.</p>
 <h2 id="buscar-facturas">Buscar facturas</h2>
+<p>El listado muestra hasta 25 registros por página. Usa <strong>Anterior</strong> y <strong>Siguiente</strong> para navegar con los filtros actuales.</p>
 <div class="pasos">
 <ol>
 <li>Menú → <em>Ventas → <strong>Facturas</strong></em>.</li>
@@ -122,7 +90,7 @@
 <figure class="captura"><img src="img/facturas-comprobante-botones.webp" alt="Botones del comprobante" loading="lazy"><figcaption>Botones del comprobante</figcaption></figure>
 <ul>
 <li><span class="marca-num">1</span> <strong>Imprimir</strong>: abre el diálogo de impresión del navegador. Puedes elegir <em>Guardar como PDF</em>.</li>
-<li><span class="marca-num">2</span> <strong>Cancelar factura</strong>: aparece en facturas <em>Pagado</em> y <em>Pendiente</em> (ver abajo). En una <em>Pendiente</em> también verás <strong>Registrar pago</strong>.</li>
+<li><span class="marca-num">2</span> <strong>Cancelar factura</strong>: se habilita para facturas Pagado del mismo día. Las de otro día muestran la restricción y las canceladas no pueden repetirse.</li>
 <li><span class="marca-num">3</span> <strong>Volver a facturas</strong>.</li>
 </ul>
 </li>
@@ -141,10 +109,11 @@
 <h2 id="cancelar-una-factura">Cancelar una factura</h2>
 <div class="pasos">
 <ol>
-<li>Abre el comprobante de una factura <strong>Pagado</strong> o <strong>Pendiente</strong> y pulsa <strong>Cancelar factura</strong> (<span class="marca-num">2</span> en la imagen de los botones).</li>
-<li>Confirma: <em>«¿Cancelar esta factura y reponer las existencias?»</em>.</li>
+<li>Abre el comprobante de una factura <strong>Pagado del mismo día</strong> y pulsa <strong>Cancelar factura</strong> (<span class="marca-num">2</span> en la imagen de los botones).</li>
+<li>Revisa los datos, escribe el <strong>motivo de la cancelación</strong> (hasta 160 caracteres) y pulsa <strong>Confirmar cancelación</strong>. El motivo queda en Historial de acciones.</li>
 <li>
-<p>Listo:</p>
+<p>La captura anterior al cambio ilustra los datos que debes revisar.</p><figure class="captura"><img src="img/facturas-cancelar-confirmacion.webp" alt="Pantalla de confirmación de la cancelación" loading="lazy"><figcaption>Pantalla de confirmación de la cancelación</figcaption></figure>
+<p>Después de confirmar:</p>
 <figure class="captura"><img src="img/facturas-cancelada.webp" alt="Factura cancelada" loading="lazy"><figcaption>Factura cancelada</figcaption></figure>
 <ul>
 <li><span class="marca-num">1</span> El aviso confirma que <strong>se repuso el inventario</strong>: cada producto recuperó las unidades vendidas.</li>
@@ -156,11 +125,9 @@
 <p><strong>La reposición ocurre una sola vez.</strong> Aunque alguien reenvíe la petición, el servidor responde <em>«Esta factura ya está cancelada; no se repuso el inventario otra vez.»</em></p>
 <div class="pestanas">
 <div class="pestana" data-titulo="Ejemplo del SRS">
-<p>Una venta descontó <strong>3</strong> unidades. Luego se ajustó el stock a mano a <strong>1</strong>. Al cancelar la venta el stock queda en <strong>4</strong> (1 + 3). Una segunda cancelación no cambia nada.</p>
+<p>Una venta descontó <strong>3</strong> unidades. Luego se ajustaron las existencias a <strong>1</strong> unidad. Al cancelar la venta quedan <strong>4</strong> unidades (1 + 3). Una segunda cancelación no cambia nada.</p>
 </div>
-<div class="pestana" data-titulo="¿Y las facturas Pendiente?">
-<p>Se cancelan igual que las <em>Pagado</em>: la mercancía vuelve al inventario y la deuda desaparece del reporte de pendientes.</p>
-</div>
+<div class="pestana" data-titulo="Regla del mismo día"><p>Solo se cancela una factura Pagado del día actual en America/Bogota. Una factura anterior se conserva y el servidor rechaza su cancelación.</p></div>
 </div>
 <h2 id="lo-que-no-se-puede-hacer">Lo que no se puede hacer</h2>
 <ul>

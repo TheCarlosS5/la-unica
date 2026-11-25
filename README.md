@@ -1,116 +1,124 @@
 # La Única
 
-Aplicación web local para administrar clientes, productos, ventas mediante facturas y reportes. Está desarrollada en PHP y se conecta a MySQL mediante MySQLi. Laragon es el entorno documentado para ejecutarla.
+Aplicación PHP local para administrar clientes, productos, ventas e inventario. Documentación alineada el **23 de noviembre de 2026** con el commit [`e527b75`](https://github.com/TheCarlosS5/la-unica/commit/e527b752204e0faf23fb4bb05876ccc4096082ad), publicado el 22 de noviembre en hora de Colombia. El nombre de una carpeta o una versión documental no identifica por sí solo una versión de software.
 
-La especificación de requisitos vigente es [referencias/SRS.docx](referencias/SRS.docx), versión 1.5. Para consulta están disponibles [referencias/SRS.pdf](referencias/SRS.pdf) y [referencias/SRS.md](referencias/SRS.md), también en versión 1.5. Los tres documentos describen el alcance de clientes, productos, facturas, cobros, reportes y la sección Sobre nosotros, además de la arquitectura del aplicativo.
+## Funciones
 
-El [manual de usuario en Word](referencias/manual.docx) y su [versión PDF](referencias/manual.pdf), versión 1.1, explican paso a paso todos los módulos con capturas actuales: ventas de contado o por cobrar, registro de pago, cancelación, reportes y la sección «Sobre nosotros», que permite consultar el PDF dentro del aplicativo, ver el video explicativo y abrir la wiki.
+- Clientes: documento único, nombre y fecha automática; búsqueda y edición del nombre. Eliminación solo sin facturas.
+- Listados: clientes, productos y facturas en páginas de 25 filas; filtros conservados y total de registros.
+- Productos: nombre, unidad, stock entero y precio. Editar el catálogo no altera los nombres, unidades ni precios guardados en ventas anteriores.
+- Facturas: ventas **Pagado**, descuento transaccional de stock y comprobante imprimible. Cancelación únicamente el mismo día en America/Bogota, con motivo obligatorio y reposición una sola vez. Las facturas no se editan ni se eliminan.
+- Cinco reportes: **Ventas**, **Unidades vendidas por producto**, **Existencias**, **Clientes y cantidad de facturas** y **Detalle de facturas**; resumen diario, impresión/PDF y descarga CSV de cada consulta.
+- Historial de acciones en SQL y errores técnicos en archivo. La wiki y el historial de errores funcionan sin SQL.
+- Acceso: un operador en el mismo equipo. Términos y Condiciones obligatorios con aceptación recordada durante 30 días. Los módulos operativos exigen la aceptación antes de abrir SQL. El operador entra sin cuenta y el portal usa un token CSRF.
+- Sobre nosotros: SRS completo, manual del usuario, manual técnico, PAC, video y wiki ilustrada.
 
-## Funciones implementadas
-
-- **Clientes:** crear, consultar, editar y eliminar. El identificador se ingresa manualmente; la fecha de registro es opcional (no puede ser posterior a hoy) y, si se deja vacía, la asigna la base de datos.
-- **Productos:** crear, consultar, editar y eliminar. El identificador se genera automáticamente. Se administran nombre, unidad de medida de texto, existencias enteras y precio unitario.
-- **Ventas:** crear una factura de contado (*Pagado*) o por cobrar (*Pendiente*) para un cliente con uno o varios productos. La aplicación comprueba y descuenta existencias en una transacción y **guarda el precio de cada línea**: editar después el catálogo no altera las facturas ya emitidas.
-- **Facturas:** buscar y consultar facturas, ver sus detalles, imprimir un comprobante interno, registrar el pago de una factura *Pendiente* y cancelar facturas *Pagado* o *Pendiente* reponiendo el inventario una sola vez.
-- **Reportes:** un resumen general y siete reportes individuales: clientes y cantidad de facturas, total por factura, unidades vendidas por producto, detalle de facturas, existencias de productos, facturas por estado y ventas por cobrar (pendientes). Los totales y las unidades vendidas excluyen las facturas canceladas.
-- **Sobre nosotros:** acceso al manual PDF integrado, a la sección del video explicativo y a la wiki. Para reproducir el video, coloca el archivo en `assets/video/1.mp4`.
-- **Wiki:** documentación completa en `wiki/` (abre `…/wiki/` o *Menú → Información → Wiki*): guías paso a paso con capturas señaladas, configuración, solución de problemas y notas técnicas. Está hecha en PHP plano y no necesita la base de datos.
-- Las operaciones validan los datos; se protegen las solicitudes de modificación con tokens CSRF y las eliminaciones requieren confirmación. No se permite eliminar clientes con facturas ni productos que aparezcan en detalles de factura.
-
-## Funciones fuera del alcance actual
-
-La autenticación, los roles y las demás funciones excluidas del SRS siguen fuera de esta versión.
+No implementa crédito, pagos pendientes, impuestos ni factura electrónica. El sistema está diseñado para un único operador local.
 
 ## Requisitos
 
-- Apache.
-- PHP con las extensiones requeridas por la aplicación, incluida `mysqli` y `mysqlnd`.
-- MySQL 8.0.16 o posterior.
-- Navegador web moderno.
-- Laragon como entorno documentado para ejecución local.
+PHP **8.2 o posterior** con `mysqli`, `mysqlnd`, `mbstring` y sesiones operativas; Apache con `AllowOverride` para `.htaccess`; MySQL **8.0.16 o posterior** o MariaDB compatible con las restricciones del esquema. Laragon es el entorno de referencia. La revisión local usa PHP 8.3.33 y MariaDB 13.0.2; no certifica todas las versiones de ambos motores. Composer no es necesario para abrir el aplicativo.
 
-La interfaz usa CSS propio, fuentes locales y SVG integrados; no requiere Bootstrap ni una carpeta de paquetes `vendor`.
+## Instalación nueva e independiente
 
-## Base de datos
+1. Clona o copia el repositorio en una **carpeta nueva** de Laragon. Si ya tienes otro proyecto, conserva su carpeta y su base. Los ejemplos `la-unica` y `la-unica-2` son rutas de instalación, no nombres de bases obligatorios.
+2. Inicia Apache y SQL y comprueba el puerto real. `3306` es el valor predeterminado. Utiliza el puerto configurado en tu instalación.
+3. Importa `referencias/db.sql` solo en una instalación nueva. Crea `la_unica`; para otra copia cambia `CREATE DATABASE` y `USE` en una copia del script por un nombre exclusivo. No reimportes el esquema sobre datos de trabajo.
+4. Opcionalmente carga `referencias/clientes_prueba.sql` y `referencias/productos_prueba.sql`, ajustando sus `USE`: diez clientes y treinta productos ficticios. El conjunto alternativo de `wiki/herramientas/datos_ejemplo.sql` es para las capturas; no se acumula sobre una base ya poblada.
+5. Copia `php/config/conexion.local.example.php` a `conexion.local.php` y configura host, puerto, base, usuario y contraseña del equipo. Git ignora este archivo. `DB_HOST`, `DB_PORT`, `DB_DATABASE`, `DB_USERNAME` y `DB_PASSWORD` tienen prioridad; no se carga `.env` automáticamente. Usa una cuenta limitada a esa base, con SELECT, INSERT, UPDATE, DELETE y EXECUTE.
+6. Abre la URL de esa carpeta, por ejemplo `http://localhost/la-unica-2/`. Revisa el portal con Siguiente (o Saltar al final) y pulsa Aceptar y entrar; Rechazar vuelve al aviso. Comprueba una venta y sus reportes en la instalación ficticia antes de usar datos reales.
 
-El script [referencias/db.sql](referencias/db.sql) crea la base `la_unica`, cuatro tablas (`clientes`, `facturas`, `productos` y `detalle_facturas`), tres vistas y cinco procedimientos almacenados. **No inserta datos de ejemplo.**
+No se incluye migración automática desde el modelo anterior con Pendiente. Un traslado requiere respaldo, revisión del esquema y ensayo en otra base. No borres una base para resolver un error de conexión o importación.
 
-Importa el script una sola vez en una instancia donde todavía no exista la base `la_unica`, ya que contiene `CREATE DATABASE la_unica`. No es un script de actualización ni de reinicio para una base existente.
+## Documentación vigente
 
-**Si tu base se creó con una versión anterior**, haz una copia de seguridad y ejecuta una sola vez [referencias/migraciones/001_precio_historico.sql](referencias/migraciones/001_precio_historico.sql). Agrega `precio_unitario` a `detalle_facturas` y actualiza las vistas. Las líneas antiguas no tenían su precio guardado, así que se rellenan con el precio que tenga el catálogo en ese momento.
+| Documento | Versión | Archivos |
+| --- | --- | --- |
+| SRS completo | 1.6 | [Word](referencias/SRS.docx) · [PDF](referencias/SRS.pdf) |
+| Manual del usuario | 2.1 | [Word](referencias/manual.docx) · [PDF](referencias/manual.pdf) |
+| Manual técnico | 1.4 | [Word](referencias/manual_tecnico.docx) · [PDF](referencias/manual_tecnico.pdf) |
+| Plan de Aseguramiento de la Calidad | 2.0 | [Word](referencias/PAC.docx) · [PDF](referencias/PAC.pdf) |
 
-## Ejecución local con Laragon
+La [wiki](wiki/) conserva la estructura, pasos y capturas numeradas elegidos para la entrega y describe las reglas actuales. Sus páginas PHP se consultan a través del servidor. Sobre nosotros integra los cuatro PDF. Los visores de esa sección cargan SQL; la wiki y el historial de errores lo omiten. Los PDF pueden abrirse directamente desde el mismo equipo.
 
-1. Inicia Apache y MySQL desde Laragon.
-2. Importa `referencias/db.sql` en tu instancia local de MySQL.
-3. Por defecto la aplicación se conecta a `127.0.0.1:3306`, base `la_unica`, usuario `root` sin contraseña (los valores de Laragon). Si los tuyos son distintos, **no edites `conexion.php`**: copia [php/config/conexion.local.example.php](php/config/conexion.local.example.php) como `php/config/conexion.local.php` (Git lo ignora) y ajústalo, o define las variables `DB_HOST`, `DB_PORT`, `DB_DATABASE`, `DB_USERNAME` y `DB_PASSWORD`.
-4. Recomendado: crea un usuario MySQL exclusivo con [referencias/usuario_app.sql](referencias/usuario_app.sql) (cambia antes la contraseña) y úsalo en `conexion.local.php` en lugar de `root`.
-5. Configura Laragon para servir la carpeta del proyecto y abre la URL local que exponga Apache. `http://localhost/la-unica/` es un ejemplo; la dirección y el puerto web también pueden variar según la configuración.
+El [anexo del 18/11](referencias/REVISION_EQUIPOS_2026-11-18.md) y sus evidencias corresponden a un corte anterior con cuentas y roles. Las regresiones de acceso local y CSV del 22/11 están en [resultados del grupo 5](referencias/QA/resultados_grupo_5.json). La [revisión de coherencia](referencias/COHERENCIA_DOCUMENTAL.md) registra las correcciones y comprobaciones del 11/11/2026. QA conserva el [plan vigente](referencias/QA/plan-de-pruebas.md), [casos manuales](referencias/QA/casos-de-prueba.md), [checklist](referencias/QA/checklist-seguridad.md) y evidencias históricas identificadas por fecha. Se añade la prueba ejecutable `php tests/seguridad.php`; las verificaciones HTTP y de navegador del 18/11 están en `referencias/QA/revision_2026-11-18/`. No hay Composer ni workflows activos.
 
-PHP utiliza la zona horaria `America/Bogota` y cada conexión MySQL fija su sesión a UTC-05:00 para registrar y consultar las fechas locales.
+El [modelo de entidades y relaciones](referencias/mer.png) representa las cinco tablas del esquema actual.
 
-### Seguridad del equipo local
+## Exportar, imprimir y guardar como PDF
 
-El SRS limita la aplicación y MySQL al equipo local y no contempla autenticación ni roles. Eso solo es seguro si de verdad nadie más puede llegar a la aplicación:
+Usa **Descargar CSV** para trabajar en Excel o LibreOffice con las filas de la consulta y sus filtros. El separador es punto y coma y el archivo usa UTF-8. Para imprimir, aplica los filtros y pulsa **Imprimir reporte** o **Guardar como PDF**. Ambos abren el diálogo del navegador; para exportar selecciona el destino PDF y dónde guardarlo. Usa A4, escala 100 % y desactiva encabezados y pies del navegador: el documento incorpora su propio título, período, fecha y numeración. Detalle de facturas utiliza horizontal; los demás, vertical.
 
-- **Apache:** Laragon escucha por defecto en todas las interfaces (`Listen 80`), así que cualquiera en la misma red WiFi podría abrir la app. En *Menú → Apache → httpd.conf* cambia la línea por `Listen 127.0.0.1:80` y reinicia Apache.
-- **MySQL:** deja `bind-address = 127.0.0.1` en `my.ini` y usa el usuario `la_unica_app` en lugar de `root`.
-- **Archivos internos:** el [.htaccess](.htaccess) de la raíz responde 404 a `.git`, `vendor`, `tests`, `php/config`, los scripts SQL y los documentos de `referencias`, y `wiki/herramientas`. Requiere `AllowOverride` activo (Laragon lo trae).
-- La cookie de sesión usa `HttpOnly` y `SameSite=Strict`, y las páginas envían `X-Frame-Options`, `X-Content-Type-Options` y `Referrer-Policy`.
+La revisión visual de reportes del 10/11/2026 se realizó en Brave, incluidos ejemplos multipágina. El resultado puede variar con navegador, papel o escala. El comprobante también se imprime desde su vista.
 
-## Pruebas automatizadas
+## Protección y límites
 
-Las pruebas de integración usan PHPUnit y una base MySQL/MariaDB **aparte**: el nombre debe empezar por `la_unica_test`, y [tests/bootstrap.php](tests/bootstrap.php) rechaza cualquier otro.
+Apache restringe el acceso al mismo equipo con `Require local` en `.htaccess`. Usa Apache con `AllowOverride All` y no publiques el aplicativo por Internet ni lo reenvíes mediante un túnel o proxy. PHP `-S` no aplica esas restricciones.
 
-```bash
-composer install
-# Crear la base de pruebas a partir del esquema (una vez):
-sed -e 's/^CREATE DATABASE la_unica;$/CREATE DATABASE la_unica_test;/' \
-    -e 's/^USE la_unica;$/USE la_unica_test;/' referencias/db.sql | mysql -u root -p
-DB_TEST_HOST=127.0.0.1 DB_TEST_PORT=3306 DB_TEST_USERNAME=root DB_TEST_PASSWORD=... \
-DB_TEST_DATABASE=la_unica_test composer test
-```
+Los módulos verifican Términos y Condiciones antes de abrir SQL. El portal y los cambios de datos usan POST con tokens comprobados mediante `validarTokenCsrf()` en `php/config/seguridad.php`. En `php/config/consultas.php` se reutilizan las llamadas preparadas a procedimientos y el registro de auditoría. Cada módulo prepara sus consultas específicas mediante `mysqli::prepare()`. El historial guarda los motivos de cancelación. El MER y el esquema conservan cinco tablas. El documento del cliente sigue siendo un entero positivo de hasta 2.147.483.647.
 
-Cubren las vistas y los procedimientos, las restricciones de la base, y el flujo de ventas (`registrarVenta`, `registrarPagoFactura`, `cancelarFactura` en [php/facturas/servicio_facturas.php](php/facturas/servicio_facturas.php)): precio histórico, reversión cuando falta stock, cancelación única y exclusión de canceladas en los reportes. GitHub Actions las ejecuta en cada push y en cada pull request a `main`, junto con la validación de sintaxis PHP/JS y una prueba de la migración desde el esquema anterior.
+Las evidencias de concurrencia y rendimiento corresponden a los escenarios medidos y a su fecha. El PAC registra el resultado, la evidencia y el estado por verificar de cada caso. Los registros anteriores siguen identificados por fecha.
 
 ## Estructura del proyecto
 
 ```text
-AUTORES.md                Integrantes del equipo, roles y asistencia de IA
-index.php                 Punto de entrada que redirige a main.php
-main.php                  Carga la página de inicio
+index.php / main.php                 Entrada e inicio con comprobación de aceptación
+terminos.php                         Aviso operativo en cinco pasos
+procesar_terminos.php                Aceptación/rechazo en sesión y cookie de 30 días
+README.md                            Instalación y referencia vigente
+.htaccess                            Protección de archivos internos en Apache
 assets/
-  css/estilos.css         Hoja de estilos propia
-  fonts/                  Fuentes locales y archivo de licencias
-  img/                    Logotipo del aplicativo
-  js/facturas.js          Interacciones del formulario de facturas
-  video/                  Ubicación esperada para 1.mp4
+  css/estilos.css                     Estilos y diseño adaptable
+  fonts/ y LICENCIAS.txt              Fuentes locales y licencias
+  img/logo.png                       Marca del aplicativo
+  js/facturas.js                     Líneas y total estimado de la venta
+  js/formularios.js                  Bloqueo temporal de envíos repetidos
+  video/1.mp4                        Video explicativo
 php/
-  config/                 Conexión MySQLi, entorno (URL base, cabeceras, h()) y ayudantes de consulta
-  includes/               Menú y pie de página
-  inicio/                 Dashboard
-  clientes/               Operaciones de clientes
-  productos/              Operaciones de productos
-  facturas/               Ventas, pagos, cancelaciones e impresión; servicio_facturas.php tiene las reglas
-  reportes/               Resumen y reportes individuales
-  sobre_nosotros/         Manual integrado y página del video
+  config/conexion.php                Arranque y conexión SQL
+  config/configuracion.php           Valores privados y variables DB_*
+  config/entorno.php                 Hora, constantes y URL base
+  config/utilidades.php              Validación, escape y formato
+  config/seguridad.php               Sesión y tokens CSRF
+  config/consultas.php               Historial y procedimientos
+  config/errores.php                 Diagnóstico y respuestas generales
+  config/conexion.local.example.php  Plantilla privada; conexion.local.php se ignora
+  includes/                         Menú y pie compartidos
+  inicio/ clientes/ productos/       Catálogos y portada
+  facturas/                         Venta, comprobante y cancelación del día
+  reportes/                         Cinco consultas, resumen, impresión y CSV
+  historial/                        Acciones SQL y diagnóstico en archivo
+  sobre_nosotros/                    SRS, manuales, PAC, video y acceso a wiki
 wiki/
-  index.php               Wiki del proyecto (guías, configuración y notas técnicas)
-  paginas/                Contenido de cada página
-  img/                    Capturas señaladas paso a paso
-  herramientas/           Script que regenera las capturas
-tests/                    Pruebas de integración (PHPUnit)
+  index.php / includes/              Enrutador por catálogo, búsqueda y plantillas
+  paginas/                          Guías, configuración y notas técnicas
+  img/                              Capturas numeradas WebP
+  herramientas/                     Datos ficticios y generación aislada de capturas
+  css/ y js/                        Diseño, menú y visor de imágenes
 referencias/
-  db.sql                  Esquema inicial de la base de datos
-  migraciones/            Scripts para actualizar bases existentes
-  usuario_app.sql         Usuario MySQL con permisos mínimos
-  manual.docx             Manual de usuario editable, versión 1.1
-  manual.pdf              Manual de usuario para consulta y visor integrado
-  SRS.docx                Especificación de requisitos, versión 1.5
-  SRS.pdf                 Copia de consulta del SRS, versión 1.5
-  SRS.md                  Versión Markdown del SRS, versión 1.5
+  db.sql                            Cinco tablas, cuatro procedimientos, sin vistas
+  mer.png                           Modelo de entidades y relaciones
+  clientes_prueba.sql                Diez clientes ficticios
+  productos_prueba.sql               Treinta productos ficticios
+  SRS.docx / SRS.pdf                SRS 1.6
+  manual.docx / manual.pdf          Manual del usuario 2.1
+  manual_tecnico.docx / .pdf        Manual técnico 1.4
+  PAC.docx / PAC.pdf                PAC 2.0
+  QA/                               Plan, casos, hallazgos y evidencia fechada
+  COHERENCIA_DOCUMENTAL.md           Revisión de documentos y referencias
+logs/                               Diagnóstico privado; no se publican archivos .log
 ```
 
-## Autores
+## Equipo
 
-Proyecto de la ficha 3407799 (ADSO, SENA Regional Huila). Consulta los integrantes, sus roles y la asistencia de inteligencia artificial en [AUTORES.md](AUTORES.md).
+Proyecto de la ficha **3407799**, programa **Análisis y Desarrollo de Software**, SENA Regional Huila, Centro de la Industria, la Empresa y los Servicios. Instructor: **José de Jesús Motta Vargas**.
+
+| Integrante | Responsabilidad principal documentada en el SRS |
+| --- | --- |
+| Carlos Stiven Gutiérrez Ramírez | Interfaces y navegación |
+| Camilo Andrés Tamayo Duran | Lógica del aplicativo |
+| Kevin Fernando Martínez Pérez | Requisitos y documentación |
+| Samuel Santiago Ramírez Fierro | Base de datos |
+| Santiago Ortiz Claros | Calidad, pruebas y seguridad |
+
+El historial conserva los aportes de cada integrante.

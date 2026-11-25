@@ -1,10 +1,10 @@
 <?php if (!defined('LA_UNICA_WIKI')) { exit; } ?>
 <div class="aviso aviso-tip">
 <p class="aviso-titulo">Consejo</p>
-<p>Antes que nada, revisa el <strong>log de errores de PHP</strong>: ahí La Única escribe el detalle técnico que no muestra en pantalla (contexto, excepción y <code>SQLSTATE</code>). En Laragon suele estar en <code>C:\laragon\tmp\php_errors.log</code>.</p>
+<p>Antes que nada, revisa el <strong>Historial → Errores</strong>: ahí La Única escribe el detalle técnico que no muestra en pantalla (operación, tipo, código, mensaje y ubicación). El registro principal es <code>logs/errores.log</code>; solo si no puede escribirse se usa el log configurado de PHP.</p>
 </div>
-<h2 id="error-de-conexión-a-la-base-de-datos">«Error de conexión a la base de datos.»</h2>
-<p>Todas las páginas muestran solo esa frase (y HTTP 500).</p>
+<h2 id="error-de-conexión-a-la-base-de-datos">«No se pudo conectar a la base de datos»</h2>
+<p>Las páginas que necesitan SQL responden HTTP 500 con orientación general. El detalle técnico queda en el historial de errores.</p>
 <div class="pasos">
 <ol>
 <li><strong>¿MySQL está encendido?</strong> En Laragon, <em>Start All</em> y comprueba que MySQL esté en verde.</li>
@@ -13,18 +13,18 @@
 <li><strong>¿Usuario y contraseña?</strong> Por defecto <code>root</code> sin contraseña. Si tu MySQL tiene clave (o usas <code>la_unica_app</code>), ponla en <code>conexion.local.php</code>.</li>
 </ol>
 </div>
-<p>Mientras tanto, <em>Sobre nosotros → Manual del Usuario</em> sigue funcionando sin base de datos.</p>
+<p>Mientras tanto, la <strong>wiki y el Historial de errores</strong> siguen funcionando sin base de datos. Las páginas de Sobre nosotros sí cargan la conexión SQL.</p>
 <h2 id="error-al-importar-dbsql-database-exists">Error al importar <code>db.sql</code>: «database exists»</h2>
 <pre class="highlight"><code class="language-text">ERROR 1007 (HY000): Can't create database 'la_unica'; database exists</code></pre>
-<p>Ya la importaste antes. El script <strong>no es de reinicio</strong>. Si quieres empezar de cero (perderás los datos):</p>
-<pre class="highlight"><code class="language-sql">DROP DATABASE la_unica;</code></pre>
-<p>y vuelve a importar.</p>
+<p>La base ya existe. El script <strong>no es de reinicio</strong>. Conserva un respaldo y crea otra base con un nombre distinto ajustando CREATE DATABASE y USE; no borres una base para solucionar este mensaje.</p>
+<p>Importa la copia del esquema únicamente en ese destino nuevo y configura la aplicación para usarlo.</p>
 <h2 id="error-al-importar-check-o-default-current_date">Error al importar: <code>CHECK</code> o <code>DEFAULT (CURRENT_DATE)</code></h2>
 <pre class="highlight"><code class="language-text">ERROR 1064 (42000): You have an error in your SQL syntax ... near '(CURRENT_DATE)'</code></pre>
 <p>Tu MySQL es demasiado viejo (o es MariaDB antiguo). Necesitas <strong>MySQL 8.0.16 o superior</strong>. Laragon reciente ya lo trae.</p>
 <h2 id="las-tildes-y-eñes-se-ven-raras-ã-âœ">Las tildes y eñes se ven raras (<code>Ã±</code>, <code>â”œ</code>)</h2>
 <p>Los datos se insertaron con una codificación distinta de UTF-8 (pasa al importar con la consola de Windows). La app siempre usa <code>utf8mb4</code>; el problema está en cómo entraron los datos. Al importar desde consola usa:</p>
-<pre class="highlight"><code class="language-powershell">mysql -u root -P 3306 --default-character-set=utf8mb4 la_unica &lt; archivo.sql</code></pre>
+<pre class="highlight"><code class="language-powershell">mysql -u root -P 3306 --default-character-set=utf8mb4 --password NOMBRE_BASE_EXCLUSIVA
+# Dentro del cliente: SOURCE C:/ruta/archivo.sql;</code></pre>
 <h2 id="call-to-undefined-function-mysqli-o-class-mysqli-not-found">«Call to undefined function mysqli…» o «Class "mysqli" not found»</h2>
 <p>PHP no tiene la extensión <code>mysqli</code>. En Laragon: <em>Menú → PHP → Extensions → mysqli</em>. Fuera de Laragon, descomenta <code>extension=mysqli</code> en <code>php.ini</code> y reinicia Apache.</p>
 <h2 id="no-se-pudo-validar-la-solicitud-actualiza-la-página-e-inténtalo-de-nuevo">«No se pudo validar la solicitud. Actualiza la página e inténtalo de nuevo.»</h2>
@@ -43,11 +43,11 @@
 <li>La carpeta <code>assets/</code> no está junto a <code>php/</code>. Revisa la <a href="index.php?pagina=guia/instalacion#estructura-que-debes-tener">estructura</a>.</li>
 </ul>
 <h2 id="no-puedo-eliminar-un-cliente-o-producto">No puedo eliminar un cliente o producto</h2>
-<p>Es intencional: tiene <strong>historial de facturas</strong> (verás el candado <em>En facturas</em>). Las facturas nunca se borran, así que sus clientes y productos tampoco. Para un producto que ya no vendes, deja el stock en 0.</p>
+<p>Es intencional: tiene <strong>historial de facturas</strong> (verás el candado <em>En facturas</em>). Las facturas nunca se borran, así que sus clientes y productos tampoco. Para un producto que ya no vendes, deja sus existencias en 0.</p>
 <h2 id="un-producto-no-aparece-al-hacer-una-factura">Un producto no aparece al hacer una factura</h2>
-<p>Está <strong>agotado</strong> (stock 0) o ya lo elegiste en otra línea. Repón stock en <em>Productos → Editar</em> o ajusta la cantidad de la línea existente.</p>
+<p>Está <strong>agotado</strong> (sin existencias) o ya lo elegiste en otra línea. Repón existencias en <em>Productos → Editar</em> o ajusta la cantidad de la línea existente.</p>
 <h2 id="las-existencias-cambiaron-y-no-alcanzan-para-completar-la-venta">«Las existencias cambiaron y no alcanzan para completar la venta»</h2>
-<p>Entre que abriste el formulario y guardaste, el stock bajó (otra venta en otra pestaña, o alguien editó el producto). No se guardó nada. Revisa las cantidades y vuelve a guardar.</p>
+<p>Entre que abriste el formulario y guardaste, las existencias bajaron (otra venta en otra pestaña, o alguien editó el producto). No se guardó nada. Revisa las cantidades y vuelve a guardar.</p>
 <h2 id="el-total-de-una-factura-antigua-cambió">El total de una factura antigua cambió</h2>
 <p>No es un error: el esquema no guarda precio histórico. Ver la <a href="index.php?pagina=guia/faq#por-qué-cambió-el-total-de-una-factura-vieja">FAQ</a>.</p>
 <h2 id="el-video-no-aparece">El video no aparece</h2>

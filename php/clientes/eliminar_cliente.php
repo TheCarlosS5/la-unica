@@ -20,11 +20,7 @@ $mostrarConfirmacion = false;
 $nombreCliente = '';
 $tokenCsrf = obtenerTokenCsrf();
 
-$idRecibido = $_POST['id_cliente'] ?? null;
-$confirmarRecibido = $_POST['confirmar'] ?? null;
-$datosPostValidos = is_string($idRecibido)
-    && ($confirmarRecibido === null || is_string($confirmarRecibido));
-$idCliente = validarId($idRecibido);
+$idCliente = validarId($_POST['id_cliente'] ?? '');
 
 if (($_SERVER['REQUEST_METHOD'] ?? 'GET') !== 'POST') {
     http_response_code(400);
@@ -34,7 +30,7 @@ if (($_SERVER['REQUEST_METHOD'] ?? 'GET') !== 'POST') {
     http_response_code(403);
     $mensajeResultado = 'No se pudo validar la solicitud. Actualiza la página e inténtalo de nuevo.';
     $esError = true;
-} elseif (!$datosPostValidos || $idCliente === null) {
+} elseif ($idCliente === null) {
     http_response_code(400);
     $mensajeResultado = 'Solicitud no válida.';
     $esError = true;
@@ -52,7 +48,7 @@ if (($_SERVER['REQUEST_METHOD'] ?? 'GET') !== 'POST') {
             $mensajeResultado = 'No se encontró el cliente.';
             $esError = true;
         } else {
-            $esConfirmado = ($confirmarRecibido === 'si');
+            $esConfirmado = (($_POST['confirmar'] ?? '') === 'si');
 
             if (!$esConfirmado) {
                 $mostrarConfirmacion = true;
@@ -73,6 +69,7 @@ if (($_SERVER['REQUEST_METHOD'] ?? 'GET') !== 'POST') {
                     $ejecutado = $eliminar->execute();
 
                     if ($ejecutado && $eliminar->affected_rows === 1) {
+                        registrarAccion($conexion, 'Clientes', 'Eliminar', 'Cliente ' . $idCliente . ' «' . $nombreCliente . '» eliminado.');
                         $mensajeResultado = 'Cliente eliminado correctamente.';
                         $esError = false;
                     } else {
@@ -128,7 +125,7 @@ require __DIR__ . '/../includes/menu.php';
             </p>
 
             <dl class="tarjeta-registro-eliminar">
-                <dt>ID Cliente</dt>
+                <dt>Documento</dt>
                 <dd><span class="chip-id">#<?= h($idCliente) ?></span></dd>
                 <dt>Nombre</dt>
                 <dd><?= h($nombreCliente) ?></dd>

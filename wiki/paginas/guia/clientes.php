@@ -22,7 +22,7 @@
 <tr>
 <td>Fecha de registro</td>
 <td>fecha</td>
-<td>Opcional. Si la dejas vacía se usa la fecha de hoy. Puede ser anterior, pero no posterior a hoy.</td>
+<td>Automática: se asigna el día del registro. En la edición es de solo lectura; no se introduce desde el formulario.</td>
 </tr>
 </tbody>
 </table></div>
@@ -31,9 +31,10 @@
 <figure class="captura"><img src="img/clientes-menu.webp" alt="Clientes en el menú" loading="lazy"><figcaption>Clientes en el menú</figcaption></figure>
 <ul>
 <li><span class="marca-num">1</span> <strong>Clientes</strong> abre el listado.</li>
-<li><span class="marca-num">2</span> <strong>Nuevo cliente</strong> va directo al formulario de creación.</li>
+<li><span class="marca-num">2</span> <strong>Crear cliente</strong> va directo al formulario de creación.</li>
 </ul>
 <h2 id="leer-el-listado">Leer el listado</h2>
+<p>El listado muestra hasta 25 registros por página. Usa <strong>Anterior</strong> y <strong>Siguiente</strong> para navegar con los filtros actuales.</p>
 <figure class="captura"><img src="img/clientes-lista-columnas.webp" alt="Columnas importantes del listado" loading="lazy"><figcaption>Columnas importantes del listado</figcaption></figure>
 <ul>
 <li><span class="marca-num">1</span> <strong>Facturas</strong>: cuántas facturas tiene el cliente (de cualquier estado).</li>
@@ -58,15 +59,14 @@
 <h2 id="crear-un-cliente">Crear un cliente</h2>
 <div class="pasos">
 <ol>
-<li>Menú → <em>Clientes → <strong>Nuevo cliente</strong></em>.</li>
+<li>Menú → <em>Clientes → <strong>Crear cliente</strong></em>.</li>
 <li>
 <p>Llena el formulario:</p>
-<figure class="captura"><img src="img/clientes-crear-formulario.webp" alt="Formulario de nuevo cliente" loading="lazy"><figcaption>Formulario de nuevo cliente</figcaption></figure>
+<figure class="captura"><img src="img/clientes-crear-formulario.webp" alt="Formulario para crear un cliente" loading="lazy"><figcaption>Formulario para crear un cliente</figcaption></figure>
 <ul>
 <li><span class="marca-num">1</span> <strong>ID del cliente</strong>: el número que identifica al cliente en tu negocio. No se puede cambiar después.</li>
 <li><span class="marca-num">2</span> <strong>Nombre completo</strong>: hasta 100 caracteres.</li>
-<li><span class="marca-num">3</span> <strong>Fecha de registro</strong>: déjala vacía para usar la fecha de hoy.</li>
-<li><span class="marca-num">4</span> Pulsa <strong>Crear cliente</strong>.</li>
+<li><span class="marca-num">3</span> Pulsa <strong>Crear cliente</strong>. La fecha del día se asigna automáticamente.</li>
 </ul>
 </li>
 <li>
@@ -98,7 +98,7 @@
 </li>
 </ol>
 </div>
-<p>Las facturas guardan el <strong>ID</strong> y no una copia del nombre: al cambiar el nombre, todas sus facturas anteriores muestran el nombre nuevo.</p>
+<p>Las facturas guardan el <strong>ID y una copia del nombre</strong> del cliente al vender. Cambiar el nombre actual no modifica sus comprobantes anteriores.</p>
 <h2 id="eliminar-un-cliente">Eliminar un cliente</h2>
 <div class="pasos">
 <ol>

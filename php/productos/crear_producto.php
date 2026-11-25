@@ -2,7 +2,7 @@
 /**
  * Archivo: crear_producto.php
  * Módulo: Productos — alta.
- * Propósito: agregar un artículo al catálogo con unidad, stock inicial y precio.
+ * Propósito: agregar un producto al catálogo con unidad, stock inicial y precio.
  * Funcionamiento: valida el POST y su token CSRF; comprueba nombre, unidad, stock entero y precio
  * decimal antes de insertar con una sentencia preparada. En éxito aplica redirección HTTP 303.
  * Puntos clave: el ID lo genera la base; nombre admite 100 caracteres, unidad 20, stock no negativo
@@ -13,8 +13,9 @@ require __DIR__ . '/../config/conexion.php';
 
 $titulo = 'Crear producto';
 $seccionActiva = 'productos';
-$mensajeExito = tomarMensajeFlash('producto_creado');
+$mensajeExito = (($_GET['creado'] ?? '') === '1') ? 'Producto creado correctamente.' : '';
 $mensajeError = '';
+$campoError = '';
 $tokenCsrf = obtenerTokenCsrf();
 
 $nombreProducto = '';
@@ -23,47 +24,38 @@ $stockInicial = '';
 $precioUnitario = '';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $nombreRecibido = $_POST['nombre'] ?? null;
-    $unidadRecibida = $_POST['unidad_medida'] ?? null;
-    $stockRecibido = $_POST['stock'] ?? null;
-    $precioRecibido = $_POST['precio_unitario'] ?? null;
-
-    $datosPostValidos = is_string($nombreRecibido)
-        && is_string($unidadRecibida)
-        && is_string($stockRecibido)
-        && is_string($precioRecibido);
-
-    $nombreProducto = is_string($nombreRecibido) ? trim($nombreRecibido) : '';
-    $unidadMedida = is_string($unidadRecibida) ? trim($unidadRecibida) : '';
-    $stockTexto = is_string($stockRecibido) ? trim($stockRecibido) : '';
-    $precioTexto = is_string($precioRecibido) ? trim($precioRecibido) : '';
-
-    $stockValido = filter_var($stockTexto, FILTER_VALIDATE_INT);
-
-    $stockInicial = $stockTexto;
-    $precioUnitario = $precioTexto;
+    // Se conservan los valores escritos para devolverlos al formulario si hay un error.
+    $nombreProducto = leerTexto($_POST, 'nombre');
+    $unidadMedida = leerTexto($_POST, 'unidad_medida');
+    $stockInicial = leerTexto($_POST, 'stock');
+    $precioUnitario = leerTexto($_POST, 'precio_unitario');
+    $stockValido = validarEntero($stockInicial, 0);
+    $precioTexto = $precioUnitario;
 
     if (!validarTokenCsrf($_POST['csrf_token'] ?? null)) {
         http_response_code(403);
         $mensajeError = 'No se pudo validar la solicitud. Actualiza la página e inténtalo de nuevo.';
-    } elseif (!$datosPostValidos) {
-        $mensajeError = 'Los datos enviados no tienen el formato esperado.';
-    } elseif ($nombreRecibido === null || $nombreProducto === '' || longitudTexto($nombreProducto) > 100) {
+    } elseif ($nombreProducto === '' || longitudTexto($nombreProducto) > 100) {
         $mensajeError = 'El nombre es obligatorio y admite hasta 100 caracteres.';
-    } elseif ($unidadRecibida === null || $unidadMedida === '' || longitudTexto($unidadMedida) > 20) {
+        $campoError = 'nombre';
+    } elseif ($unidadMedida === '' || longitudTexto($unidadMedida) > 20) {
         $mensajeError = 'La unidad es obligatoria y admite hasta 20 caracteres.';
-    } elseif ($stockRecibido === null || $stockTexto === '' || $stockValido === false || $stockValido < 0 || $stockValido > 2147483647) {
-        $mensajeError = 'El stock debe ser un entero no negativo.';
-    } elseif ($precioRecibido === null || $precioTexto === '' || !preg_match('/^\d{1,8}(?:\.\d{1,2})?$/', $precioTexto)) {
+        $campoError = 'unidad_medida';
+    } elseif ($stockValido === null) {
+        $mensajeError = 'Las existencias deben ser un entero no negativo.';
+        $campoError = 'stock';
+    } elseif (!preg_match('/^\d{1,8}(?:\.\d{1,2})?$/', $precioTexto)) {
         $mensajeError = 'El precio debe ser no negativo y tener máximo dos decimales.';
+        $campoError = 'precio_unitario';
     } else {
         try {
             $sentencia = $conexion->prepare('INSERT INTO productos (nombre, unidad_medida, stock, precio_unitario) VALUES (?, ?, ?, ?)');
             $sentencia->bind_param('ssis', $nombreProducto, $unidadMedida, $stockValido, $precioTexto);
 
             if ($sentencia->execute()) {
-                guardarMensajeFlash('producto_creado', 'Producto creado correctamente.');
-                header('Location: crear_producto.php', true, 303);
+                registrarAccion($conexion, 'Productos', 'Crear', 'Producto #' . $conexion->insert_id . ' «' . $nombreProducto . '» creado: '
+                    . $stockValido . ' ' . $unidadMedida . ' a ' . formatearMonedaCop($precioTexto) . '.');
+                header('Location: crear_producto.php?creado=1', true, 303);
                 exit;
             } else {
                 $mensajeError = 'No se pudo crear el producto.';
@@ -85,10 +77,10 @@ require __DIR__ . '/../includes/menu.php';
             <span class="miga-separador" aria-hidden="true">/</span>
             <a href="ver_productos.php">Productos</a>
             <span class="miga-separador" aria-hidden="true">/</span>
-            <span>Nuevo producto</span>
+            <span>Crear producto</span>
         </nav>
         <h1 class="encabezado-titulo">Crear producto</h1>
-        <p class="encabezado-descripcion">Agrega un nuevo artículo al catálogo con sus existencias iniciales y precio unitario de comercialización.</p>
+        <p class="encabezado-descripcion">Agrega un nuevo producto al catálogo con sus existencias iniciales y precio unitario de comercialización.</p>
     </div>
 </div>
 
@@ -125,23 +117,26 @@ require __DIR__ . '/../includes/menu.php';
                         <span>Nombre del producto</span>
                         <span class="ayuda" style="margin:0;">Hasta 100 caracteres</span>
                     </label>
-                    <input id="nombre" name="nombre" type="text" maxlength="100" value="<?= h($nombreProducto) ?>" placeholder="Ej. Café molido 500g" required>
+                    <input id="nombre" name="nombre" type="text" maxlength="100" value="<?= h($nombreProducto) ?>" placeholder="Ej. Café molido 500g" required <?= $campoError === 'nombre' ? 'aria-invalid="true"' : '' ?> aria-describedby=" <?= $campoError === 'nombre' ? 'error-nombre' : '' ?>">
+                <?php if ($campoError === 'nombre'): ?><span id="error-nombre" class="error-campo"><?= h($mensajeError) ?></span><?php endif; ?>
                 </div>
                 <div class="campo">
                     <label for="unidad_medida">
                         <span>Unidad de medida</span>
                         <span class="ayuda" style="margin:0;">Hasta 20 car.</span>
                     </label>
-                    <input id="unidad_medida" name="unidad_medida" type="text" maxlength="20" value="<?= h($unidadMedida) ?>" placeholder="Ej. Kilogramo, Litro, Paquete" required>
+                    <input id="unidad_medida" name="unidad_medida" type="text" maxlength="20" value="<?= h($unidadMedida) ?>" placeholder="Ej. Kilogramo, Litro, Paquete" required <?= $campoError === 'unidad_medida' ? 'aria-invalid="true"' : '' ?> aria-describedby=" <?= $campoError === 'unidad_medida' ? 'error-unidad_medida' : '' ?>">
+                <?php if ($campoError === 'unidad_medida'): ?><span id="error-unidad_medida" class="error-campo"><?= h($mensajeError) ?></span><?php endif; ?>
                     <span class="ayuda texto-ayuda">Define la unidad para cuantificar ventas y existencias.</span>
                 </div>
 
                 <div class="campo">
                     <label for="stock">
-                        <span>Stock inicial</span>
+                        <span>Existencias iniciales</span>
                         <span class="ayuda" style="margin:0;">Entero ≥ 0</span>
                     </label>
-                    <input id="stock" name="stock" type="number" min="0" max="2147483647" step="1" value="<?= h($stockInicial) ?>" placeholder="0" required>
+                    <input id="stock" name="stock" type="number" min="0" max="2147483647" step="1" value="<?= h($stockInicial) ?>" placeholder="0" required <?= $campoError === 'stock' ? 'aria-invalid="true"' : '' ?> aria-describedby=" <?= $campoError === 'stock' ? 'error-stock' : '' ?>">
+                <?php if ($campoError === 'stock'): ?><span id="error-stock" class="error-campo"><?= h($mensajeError) ?></span><?php endif; ?>
                     <span class="ayuda texto-ayuda">Unidades disponibles en almacén.</span>
                 </div>
 
@@ -150,7 +145,8 @@ require __DIR__ . '/../includes/menu.php';
                         <span>Precio unitario ($)</span>
                         <span class="ayuda" style="margin:0;">Hasta 2 decimales</span>
                     </label>
-                    <input id="precio_unitario" name="precio_unitario" type="number" min="0" max="99999999.99" step="0.01" value="<?= h($precioUnitario) ?>" placeholder="0.00" required>
+                    <input id="precio_unitario" name="precio_unitario" type="number" min="0" max="99999999.99" step="0.01" value="<?= h($precioUnitario) ?>" placeholder="0.00" required <?= $campoError === 'precio_unitario' ? 'aria-invalid="true"' : '' ?> aria-describedby=" <?= $campoError === 'precio_unitario' ? 'error-precio_unitario' : '' ?>">
+                <?php if ($campoError === 'precio_unitario'): ?><span id="error-precio_unitario" class="error-campo"><?= h($mensajeError) ?></span><?php endif; ?>
                     <span class="ayuda texto-ayuda">Tarifa monetaria de venta por cada unidad de medida.</span>
                 </div>
             </div>

@@ -1,6 +1,6 @@
 <?php if (!defined('LA_UNICA_WIKI')) { exit; } ?>
 <h2 id="estilo-visual-papel-y-marcador">Estilo visual: «papel y marcador»</h2>
-<p>Toda la interfaz sale de <code>assets/css/estilos.css</code> (≈2.200 líneas, sin Bootstrap ni frameworks). La idea es una libreta: fondo de papel cálido, tinta de grafito, un <strong>marcador verde</strong> para las acciones y un <strong>resaltador amarillo</strong> para lo importante (totales, elemento activo).</p>
+<p>Toda la interfaz sale de <code>assets/css/estilos.css</code> (sin Bootstrap ni frameworks). La idea es una libreta: fondo de papel cálido, tinta de grafito, un <strong>marcador verde</strong> para las acciones y un <strong>resaltador amarillo</strong> para lo importante (totales, elemento activo).</p>
 <div class="tabla-wiki"><table>
 <thead>
 <tr>
@@ -43,7 +43,7 @@
 <tr>
 <td><code>--color-aviso</code></td>
 <td><code>#7a5200</code></td>
-<td>Candados «En facturas», pendiente</td>
+<td>Candados «En facturas» y avisos</td>
 </tr>
 <tr>
 <td><code>--fuente-titulo</code></td>
@@ -122,7 +122,7 @@
 <p>Las líneas nuevas se clonan de un <code>&lt;template id="plantilla-linea-factura"&gt;</code>. Al enviar, el botón se desactiva y muestra <em>Guardando…</em>.</p>
 <div class="aviso aviso-note">
 <p class="aviso-titulo">Nota</p>
-<p>El total del navegador es <strong>orientativo</strong>. El que vale es el que calcula el servidor con <code>vista_total_facturas</code> dentro de la transacción.</p>
+<p>El total del navegador es <strong>orientativo</strong>. El que vale es el que calcula el servidor con <code>SUM(cantidad * precio_unitario)</code> sobre los detalles históricos dentro de la transacción.</p>
 </div>
 <h2 id="accesibilidad">Accesibilidad</h2>
 <ul>

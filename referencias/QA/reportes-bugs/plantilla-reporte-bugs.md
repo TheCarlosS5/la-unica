@@ -1,16 +1,7 @@
-# Plantilla de Reporte de Bugs
+# Plantilla de hallazgo
 
-**ID del Bug:** BUG-001
-**Módulo:** (Ej. Ventas, Productos, Clientes)
-**Descripción:** (Explicación breve de qué está fallando)
+ID: BUG-NNN u OBS-NNN, único. Fecha: AAAA-MM-DD. Estado: Nuevo / En revisión / Corregido / No reproducido / Cerrado con verificación.
 
-**Pasos para reproducir el error:**
-1. Ir a la sección de...
-2. Hacer clic en...
-3. Ingresar los datos...
-4. Ocurre el error.
+Registrar módulo, requisito SRS, commit, entorno y navegador, base ficticia y datos necesarios, descripción, pasos reproducibles, esperado y obtenido, severidad y evidencia. Omitir contraseñas, logs privados completos y datos operativos.
 
-**Resultado Esperado:** (Qué debería haber pasado si el sistema funcionara bien)
-**Resultado Actual:** (Qué pasó realmente)
-**Severidad:** (Alta / Media / Baja)
-**Evidencia:** (Adjuntar captura de pantalla o video si es necesario)
+Separar el reporte original de cada seguimiento: fecha, cambio, resultado de verificación y responsable real. Un cambio de código no basta para inventar una aceptación de QA o del instructor.

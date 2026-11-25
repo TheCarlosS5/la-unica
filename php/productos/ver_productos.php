@@ -15,49 +15,37 @@ $titulo = 'Productos';
 $seccionActiva = 'productos';
 $tokenCsrf = obtenerTokenCsrf();
 
-$terminoBusqueda = $_GET['buscar'] ?? '';
-$terminoBusqueda = is_string($terminoBusqueda) ? trim($terminoBusqueda) : '';
+$terminoBusqueda = leerTexto($_GET, 'buscar');
 $busquedaActiva = $terminoBusqueda !== '';
-$idBusquedaNormalizado = ctype_digit($terminoBusqueda) ? ltrim($terminoBusqueda, '0') : '';
-if ($idBusquedaNormalizado === '' && $busquedaActiva && ctype_digit($terminoBusqueda)) {
-    $idBusquedaNormalizado = '0';
-}
-$buscarPorId = $busquedaActiva
-    && ctype_digit($terminoBusqueda)
-    && strlen($idBusquedaNormalizado) <= 10
-    && (float)$idBusquedaNormalizado <= 2147483647;
+// Si lo escrito es un número válido, también se busca como ID de producto.
+$idBuscado = validarId($terminoBusqueda);
 
 $sqlSeleccionProductos = 'SELECT p.id_producto, p.nombre, p.unidad_medida, p.stock, p.precio_unitario, COUNT(d.id_producto) AS total_detalles FROM productos p LEFT JOIN detalle_facturas d ON d.id_producto = p.id_producto';
 $sqlAgruparProductos = ' GROUP BY p.id_producto, p.nombre, p.unidad_medida, p.stock, p.precio_unitario ORDER BY p.id_producto';
 $productos = [];
 $errorLectura = false;
+$paginacion = null;
 try {
-    if ($busquedaActiva && $buscarPorId) {
-        $consultaProductos = $conexion->prepare($sqlSeleccionProductos . ' WHERE p.id_producto = ? OR p.nombre LIKE ?' . $sqlAgruparProductos);
-        $patronNombre = patronLike($terminoBusqueda);
-        $consultaProductos->bind_param('ss', $idBusquedaNormalizado, $patronNombre);
-        $consultaProductos->execute();
-        $resultadoProductos = $consultaProductos->get_result();
+    $condicion = '';
+    $tipos = '';
+    $parametros = [];
+    if ($idBuscado !== null) {
+        $condicion = ' WHERE p.id_producto = ? OR p.nombre LIKE ?';
+        $tipos = 'is';
+        $parametros = [$idBuscado, '%' . $terminoBusqueda . '%'];
     } elseif ($busquedaActiva) {
-        $consultaProductos = $conexion->prepare($sqlSeleccionProductos . ' WHERE p.nombre LIKE ?' . $sqlAgruparProductos);
-        $patronNombre = patronLike($terminoBusqueda);
-        $consultaProductos->bind_param('s', $patronNombre);
-        $consultaProductos->execute();
-        $resultadoProductos = $consultaProductos->get_result();
-    } else {
-        $resultadoProductos = $conexion->query($sqlSeleccionProductos . $sqlAgruparProductos);
+        $condicion = ' WHERE p.nombre LIKE ?';
+        $tipos = 's';
+        $parametros = ['%' . $terminoBusqueda . '%'];
     }
-    while ($producto = $resultadoProductos->fetch_assoc()) {
-        $productos[] = $producto;
-    }
-    $resultadoProductos->free();
-    if (isset($consultaProductos)) {
-        $consultaProductos->close();
-    }
+    $paginacion = consultarPagina($conexion, $sqlSeleccionProductos . $condicion . $sqlAgruparProductos, $tipos, $parametros);
+    $productos = $paginacion['filas'];
 } catch (Throwable $e) {
     registrarErrorServidor('leer_productos', $e);
     $errorLectura = true;
 }
+
+$mensajeTexto = leerTexto($_GET, 'mensaje');
 
 require __DIR__ . '/../includes/menu.php';
 ?>
@@ -81,6 +69,16 @@ require __DIR__ . '/../includes/menu.php';
         </a>
     </div>
 </div>
+
+<?php if ($mensajeTexto !== ''): ?>
+    <div class="mensaje alerta" role="status">
+        <svg class="alerta-icono" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
+            <polyline points="22 4 12 14.01 9 11.01" />
+        </svg>
+        <div class="alerta-contenido"><?= h($mensajeTexto) ?></div>
+    </div>
+<?php endif; ?>
 
 <form class="filtro-busqueda" method="get" action="ver_productos.php" role="search">
     <div class="campo">
@@ -110,7 +108,7 @@ require __DIR__ . '/../includes/menu.php';
             <line x1="12" y1="22" x2="12" y2="12" />
         </svg>
         <h2 class="estado-vacio-titulo">Todavía no hay productos registrados</h2>
-        <p class="estado-vacio-texto">Registra los primeros artículos del inventario con sus existencias y precios unitarios para iniciar las ventas.</p>
+        <p class="estado-vacio-texto">Registra los primeros productos del inventario con sus existencias y precios unitarios para iniciar las ventas.</p>
         <a class="boton" href="crear_producto.php">
             <svg class="boton-icono" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                 <line x1="12" y1="5" x2="12" y2="19" />
@@ -121,47 +119,54 @@ require __DIR__ . '/../includes/menu.php';
     </div>
 <?php else: ?>
     <div class="tabla-wrap tabla-contenedor">
-        <table class="tabla">
-            <thead>
-                <tr>
-                    <th scope="col">ID</th>
-                    <th scope="col">Nombre</th>
-                    <th scope="col">Unidad</th>
-                    <th scope="col">Stock</th>
-                    <th scope="col" class="texto-derecha">Precio unitario</th>
-                    <th scope="col">Detalles</th>
-                    <th scope="col" class="texto-derecha">Acciones</th>
+        <table class="tabla listado-adaptable" role="table">
+            <thead role="rowgroup">
+                <tr role="row">
+                    <th role="columnheader" scope="col">ID</th>
+                    <th role="columnheader" scope="col">Nombre</th>
+                    <th role="columnheader" scope="col">Unidad</th>
+                    <th role="columnheader" scope="col">Existencias</th>
+                    <th role="columnheader" scope="col" class="texto-derecha">Precio unitario</th>
+                    <th role="columnheader" scope="col">Detalles</th>
+                    <th role="columnheader" scope="col" class="texto-derecha">Acciones</th>
                 </tr>
             </thead>
-            <tbody>
+            <tbody role="rowgroup">
                 <?php foreach ($productos as $producto): ?>
-                    <tr>
-                        <td>
+                    <tr role="row">
+                        <td role="cell">
+                            <span class="listado-etiqueta" aria-hidden="true">ID</span>
                             <span class="chip-id">#<?= h($producto['id_producto']) ?></span>
                         </td>
-                        <td>
+                        <td role="cell">
+                            <span class="listado-etiqueta" aria-hidden="true">Nombre</span>
                             <span class="celda-destacada"><?= h($producto['nombre']) ?></span>
                         </td>
-                        <td>
+                        <td role="cell">
+                            <span class="listado-etiqueta" aria-hidden="true">Unidad</span>
                             <span class="insignia-unidad"><?= h($producto['unidad_medida']) ?></span>
                         </td>
-                        <td>
+                        <td role="cell">
+                            <span class="listado-etiqueta" aria-hidden="true">Existencias</span>
                             <?php if ((int)$producto['stock'] === 0): ?>
                                 <span class="insignia-stock agotado">0 (Agotado)</span>
                             <?php else: ?>
                                 <span class="insignia-stock disponible"><?= h($producto['stock']) ?></span>
                             <?php endif; ?>
                         </td>
-                        <td class="celda-precio">
+                        <td role="cell" class="celda-precio">
+                            <span class="listado-etiqueta" aria-hidden="true">Precio unitario</span>
                             $ <?= number_format((float)$producto['precio_unitario'], 2, ',', '.') ?>
                         </td>
-                        <td>
+                        <td role="cell">
+                            <span class="listado-etiqueta" aria-hidden="true">Detalles</span>
                             <span class="insignia-facturas <?= (int)$producto['total_detalles'] > 0 ? 'con-facturas' : 'sin-facturas' ?>">
                                 <?= h($producto['total_detalles']) ?> <?= (int)$producto['total_detalles'] === 1 ? 'detalle' : 'detalles' ?>
                             </span>
                         </td>
-                        <td>
-                            <div class="acciones" style="justify-content: flex-end;">
+                        <td role="cell" class="listado-acciones">
+                            <span class="listado-etiqueta" aria-hidden="true">Acciones</span>
+                            <div class="acciones acciones-listado">
                                 <a class="editar" href="editar_producto.php?id=<?= h($producto['id_producto']) ?>" title="Editar producto #<?= h($producto['id_producto']) ?>">
                                     <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                                         <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
@@ -170,7 +175,7 @@ require __DIR__ . '/../includes/menu.php';
                                     <span>Editar</span>
                                 </a>
                                 <?php if ((int)$producto['total_detalles'] === 0): ?>
-                                    <form method="post" action="eliminar_producto.php" onsubmit="return confirm('¿Eliminar este producto?')">
+                                    <form method="post" action="eliminar_producto.php">
                                         <?php if ($tokenCsrf !== null): ?>
                                             <input type="hidden" name="csrf_token" value="<?= h($tokenCsrf) ?>">
                                         <?php endif; ?>
@@ -208,4 +213,5 @@ require __DIR__ . '/../includes/menu.php';
         <span>No se permite eliminar productos que estén incluidos en detalles de factura.</span>
     </div>
 <?php endif; ?>
+<?php mostrarPaginacion($paginacion); ?>
 <?php require __DIR__ . '/../includes/pie.php'; ?>

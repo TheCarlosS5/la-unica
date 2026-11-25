@@ -1,4 +1,4 @@
-<?php
+<!--
 /**
  * Archivo: pie.php
  * Módulo: Plantilla compartida de cierre.
@@ -7,7 +7,7 @@
  * Puntos clave: abrir/cerrar menú, cerrar al pulsar el fondo o Escape, actualizar aria-expanded
  * y devolver el foco al botón que lo abrió.
  */
-?>
+-->
         </main>
         <footer class="pie-app" role="contentinfo">
             <div class="pie-inner">
@@ -53,5 +53,6 @@
     });
 })();
 </script>
+<script src="<?= h($baseUrl) ?>/assets/js/formularios.js" defer></script>
 </body>
 </html>

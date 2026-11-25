@@ -1,4 +1,15 @@
-/php/config/conexion.local.php
+# Configuración y datos privados del equipo
+php/config/conexion.local.php
+.env
+.env.*
+!.env.example
+logs/*.log
+vendor/
+.phpunit.cache/
+node_modules/
+*.bak
+*.tmp
 
-/vendor/
-/.phpunit.cache/
+php/config/usuarios.local.php
+php/config/usuarios.local.php.lock
+logs/acceso-*.php

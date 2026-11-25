@@ -7,16 +7,23 @@
  * el menú, la cabecera y la navegación del sistema.
  */
 
-require __DIR__ . '/inicializar.php';
+require __DIR__ . '/../config/conexion.php';
 
 $titulo = 'Manual del Usuario';
 $seccionActiva = 'sobre_nosotros';
 $manualUrl = $baseUrl . '/referencias/manual.pdf';
 $manualPath = dirname(__DIR__, 2) . '/referencias/manual.pdf';
-$manualDisponible = is_file($manualPath);
+$manualDisponible = is_file($manualPath) && is_readable($manualPath);
+if ($manualDisponible) {
+    $huellaPdf = hash_file('sha256', $manualPath);
+    if ($huellaPdf !== false) {
+        $manualUrl .= '?v=' . substr($huellaPdf, 0, 16);
+    }
+}
 
 require __DIR__ . '/../includes/menu.php';
 ?>
+<p class="nota nota-informativa">Actualización operativa. Puedes descargar los cinco reportes en CSV con los filtros aplicados. Para cancelar una factura del día escribe un motivo antes de confirmar.</p>
 
 <div class="encabezado-vista">
     <div class="encabezado-info">
@@ -58,6 +65,7 @@ require __DIR__ . '/../includes/menu.php';
                 <a href="<?= h($manualUrl) ?>">Consultar el archivo del manual</a>.
             </iframe>
         </div>
+        <p class="manual-panel-descripcion">Si el visor no aparece, <a href="<?= h($manualUrl) ?>" download>descarga el PDF para consultarlo</a>.</p>
     <?php else: ?>
         <div class="mensaje error alerta alerta-error" role="alert">
             No se encontró <code>referencias/manual.pdf</code>. Verifica que el documento esté dentro de la carpeta <code>referencias</code> del proyecto.

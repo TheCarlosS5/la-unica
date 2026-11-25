@@ -1,0 +1,126 @@
+{
+  "concurrencia": [
+    {
+      "ronda": 1,
+      "venta_unica": true,
+      "reposicion_unica": true
+    },
+    {
+      "ronda": 2,
+      "venta_unica": true,
+      "reposicion_unica": true
+    },
+    {
+      "ronda": 3,
+      "venta_unica": true,
+      "reposicion_unica": true
+    },
+    {
+      "ronda": 4,
+      "venta_unica": true,
+      "reposicion_unica": true
+    },
+    {
+      "ronda": 5,
+      "venta_unica": true,
+      "reposicion_unica": true
+    },
+    {
+      "ronda": 6,
+      "venta_unica": true,
+      "reposicion_unica": true
+    },
+    {
+      "ronda": 7,
+      "venta_unica": true,
+      "reposicion_unica": true
+    },
+    {
+      "ronda": 8,
+      "venta_unica": true,
+      "reposicion_unica": true
+    },
+    {
+      "ronda": 9,
+      "venta_unica": true,
+      "reposicion_unica": true
+    },
+    {
+      "ronda": 10,
+      "venta_unica": true,
+      "reposicion_unica": true
+    }
+  ],
+  "rendimiento": {
+    "clientes": {
+      "consultas": 20,
+      "registros_cargados": 1000,
+      "p95_ms": 31.06,
+      "max_ms": 36.94,
+      "limite_ms": 2000,
+      "cumple_95_por_ciento": true
+    },
+    "productos": {
+      "consultas": 20,
+      "registros_cargados": 1000,
+      "p95_ms": 31.2,
+      "max_ms": 32.04,
+      "limite_ms": 2000,
+      "cumple_95_por_ciento": true
+    },
+    "facturas": {
+      "consultas": 20,
+      "registros_cargados": 1000,
+      "p95_ms": 31.32,
+      "max_ms": 31.51,
+      "limite_ms": 2000,
+      "cumple_95_por_ciento": true
+    }
+  },
+  "regresiones": [
+    {
+      "prueba": "Diez carreras de venta y diez de cancelación con bloqueo real",
+      "aprobada": true
+    },
+    {
+      "prueba": "clientes: al menos 95 % de 20 búsquedas en menos de 2 s con 1000 registros",
+      "aprobada": true
+    },
+    {
+      "prueba": "productos: al menos 95 % de 20 búsquedas en menos de 2 s con 1000 registros",
+      "aprobada": true
+    },
+    {
+      "prueba": "facturas: al menos 95 % de 20 búsquedas en menos de 2 s con 1000 registros",
+      "aprobada": true
+    },
+    {
+      "prueba": "Las 29 páginas de wiki y sus recursos locales están disponibles",
+      "aprobada": true
+    },
+    {
+      "prueba": "Wiki rechaza rutas ajenas al catálogo",
+      "aprobada": true
+    },
+    {
+      "prueba": "Buscador de wiki escapa entradas HTML",
+      "aprobada": true
+    },
+    {
+      "prueba": "Fallo SQL responde 500 sin exponer diagnóstico ni usuario",
+      "aprobada": true
+    },
+    {
+      "prueba": "Historial de diagnóstico funciona con SQL caído",
+      "aprobada": true
+    },
+    {
+      "prueba": "Wiki funciona con SQL caído",
+      "aprobada": true
+    },
+    {
+      "prueba": "Configuración inválida responde de forma segura",
+      "aprobada": true
+    }
+  ]
+}

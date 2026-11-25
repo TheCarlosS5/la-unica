@@ -2,15 +2,15 @@
 /**
  * Archivo: datos_reportes.php
  * Módulo: Reportes — catálogo y acceso a datos.
- * Propósito: centralizar definición, columnas, textos, fuentes SQL y consulta de los siete reportes.
- * Funcionamiento: catalogoReportes() entrega metadatos; obtenerFilasReporte() selecciona la vista o
+ * Propósito: centralizar los reportes adicionales adaptados a la base de la-unica-2.
+ * Funcionamiento: catalogoReportes() entrega metadatos; obtenerFilasReporte() selecciona la consulta o
  * procedimiento correspondiente; consultarFilasReporte() lee resultados y limpia resultados adicionales.
  * Puntos clave: los totales y subtotales usan el precio guardado en cada línea de la venta; los reportes
  * de ventas (totales y unidades) excluyen las facturas canceladas.
  */
 
 /**
- * Devuelve títulos, descripción, fuente de datos, columnas y reglas de los siete reportes.
+ * Devuelve títulos, descripción, fuente de datos, columnas y reglas de los reportes auxiliares y sus rutas de compatibilidad.
  * @return array Catálogo indexado por la clave interna de cada reporte.
  */
 function catalogoReportes(): array
@@ -19,9 +19,9 @@ function catalogoReportes(): array
         'clientes' => [
             'archivo' => 'clientes_y_facturas.php',
             'titulo' => 'Clientes y cantidad de facturas',
-            'descripcion' => 'Cuenta las facturas de cada cliente e incluye a quienes todavía no tienen ventas.',
-            'fuente' => 'Procedimiento reporte_facturas_clientes()',
-            'nota' => 'El conteo incluye facturas Pagado, Cancelado y Pendiente.',
+            'descripcion' => 'Para el operador de caja. Muestra qué clientes compran con más frecuencia e incluye a los que todavía no tienen facturas.',
+            'fuente' => 'Consulta de las tablas de esta versión',
+            'nota' => 'El conteo incluye facturas Pagado y Cancelado.',
             'vacio' => 'Todavía no hay clientes registrados.',
             'columnas' => [
                 ['campo' => 'id_cliente', 'titulo' => 'ID cliente', 'tipo' => 'id'],
@@ -33,8 +33,8 @@ function catalogoReportes(): array
         'total_facturas' => [
             'archivo' => 'total_vigente_por_factura.php',
             'titulo' => 'Total por factura',
-            'descripcion' => 'Suma cantidad por precio de venta de cada factura Pagado o Pendiente.',
-            'fuente' => 'Vista vista_total_facturas',
+            'descripcion' => 'Suma cantidad por precio de venta de cada factura Pagado.',
+            'fuente' => 'Consulta de las tablas de esta versión',
             'nota' => 'Usa el precio registrado en cada venta. Las facturas canceladas y las que no tienen detalles no aparecen.',
             'vacio' => 'No hay ventas vigentes para calcular.',
             'columnas' => [
@@ -48,8 +48,8 @@ function catalogoReportes(): array
         'unidades_productos' => [
             'archivo' => 'unidades_facturadas_por_producto.php',
             'titulo' => 'Unidades vendidas por producto',
-            'descripcion' => 'Suma las cantidades vendidas de cada producto en facturas Pagado o Pendiente.',
-            'fuente' => 'Vista vista_unidades_productos',
+            'descripcion' => 'Suma las cantidades vendidas de cada producto en facturas Pagado.',
+            'fuente' => 'Consulta de las tablas de esta versión',
             'nota' => 'Excluye las facturas canceladas, cuyas unidades ya volvieron al inventario. Solo aparecen productos con al menos una venta vigente.',
             'vacio' => 'Todavía no hay productos vendidos.',
             'columnas' => [
@@ -62,8 +62,8 @@ function catalogoReportes(): array
         'detalle_facturas' => [
             'archivo' => 'detalle_facturas.php',
             'titulo' => 'Detalle de facturas',
-            'descripcion' => 'Consulta cada producto, cantidad, precio de venta y subtotal de sus facturas.',
-            'fuente' => 'Procedimiento reporte_detalle_facturas()',
+            'descripcion' => 'Para el operador de caja. Permite atender una consulta sobre una compra y verificar sus productos, cantidades, precios y subtotales.',
+            'fuente' => 'Consulta de las tablas de esta versión',
             'nota' => 'Incluye todos los estados (revisa la columna Estado) y ordena por ID de factura. Precio y subtotal son los registrados en la venta.',
             'vacio' => 'Todavía no hay detalles de factura.',
             'columnas' => [
@@ -81,8 +81,8 @@ function catalogoReportes(): array
         'stock_productos' => [
             'archivo' => 'existencias_productos.php',
             'titulo' => 'Existencias de productos',
-            'descripcion' => 'Muestra stock y precio unitario vigente, desde la menor existencia.',
-            'fuente' => 'Procedimiento reporte_stock_productos()',
+            'descripcion' => 'Muestra las existencias y el precio unitario, ordenados por cantidad disponible.',
+            'fuente' => 'Consulta de las tablas de esta versión',
             'nota' => 'El orden ascendente permite revisar primero las existencias más bajas. El precio mostrado es el precio actual del catálogo.',
             'vacio' => 'Todavía no hay productos registrados.',
             'columnas' => [
@@ -97,7 +97,7 @@ function catalogoReportes(): array
             'archivo' => 'facturas_por_estado.php',
             'titulo' => 'Facturas por estado',
             'descripcion' => 'Cuenta las facturas agrupadas por su estado actual.',
-            'fuente' => 'Procedimiento reporte_facturas_por_estado()',
+            'fuente' => 'Consulta de las tablas de esta versión',
             'nota' => 'El reporte incluye todos los estados que tengan facturas registradas; un estado sin registros no aparece como fila.',
             'vacio' => 'Todavía no hay facturas registradas.',
             'columnas' => [
@@ -109,10 +109,10 @@ function catalogoReportes(): array
         'pendientes' => [
             'archivo' => 'facturas_pendientes.php',
             'titulo' => 'Facturas pendientes',
-            'descripcion' => 'Lista las ventas por cobrar (estado Pendiente), de la más antigua a la más reciente.',
-            'fuente' => 'Procedimiento reporte_facturas_pendientes()',
-            'nota' => 'Una venta queda Pendiente cuando se registra como «por cobrar». Desde su comprobante se puede registrar el pago o cancelarla.',
-            'vacio' => 'No hay ventas por cobrar.',
+            'descripcion' => 'Consulta de compatibilidad con la otra versión del proyecto. La Única 2 no implementa ventas por cobrar.',
+            'fuente' => 'Consulta de las tablas de esta versión',
+            'nota' => 'Esta versión solo registra Pagado y Cancelado; no permite crear ventas por cobrar ni registrar pagos pendientes.',
+            'vacio' => 'No aplicable: esta versión no admite facturas Pendiente.',
             'columnas' => [
                 ['campo' => 'id_factura', 'titulo' => 'Factura', 'tipo' => 'id'],
                 ['campo' => 'cliente', 'titulo' => 'Cliente', 'tipo' => 'texto'],
@@ -170,34 +170,17 @@ function consultarFilasReporte(mysqli $conexion, string $consulta, bool $esProce
  */
 function obtenerFilasReporte(mysqli $conexion, string $tipoReporte): array
 {
-    switch ($tipoReporte) {
-        case 'clientes':
-            return consultarFilasReporte($conexion, 'CALL reporte_facturas_clientes()', true);
-
-        case 'total_facturas':
-            return consultarFilasReporte(
-                $conexion,
-                'SELECT id_factura, cliente, estado_factura, total_factura FROM vista_total_facturas ORDER BY id_factura DESC'
-            );
-
-        case 'unidades_productos':
-            return consultarFilasReporte(
-                $conexion,
-                'SELECT id_producto, producto, unidades_facturadas FROM vista_unidades_productos ORDER BY unidades_facturadas DESC, id_producto'
-            );
-
-        case 'detalle_facturas':
-            return consultarFilasReporte($conexion, 'CALL reporte_detalle_facturas()', true);
-
-        case 'stock_productos':
-            return consultarFilasReporte($conexion, 'CALL reporte_stock_productos()', true);
-
-        case 'por_estado':
-            return consultarFilasReporte($conexion, 'CALL reporte_facturas_por_estado()', true);
-
-        case 'pendientes':
-            return consultarFilasReporte($conexion, 'CALL reporte_facturas_pendientes()', true);
+    $consultas = [
+        'clientes' => "SELECT c.id_cliente,c.nombre,COUNT(f.id_factura) AS total_facturas FROM clientes c LEFT JOIN facturas f ON f.id_cliente=c.id_cliente GROUP BY c.id_cliente,c.nombre ORDER BY c.id_cliente",
+        'total_facturas' => "SELECT f.id_factura,f.nombre_cliente AS cliente,f.estado_factura,SUM(d.cantidad*d.precio_unitario) AS total_factura FROM facturas f JOIN detalle_facturas d ON d.id_factura=f.id_factura WHERE f.estado_factura='Pagado' GROUP BY f.id_factura,f.nombre_cliente,f.estado_factura ORDER BY f.id_factura DESC",
+        'unidades_productos' => "SELECT p.id_producto,p.nombre AS producto,SUM(d.cantidad) AS unidades_facturadas FROM productos p JOIN detalle_facturas d ON d.id_producto=p.id_producto JOIN facturas f ON f.id_factura=d.id_factura WHERE f.estado_factura='Pagado' GROUP BY p.id_producto,p.nombre ORDER BY unidades_facturadas DESC,p.id_producto",
+        'detalle_facturas' => "SELECT f.id_factura,f.nombre_cliente AS cliente,f.estado_factura,f.fecha_factura,d.nombre_producto AS producto,d.cantidad,d.precio_unitario,d.cantidad*d.precio_unitario AS subtotal FROM facturas f JOIN detalle_facturas d ON d.id_factura=f.id_factura ORDER BY f.id_factura DESC,d.id_detalle_factura",
+        'stock_productos' => "SELECT id_producto,nombre,stock,precio_unitario FROM productos ORDER BY stock,id_producto",
+        'por_estado' => "SELECT estado_factura,COUNT(*) AS total_facturas FROM facturas GROUP BY estado_factura ORDER BY estado_factura",
+        'pendientes' => "SELECT id_factura,nombre_cliente AS cliente,fecha_factura,estado_factura FROM facturas WHERE estado_factura='Pendiente' ORDER BY fecha_factura,id_factura",
+    ];
+    if (!isset($consultas[$tipoReporte])) {
+        throw new InvalidArgumentException('El reporte solicitado no está disponible.');
     }
-
-    throw new InvalidArgumentException('El reporte solicitado no está disponible.');
+    return consultarFilasReporte($conexion, $consultas[$tipoReporte]);
 }
