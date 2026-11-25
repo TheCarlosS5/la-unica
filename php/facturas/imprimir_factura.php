@@ -150,7 +150,7 @@ require __DIR__ . '/../includes/menu.php';
             <div><dt>Cliente</dt><dd><?= h($factura['cliente']) ?></dd></div>
             <div><dt>Documento del cliente</dt><dd><?= (int)$factura['id_cliente'] ?></dd></div>
             <div><dt>Fecha</dt><dd><?= h($fechaFactura) ?><?= $hayFechaFactura ? ' (Bogotá)' : '' ?></dd></div>
-            <div><dt>Estado</dt><dd><span class="estado-factura <?= strtolower(h($factura['estado_factura'])) ?>"><?= h($factura['estado_factura']) ?></span></dd></div>
+            <div><dt>Estado</dt><dd><span class="estado-factura <?= strtolower(h($factura['estado_factura'])) ?>"><span aria-hidden="true"><?= $factura['estado_factura'] === 'Pagado' ? '✓' : '×' ?></span> <?= h($factura['estado_factura']) ?></span></dd></div>
         </dl>
 
         <?php if ($detalles === []): ?>

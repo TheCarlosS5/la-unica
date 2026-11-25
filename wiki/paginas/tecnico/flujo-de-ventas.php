@@ -1,7 +1,9 @@
 <?php if (!defined('LA_UNICA_WIKI')) { exit; } ?>
-<h2 id="venta">Venta atómica</h2>
-<p>crear_factura.php valida CSRF, cliente y líneas. Agrupa productos repetidos, abre una transacción y bloquea el cliente y los productos con SELECT FOR UPDATE. Los productos se bloquean por ID ordenado. Relee precios y stock, inserta cabecera y detalles históricos, descuenta stock y registra la acción antes de confirmar. Un fallo revierte el conjunto.</p>
-<h2 id="cancelacion">Cancelación atómica</h2>
-<p>cancelar_factura.php exige confirmación, bloquea la factura, valida Pagado y fecha del día, bloquea los productos y devuelve las cantidades. Cambia el estado y registra la acción dentro de la transacción. El bloqueo y la comprobación del estado impiden una segunda reposición.</p>
-<h2 id="prueba">Verificación de contención</h2>
-<p>En la revisión técnica del 10 de noviembre de 2026, dos sesiones compitieron por la última unidad disponible y luego por cancelar una misma factura. Se repitió cada escenario diez veces. En cada caso persistió una sola venta o una sola reposición, según la operación.</p>
+<h2 id="registro-de-una-venta">Registro de una venta</h2>
+<ol><li>crear_factura.php valida CSRF, cliente, productos y cantidades.</li><li>Suma cantidades de productos repetidos y abre una transacción.</li><li>Bloquea el cliente y los productos con FOR UPDATE; ordena los ID de productos para reducir interbloqueos.</li><li>Vuelve a consultar los precios y las existencias. Si cualquier línea no alcanza, revierte el conjunto.</li><li>Inserta factura Pagado, sus copias históricas y detalles; descuenta con UPDATE condicionado y calcula el total en SQL.</li><li>Registra la acción y confirma todo junto.</li></ol>
+<h2 id="cancelación">Cancelación del mismo día</h2>
+<ol><li>cancelar_factura.php exige POST, CSRF e ID válido.</li><li>Sin confirmar=si muestra los datos de la confirmación.</li><li>Al confirmar bloquea la factura, comprueba Pagado y que sea del día actual en America/Bogota.</li><li>Agrupa cantidades, bloquea productos y repone existencias, cambia a Cancelado y registra la acción.</li><li>Confirma o revierte el conjunto. Otra cancelación del mismo ID no repone de nuevo.</li></ol>
+<h2 id="errores-y-concurrencia">Errores y concurrencia</h2>
+<p>Los conflictos de existencia producen rechazo sin factura parcial. El diseño utiliza bloqueos y restricciones; su existencia no certifica cualquier carga. La evidencia histórica midió diez carreras de venta y diez de cancelación, con dos solicitudes por carrera. Los scripts de aquella batería no se distribuyen en la versión actual.</p>
+<h2 id="precios-y-estados">Precios y estados</h2>
+<p>El navegador estima con los datos del formulario, pero el servidor decide el precio persistido. No hay servicio_facturas.php, registrarVenta(), registrarPagoFactura() ni flujo de cobro. La lógica vive en crear_factura.php y cancelar_factura.php.</p>

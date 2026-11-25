@@ -16,7 +16,7 @@
 
 require __DIR__ . '/../config/conexion.php';
 
-$titulo = 'Nueva factura';
+$titulo = 'Crear factura';
 $seccionActiva = 'facturas';
 $tokenCsrf = obtenerTokenCsrf();
 $mensajeError = '';
@@ -44,8 +44,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $lineasFormulario = [];
     foreach ($productosEntrada as $indice => $productoEntrada) {
         $lineasFormulario[] = [
-            'id_producto' => trim((string)$productoEntrada),
-            'cantidad' => trim((string)($cantidadesEntrada[$indice] ?? '')),
+            'id_producto' => is_scalar($productoEntrada) ? trim((string)$productoEntrada) : '',
+            'cantidad' => isset($cantidadesEntrada[$indice]) && is_scalar($cantidadesEntrada[$indice]) ? trim((string)$cantidadesEntrada[$indice]) : '',
         ];
     }
     if ($lineasFormulario === []) {
@@ -203,12 +203,14 @@ foreach ($productos as $producto) {
         $productosDisponibles++;
     }
     $etiqueta = $producto['nombre'] . ' · ' . $producto['unidad_medida'] . ' · '
-        . formatearMonedaCop($producto['precio_unitario']) . ' · stock: ' . $stockProducto;
+        . formatearMonedaCop($producto['precio_unitario']) . ' · existencias disponibles: ' . $stockProducto;
     $opcionesProductos .= '<option value="' . $idProducto . '" data-stock="' . $stockProducto
         . '" data-precio="' . h((string)$producto['precio_unitario']) . '"'
         . ($stockProducto < 1 ? ' disabled' : '') . '>' . h($etiqueta) . '</option>';
 }
 
+$errorCliente = $mensajeError !== '' && str_contains($mensajeError, 'cliente');
+$errorLineas = $mensajeError !== '' && !$errorCliente && http_response_code() !== 403;
 require __DIR__ . '/../includes/menu.php';
 ?>
 <div class="encabezado-vista">
@@ -216,7 +218,7 @@ require __DIR__ . '/../includes/menu.php';
         <nav class="miga-pan" aria-label="Ruta de navegación">
             <a href="<?= h($baseUrl) ?>/main.php">Inicio</a>
             <span class="miga-separador" aria-hidden="true">/</span>
-            <span>Nueva factura</span>
+            <span>Crear factura</span>
         </nav>
         <h1 class="encabezado-titulo">Registrar una venta</h1>
         <p class="encabezado-descripcion">Selecciona el cliente y agrega los productos. El inventario se valida y actualiza al guardar la factura.</p>
@@ -255,20 +257,21 @@ require __DIR__ . '/../includes/menu.php';
 
                 <div class="campo">
                     <label for="id_cliente"><span>Cliente</span><span class="ayuda" style="margin:0">Requerido</span></label>
-                    <select id="id_cliente" name="id_cliente" required>
+                    <select id="id_cliente" name="id_cliente" required <?= $errorCliente ? 'aria-invalid="true" aria-describedby="error-cliente"' : '' ?>>
                         <option value="">Selecciona un cliente</option>
                         <?php foreach ($clientes as $cliente): ?>
                             <option value="<?= (int)$cliente['id_cliente'] ?>" <?= $clienteSeleccionado === (string)$cliente['id_cliente'] ? 'selected' : '' ?>><?= h($cliente['nombre']) ?> · Doc. <?= (int)$cliente['id_cliente'] ?></option>
                         <?php endforeach; ?>
                     </select>
+                    <?php if ($errorCliente): ?><p class="error-campo" id="error-cliente"><?= h($mensajeError) ?></p><?php endif; ?>
                 </div>
-
                 <div class="factura-lineas-cabecera">
                     <div><h3>Productos</h3><p class="ayuda">Cada producto puede agregarse una sola vez; ajusta su cantidad.</p></div>
                     <button class="boton secundario" type="button" id="agregar-linea-factura">Agregar producto</button>
                 </div>
 
-                <div id="lineas-factura" class="factura-lineas" aria-live="polite">
+                <div id="lineas-factura" class="factura-lineas" aria-live="polite" role="group" aria-label="Líneas de la factura" <?= $errorLineas ? 'aria-describedby="error-lineas"' : '' ?>>
+                    <?php if ($errorLineas): ?><p class="error-campo" id="error-lineas"><?= h($mensajeError) ?></p><?php endif; ?>
                     <?php foreach ($lineasFormulario as $indice => $linea): ?>
                         <div class="factura-linea" data-linea-factura>
                             <div class="campo factura-producto-campo">
@@ -280,10 +283,12 @@ require __DIR__ . '/../includes/menu.php';
                                     ?>
                                 </select>
                                 <span class="ayuda" data-detalle-producto>Selecciona un producto para consultar precio y existencias.</span>
+                                <span class="error-campo" data-error-producto hidden></span>
                             </div>
                             <div class="campo factura-cantidad-campo">
                                 <label for="cantidad_<?= $indice ?>">Cantidad</label>
                                 <input id="cantidad_<?= $indice ?>" name="cantidad[]" type="number" min="1" max="2147483647" step="1" inputmode="numeric" value="<?= h($linea['cantidad']) ?>" data-cantidad required>
+                                <span class="error-campo" data-error-cantidad hidden></span>
                             </div>
                             <button class="boton-peligro factura-quitar-linea" type="button" data-quitar-linea aria-label="Quitar este producto">Quitar</button>
                         </div>
@@ -296,10 +301,12 @@ require __DIR__ . '/../includes/menu.php';
                             <label>Producto</label>
                             <select name="id_producto[]" data-producto-select required><?= $opcionesProductos ?></select>
                             <span class="ayuda" data-detalle-producto>Selecciona un producto para consultar precio y existencias.</span>
+                            <span class="error-campo" data-error-producto hidden></span>
                         </div>
                         <div class="campo factura-cantidad-campo">
                             <label>Cantidad</label>
                             <input name="cantidad[]" type="number" min="1" max="2147483647" step="1" inputmode="numeric" value="1" data-cantidad required>
+                            <span class="error-campo" data-error-cantidad hidden></span>
                         </div>
                         <button class="boton-peligro factura-quitar-linea" type="button" data-quitar-linea aria-label="Quitar este producto">Quitar</button>
                     </div>

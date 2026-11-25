@@ -23,6 +23,7 @@ if ($manualDisponible) {
 
 require __DIR__ . '/../includes/menu.php';
 ?>
+<p class="nota nota-informativa">Actualización operativa. Puedes descargar los cinco reportes en CSV con los filtros aplicados. Para cancelar una factura del día escribe un motivo antes de confirmar.</p>
 
 <div class="encabezado-vista">
     <div class="encabezado-info">

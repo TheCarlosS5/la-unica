@@ -1,0 +1,13 @@
+{
+  "name": "la-unica-wiki-capturas",
+  "private": true,
+  "type": "module",
+  "description": "Genera las capturas de la wiki de La Única.",
+  "scripts": {
+    "capturas": "node capturas.mjs"
+  },
+  "dependencies": {
+    "playwright": "1.62.1",
+    "sharp": "0.35.5"
+  }
+}

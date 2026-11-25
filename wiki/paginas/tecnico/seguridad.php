@@ -1,7 +1,10 @@
 <?php if (!defined('LA_UNICA_WIKI')) { exit; } ?>
-<h2 id="controles">Controles implementados</h2>
-<p>Los formularios de cambio validan tokens CSRF de sesión. Las consultas parametrizadas separan datos y SQL. h() escapa valores al producir HTML. Las ventas y cancelaciones usan transacciones, bloqueos y restricciones de base de datos. La configuración privada está ignorada por Git y Apache bloquea recursos internos mediante .htaccess.</p>
-<h2 id="diagnostico">Diagnóstico seguro</h2>
-<p>Los errores de conexión y configuración devuelven HTTP 500 con un mensaje general. Los detalles quedan en el archivo local de errores y los manejadores globales evitan mostrarlos en la respuesta pública. El historial técnico permite consultarlos aun con SQL detenido; su acceso depende de mantener el sistema local y controlado.</p>
-<h2 id="limites">Límites</h2>
-<p>No hay usuarios, autenticación ni roles. Los controles no sustituyen un sistema de autorización para Internet. Las pruebas cubren casos definidos; no constituyen una auditoría de penetración ni una certificación general de seguridad.</p>
+<h2>Acceso local</h2>
+<p>Apache limita el acceso al mismo equipo con <code>Require local</code>. El aplicativo está destinado a un solo operador. Los módulos verifican la aceptación de Términos y Condiciones al inicio del procesamiento. La aceptación se guarda en la sesión y en una cookie de 30 días de la instalación.</p>
+<h2 id="portal">Portal y CSRF</h2>
+<p>Aceptar términos no autentica. Las operaciones y el portal de aceptación/rechazo requieren POST y token CSRF. Los módulos operativos verifican la aceptación antes de consultar o modificar datos. Las cookies se emiten con la ruta base de la instalación. En la raíz se usa /, que también abarca las rutas inferiores del mismo host.</p>
+<h2 id="sesion">Sesión y cabeceras</h2>
+<p>La sesión usa nombre propio por instalación, modo estricto, HttpOnly, SameSite=Lax y Secure bajo HTTPS. Se envían CSP (inline permitido para la interfaz existente), X-Frame-Options, X-Content-Type-Options y Referrer-Policy; se elimina X-Powered-By.</p>
+<h2 id="datos">Datos y archivos privados</h2>
+<p>Las consultas preparadas, el escape HTML y las validaciones del servidor permanecen. Las ventas y cancelaciones conservan sus transacciones; cancelar requiere un motivo que queda guardado en el historial. Apache bloquea configuración, tools, tests, Git, SQL, Markdown y logs. Los PDF, documentos Word y la wiki se consultan desde el mismo equipo. PHP -S no aplica .htaccess. Los errores detallados se consultan en Historial de errores aun si SQL falla.</p>
+<h2 id="limites">Límites</h2><p>El uso previsto sigue siendo local. Evita exponer el aplicativo por túneles o proxies. El operador realiza copias de seguridad y conserva los registros de errores de acuerdo con el PAC.</p>

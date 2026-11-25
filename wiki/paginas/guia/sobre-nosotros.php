@@ -1,21 +1,12 @@
 <?php if (!defined('LA_UNICA_WIKI')) { exit; } ?>
-<p class="aviso"><strong>Guía visual actualizada.</strong> Las capturas se tomaron de la interfaz actual con datos ficticios y una base independiente. Haz clic en una imagen o enfócala y pulsa Enter para ampliarla; Escape cierra el visor.</p>
-<h2 id="recursos">Abrir Sobre nosotros</h2>
-<p>Esta sección reúne los recursos integrados. Las capturas permiten identificar la tarjeta y el visor correspondientes.</p>
-<figure class="captura"><img src="img/actuales/sobre-nosotros.jpg" alt="Ayuda — SRS, manuales, PAC, video y wiki en la interfaz actual." width="1280" height="960" loading="lazy" decoding="async"><figcaption>Ayuda — SRS, manuales, PAC, video y wiki en la interfaz actual.</figcaption></figure>
-<h2 id="usuario">Manual del usuario</h2>
-<p>Abre Manual del Usuario para consultar instrucciones y capturas del documento 2.0. Los controles del visor permiten cambiar de página, ajustar el zoom y descargar.</p>
-<figure class="captura"><img src="img/actuales/manual-usuario.jpg" alt="Manual del usuario — Visor PDF integrado." width="1280" height="960" loading="lazy" decoding="async"><figcaption>Manual del usuario — Visor PDF integrado.</figcaption></figure>
-<h2 id="tecnico">Manual técnico</h2>
-<p>El manual técnico 1.3 describe instalación, configuración, persistencia, reglas, seguridad, respaldo y pruebas.</p>
-<figure class="captura"><img src="img/actuales/manual-tecnico.jpg" alt="Manual técnico — Documento vigente 1.3 en el visor del aplicativo." width="1280" height="960" loading="lazy" decoding="async"><figcaption>Manual técnico — Documento vigente 1.3 en el visor del aplicativo.</figcaption></figure>
-<h2 id="pac">Plan de acción de mejora continua</h2>
-<p>Consulta el PAC 1.3 para distinguir las acciones verificadas de las tareas de aceptación y mantenimiento pendientes.</p>
-<figure class="captura"><img src="img/actuales/pac.jpg" alt="PAC — Documento vigente integrado en la página." width="1280" height="960" loading="lazy" decoding="async"><figcaption>PAC — Documento vigente integrado en la página.</figcaption></figure>
-<h2 id="srs">SRS completo</h2>
-<p>La versión vigente de requisitos es el SRS 1.5 completo. Puede consultarse por páginas y descargarse en PDF o Word desde su vista.</p>
-<figure class="captura"><img src="img/actuales/srs.jpg" alt="SRS — Documento completo 1.5 en el visor integrado." width="1280" height="960" loading="lazy" decoding="async"><figcaption>SRS — Documento completo 1.5 en el visor integrado.</figcaption></figure>
-<h2 id="video">Video explicativo</h2>
-<p>Usa los controles para reproducir, pausar, ajustar volumen y abrir pantalla completa. El video es un recurso de presentación; consulta las guías actuales para los pasos operativos vigentes.</p>
-<figure class="captura"><img src="img/actuales/video.jpg" alt="Video — Reproductor integrado y sus controles." width="1280" height="960" loading="lazy" decoding="async"><figcaption>Video — Reproductor integrado y sus controles.</figcaption></figure>
-<h2 id="versiones">Interpretar las versiones</h2><p>El SRS registra requisitos; el manual técnico explica la implementación y el PAC distingue lo comprobado de lo pendiente. Una publicación no equivale por sí sola a la aceptación formal de todos los requisitos por el instructor.</p>
+<p>La sección <strong>Sobre nosotros</strong> reúne SRS, manual del usuario, manual técnico, PAC, video y esta wiki.</p><figure class="captura"><img src="img/sobre-nosotros.webp" alt="Recursos integrados en Sobre nosotros" loading="lazy"><figcaption>Recursos integrados en Sobre nosotros</figcaption></figure>
+<ul><li><span class="marca-num">1</span> Manual del Usuario.</li><li><span class="marca-num">2</span> Video explicativo.</li><li><span class="marca-num">3</span> Wiki.</li></ul><p>También están las tarjetas del SRS completo, manual técnico y PAC. Los PDF se abren dentro de la interfaz.</p><h2 id="manual-del-usuario">Manual del Usuario</h2>
+<p>La versión 2.1 de <code>referencias/manual.pdf</code> explica los módulos con capturas. Usa el visor para cambiar de página, buscar, hacer zoom, descargar o imprimir.</p><figure class="captura"><img src="img/sobre-nosotros-manual.webp" alt="Manual del usuario integrado" loading="lazy"><figcaption>Manual del usuario integrado</figcaption></figure>
+
+<h2 id="video-explicativo">Video explicativo</h2>
+<p>El reproductor usa <code>assets/video/1.mp4</code>. No inicia automáticamente. Sus controles permiten reproducir, pausar, ajustar volumen y abrir pantalla completa. Es una presentación complementaria; las instrucciones operativas vigentes están en los manuales y esta wiki.</p><figure class="captura"><img src="img/sobre-nosotros-video.webp" alt="Video explicativo integrado" loading="lazy"><figcaption>Video explicativo integrado</figcaption></figure>
+
+<h2 id="esta-wiki">Esta wiki</h2>
+<p>Se abre desde Sobre nosotros o en <code>…/wiki/</code>. La wiki y el Historial de errores funcionan sin SQL. Las páginas de Sobre nosotros sí cargan la conexión SQL; sus archivos PDF públicos pueden abrirse directamente si el servidor web funciona.</p>
+<h2 id="otros-documentos-del-proyecto">Documentos vigentes</h2>
+<div class="tabla-wiki"><table><thead><tr><th>Archivo</th><th>Versión y contenido</th></tr></thead><tbody><tr><td>SRS.docx / SRS.pdf</td><td>1.6 — requisitos y criterios de aceptación.</td></tr><tr><td>manual.docx / manual.pdf</td><td>2.1 — operación del aplicativo.</td></tr><tr><td>manual_tecnico.docx / manual_tecnico.pdf</td><td>1.4 — instalación, arquitectura y mantenimiento.</td></tr><tr><td>PAC.docx / PAC.pdf</td><td>2.0 — matriz de 25 casos y regresiones de acceso local y CSV.</td></tr><tr><td>db.sql</td><td>Instalación nueva: cinco tablas y cuatro procedimientos.</td></tr></tbody></table></div>

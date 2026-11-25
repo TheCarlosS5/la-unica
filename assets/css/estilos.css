@@ -40,7 +40,7 @@
   --color-primario-activo: #1b4332;
   --color-primario-suave: #e2f0e3;
   --color-primario-borde: #9cc5a4;
-  --color-secundario: #3c7d5c;
+  --color-secundario: #306448;
 
   /* Resaltador amarillo: para lo activo, lo importante y los totales */
   --color-resaltador: #fff1b8;
@@ -62,7 +62,7 @@
 
   /* Bordes suaves: contorno de tarjetas, contorno de controles y separadores */
   --color-contorno: #ddd6c0;
-  --color-contorno-fuerte: #a29b83;
+  --color-contorno-fuerte: #827b65;
   --color-borde: #d6cfb8;
   --color-borde-suave: #e9e3d0;
   --color-borde-fuerte: #2b2b36;
@@ -81,7 +81,6 @@
   --color-aviso-fondo: #fff1c4;
   --color-aviso-borde: #e8c35a;
 
-  --color-foco: rgba(45, 106, 79, 0.35);
 
   /* Sombras suaves */
   --sombra-sm: 0 1px 2px rgba(43, 43, 54, 0.08);
@@ -1512,9 +1511,7 @@ button[disabled] {
 
 .campo input:focus,
 .campo select:focus {
-  outline: none;
   background-color: #fffbe6;
-  box-shadow: 0 0 0 3px var(--color-foco);
 }
 
 .campo input[readonly] {
@@ -2149,5 +2146,118 @@ button[disabled] {
 
   .video-reproductor {
     max-height: 60vh;
+  }
+}
+/* Vista del modelo entidad-relación. */
+.mer-figura {
+    margin: 0;
+}
+
+.mer-imagen {
+    display: block;
+    max-width: 100%;
+    height: auto;
+    margin-inline: auto;
+    filter: invert(1) sepia(.18);
+}
+
+/* Ajustes derivados de las evaluaciones de noviembre de 2026. */
+:root { --espacio-1: 4px; --espacio-2: 8px; --espacio-3: 16px; --espacio-4: 24px; }
+input, select, textarea { border-color: var(--color-contorno-fuerte); }
+textarea { width: 100%; font: inherit; min-height: 88px; border-radius: 10px; padding: 12px; }
+button:disabled, input:disabled, select:disabled { cursor: not-allowed; opacity: .65; }
+.boton.secundario:hover, .boton-secundario:hover { background: #e2eadf; border-color: var(--color-primario); }
+.nav-subenlace, .miga-pan a, .btn-abrir-drawer, .btn-cerrar-drawer,
+.acciones-tabla a, .acciones-tabla button, .boton-peligro, .boton-editar,
+.tabla-acciones a, .tabla-acciones button { min-width: 44px; min-height: 44px; }
+.miga-pan a { display: inline-flex; align-items: center; }
+.btn-abrir-drawer, .btn-cerrar-drawer { width: 44px; height: 44px; }
+table,
+.tabla th,
+.comprobante-factura,
+.reporte-impresion {
+  font-family: 'Segoe UI', Arial, sans-serif;
+  font-variant-numeric: tabular-nums;
+}
+.error-campo:not([hidden]) { display: block; color: #9c2929; font-weight: 600; margin-top: var(--espacio-2); }
+[aria-invalid="true"] { border: 2px solid #9c2929; }
+.paginacion { display: flex; align-items: center; flex-wrap: wrap; gap: var(--espacio-3); margin: var(--espacio-4) 0; }
+.motivo-cancelacion { padding: var(--espacio-4); }
+@media print { .paginacion { display: none; } table, body { font-family: Arial, sans-serif; } }
+
+.acciones .editar, .acciones button { min-height: 44px; min-width: 44px; }
+
+/* Los listados operativos conservan las acciones junto al registro en móvil. */
+.listado-etiqueta {
+  display: none;
+}
+
+.acciones-listado {
+  justify-content: flex-end;
+}
+
+.estado-factura {
+  gap: .35em;
+}
+
+form[data-carga] button[aria-disabled="true"] {
+  cursor: progress;
+  opacity: .8;
+}
+
+@media screen and (max-width: 680px) {
+  .tabla.listado-adaptable,
+  .listado-adaptable tbody {
+    display: block;
+    min-width: 0;
+  }
+
+  .listado-adaptable thead {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+
+  .listado-adaptable tbody tr {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px 14px;
+    padding: 14px;
+  }
+
+  .listado-adaptable tbody tr + tr {
+    border-top: 1px solid var(--color-contorno);
+  }
+
+  .listado-adaptable tbody td {
+    display: block;
+    padding: 0;
+    border: 0;
+    text-align: left;
+    overflow-wrap: anywhere;
+  }
+
+  .listado-etiqueta {
+    display: block;
+    margin-bottom: 2px;
+    color: var(--color-texto-secundario);
+    font-size: .85rem;
+  }
+
+  .listado-adaptable .listado-acciones {
+    grid-column: 1 / -1;
+  }
+
+  .listado-acciones .listado-etiqueta {
+    display: none;
+  }
+
+  .listado-acciones .acciones {
+    justify-content: flex-start;
+    flex-wrap: wrap;
   }
 }

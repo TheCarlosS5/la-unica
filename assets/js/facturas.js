@@ -43,6 +43,8 @@
     cantidad.id = 'cantidad_' + sufijo;
     etiquetaProducto.htmlFor = select.id;
     etiquetaCantidad.htmlFor = cantidad.id;
+    fila.querySelector('[data-error-producto]').id = 'error-producto-' + sufijo;
+    fila.querySelector('[data-error-cantidad]').id = 'error-cantidad-' + sufijo;
   }
 
   /* ACTUALIZARDETALLE — Muestra precio y stock del producto y actualiza el máximo permitido en la cantidad. */
@@ -129,12 +131,49 @@
     nuevaFila.querySelector('[data-producto-select]').focus();
   });
 
+  function actualizarError(campo) {
+    const esProducto = campo.matches('[data-producto-select]');
+    const fila = campo.closest('[data-linea-factura]');
+    const error = fila.querySelector(esProducto ? '[data-error-producto]' : '[data-error-cantidad]');
+    let mensaje = '';
+    if (campo.validity.rangeOverflow) {
+      mensaje = 'Las existencias disponibles son ' + campo.max + '. Reduce la cantidad.';
+    } else if (!campo.validity.valid) {
+      mensaje = esProducto ? 'Selecciona un producto.' : 'Escribe una cantidad entera mayor que cero.';
+    }
+    error.textContent = mensaje;
+    error.hidden = !mensaje;
+    if (mensaje) {
+      campo.setAttribute('aria-invalid', 'true');
+      campo.setAttribute('aria-describedby', error.id);
+    } else {
+      campo.removeAttribute('aria-invalid');
+      campo.removeAttribute('aria-describedby');
+    }
+  }
+
+  lineas.addEventListener('invalid', function (evento) {
+    if (evento.target.matches('[data-producto-select], [data-cantidad]')) actualizarError(evento.target);
+  }, true);
+
+  if (document.getElementById('error-lineas')) {
+    filas().forEach(function (fila) {
+      fila.querySelectorAll('[data-producto-select], [data-cantidad]').forEach(actualizarError);
+    });
+  }
+
   lineas.addEventListener('change', function (evento) {
-    if (evento.target.matches('[data-producto-select]')) refrescar();
+    if (!evento.target.matches('[data-producto-select]')) return;
+    refrescar();
+    if (evento.target.hasAttribute('aria-invalid')) actualizarError(evento.target);
+    const cantidad = evento.target.closest('[data-linea-factura]').querySelector('[data-cantidad]');
+    if (cantidad.hasAttribute('aria-invalid')) actualizarError(cantidad);
   });
 
   lineas.addEventListener('input', function (evento) {
-    if (evento.target.matches('[data-cantidad]')) actualizarTotal();
+    if (!evento.target.matches('[data-cantidad]')) return;
+    actualizarTotal();
+    if (evento.target.hasAttribute('aria-invalid')) actualizarError(evento.target);
   });
 
   lineas.addEventListener('click', function (evento) {

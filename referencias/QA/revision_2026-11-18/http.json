@@ -1,0 +1,218 @@
+[
+  {
+    "prueba": "Sin sesión: /main.php",
+    "resultado": "OK"
+  },
+  {
+    "prueba": "Sin sesión: /php/historial/errores.php",
+    "resultado": "OK"
+  },
+  {
+    "prueba": "Sin sesión: /php/facturas/crear_factura.php",
+    "resultado": "OK"
+  },
+  {
+    "prueba": "Sin sesión: /php/clientes/eliminar_cliente.php",
+    "resultado": "OK"
+  },
+  {
+    "prueba": "Sin sesión: /php/reportes/ventas.php",
+    "resultado": "OK"
+  },
+  {
+    "prueba": "CSRF términos rechazado",
+    "resultado": "OK"
+  },
+  {
+    "prueba": "GET términos rechazado",
+    "resultado": "OK"
+  },
+  {
+    "prueba": "Archivo privado bloqueado: /php/config/usuarios.local.php",
+    "resultado": "OK"
+  },
+  {
+    "prueba": "Archivo privado bloqueado: /logs/errores.log",
+    "resultado": "OK"
+  },
+  {
+    "prueba": "Archivo privado bloqueado: /tools/usuario.php",
+    "resultado": "OK"
+  },
+  {
+    "prueba": "Archivo privado bloqueado: /.git/config",
+    "resultado": "OK"
+  },
+  {
+    "prueba": "Archivo privado bloqueado: /referencias/db.sql",
+    "resultado": "OK"
+  },
+  {
+    "prueba": "Paginación clientes",
+    "resultado": "OK"
+  },
+  {
+    "prueba": "Paginación clientes?pagina=2",
+    "resultado": "OK"
+  },
+  {
+    "prueba": "Paginación clientes?pagina=999999999",
+    "resultado": "OK"
+  },
+  {
+    "prueba": "Paginación clientes?pagina[]=2",
+    "resultado": "OK"
+  },
+  {
+    "prueba": "Paginación clientes?buscar=prueba&pagina=2",
+    "resultado": "OK"
+  },
+  {
+    "prueba": "Paginación productos",
+    "resultado": "OK"
+  },
+  {
+    "prueba": "Paginación productos?pagina=2",
+    "resultado": "OK"
+  },
+  {
+    "prueba": "Paginación productos?pagina=999999999",
+    "resultado": "OK"
+  },
+  {
+    "prueba": "Paginación productos?pagina[]=2",
+    "resultado": "OK"
+  },
+  {
+    "prueba": "Paginación productos?buscar=prueba&pagina=2",
+    "resultado": "OK"
+  },
+  {
+    "prueba": "Error inline duplicado",
+    "resultado": "OK"
+  },
+  {
+    "prueba": "Error inline existencias",
+    "resultado": "OK"
+  },
+  {
+    "prueba": "qa_operador denegado /php/historial/errores.php",
+    "resultado": "OK"
+  },
+  {
+    "prueba": "qa_operador denegado /php/productos/crear_producto.php",
+    "resultado": "OK"
+  },
+  {
+    "prueba": "qa_operador denegado /php/clientes/eliminar_cliente.php",
+    "resultado": "OK"
+  },
+  {
+    "prueba": "qa_operador denegado /php/facturas/cancelar_factura.php",
+    "resultado": "OK"
+  },
+  {
+    "prueba": "qa_operador consulta productos",
+    "resultado": "OK"
+  },
+  {
+    "prueba": "qa_operador catálogo sin acción crear",
+    "resultado": "OK"
+  },
+  {
+    "prueba": "Operador puede registrar factura",
+    "resultado": "OK"
+  },
+  {
+    "prueba": "qa_consulta denegado /php/historial/errores.php",
+    "resultado": "OK"
+  },
+  {
+    "prueba": "qa_consulta denegado /php/productos/crear_producto.php",
+    "resultado": "OK"
+  },
+  {
+    "prueba": "qa_consulta denegado /php/clientes/eliminar_cliente.php",
+    "resultado": "OK"
+  },
+  {
+    "prueba": "qa_consulta denegado /php/facturas/cancelar_factura.php",
+    "resultado": "OK"
+  },
+  {
+    "prueba": "qa_consulta consulta productos",
+    "resultado": "OK"
+  },
+  {
+    "prueba": "qa_consulta catálogo sin acción crear",
+    "resultado": "OK"
+  },
+  {
+    "prueba": "Consulta no registra factura",
+    "resultado": "OK"
+  },
+  {
+    "prueba": "Venta creada",
+    "resultado": "OK"
+  },
+  {
+    "prueba": "Descuento inventario",
+    "resultado": "OK"
+  },
+  {
+    "prueba": "Motivo obligatorio",
+    "resultado": "OK"
+  },
+  {
+    "prueba": "Cancelación repone",
+    "resultado": "OK"
+  },
+  {
+    "prueba": "Motivo auditado",
+    "resultado": "OK"
+  },
+  {
+    "prueba": "No repone dos veces",
+    "resultado": "OK"
+  },
+  {
+    "prueba": "Cerrar sesión",
+    "resultado": "OK"
+  },
+  {
+    "prueba": "Paginación facturas ",
+    "resultado": "OK"
+  },
+  {
+    "prueba": "Paginación facturas ?pagina=2",
+    "resultado": "OK"
+  },
+  {
+    "prueba": "Paginación facturas ?buscar=Cliente+prueba&pagina=2",
+    "resultado": "OK"
+  },
+  {
+    "prueba": "Paginación facturas ?fecha=2026-11-18&pagina=2",
+    "resultado": "OK"
+  },
+  {
+    "prueba": "Cabeceras presentes",
+    "resultado": "OK"
+  },
+  {
+    "prueba": "Historial sin SQL",
+    "resultado": "OK"
+  },
+  {
+    "prueba": "Cambio de cuenta invalida sesión",
+    "resultado": "OK"
+  },
+  {
+    "prueba": "CSRF de otra sesión rechazado",
+    "resultado": "OK"
+  },
+  {
+    "prueba": "Límite compartido bloquea credenciales correctas",
+    "resultado": "OK"
+  }
+]

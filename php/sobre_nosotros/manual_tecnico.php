@@ -23,6 +23,7 @@ if ($manualDisponible) {
 
 require __DIR__ . '/../includes/menu.php';
 ?>
+<p class="nota nota-informativa">Actualización operativa. Usa el puerto SQL de tu equipo. Apache restringe el acceso a conexiones locales con Require local. El portal exige POST y un token CSRF. Los módulos verifican la aceptación antes de abrir SQL.</p>
 
 <div class="encabezado-vista">
     <div class="encabezado-info">

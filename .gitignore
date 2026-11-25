@@ -9,3 +9,7 @@ vendor/
 node_modules/
 *.bak
 *.tmp
+
+php/config/usuarios.local.php
+php/config/usuarios.local.php.lock
+logs/acceso-*.php

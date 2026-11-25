@@ -1,7 +1,10 @@
 <?php if (!defined('LA_UNICA_WIKI')) { exit; } ?>
-<h2 id="utilidades">Validación y formato</h2>
-<p>utilidades.php ofrece h para escape HTML, leerTexto para entradas escalares, validarEntero y validarId para rangos numéricos, validarFecha, longitudTexto, formatearMonedaCop y esFacturaDeHoy. entorno.php define STOCK_BAJO y ENTERO_MAXIMO.</p>
-<h2 id="sesion">Sesión y consultas</h2>
-<p>seguridad.php contiene sesionDisponible, obtenerTokenCsrf y validarTokenCsrf. consultas.php ofrece registrarAccion y llamarProcedimiento; limpia los resultados pendientes de procedimientos para poder reutilizar la conexión.</p>
-<h2 id="errores">Configuración y errores</h2>
-<p>cargarConfiguracionBD, en configuracion.php, devuelve un arreglo validado sin imprimir valores. registrarErrorServidor y mostrarPaginaError, en errores.php, separan diagnóstico y respuesta. Los módulos siguen cargando conexion.php como punto de entrada; SIN_BASE_DE_DATOS omite la carga de valores SQL y la conexión.</p>
+<h2 id="referencia">Funciones compartidas actuales</h2>
+<div class="tabla-wiki"><table><thead><tr><th>Archivo</th><th>Funciones</th><th>Responsabilidad</th></tr></thead><tbody><tr><td>utilidades.php</td><td>h, leerTexto, validarEntero, validarId, validarFecha, longitudTexto, formatearMonedaCop, esFacturaDeHoy</td><td>Escape HTML, lectura escalar, rangos y formato.</td></tr><tr><td>seguridad.php</td><td>sesionDisponible, obtenerTokenCsrf, validarTokenCsrf</td><td>Sesiones y token de las operaciones de cambio.</td></tr><tr><td>configuracion.php</td><td>cargarConfiguracionBD</td><td>Valores privados/entorno, validación y predeterminados.</td></tr><tr><td>errores.php</td><td>registrarErrorServidor, mostrarPaginaError</td><td>JSON de diagnóstico y respuesta general.</td></tr><tr><td>consultas.php</td><td>registrarAccion, llamarProcedimiento</td><td>Historial y CALL con limpieza de resultados.</td></tr><tr><td>reportes/datos_reportes.php</td><td>catalogoReportes, consultarFilasReporte, obtenerFilasReporte</td><td>Metadatos y consultas auxiliares de reportes.</td></tr></tbody></table></div>
+
+<h2 id="punto-de-entrada">Punto de entrada</h2>
+<p>Los módulos cargan conexion.php, que incluye los archivos anteriores. SIN_BASE_DE_DATOS omite la carga de configuración SQL y la conexión; lo utiliza Historial de errores. La wiki tiene sus propias utilidades de carga/búsqueda y un h() protegido frente a redeclaración.</p>
+<h2 id="transacciones">Transacciones de negocio</h2>
+<p>Crear y cancelar facturas se implementa directamente en sus entradas PHP. No existe una API de servicio_facturas.php ni los métodos registrarVenta, registrarPagoFactura, totalFactura o ejecutarEnTransaccion de la versión antigua.</p>
+<h2 id="historial">Historial dentro de una transacción</h2>
+<p>registrarAccion recibe enTransaccion=true en ventas/cancelaciones y propaga un fallo para provocar rollback. Fuera de una transacción registra el problema técnico sin deshacer una operación ya completada. llamarProcedimiento recibe el CALL, tipos y parámetros y devuelve filas asociativas.</p>

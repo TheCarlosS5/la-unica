@@ -15,9 +15,9 @@ $titulo = 'Ventas';
 $seccionActiva = 'reportes';
 $vistas = ['factura' => 'Factura', 'dia' => 'Día', 'semana' => 'Semana', 'mes' => 'Mes', 'anio' => 'Año'];
 $hoy = date('Y-m-d');
-$desde = trim((string)($_GET['desde'] ?? $hoy));
-$hasta = trim((string)($_GET['hasta'] ?? $hoy));
-$ver = (string)($_GET['ver'] ?? 'factura');
+$desde = leerTexto($_GET + ['desde' => $hoy], 'desde');
+$hasta = leerTexto($_GET + ['hasta' => $hoy], 'hasta');
+$ver = leerTexto($_GET + ['ver' => 'factura'], 'ver');
 $errorFiltro = '';
 $errorLectura = false;
 $filas = [];
@@ -86,6 +86,22 @@ function etiquetaPeriodo($inicio, $ver) {
     return $dias[(int)date('w', $fecha)] . ' ' . date('d/m/Y', $fecha);
 }
 
+require_once __DIR__ . '/exportar_csv.php';
+$columnasCsv = $ver === 'factura' ? [
+    ['campo' => 'id_factura', 'titulo' => 'Factura'],
+    ['campo' => 'fecha_factura', 'titulo' => 'Fecha'],
+    ['campo' => 'cliente', 'titulo' => 'Cliente'],
+    ['campo' => 'estado_factura', 'titulo' => 'Estado'],
+    ['campo' => 'total_factura', 'titulo' => 'Total (COP)', 'tipo' => 'moneda'],
+] : [
+    ['campo' => 'inicio_periodo', 'titulo' => 'Inicio del período'],
+    ['campo' => 'ventas', 'titulo' => 'Ventas pagadas'],
+    ['campo' => 'total_vendido', 'titulo' => 'Total vendido (COP)', 'tipo' => 'moneda'],
+    ['campo' => 'canceladas', 'titulo' => 'Facturas canceladas'],
+    ['campo' => 'total_cancelado', 'titulo' => 'Total cancelado (COP)', 'tipo' => 'moneda'],
+];
+exportarReporteCsv('ventas', $columnasCsv, $filas, empty($errorFiltro) && !$errorLectura);
+
 require __DIR__ . '/../includes/menu.php';
 require __DIR__ . '/acciones_impresion.php';
 ?>
@@ -103,7 +119,7 @@ require __DIR__ . '/acciones_impresion.php';
     </div>
 </div>
 
-<form class="filtros-facturas filtros-historial" method="get" action="ventas.php" aria-label="Filtrar ventas">
+<form class="filtros-facturas filtros-historial" method="get" data-carga action="ventas.php" aria-label="Filtrar ventas">
     <div class="campo">
         <label for="desde">Desde</label>
         <input id="desde" name="desde" type="date" value="<?= h($desde) ?>" required>
@@ -178,7 +194,7 @@ require __DIR__ . '/acciones_impresion.php';
                             <td><span class="chip-id">#<?= (int)$factura['id_factura'] ?></span></td>
                             <td><span class="celda-fecha"><?= h(date('d/m/Y H:i', strtotime($factura['fecha_factura']))) ?></span></td>
                             <td><?= h($factura['cliente']) ?></td>
-                            <td><span class="estado-factura <?= strtolower(h($factura['estado_factura'])) ?>"><?= h($factura['estado_factura']) ?></span></td>
+                            <td><span class="estado-factura <?= strtolower(h($factura['estado_factura'])) ?>"><span aria-hidden="true"><?= $factura['estado_factura'] === 'Pagado' ? '✓' : '×' ?></span> <?= h($factura['estado_factura']) ?></span></td>
                             <td class="texto-derecha celda-destacada"><?= h(formatearMonedaCop($factura['total_factura'])) ?></td>
                             <td class="texto-derecha no-imprimir-reporte"><a class="boton secundario boton-factura-detalle" href="<?= h($baseUrl) ?>/php/facturas/imprimir_factura.php?id=<?= (int)$factura['id_factura'] ?>">Ver factura</a></td>
                         </tr>

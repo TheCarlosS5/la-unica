@@ -34,6 +34,16 @@ foreach ($productos as $producto) {
     }
 }
 
+require_once __DIR__ . '/exportar_csv.php';
+$columnasCsv = [
+    ['campo' => 'id_producto', 'titulo' => 'ID producto'],
+    ['campo' => 'nombre', 'titulo' => 'Producto'],
+    ['campo' => 'unidad_medida', 'titulo' => 'Unidad de medida'],
+    ['campo' => 'stock', 'titulo' => 'Existencias'],
+    ['campo' => 'precio_unitario', 'titulo' => 'Precio vigente (COP)', 'tipo' => 'moneda'],
+];
+exportarReporteCsv('existencias', $columnasCsv, $productos, empty($errorFiltro) && !$errorLectura);
+
 require __DIR__ . '/../includes/menu.php';
 require __DIR__ . '/acciones_impresion.php';
 ?>
@@ -56,7 +66,7 @@ require __DIR__ . '/acciones_impresion.php';
 <?php elseif ($productos === []): ?>
     <div class="sin-datos estado-vacio" role="status">
         <h2 class="estado-vacio-titulo">Todavía no hay productos registrados</h2>
-        <a class="boton" href="<?= h($baseUrl) ?>/php/productos/crear_producto.php">Crear producto</a>
+        <?php if (puedeAcceder('/php/productos/crear_producto.php', usuarioActual())): ?><a class="boton" href="<?= h($baseUrl) ?>/php/productos/crear_producto.php">Crear producto</a><?php endif; ?>
     </div>
 <?php else: ?>
     <section class="tarjetas reportes-resumen-grid" aria-label="Resumen de existencias">

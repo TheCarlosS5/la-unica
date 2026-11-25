@@ -19,6 +19,7 @@ $reportesMenu = [
     ['archivo' => 'detalle_facturas.php', 'titulo' => 'Detalle de facturas'],
 ];
 $baseUrl = $baseUrl ?? '';
+
 $titulo = $titulo ?? 'La Única';
 $seccionActual = $seccionActiva ?? '';
 $paginaActual = basename(str_replace('\\', '/', (string)($_SERVER['SCRIPT_NAME'] ?? '')));
@@ -50,7 +51,7 @@ if ($seccionActual === '') {
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="theme-color" content="#fbf7ec">
     <title><?= h($titulo) ?> · La Única - Administración</title>
-    <link rel="icon" type="image/png" href="<?= h($baseUrl) ?>/assets/img/logo.png">
+    <link rel="icon" type="image/webp" href="<?= h($baseUrl) ?>/assets/img/logo.webp">
     <link rel="preload" href="<?= h($baseUrl) ?>/assets/fonts/patrick-hand-latin.woff2" as="font" type="font/woff2" crossorigin>
     <link rel="preload" href="<?= h($baseUrl) ?>/assets/fonts/architects-daughter-latin.woff2" as="font" type="font/woff2" crossorigin>
     <link rel="stylesheet" href="<?= h($baseUrl) ?>/assets/css/estilos.css">
@@ -66,7 +67,7 @@ if ($seccionActual === '') {
             <div class="sidebar-cabecera">
                 <a class="sidebar-marca" href="<?= h($baseUrl) ?>/main.php" title="Panel La Única">
                     <span class="marca-emblema" aria-hidden="true">
-                        <img src="<?= h($baseUrl) ?>/assets/img/logo.png" alt="">
+                        <img src="<?= h($baseUrl) ?>/assets/img/logo.webp" alt="" width="128" height="128">
                     </span>
                     <span class="marca-texto">
                         <span class="marca-nombre">La Única</span>
@@ -105,12 +106,12 @@ if ($seccionActual === '') {
                                 </svg>
                                 <span>Facturas</span>
                             </a>
-                            <a class="nav-subenlace<?= $paginaActual === 'crear_factura.php' ? ' activo' : '' ?>" href="<?= h($baseUrl) ?>/php/facturas/crear_factura.php" title="Registrar una nueva factura" <?= $paginaActual === 'crear_factura.php' ? ' aria-current="page"' : '' ?>>
+                            <a class="nav-subenlace<?= $paginaActual === 'crear_factura.php' ? ' activo' : '' ?>" href="<?= h($baseUrl) ?>/php/facturas/crear_factura.php" title="Crear factura" <?= $paginaActual === 'crear_factura.php' ? ' aria-current="page"' : '' ?>>
                                 <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                                     <line x1="12" y1="5" x2="12" y2="19" />
                                     <line x1="5" y1="12" x2="19" y2="12" />
                                 </svg>
-                                <span>Nueva factura</span>
+                                <span>Crear factura</span>
                             </a>
                         </div>
                     </nav>
@@ -129,12 +130,12 @@ if ($seccionActual === '') {
                                 </svg>
                                 <span>Clientes</span>
                             </a>
-                            <a class="nav-subenlace<?= $paginaActual === 'crear_cliente.php' ? ' activo' : '' ?>" href="<?= h($baseUrl) ?>/php/clientes/crear_cliente.php" title="Crear nuevo cliente" <?= $paginaActual === 'crear_cliente.php' ? ' aria-current="page"' : '' ?>>
+                            <a class="nav-subenlace<?= $paginaActual === 'crear_cliente.php' ? ' activo' : '' ?>" href="<?= h($baseUrl) ?>/php/clientes/crear_cliente.php" title="Crear cliente" <?= $paginaActual === 'crear_cliente.php' ? ' aria-current="page"' : '' ?>>
                                 <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                                     <line x1="12" y1="5" x2="12" y2="19" />
                                     <line x1="5" y1="12" x2="19" y2="12" />
                                 </svg>
-                                <span>Nuevo cliente</span>
+                                <span>Crear cliente</span>
                             </a>
                         </div>
 
@@ -147,12 +148,12 @@ if ($seccionActual === '') {
                                 </svg>
                                 <span>Productos</span>
                             </a>
-                            <a class="nav-subenlace<?= $paginaActual === 'crear_producto.php' ? ' activo' : '' ?>" href="<?= h($baseUrl) ?>/php/productos/crear_producto.php" title="Crear nuevo producto" <?= $paginaActual === 'crear_producto.php' ? ' aria-current="page"' : '' ?>>
+                            <a class="nav-subenlace<?= $paginaActual === 'crear_producto.php' ? ' activo' : '' ?>" href="<?= h($baseUrl) ?>/php/productos/crear_producto.php" title="Crear producto" <?= $paginaActual === 'crear_producto.php' ? ' aria-current="page"' : '' ?>>
                                 <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                                     <line x1="12" y1="5" x2="12" y2="19" />
                                     <line x1="5" y1="12" x2="19" y2="12" />
                                 </svg>
-                                <span>Nuevo producto</span>
+                                <span>Crear producto</span>
                             </a>
                         </div>
                     </nav>

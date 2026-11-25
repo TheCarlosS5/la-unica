@@ -68,18 +68,21 @@ require __DIR__ . '/acciones_impresion.php';
             <h2 class="modulo-titulo">Ventas de hoy</h2>
             <p class="reportes-resumen-valor"><?= h(formatearMonedaCop($totalHoy)) ?></p>
             <p class="reportes-resumen-detalle"><?= $ventasHoy ?> <?= $ventasHoy === 1 ? 'factura pagada' : 'facturas pagadas' ?>.</p>
+            <p>Para caja. Permite cerrar el día y comparar cuánto se vendió en otros períodos.</p>
             <div class="modulo-acciones"><a class="boton" href="ventas.php">Ventas</a></div>
         </article>
         <article class="reportes-resumen-card">
             <h2 class="modulo-titulo">Unidades vendidas hoy</h2>
             <p class="reportes-resumen-valor"><?= number_format($unidadesHoy, 0, ',', '.') ?></p>
             <p class="reportes-resumen-detalle">De <?= count($productosHoy) ?> <?= count($productosHoy) === 1 ? 'producto' : 'productos distintos' ?>.</p>
+            <p>Para inventario. Ayuda a identificar qué productos tienen más demanda.</p>
             <div class="modulo-acciones"><a class="boton" href="unidades_vendidas_por_producto.php">Unidades vendidas</a></div>
         </article>
         <article class="reportes-resumen-card">
             <h2 class="modulo-titulo">Existencias</h2>
             <p class="reportes-resumen-valor"><?= $agotados ?> agotados · <?= $bajos ?> bajos</p>
             <p class="reportes-resumen-detalle">«Bajo» = <?= STOCK_BAJO ?> unidades o menos.</p>
+            <p>Para inventario. Ayuda a decidir qué productos reponer primero.</p>
             <div class="modulo-acciones"><a class="boton" href="existencias_productos.php">Existencias</a></div>
         </article>
     </section>

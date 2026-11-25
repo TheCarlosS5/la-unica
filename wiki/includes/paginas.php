@@ -39,11 +39,11 @@ function catalogoWiki()
             ],
             'guia/reportes' => [
                 'titulo' => 'Reportes',
-                'descripcion' => 'Resumen diario y cinco reportes: consulta, impresión y PDF.',
+                'descripcion' => 'Resumen diario, cinco reportes, impresión y PDF.',
             ],
             'guia/sobre-nosotros' => [
                 'titulo' => 'Sobre nosotros y ayuda',
-                'descripcion' => 'SRS, manuales, PAC, video y wiki de la versión actual.',
+                'descripcion' => 'Manual de usuario integrado, video explicativo y esta wiki.',
             ],
             'guia/movil' => [
                 'titulo' => 'En celular y tableta',
@@ -75,7 +75,7 @@ function catalogoWiki()
             ],
             'guia/mensajes' => [
                 'titulo' => 'Catálogo de mensajes',
-                'descripcion' => 'Los principales mensajes de La Única, qué significan y qué hacer.',
+                'descripcion' => 'Todos los mensajes que muestra La Única, qué significan y qué hacer.',
             ],
         ],
         'Notas técnicas' => [
@@ -112,8 +112,8 @@ function catalogoWiki()
                 'descripcion' => 'Sistema visual, plantilla de páginas, menú adaptable y el script del formulario de facturas.',
             ],
             'tecnico/requisitos' => [
-                'titulo' => 'Requisitos (SRS 1.5)',
-                'descripcion' => 'Resumen del SRS vigente y matriz de trazabilidad requisito → código.',
+                'titulo' => 'Requisitos (SRS 1.6)',
+                'descripcion' => 'SRS 1.6 y trazabilidad entre requisitos y código.',
             ],
             'tecnico/contribuir' => [
                 'titulo' => 'Contribuir al proyecto',
@@ -121,11 +121,11 @@ function catalogoWiki()
             ],
             'tecnico/releases' => [
                 'titulo' => 'Publicar un release',
-                'descripcion' => 'Convención de versiones y pasos para etiquetar y publicar La Única en GitHub (resumen de RELEASE.md).',
+                'descripcion' => 'Convención de versiones y pasos para etiquetar y publicar La Única en GitHub (preparación documentada de una entrega).',
             ],
             'tecnico/wiki' => [
                 'titulo' => 'Mantener esta wiki',
-                'descripcion' => 'Cómo está hecha la wiki en PHP, cómo agregar o editar páginas y cómo verificar sus enlaces y mantener instrucciones actuales.',
+                'descripcion' => 'Cómo está hecha la wiki en PHP, cómo agregar o editar páginas y cómo regenerar las capturas numeradas.',
             ],
         ],
         'General' => [
@@ -135,7 +135,7 @@ function catalogoWiki()
             ],
             'general/novedades' => [
                 'titulo' => 'Historial del proyecto',
-                'descripcion' => 'Integración actual y mejoras de la revisión técnica.',
+                'descripcion' => 'Cronología de La Única reconstruida a partir del historial de Git.',
             ],
         ],
     ];

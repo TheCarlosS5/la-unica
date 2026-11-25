@@ -3,7 +3,7 @@
  * Archivo: index.php
  * Módulo: Sobre nosotros.
  * Propósito: presentar los recursos de ayuda y documentación de La Única.
- * Funcionamiento: muestra tarjetas de acceso a los dos manuales, al PAC y al video integrado.
+ * Funcionamiento: muestra tarjetas de acceso al SRS, los dos manuales, el PAC, el MER, el video y la wiki.
  */
 
 require __DIR__ . '/../config/conexion.php';
@@ -21,11 +21,33 @@ require __DIR__ . '/../includes/menu.php';
             <span aria-current="page">Sobre nosotros</span>
         </nav>
         <h1 class="encabezado-titulo">Sobre nosotros</h1>
-        <p class="encabezado-descripcion">Consulta el SRS, el manual del usuario, el manual técnico, el Plan de Acción de Mejora Continua y la wiki, o reproduce el video explicativo. Todos los recursos se muestran dentro del aplicativo.</p>
+        <p class="encabezado-descripcion">Consulta el SRS, el manual del usuario, el manual técnico, el Plan de Aseguramiento de la Calidad, el modelo entidad-relación (MER) y la wiki, o reproduce el video explicativo. Todos los recursos se muestran dentro del aplicativo.</p>
     </div>
 </div>
 
 <section class="tarjetas reportes-resumen-grid" aria-label="Recursos de ayuda">
+    <article class="reportes-resumen-card">
+        <div class="modulo-cabecera">
+            <div class="modulo-icono" aria-hidden="true">
+                <svg width="25" height="25" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="8" y="2" width="8" height="6" rx="1" />
+                    <rect x="2" y="16" width="8" height="6" rx="1" />
+                    <rect x="14" y="16" width="8" height="6" rx="1" />
+                    <path d="M12 8v4M6 16v-4h12v4" />
+                </svg>
+            </div>
+            <h2 class="modulo-titulo">Modelo entidad-relación (MER)</h2>
+        </div>
+        <p class="reportes-resumen-descripcion">Consulta las entidades, los campos y las relaciones de la base de datos de La Única.</p>
+        <p class="reportes-resumen-detalle">El diagrama se muestra dentro del aplicativo y se puede abrir a tamaño completo.</p>
+        <div class="modulo-acciones">
+            <a class="boton" href="<?= h($baseUrl) ?>/php/sobre_nosotros/mer.php">
+                <span>Ver MER</span>
+                <svg class="boton-icono" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="9 18 15 12 9 6" /></svg>
+            </a>
+        </div>
+    </article>
+
     <article class="reportes-resumen-card">
         <div class="modulo-cabecera">
             <div class="modulo-icono" aria-hidden="true">
@@ -36,7 +58,7 @@ require __DIR__ . '/../includes/menu.php';
             </div>
             <h2 class="modulo-titulo">Especificación de requisitos (SRS)</h2>
         </div>
-        <p class="reportes-resumen-descripcion">Consulta el SRS completo, versión 1.5, con el alcance, los requisitos, las reglas del negocio y los criterios de aceptación.</p>
+        <p class="reportes-resumen-descripcion">Consulta el SRS completo, versión 1.6, con el alcance, los requisitos, las reglas del negocio y los criterios de aceptación.</p>
         <p class="reportes-resumen-detalle">El documento PDF se muestra integrado en la página, sin abrir una pestaña externa.</p>
         <div class="modulo-acciones">
             <a class="boton" href="<?= h($baseUrl) ?>/php/sobre_nosotros/srs.php">
@@ -94,9 +116,9 @@ require __DIR__ . '/../includes/menu.php';
                     <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" />
                 </svg>
             </div>
-            <h2 class="modulo-titulo">Plan de Acción de Mejora Continua</h2>
+            <h2 class="modulo-titulo">Plan de Aseguramiento de la Calidad</h2>
         </div>
-        <p class="reportes-resumen-descripcion">Consulta el PAC con las acciones de mejora, sus prioridades, las evidencias y el seguimiento del proyecto.</p>
+        <p class="reportes-resumen-descripcion">Consulta el PAC 2.0 con los casos de prueba, sus resultados, las evidencias y los criterios de aceptación.</p>
         <p class="reportes-resumen-detalle">El documento PDF se muestra integrado en la página, sin abrir una pestaña externa.</p>
         <div class="modulo-acciones">
             <a class="boton" href="<?= h($baseUrl) ?>/php/sobre_nosotros/pac.php">

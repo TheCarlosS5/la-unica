@@ -1,23 +1,32 @@
 <?php if (!defined('LA_UNICA_WIKI')) { exit; } ?>
-<p class="aviso"><strong>Guía visual actualizada.</strong> Las capturas se tomaron de la interfaz actual con datos ficticios y una base independiente. Haz clic en una imagen o enfócala y pulsa Enter para ampliarla; Escape cierra el visor.</p>
-<h2 id="resumen">Resumen diario y acceso a las consultas</h2>
-<p>Abre Reportes para revisar el resumen del día y acceder a cinco consultas útiles. Las rutas antiguas compatibles no agregan opciones duplicadas al menú.</p>
-<figure class="captura"><img src="img/actuales/reportes-resumen.jpg" alt="Reportes — Resumen diario y catálogo vigente." width="1280" height="960" loading="lazy" decoding="async"><figcaption>Reportes — Resumen diario y catálogo vigente.</figcaption></figure>
-<h2 id="ventas">Ventas por fechas y agrupación</h2>
-<p>Aplica Desde, Hasta y Ver por; pulsa Consultar. Puedes revisar facturas o agrupar por día, semana, mes o año. Las canceladas se distinguen y no suman al total vendido.</p>
-<figure class="captura"><img src="img/actuales/reportes-ventas.jpg" alt="Ventas — Una venta vigente y una cancelada, separadas en los totales." width="1280" height="960" loading="lazy" decoding="async"><figcaption>Ventas — Una venta vigente y una cancelada, separadas en los totales.</figcaption></figure>
-<h2 id="unidades">Unidades vendidas por producto</h2>
-<p>Consulta las cantidades e importes vendidos dentro del rango. Solo cuentan facturas Pagado; se excluyen las canceladas porque sus unidades ya regresaron al inventario.</p>
-<figure class="captura"><img src="img/actuales/reportes-unidades.jpg" alt="Unidades — Cantidades e importes de ventas vigentes." width="1280" height="960" loading="lazy" decoding="async"><figcaption>Unidades — Cantidades e importes de ventas vigentes.</figcaption></figure>
-<h2 id="existencias">Existencias actuales</h2>
-<p>Revisa stock y precio vigente, ordenados desde las menores existencias. Este reporte describe el catálogo actual, no el precio histórico de una venta.</p>
-<figure class="captura"><img src="img/actuales/reportes-existencias.jpg" alt="Existencias — Disponibilidad y precios actuales del catálogo ficticio." width="1280" height="960" loading="lazy" decoding="async"><figcaption>Existencias — Disponibilidad y precios actuales del catálogo ficticio.</figcaption></figure>
+<p>Los reportes son <strong>solo de consulta</strong>: no cambian datos. La versión actual ofrece cinco reportes y un resumen diario. Utiliza cuatro procedimientos y consultas sobre las tablas actuales; <code>db.sql</code> no define vistas.</p><h2 id="abrir-los-reportes">Abrir los reportes</h2>
+<figure class="captura"><img src="img/reportes-menu.webp" alt="Reportes en el menú actual" loading="lazy"><figcaption>Reportes en el menú actual</figcaption></figure>
+<p><span class="marca-num">1</span> Reportes abre el resumen. <span class="marca-num">2</span> Debajo se encuentran los accesos a las cinco consultas.</p>
+<h2 id="el-resumen-general">El resumen general</h2>
+<p>Las tarjetas resumen ventas del día, unidades del día y existencias. Más abajo están Clientes y cantidad de facturas y Detalle de facturas.</p><figure class="captura"><img src="img/reportes-resumen.webp" alt="Resumen diario y cinco consultas actuales" loading="lazy"><figcaption>Resumen diario y cinco consultas actuales</figcaption></figure>
+<figure class="captura"><img src="img/reportes-tarjeta.webp" alt="Partes de la tarjeta Ventas de hoy" loading="lazy"><figcaption>Partes de la tarjeta Ventas de hoy</figcaption></figure>
+<ul><li><span class="marca-num">1</span> Importe vendido.</li><li><span class="marca-num">2</span> Cantidad de facturas pagadas.</li><li><span class="marca-num">3</span> Botón que abre Ventas.</li></ul>
+<h2 id="leer-un-reporte-individual">Leer una consulta</h2>
+<figure class="captura"><img src="img/reportes-individual-partes.webp" alt="Encabezado, impresión y filas del reporte de existencias" loading="lazy"><figcaption>Encabezado, impresión y filas del reporte de existencias</figcaption></figure>
+<p><span class="marca-num">1</span> identifica la consulta; <span class="marca-num">2</span> señala los controles de impresión y PDF; <span class="marca-num">3</span> señala una fila del resultado. Los datos y las notas dependen del reporte.</p>
+<p>En cada consulta, aplica los filtros y pulsa <strong>Descargar CSV</strong>, junto a los controles de impresión, para exportar las filas. El archivo usa UTF-8 y punto y coma como separador.</p>
+<h2 id="los-siete-reportes-en-detalle">Los cinco reportes en detalle</h2>
+<div class="tabla-wiki"><table><thead><tr><th>Reporte</th><th>Qué muestra</th></tr></thead><tbody><tr><td>Ventas</td><td>Lista facturas con su estado o agrupa por día, semana, mes o año. Solo Pagado suma al total vendido.</td></tr><tr><td>Unidades vendidas por producto</td><td>Cantidades e importes por fechas, excluyendo Cancelado.</td></tr><tr><td>Existencias</td><td>Existencias y precio actual; Bajo es de 1 a 5 y Agotado es 0.</td></tr><tr><td>Clientes y cantidad de facturas</td><td>Incluye clientes sin facturas y cuenta Pagado y Cancelado.</td></tr><tr><td>Detalle de facturas</td><td>Líneas con precio histórico, fecha, estado y subtotal. Incluye ambos estados.</td></tr></tbody></table></div>
+
+<h2 id="ventas">Ventas</h2>
+<p>Selecciona Desde, Hasta y Ver por, y pulsa Consultar. Al abrir se muestra hoy. La vista por factura conserva el estado; las agrupaciones separan ventas pagadas y canceladas.</p><figure class="captura"><img src="img/reporte-total-vigente-por-factura.webp" alt="Ventas en la versión actual" loading="lazy"><figcaption>Ventas en la versión actual</figcaption></figure>
+
+<h2 id="unidades">Unidades vendidas</h2>
+<p>Elige el rango de fechas. Se suman cantidades e importes de las facturas Pagado, utilizando el precio guardado al vender.</p><figure class="captura"><img src="img/reporte-unidades-facturadas-por-producto.webp" alt="Unidades vendidas en la versión actual" loading="lazy"><figcaption>Unidades vendidas en la versión actual</figcaption></figure>
+
+<h2 id="existencias">Existencias</h2>
+<p>Ordena desde las menores existencias y muestra precios actuales. No representa los precios de ventas anteriores.</p><figure class="captura"><img src="img/reporte-existencias-productos.webp" alt="Existencias en la versión actual" loading="lazy"><figcaption>Existencias en la versión actual</figcaption></figure>
+
 <h2 id="clientes">Clientes y cantidad de facturas</h2>
-<p>Incluye clientes sin ventas y cuenta las facturas de ambos estados. Cancelar no elimina la factura ni su relación con el cliente.</p>
-<figure class="captura"><img src="img/actuales/reportes-clientes.jpg" alt="Clientes — Conteo de facturas con clientes sin ventas incluidos." width="1280" height="960" loading="lazy" decoding="async"><figcaption>Clientes — Conteo de facturas con clientes sin ventas incluidos.</figcaption></figure>
+<p>Incluye los clientes sin facturas. El conteo incluye Pagado y Cancelado porque ambos conservan la relación con el cliente.</p><figure class="captura"><img src="img/reporte-clientes-y-facturas.webp" alt="Clientes y cantidad de facturas en la versión actual" loading="lazy"><figcaption>Clientes y cantidad de facturas en la versión actual</figcaption></figure>
+
 <h2 id="detalle">Detalle de facturas</h2>
-<p>Revisa productos, cantidades, fecha, estado, precio de venta y subtotal. Conserva ambos estados para trazabilidad; comprueba Estado al interpretar las cifras.</p>
-<figure class="captura"><img src="img/actuales/reportes-detalle.jpg" alt="Detalle — Líneas y valores históricos de cada factura." width="1600" height="1050" loading="lazy" decoding="async"><figcaption>Detalle — Líneas y valores históricos de cada factura.</figcaption></figure>
-<h2 id="pdf">Imprimir y guardar como PDF</h2>
-<p>Aplica los filtros antes de pulsar Imprimir reporte o Guardar como PDF. Ambos abren el diálogo del navegador: selecciona el destino PDF para exportar. Usa A4, escala 100 % y desactiva encabezados y pies del navegador. Detalle de facturas utiliza horizontal; los demás, vertical.</p>
-<figure class="captura"><img src="img/actuales/reportes-impresion.jpg" alt="Impresión — Estilos del reporte de ventas con título, período y datos; el diálogo del navegador no forma parte de la captura." width="1280" height="960" loading="lazy" decoding="async"><figcaption>Impresión — Estilos del reporte de ventas con título, período y datos; el diálogo del navegador no forma parte de la captura.</figcaption></figure>
+<p>Muestra nombre del cliente en la venta, producto, cantidad, fecha, estado, precio histórico y subtotal. Revisa Estado al interpretar las cifras.</p><figure class="captura"><img src="img/reporte-detalle-facturas.webp" alt="Detalle de facturas en la versión actual" loading="lazy"><figcaption>Detalle de facturas en la versión actual</figcaption></figure>
+
+<h2 id="imprimir-y-guardar-pdf">Imprimir y guardar como PDF</h2>
+<p>Aplica los filtros antes de pulsar Imprimir reporte o Guardar como PDF. Ambos abren el diálogo del navegador; selecciona Guardar como PDF y la carpeta de destino para exportar. No se genera una descarga automática.</p><p>Usa A4, escala 100 % y desactiva encabezados y pies del navegador. Detalle de facturas utiliza horizontal; los demás, vertical. La página imprime su título, período, fecha y numeración.</p><figure class="captura"><img src="img/reporte-ventas-impresion.webp" alt="Estilos de impresión del reporte de Ventas; no es el diálogo del navegador" loading="lazy"><figcaption>Estilos de impresión del reporte de Ventas; no es el diálogo del navegador</figcaption></figure>

@@ -1,6 +1,7 @@
 <?php if (!defined('LA_UNICA_WIKI')) { exit; } ?>
-<h2 id="publicar">Publicación verificable</h2>
-<p>RELEASE.md recoge la preparación de una publicación: respaldo, revisión de la diferencia, verificación en una instalación aislada y comprobación del commit remoto. Una actualización de main no crea automáticamente una etiqueta ni un release de GitHub.</p>
-<h2 id="alcance">Describir la versión</h2>
-<p>Las notas deben nombrar las funciones presentes: cinco tablas, cuatro procedimientos, ventas Pagado, cancelaciones del mismo día, cinco reportes y ayuda integrada. No reutilices las instrucciones de la versión antigua con pagos pendientes o migraciones que esta copia no contiene.</p>
-<p>No publiques contraseñas, respaldos con datos reales ni logs. Crea etiquetas solo cuando el equipo haya definido su número y autorizado la publicación.</p>
+<h2 id="preparar-la-entrega">Preparar la entrega</h2>
+<ol><li>Identifica el commit, la copia y su base; respalda antes de cambiar datos o esquema.</li><li>Ejecuta el plan de QA en una instalación independiente y registra resultados reales.</li><li>Comprueba los cinco reportes, sus CSV y PDF, el comprobante, documentos y video.</li><li>Revisa la diferencia de Git y excluye configuración privada y datos reales.</li><li>Confirma que SRS 1.6, manual de usuario 2.1, manual técnico 1.4, PAC 2.0 y wiki describan la misma operación.</li></ol>
+<h2 id="publicación">Publicación</h2>
+<p>Integra sin sobrescribir trabajo ajeno ni usar force push. Comprueba el SHA remoto. main no tiene workflows activos en esta distribución; una publicación no permite afirmar que existan comprobaciones automáticas actuales.</p>
+<h2 id="etiquetas-y-versiones">Etiquetas y versiones</h2>
+<p>Actualizar main no crea una etiqueta ni un release. Cuando el equipo acuerde un número y autorice publicarlo, etiqueta el commit verificado y escribe notas de sus cambios reales. No existe RELEASE.md vigente; esta página y el README describen la preparación de entrega.</p>

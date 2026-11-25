@@ -24,29 +24,22 @@ $sqlSeleccionClientes = 'SELECT c.id_cliente, c.nombre, c.fecha_registro, COUNT(
 $sqlAgruparClientes = ' GROUP BY c.id_cliente, c.nombre, c.fecha_registro ORDER BY c.id_cliente';
 $clientes = [];
 $errorLectura = false;
+$paginacion = null;
 try {
+    $condicion = '';
+    $tipos = '';
+    $parametros = [];
     if ($documentoBuscado !== null) {
-        $consultaClientes = $conexion->prepare($sqlSeleccionClientes . ' WHERE c.id_cliente = ? OR c.nombre LIKE ?' . $sqlAgruparClientes);
-        $patronNombre = '%' . $terminoBusqueda . '%';
-        $consultaClientes->bind_param('is', $documentoBuscado, $patronNombre);
-        $consultaClientes->execute();
-        $resultadoClientes = $consultaClientes->get_result();
+        $condicion = ' WHERE c.id_cliente = ? OR c.nombre LIKE ?';
+        $tipos = 'is';
+        $parametros = [$documentoBuscado, '%' . $terminoBusqueda . '%'];
     } elseif ($busquedaActiva) {
-        $consultaClientes = $conexion->prepare($sqlSeleccionClientes . ' WHERE c.nombre LIKE ?' . $sqlAgruparClientes);
-        $patronNombre = '%' . $terminoBusqueda . '%';
-        $consultaClientes->bind_param('s', $patronNombre);
-        $consultaClientes->execute();
-        $resultadoClientes = $consultaClientes->get_result();
-    } else {
-        $resultadoClientes = $conexion->query($sqlSeleccionClientes . $sqlAgruparClientes);
+        $condicion = ' WHERE c.nombre LIKE ?';
+        $tipos = 's';
+        $parametros = ['%' . $terminoBusqueda . '%'];
     }
-    while ($cliente = $resultadoClientes->fetch_assoc()) {
-        $clientes[] = $cliente;
-    }
-    $resultadoClientes->free();
-    if (isset($consultaClientes)) {
-        $consultaClientes->close();
-    }
+    $paginacion = consultarPagina($conexion, $sqlSeleccionClientes . $condicion . $sqlAgruparClientes, $tipos, $parametros);
+    $clientes = $paginacion['filas'];
 } catch (Throwable $e) {
     registrarErrorServidor('leer_clientes', $e);
     $errorLectura = true;
@@ -127,35 +120,40 @@ require __DIR__ . '/../includes/menu.php';
     </div>
 <?php else: ?>
     <div class="tabla-wrap tabla-contenedor">
-        <table class="tabla">
-            <thead>
-                <tr>
-                    <th scope="col">Documento</th>
-                    <th scope="col">Nombre</th>
-                    <th scope="col">Fecha de registro</th>
-                    <th scope="col">Facturas</th>
-                    <th scope="col" class="texto-derecha">Acciones</th>
+        <table class="tabla listado-adaptable" role="table">
+            <thead role="rowgroup">
+                <tr role="row">
+                    <th role="columnheader" scope="col">Documento</th>
+                    <th role="columnheader" scope="col">Nombre</th>
+                    <th role="columnheader" scope="col">Fecha de registro</th>
+                    <th role="columnheader" scope="col">Facturas</th>
+                    <th role="columnheader" scope="col" class="texto-derecha">Acciones</th>
                 </tr>
             </thead>
-            <tbody>
+            <tbody role="rowgroup">
                 <?php foreach ($clientes as $cliente): ?>
-                    <tr>
-                        <td>
+                    <tr role="row">
+                        <td role="cell">
+                            <span class="listado-etiqueta" aria-hidden="true">Documento</span>
                             <span class="chip-id">#<?= h($cliente['id_cliente']) ?></span>
                         </td>
-                        <td>
+                        <td role="cell">
+                            <span class="listado-etiqueta" aria-hidden="true">Nombre</span>
                             <span class="celda-destacada"><?= h($cliente['nombre']) ?></span>
                         </td>
-                        <td>
+                        <td role="cell">
+                            <span class="listado-etiqueta" aria-hidden="true">Fecha de registro</span>
                             <span class="celda-fecha"><?= h($cliente['fecha_registro']) ?></span>
                         </td>
-                        <td>
+                        <td role="cell">
+                            <span class="listado-etiqueta" aria-hidden="true">Facturas</span>
                             <span class="insignia-facturas <?= (int)$cliente['total_facturas'] > 0 ? 'con-facturas' : 'sin-facturas' ?>">
                                 <?= h($cliente['total_facturas']) ?> <?= (int)$cliente['total_facturas'] === 1 ? 'factura' : 'facturas' ?>
                             </span>
                         </td>
-                        <td>
-                            <div class="acciones" style="justify-content: flex-end;">
+                        <td role="cell" class="listado-acciones">
+                            <span class="listado-etiqueta" aria-hidden="true">Acciones</span>
+                            <div class="acciones acciones-listado">
                                 <a class="editar" href="editar_cliente.php?id=<?= h($cliente['id_cliente']) ?>" title="Editar cliente #<?= h($cliente['id_cliente']) ?>">
                                     <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                                         <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
@@ -202,4 +200,5 @@ require __DIR__ . '/../includes/menu.php';
         <span>Control de integridad: No se permite eliminar clientes que tengan facturas asociadas en el sistema.</span>
     </div>
 <?php endif; ?>
+<?php mostrarPaginacion($paginacion); ?>
 <?php require __DIR__ . '/../includes/pie.php'; ?>

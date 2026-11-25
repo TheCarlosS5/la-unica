@@ -1,11 +1,16 @@
 <?php if (!defined('LA_UNICA_WIKI')) { exit; } ?>
-<h2 id="fuentes">Fuentes de datos</h2>
-<p>Ventas y Unidades consultan procedimientos por fechas. Existencias usa el procedimiento de stock. Clientes y cantidad de facturas y Detalle usan consultas sobre las tablas actuales. datos_reportes.php contiene las definiciones auxiliares y reporte_individual.php presenta las consultas reutilizables. Algunas rutas antiguas redirigen a reportes vigentes por compatibilidad y no se muestran como opciones adicionales.</p>
-<h2 id="calculos">Cálculos y presentación</h2>
-<p>Los importes de ventas usan el precio histórico del detalle. Las canceladas se conservan para consulta, pero se excluyen de unidades vendidas y del total vendido. acciones_impresion.php prepara filtros, título y estilos para imprimir sin los controles de navegación.</p>
-<p>La salida a PDF depende del diálogo del navegador. Los documentos técnicos registran la validación visual realizada y sus límites. La orientación horizontal del detalle evita comprimir sus ocho columnas.</p>
+<h2 id="piezas">Piezas del módulo</h2>
+<div class="tabla-wiki"><table><thead><tr><th>Archivo</th><th>Función</th></tr></thead><tbody><tr><td>ventas.php</td><td>Filtros, agrupaciones y resultados de ventas.</td></tr><tr><td>unidades_vendidas_por_producto.php</td><td>Cantidades e importe por fechas.</td></tr><tr><td>existencias_productos.php</td><td>Existencias y precio vigentes.</td></tr><tr><td>datos_reportes.php y reporte_individual.php</td><td>Catálogo y presentación auxiliar para clientes/detalle y rutas de compatibilidad.</td></tr><tr><td>ver_reportes.php</td><td>Resumen del día y accesos a las cinco consultas.</td></tr><tr><td>acciones_impresion.php</td><td>Controles, datos del documento y estilos de impresión.</td></tr></tbody></table></div>
 
-<h2 id="guia-visual">Referencia visual de la versión actual</h2>
-<p>Capturas reales con datos ficticios. Haz clic o pulsa Enter sobre una imagen para ampliarla.</p>
-<figure class="captura"><img src="img/actuales/reportes-detalle.jpg" alt="Consulta real — Detalles con precios históricos y estado." width="1600" height="1050" loading="lazy" decoding="async"><figcaption>Consulta real — Detalles con precios históricos y estado.</figcaption></figure>
-<figure class="captura"><img src="img/actuales/reportes-impresion.jpg" alt="Salida visual — Estilos de impresión del reporte." width="1280" height="960" loading="lazy" decoding="async"><figcaption>Salida visual — Estilos de impresión del reporte.</figcaption></figure>
+<h2 id="fuentes-sql-por-reporte">Fuentes SQL por reporte</h2>
+<div class="tabla-wiki"><table><thead><tr><th>Reporte</th><th>Ruta</th><th>Fuente</th><th>Interpretación</th></tr></thead><tbody><tr><td>Ventas</td><td>ventas.php</td><td>Cuatro procedimientos en el esquema; este reporte usa ventas por fecha o por período.</td><td>Lista facturas con su estado o agrupa por día, semana, mes o año. Solo Pagado suma al total vendido.</td></tr><tr><td>Unidades vendidas por producto</td><td>unidades_vendidas_por_producto.php</td><td>reporte_unidades_vendidas</td><td>Cantidades e importes por fechas, excluyendo Cancelado.</td></tr><tr><td>Existencias</td><td>existencias_productos.php</td><td>reporte_existencias</td><td>Existencias y precio actual; Bajo es de 1 a 5 y Agotado es 0.</td></tr><tr><td>Clientes y cantidad de facturas</td><td>clientes_y_facturas.php</td><td>Consulta preparada/SQL de las tablas actuales</td><td>Incluye clientes sin facturas y cuenta Pagado y Cancelado.</td></tr><tr><td>Detalle de facturas</td><td>detalle_facturas.php</td><td>Consulta de facturas y detalle_facturas</td><td>Líneas con precio histórico, fecha, estado y subtotal. Incluye ambos estados.</td></tr></tbody></table></div>
+
+<h2 id="compatibilidad">Rutas de compatibilidad</h2>
+<p>total_vigente_por_factura.php y facturas_por_estado.php redirigen a Ventas; unidades_facturadas_por_producto.php a Unidades vendidas; facturas_pendientes.php vuelve a Reportes. No son funciones adicionales ni implementan crédito. El catálogo auxiliar conserva entradas compatibles que no se presentan como siete opciones del menú.</p>
+<h2 id="cálculos">Cálculos y resultados</h2>
+<p>Ventas y Unidades usan el precio histórico del detalle. Los totales vendidos excluyen Cancelado. Clientes cuenta ambos estados y conserva cero facturas; Detalle muestra ambos estados y el subtotal de cada línea. llamarProcedimiento limpia resultados extra después de CALL para reutilizar mysqli.</p>
+<h2 id="impresión">Impresión y PDF</h2>
+<p>Los estilos ocultan navegación y controles, incorporan título, filtros y fecha, y organizan las tablas. Los botones abren window.print(): el usuario elige imprimir o Guardar como PDF. Detalle se imprime horizontal. La vista previa depende del papel y la escala seleccionados.</p>
+
+<h2>Descarga CSV</h2>
+<p>Las cinco consultas ofrecen una descarga CSV con las mismas filas y filtros de pantalla. El archivo usa UTF-8 y punto y coma. Los reportes de ventas y unidades toman los rangos de fechas que el operador aplicó. Existencias usa el inventario actual. Clientes y detalle usan el historial completo.</p>

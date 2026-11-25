@@ -87,7 +87,7 @@ require __DIR__ . '/../includes/menu.php';
                 <h2 class="modulo-titulo">Productos</h2>
             </div>
         </div>
-        <p class="modulo-descripcion">Crear, consultar, editar y eliminar artículos del inventario comercial con supervisión de existencias y precios.</p>
+        <p class="modulo-descripcion">Crear, consultar, editar y eliminar productos del inventario comercial con supervisión de existencias y precios.</p>
         <div class="modulo-acciones">
             <a class="boton" href="<?= h($baseUrl) ?>/php/productos/ver_productos.php">
                 <span>Abrir productos</span>
@@ -135,7 +135,7 @@ require __DIR__ . '/../includes/menu.php';
                 <span>Consultar facturas</span>
                 <svg class="boton-icono" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7" /><path d="m20 20-4-4" /></svg>
             </a>
-            <a class="boton secundario" href="<?= h($baseUrl) ?>/php/facturas/crear_factura.php">Nueva factura</a>
+            <a class="boton secundario" href="<?= h($baseUrl) ?>/php/facturas/crear_factura.php">Crear factura</a>
         </div>
         <div class="modulo-detalles">
             <span class="modulo-detalle-item">
@@ -173,7 +173,7 @@ require __DIR__ . '/../includes/menu.php';
             </span>
             <span class="modulo-detalle-item">
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12" /></svg>
-                <span>Productos agotados y con stock bajo</span>
+                <span>Productos agotados y con existencias bajas</span>
             </span>
         </div>
     </article>

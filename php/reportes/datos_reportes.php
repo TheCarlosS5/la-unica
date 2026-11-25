@@ -19,7 +19,7 @@ function catalogoReportes(): array
         'clientes' => [
             'archivo' => 'clientes_y_facturas.php',
             'titulo' => 'Clientes y cantidad de facturas',
-            'descripcion' => 'Cuenta las facturas de cada cliente e incluye a quienes todavía no tienen ventas.',
+            'descripcion' => 'Para el operador de caja. Muestra qué clientes compran con más frecuencia e incluye a los que todavía no tienen facturas.',
             'fuente' => 'Consulta de las tablas de esta versión',
             'nota' => 'El conteo incluye facturas Pagado y Cancelado.',
             'vacio' => 'Todavía no hay clientes registrados.',
@@ -62,7 +62,7 @@ function catalogoReportes(): array
         'detalle_facturas' => [
             'archivo' => 'detalle_facturas.php',
             'titulo' => 'Detalle de facturas',
-            'descripcion' => 'Consulta cada producto, cantidad, precio de venta y subtotal de sus facturas.',
+            'descripcion' => 'Para el operador de caja. Permite atender una consulta sobre una compra y verificar sus productos, cantidades, precios y subtotales.',
             'fuente' => 'Consulta de las tablas de esta versión',
             'nota' => 'Incluye todos los estados (revisa la columna Estado) y ordena por ID de factura. Precio y subtotal son los registrados en la venta.',
             'vacio' => 'Todavía no hay detalles de factura.',
@@ -81,7 +81,7 @@ function catalogoReportes(): array
         'stock_productos' => [
             'archivo' => 'existencias_productos.php',
             'titulo' => 'Existencias de productos',
-            'descripcion' => 'Muestra stock y precio unitario vigente, desde la menor existencia.',
+            'descripcion' => 'Muestra las existencias y el precio unitario, ordenados por cantidad disponible.',
             'fuente' => 'Consulta de las tablas de esta versión',
             'nota' => 'El orden ascendente permite revisar primero las existencias más bajas. El precio mostrado es el precio actual del catálogo.',
             'vacio' => 'Todavía no hay productos registrados.',
