@@ -1,21 +1,41 @@
-/* Confirmación visual de envío sin perder el nombre/valor del botón pulsado. */
+/* Mantiene el botón disponible para que el navegador incluya su nombre y valor. */
 (() => {
-  document.querySelectorAll('form[method="post"]').forEach(form => {
-    if (form.id === 'formulario-factura') return;
+  const envios = new Map();
+  const anuncio = document.createElement('div');
+  anuncio.className = 'estado-envio-lector';
+  anuncio.setAttribute('role', 'status');
+  document.body.append(anuncio);
+
+  document.querySelectorAll('form[method="post"], form.filtros-facturas, form.filtro-busqueda').forEach(form => {
     form.addEventListener('submit', event => {
-      if (form.dataset.enviando === '1') { event.preventDefault(); return; }
-      form.dataset.enviando = '1';
-      form.setAttribute('aria-busy', 'true');
-      const button = event.submitter || form.querySelector('[type="submit"]');
+      if (event.defaultPrevented) return;
+      if (envios.has(form)) {
+        event.preventDefault();
+        return;
+      }
+
+      const button = event.submitter || form.querySelector('button[type="submit"]');
       if (!button) return;
-      button.setAttribute('aria-disabled', 'true');
+
       const label = button.querySelector('span') || button;
-      label.textContent = 'Procesando…';
+      const mensaje = button.dataset.textoEnvio || (form.method === 'get' ? 'Consultando…' : 'Procesando…');
+      envios.set(form, { button, label, textoOriginal: label.textContent });
+      form.setAttribute('aria-busy', 'true');
+      button.setAttribute('aria-disabled', 'true');
+      label.textContent = mensaje;
+      anuncio.textContent = mensaje;
     });
   });
-  // Una página restaurada desde el historial debe permitir volver a enviar.
+
   window.addEventListener('pageshow', () => {
-    document.querySelectorAll('form[data-enviando="1"]').forEach(() => location.reload());
+    envios.forEach(({ button, label, textoOriginal }, form) => {
+      form.removeAttribute('aria-busy');
+      button.removeAttribute('aria-disabled');
+      label.textContent = textoOriginal;
+    });
+    envios.clear();
+    anuncio.textContent = '';
   });
+
   document.querySelector('[aria-invalid="true"]')?.focus();
 })();

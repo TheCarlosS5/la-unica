@@ -203,7 +203,7 @@ foreach ($productos as $producto) {
         $productosDisponibles++;
     }
     $etiqueta = $producto['nombre'] . ' · ' . $producto['unidad_medida'] . ' · '
-        . formatearMonedaCop($producto['precio_unitario']) . ' · stock: ' . $stockProducto;
+        . formatearMonedaCop($producto['precio_unitario']) . ' · existencias: ' . $stockProducto;
     $opcionesProductos .= '<option value="' . $idProducto . '" data-stock="' . $stockProducto
         . '" data-precio="' . h((string)$producto['precio_unitario']) . '"'
         . ($stockProducto < 1 ? ' disabled' : '') . '>' . h($etiqueta) . '</option>';
@@ -316,7 +316,7 @@ require __DIR__ . '/../includes/menu.php';
                 </div>
 
                 <div class="fila-botones">
-                    <button type="submit">
+                    <button type="submit" data-texto-envio="Guardando…">
                         <svg class="boton-icono" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11z" /><path d="M17 21v-8H7v8M7 3v5h8" /></svg>
                         <span>Guardar venta</span>
                     </button>

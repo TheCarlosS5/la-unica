@@ -1,6 +1,6 @@
 <?php if (!defined('LA_UNICA_WIKI')) { exit; } ?>
 <h2 id="logo">Logo</h2>
-<p>Reemplaza <code>assets/img/logo.png</code> por tu imagen (cuadrada, PNG con transparencia, idealmente ≥ 256 px). Se usa como favicon y en la cabecera del menú lateral.</p>
+<p>Reemplaza <code>assets/img/logo.webp</code> por tu imagen (cuadrada, WebP con transparencia, idealmente ≥ 256 px). Se usa como favicon y en la cabecera del menú lateral.</p>
 <h2 id="colores">Colores</h2>
 <p>Todos los colores son variables CSS en <code>:root</code>, al principio de <code>assets/css/estilos.css</code>. Cambiar una variable cambia toda la interfaz:</p>
 <p class="codigo-titulo">assets/css/estilos.css</p>

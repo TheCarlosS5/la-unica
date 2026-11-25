@@ -31,7 +31,7 @@
 <figure class="captura"><img src="img/clientes-menu.webp" alt="Clientes en el menú" loading="lazy"><figcaption>Clientes en el menú</figcaption></figure>
 <ul>
 <li><span class="marca-num">1</span> <strong>Clientes</strong> abre el listado.</li>
-<li><span class="marca-num">2</span> <strong>Nuevo cliente</strong> va directo al formulario de creación.</li>
+<li><span class="marca-num">2</span> <strong>Crear cliente</strong> va directo al formulario de creación.</li>
 </ul>
 <h2 id="leer-el-listado">Leer el listado</h2>
 <p>El listado muestra hasta 25 registros por página. Usa <strong>Anterior</strong> y <strong>Siguiente</strong> para navegar con los filtros actuales.</p>
@@ -59,7 +59,7 @@
 <h2 id="crear-un-cliente">Crear un cliente</h2>
 <div class="pasos">
 <ol>
-<li>Menú → <em>Clientes → <strong>Nuevo cliente</strong></em>.</li>
+<li>Menú → <em>Clientes → <strong>Crear cliente</strong></em>.</li>
 <li>
 <p>Llena el formulario:</p>
 <figure class="captura"><img src="img/clientes-crear-formulario.webp" alt="Formulario de nuevo cliente" loading="lazy"><figcaption>Formulario de nuevo cliente</figcaption></figure>

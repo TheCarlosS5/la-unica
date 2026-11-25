@@ -25,7 +25,7 @@
 <td>Obligatoria, hasta 20 caracteres: <code>kg</code>, <code>litro</code>, <code>cubeta</code>, <code>unidad</code>, <code>libra</code>… No hay lista cerrada.</td>
 </tr>
 <tr>
-<td>Stock</td>
+<td>Existencias</td>
 <td>número entero</td>
 <td>0 o más. No admite decimales.</td>
 </tr>
@@ -40,13 +40,13 @@
 <figure class="captura"><img src="img/productos-menu.webp" alt="Productos en el menú" loading="lazy"><figcaption>Productos en el menú</figcaption></figure>
 <ul>
 <li><span class="marca-num">1</span> <strong>Productos</strong> abre el catálogo.</li>
-<li><span class="marca-num">2</span> <strong>Nuevo producto</strong> va directo al formulario.</li>
+<li><span class="marca-num">2</span> <strong>Crear producto</strong> va directo al formulario.</li>
 </ul>
 <h2 id="leer-el-catálogo">Leer el catálogo</h2>
 <p>El listado muestra hasta 25 registros por página. Usa <strong>Anterior</strong> y <strong>Siguiente</strong> para navegar con los filtros actuales.</p>
 <figure class="captura"><img src="img/productos-lista-marcas.webp" alt="Marcas importantes del catálogo" loading="lazy"><figcaption>Marcas importantes del catálogo</figcaption></figure>
 <ul>
-<li><span class="marca-num">1</span> <strong>0 (Agotado)</strong>: el stock llegó a cero. El producto <strong>no se puede vender</strong> hasta que repongas existencias.</li>
+<li><span class="marca-num">1</span> <strong>0 (Agotado)</strong>: las existencias llegaron a cero. El producto <strong>no se puede vender</strong> hasta que repongas existencias.</li>
 <li><span class="marca-num">2</span> <strong>Detalles</strong>: en cuántas líneas de factura aparece el producto.</li>
 <li><span class="marca-num">3</span> <strong>En facturas</strong>: candado. El producto tiene historial y no se puede eliminar.</li>
 <li><span class="marca-num">4</span> <strong>Eliminar</strong>: solo aparece en productos que nunca se han facturado.</li>
@@ -55,14 +55,14 @@
 <h2 id="crear-un-producto">Crear un producto</h2>
 <div class="pasos">
 <ol>
-<li>Menú → <em>Productos → <strong>Nuevo producto</strong></em>.</li>
+<li>Menú → <em>Productos → <strong>Crear producto</strong></em>.</li>
 <li>
 <p>Llena el formulario:</p>
 <figure class="captura"><img src="img/productos-crear-formulario.webp" alt="Formulario de nuevo producto" loading="lazy"><figcaption>Formulario de nuevo producto</figcaption></figure>
 <ul>
 <li><span class="marca-num">1</span> <strong>Nombre del producto</strong>.</li>
 <li><span class="marca-num">2</span> <strong>Unidad de medida</strong>: cómo lo vendes (<code>kg</code>, <code>litro</code>, <code>pastilla</code>…). Puede modificarse después; las facturas conservan la unidad con la que se vendió.</li>
-<li><span class="marca-num">3</span> <strong>Stock inicial</strong>: lo que tienes hoy en bodega. Cada venta lo descuenta y cada cancelación lo repone.</li>
+<li><span class="marca-num">3</span> <strong>Existencias iniciales</strong>: lo que tienes hoy en bodega. Cada venta lo descuenta y cada cancelación lo repone.</li>
 <li><span class="marca-num">4</span> <strong>Precio unitario</strong>: con punto para los decimales (<code>2900.50</code>).</li>
 <li><span class="marca-num">5</span> Pulsa <strong>Crear producto</strong>.</li>
 </ul>
@@ -81,7 +81,7 @@
 <figure class="captura"><img src="img/productos-editar-formulario.webp" alt="Edición de un producto que ya se vendió" loading="lazy"><figcaption>Edición de un producto que ya se vendió</figcaption></figure>
 <ul>
 <li><span class="marca-num">1</span> <strong>Unidad de medida</strong>: se puede editar. Las ventas anteriores conservan su copia histórica de la unidad.</li>
-<li><span class="marca-num">2</span> <strong>Stock disponible</strong>: escribe la <strong>cantidad total</strong> que tienes ahora, no lo que vas a sumar. Si contaste 95 kg en bodega, escribe <code>95</code>.</li>
+<li><span class="marca-num">2</span> <strong>Existencias disponibles</strong>: escribe la <strong>cantidad total</strong> que tienes ahora, no lo que vas a sumar. Si contaste 95 kg en bodega, escribe <code>95</code>.</li>
 <li><span class="marca-num">3</span> <strong>Precio unitario</strong>: el nuevo precio de venta.</li>
 </ul>
 </li>
@@ -91,7 +91,7 @@
 </ol>
 </div>
 <p>Si introduces existencias negativas, el servidor rechaza el cambio y conserva el formulario para corregirlo:</p>
-<figure class="captura"><img src="img/productos-editar-error.webp" alt="Error por existencias negativas" loading="lazy"><figcaption>El stock negativo no se guarda</figcaption></figure>
+<figure class="captura"><img src="img/productos-editar-error.webp" alt="Error por existencias negativas" loading="lazy"><figcaption>Las existencias no pueden ser negativas</figcaption></figure>
 <div class="aviso aviso-note">
 <p class="aviso-titulo">Cambiar el precio no altera facturas anteriores</p>
 <p>Cada línea de factura guarda el precio <strong>del momento de la venta</strong>. Si subes el arroz de $4.800 a $5.000, las ventas nuevas usan $5.000 y la factura #1 conserva su total con $4.800.</p>
@@ -111,4 +111,4 @@
 </li>
 </ol>
 </div>
-<p>¿Ya no vendes un producto que tiene historial? No lo puedes borrar, pero puedes dejar su stock en 0 para que no aparezca disponible en las ventas.</p>
+<p>¿Ya no vendes un producto que tiene historial? No lo puedes borrar, pero puedes dejar sus existencias en 0 para que no aparezca disponible en las ventas.</p>

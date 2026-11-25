@@ -58,7 +58,9 @@ require __DIR__ . '/../includes/menu.php';
                 class="video-reproductor"
                 controls
                 playsinline
-                preload="none"
+                preload="metadata"
+                width="540"
+                height="960"
                 poster="<?= h($baseUrl) ?>/assets/video/poster.webp"
                 aria-label="Video explicativo del aplicativo La Única">
                 <source src="<?= h($videoUrl) ?>" type="video/mp4">

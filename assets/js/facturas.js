@@ -143,12 +143,4 @@
     botonQuitar.closest('[data-linea-factura]').remove();
     refrescar();
   });
-
-  formulario.addEventListener('submit', function () {
-    const botonGuardar = formulario.querySelector('button[type="submit"]');
-    if (botonGuardar) {
-      botonGuardar.disabled = true;
-      botonGuardar.querySelector('span').textContent = 'Guardando…';
-    }
-  });
 })();

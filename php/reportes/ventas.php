@@ -194,7 +194,7 @@ require __DIR__ . '/acciones_impresion.php';
                             <td><span class="chip-id">#<?= (int)$factura['id_factura'] ?></span></td>
                             <td><span class="celda-fecha"><?= h(date('d/m/Y H:i', strtotime($factura['fecha_factura']))) ?></span></td>
                             <td><?= h($factura['cliente']) ?></td>
-                            <td><span class="estado-factura <?= strtolower(h($factura['estado_factura'])) ?>"><?= h($factura['estado_factura']) ?></span></td>
+                            <td><span class="estado-factura <?= strtolower(h($factura['estado_factura'])) ?>"><span aria-hidden="true"><?= $factura['estado_factura'] === 'Pagado' ? '✓' : '×' ?></span> <?= h($factura['estado_factura']) ?></span></td>
                             <td class="texto-derecha celda-destacada"><?= h(formatearMonedaCop($factura['total_factura'])) ?></td>
                             <td class="texto-derecha no-imprimir-reporte"><a class="boton secundario boton-factura-detalle" href="<?= h($baseUrl) ?>/php/facturas/imprimir_factura.php?id=<?= (int)$factura['id_factura'] ?>">Ver factura</a></td>
                         </tr>

@@ -6,13 +6,13 @@
 <figure class="captura"><img src="img/facturas-menu.webp" alt="Facturas en el menú" loading="lazy"><figcaption>Facturas en el menú</figcaption></figure>
 <ul>
 <li><span class="marca-num">1</span> <strong>Facturas</strong> abre la búsqueda de ventas.</li>
-<li><span class="marca-num">2</span> <strong>Nueva factura</strong> abre el formulario para vender.</li>
+<li><span class="marca-num">2</span> <strong>Crear factura</strong> abre el formulario para vender.</li>
 </ul>
 <h2 id="registrar-una-venta">Registrar una venta</h2>
 <div class="pasos">
 <ol>
 <li>
-<p>Menú → <em>Ventas → <strong>Nueva factura</strong></em>.</p>
+<p>Menú → <em>Ventas → <strong>Crear factura</strong></em>.</p>
 </li>
 <li>
 <p><span class="marca-num">1</span> <strong>Elige el cliente.</strong> La lista muestra el nombre y el ID. La venta se guardará como <strong>Pagado</strong>; no hay selector de forma de pago.</p>

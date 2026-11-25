@@ -20,7 +20,7 @@ $claveActual = $pagina['clave'] ?? '';
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="theme-color" content="#faf7f0">
     <title><?= h($tituloPagina) ?> · Wiki de La Única</title>
-    <link rel="icon" type="image/png" href="../assets/img/logo.png">
+    <link rel="icon" type="image/webp" href="../assets/img/logo.webp">
     <link rel="preload" href="../assets/fonts/patrick-hand-latin.woff2" as="font" type="font/woff2" crossorigin>
     <link rel="preload" href="../assets/fonts/architects-daughter-latin.woff2" as="font" type="font/woff2" crossorigin>
     <link rel="stylesheet" href="css/wiki.css">
@@ -35,7 +35,7 @@ $claveActual = $pagina['clave'] ?? '';
             </svg>
         </button>
         <a class="wiki-marca" href="index.php">
-            <img src="../assets/img/logo.png" alt="" width="34" height="34">
+            <img src="../assets/img/logo.webp" alt="" width="34" height="34">
             <span class="wiki-marca-nombre">La Única</span>
             <span class="wiki-marca-etiqueta">Wiki</span>
         </a>

@@ -103,7 +103,7 @@ require __DIR__ . '/acciones_impresion.php';
                                         <?php try { $fechaReporte = (new DateTimeImmutable((string)$valor))->format('d/m/Y H:i'); } catch (Throwable $e) { $fechaReporte = 'Sin fecha disponible'; } ?>
                                         <span class="celda-fecha"><?= h($fechaReporte) ?></span>
                                     <?php elseif ($columna['tipo'] === 'estado'): ?>
-                                        <span class="estado-factura <?= strtolower(h($valor)) ?>"><?= h($valor) ?></span>
+                                        <span class="estado-factura <?= strtolower(h($valor)) ?>"><span aria-hidden="true"><?= $valor === 'Pagado' ? '✓' : '×' ?></span> <?= h($valor) ?></span>
                                     <?php else: ?>
                                         <?= h($valor) ?>
                                     <?php endif; ?>

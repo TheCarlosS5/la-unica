@@ -19,7 +19,7 @@
 <h2 id="así-se-ven-las-pantallas">Así se ven las pantallas</h2>
 <div class="galeria galeria-vertical" style="--columnas: 3">
 <figure class="captura"><img src="img/movil-clientes.webp" alt="Listado de clientes" loading="lazy"><figcaption>Listado de clientes</figcaption></figure>
-<figure class="captura"><img src="img/movil-factura.webp" alt="Nueva factura" loading="lazy"><figcaption>Nueva factura</figcaption></figure>
+<figure class="captura"><img src="img/movil-factura.webp" alt="Crear factura" loading="lazy"><figcaption>Crear factura</figcaption></figure>
 <figure class="captura"><img src="img/movil-menu.webp" alt="Menú abierto" loading="lazy"><figcaption>Menú abierto</figcaption></figure>
 </div>
 

@@ -81,7 +81,8 @@
   --color-aviso-fondo: #fff1c4;
   --color-aviso-borde: #e8c35a;
 
-  --color-foco: rgba(45, 106, 79, 0.35);
+  --color-foco: var(--color-primario);
+  --fuente-datos: 'Segoe UI', Arial, sans-serif;
 
   /* Sombras suaves */
   --sombra-sm: 0 1px 2px rgba(43, 43, 54, 0.08);
@@ -191,7 +192,7 @@ button, input, select, textarea {
 
 /* Foco visible para quien navega con teclado */
 :focus-visible {
-  outline: 3px solid var(--color-primario);
+  outline: 3px solid var(--color-foco);
   outline-offset: 2px;
 }
 
@@ -299,9 +300,9 @@ button, input, select, textarea {
   display: none;
   align-items: center;
   justify-content: center;
-  width: 38px;
-  height: 38px;
-  min-height: 0;
+  width: 44px;
+  height: 44px;
+  flex: 0 0 44px;
   padding: 0;
   border-radius: var(--radio-sm);
   border: 1px solid var(--color-contorno-fuerte);
@@ -477,9 +478,9 @@ button, input, select, textarea {
   display: none;
   align-items: center;
   justify-content: center;
-  width: 42px;
-  height: 42px;
-  min-height: 0;
+  width: 44px;
+  height: 44px;
+  flex: 0 0 44px;
   padding: 0;
   border-radius: var(--radio-sm);
   border: 1px solid var(--color-contorno-fuerte);
@@ -813,6 +814,20 @@ button[disabled] {
   box-shadow: none;
   cursor: not-allowed;
   transform: none;
+}
+
+button[aria-disabled="true"] {
+  cursor: wait;
+  box-shadow: none;
+}
+
+.estado-envio-lector {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
 }
 
 .boton-icono {
@@ -1511,10 +1526,9 @@ button[disabled] {
 }
 
 .campo input:focus,
-.campo select:focus {
-  outline: none;
+.campo select:focus,
+.campo textarea:focus {
   background-color: #fffbe6;
-  box-shadow: 0 0 0 3px var(--color-foco);
 }
 
 .campo input[readonly] {
@@ -1743,6 +1757,16 @@ button[disabled] {
 
 }
 
+@media (max-width: 1024px) {
+  .filtros-facturas {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .filtros-facturas .filtro-acciones {
+    grid-column: 1 / -1;
+  }
+}
+
 @media (max-width: 820px) {
   /* En pantallas móviles/tablets, el sidebar se convierte en drawer deslizable */
   .barra-lateral {
@@ -1750,7 +1774,7 @@ button[disabled] {
     top: 0;
     bottom: 0;
     left: 0;
-    width: 280px;
+    width: min(280px, 100%);
     z-index: 50;
     transform: translateX(-100%);
     visibility: hidden;
@@ -2099,6 +2123,8 @@ button[disabled] {
 }
 
 .video-reproductor-marco {
+  width: min(100%, 40.5vh, 440px);
+  margin-inline: auto;
   overflow: hidden;
   border: 1px solid var(--color-contorno);
   border-radius: var(--radio-md);
@@ -2109,8 +2135,8 @@ button[disabled] {
 .video-reproductor {
   display: block;
   width: 100%;
-  max-height: min(72vh, 780px);
-  aspect-ratio: 16 / 9;
+  height: auto;
+  aspect-ratio: 9 / 16;
   background: #111;
 }
 
@@ -2147,8 +2173,8 @@ button[disabled] {
     height: 44px;
   }
 
-  .video-reproductor {
-    max-height: 60vh;
+  .video-reproductor-marco {
+    width: min(100%, 33.75vh);
   }
 }
 /* Vista del modelo entidad-relación. */
@@ -2173,8 +2199,12 @@ button:disabled, input:disabled, select:disabled { cursor: not-allowed; opacity:
 .acciones-tabla a, .acciones-tabla button, .boton-peligro, .boton-editar,
 .tabla-acciones a, .tabla-acciones button { min-width: 44px; min-height: 44px; }
 .miga-pan a { display: inline-flex; align-items: center; }
-.btn-abrir-drawer, .btn-cerrar-drawer { width: 44px; height: 44px; }
-table, .comprobante, .reporte-impresion { font-family: 'Segoe UI', Arial, sans-serif; font-variant-numeric: tabular-nums; }
+table,
+.comprobante-factura,
+.reportes-resumen-valor {
+  font-family: var(--fuente-datos);
+  font-variant-numeric: tabular-nums;
+}
 .error-campo { display: block; color: #9c2929; font-weight: 600; margin-top: var(--espacio-2); }
 [aria-invalid="true"] { border: 2px solid #9c2929; }
 .paginacion { display: flex; align-items: center; flex-wrap: wrap; gap: var(--espacio-3); margin: var(--espacio-4) 0; }
